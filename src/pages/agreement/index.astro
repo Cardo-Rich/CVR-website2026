@@ -525,6 +525,10 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
 
 <style is:global>
   * { box-sizing: border-box; }
+  /* Ensure the `hidden` attribute always wins over author `display` rules
+     (e.g. .gate / .signed-banner use display:flex, which otherwise overrides
+     the UA [hidden]{display:none} rule and keeps those cards visible). */
+  [hidden] { display: none !important; }
   html, body { margin: 0; padding: 0; }
   body { background: #EDEAE2; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; font-family: 'Barlow', sans-serif; min-height: 100vh; }
   input, textarea, button { font-family: inherit; }
