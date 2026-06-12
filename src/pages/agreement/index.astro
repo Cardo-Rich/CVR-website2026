@@ -65,20 +65,47 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
           <div class="ms-label">Key Commercial Terms</div>
           <div class="sub">These figures form part of the signed Agreement.</div>
 
-          {TERMS_META.slice(0, 3).map((m, i) => (
+          {TERMS_META.slice(0, 2).map((m, i) => (
             <div class="term-row" style={i === 0 ? 'margin-top: 12px;' : ''}>
               <div style="min-width: 0;">
                 <div class="term-name">{m.label}</div>
-                <div class="term-sub">{m.sub.replace(' · ', ' · ')}</div>
+                <div class="term-sub">{m.sub}</div>
               </div>
-              <div class="term-val">
-                {m.prefix && <span class="unit">{m.prefix}</span>}
-                <input data-term={m.key} readonly inputmode="decimal" class="input term-input" value={m.default} />
-                {m.suffix === '%' && <span class="unit">%</span>}
-                {m.suffix && m.suffix !== '%' && <span class="unit-sub">{m.suffix}</span>}
+              <div class="unit-wrap">
+                {m.prefix && <span class="unit-in left">{m.prefix}</span>}
+                <input data-term={m.key} readonly inputmode="decimal" class={`input term-input${m.prefix ? ' pl' : ''}${m.suffix ? ' pr' : ''}`} value={m.default} />
+                {m.suffix && <span class="unit-in right">{m.suffix}</span>}
               </div>
             </div>
           ))}
+
+          <div class="term-row" style="display: block;">
+            <div class="term-name">Cardo HomeSafe Insurance</div>
+            <div class="term-sub">Guest-paid damage protection, per reservation &middot; Section 13</div>
+            <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px;">
+              <div style="flex: 1 1 90px;">
+                <div class="field-label" style="margin-bottom: 5px;">Premium</div>
+                <div class="unit-wrap fill">
+                  <span class="unit-in left">$</span>
+                  <input data-term="homeSafeFee" readonly inputmode="decimal" class="input term-input pl" value="12" />
+                </div>
+              </div>
+              <div style="flex: 1 1 90px;">
+                <div class="field-label" style="margin-bottom: 5px;">Coverage Amount</div>
+                <div class="unit-wrap fill">
+                  <span class="unit-in left">$</span>
+                  <input data-term="homeSafeCoverage" readonly inputmode="decimal" class="input term-input pl" value="5,000" />
+                </div>
+              </div>
+              <div style="flex: 1 1 90px;">
+                <div class="field-label" style="margin-bottom: 5px;">Deductible</div>
+                <div class="unit-wrap fill">
+                  <span class="unit-in left">$</span>
+                  <input data-term="homeSafeDeductible" readonly inputmode="decimal" class="input term-input pl" value="500" />
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div class="term-row" style="display: block; padding-bottom: 4px;">
             <div class="term-name">Engagement Fee</div>
@@ -86,16 +113,16 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
             <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px;">
               <div style="flex: 1 1 120px;">
                 <div class="field-label" style="margin-bottom: 5px;">Startup</div>
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <span class="unit">$</span>
-                  <input data-term="startupFee" readonly inputmode="decimal" class="input term-input" style="width: 100%;" value="500" />
+                <div class="unit-wrap fill">
+                  <span class="unit-in left">$</span>
+                  <input data-term="startupFee" readonly inputmode="decimal" class="input term-input pl" value="500" />
                 </div>
               </div>
               <div style="flex: 1 1 120px;">
                 <div class="field-label" style="margin-bottom: 5px;">Lock Sync</div>
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <span class="unit">$</span>
-                  <input data-term="lockSyncFee" readonly inputmode="decimal" class="input term-input" style="width: 100%;" value="190" />
+                <div class="unit-wrap fill">
+                  <span class="unit-in left">$</span>
+                  <input data-term="lockSyncFee" readonly inputmode="decimal" class="input term-input pl" value="190" />
                 </div>
               </div>
             </div>
@@ -544,12 +571,17 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
   .term-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 0; border-top: 1px solid rgba(14,17,27,0.10); }
   .term-name { font-family: 'Montserrat', sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: 0.02em; color: #0E1528; }
   .term-sub { font-size: 12.5px; color: #6B6D78; margin-top: 2px; }
-  .term-val { display: flex; align-items: center; gap: 7px; flex: 0 0 auto; }
-  .unit { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 600; color: #2A3451; }
-  .unit-sub { font-size: 13px; color: #6B6D78; }
+  .unit-wrap { position: relative; flex: 0 0 auto; width: 96px; }
+  .unit-wrap.fill { width: 100%; }
+  .unit-wrap .term-input { width: 100%; }
+  .unit-in { position: absolute; top: 50%; transform: translateY(-50%); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; color: #6B6D78; pointer-events: none; }
+  .unit-in.left { left: 11px; }
+  .unit-in.right { right: 11px; }
 
   .input { font-size: 16px; color: #0E1528; border: 1px solid rgba(14,17,27,0.18); border-radius: 10px; padding: 12px 14px; background: #fff; transition: border-color .14s, box-shadow .14s; }
-  .term-input { width: 66px; text-align: right; font-weight: 600; border-radius: 9px; padding: 9px 11px; }
+  .term-input { text-align: right; font-weight: 600; border-radius: 9px; padding: 9px 11px; }
+  .term-input.pl { padding-left: 24px; }
+  .term-input.pr { padding-right: 28px; }
 
   .due-box { margin-top: 14px; background: #fff; border: 1px solid rgba(14,17,27,0.10); border-radius: 10px; padding: 13px 16px; }
   .due-label { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #2A3451; }

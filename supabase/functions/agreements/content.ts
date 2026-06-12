@@ -15,7 +15,9 @@ export interface TermMeta {
 export const TERMS_META: TermMeta[] = [
   { key: 'commissionPct', label: 'Management Commission', sub: '% of rental proceeds · Section 11', suffix: '%', default: '20' },
   { key: 'amenityFee', label: 'Amenity Marketing Program', sub: 'Guest-paid, per reservation', prefix: '$', default: '20' },
-  { key: 'homeSafeFee', label: 'Cardo HomeSafe Insurance', sub: 'Guest-paid premium · Section 13', prefix: '$', suffix: '/ night', default: '12' },
+  { key: 'homeSafeFee', label: 'Cardo HomeSafe — Premium', sub: 'Guest-paid, per reservation · Section 13', prefix: '$', default: '12' },
+  { key: 'homeSafeCoverage', label: 'Cardo HomeSafe — Coverage Amount', sub: 'Covered damage, per claim · Section 13', prefix: '$', default: '5,000' },
+  { key: 'homeSafeDeductible', label: 'Cardo HomeSafe — Deductible', sub: 'Per claim · Section 13', prefix: '$', default: '500' },
   { key: 'startupFee', label: 'Engagement Fee — Startup', sub: 'Rolled into first payout · non-refundable', prefix: '$', default: '500' },
   { key: 'lockSyncFee', label: 'Engagement Fee — Lock Sync', sub: 'Rolled into first payout · non-refundable', prefix: '$', default: '190' },
 ];
@@ -198,7 +200,7 @@ export const SECTIONS: Section[] = [
     title: 'Insurance',
     blocks: [
       { p: '**Liability insurance (required).** You must carry a short-term-rental liability policy of at least $1,000,000 per occurrence that covers transient rental use and names “Scherf Property Management, LLC” as an additional insured. Provide Cardo a Certificate of Insurance, keep the coverage active, and tell us immediately of any lapse or change. Your policy is primary for incidents at the Home.' },
-      { p: '**Cardo HomeSafe — guest damage protection.** Most booking platforms provide little or no damage coverage, leaving owners exposed. Cardo HomeSafe charges guests a per-night premium (stated on the first page) so we can reimburse covered damage to the Home promptly — without waiting on a platform claim. Because Airbnb is the only platform offering its own partial coverage, HomeSafe is required for bookings made anywhere other than Airbnb. Owner stays aren’t charged the premium and aren’t covered.' },
+      { p: '**Cardo HomeSafe — guest damage protection.** Most booking platforms provide little or no damage coverage, leaving owners exposed. Cardo HomeSafe charges guests a per-reservation premium (stated on the first page, along with the coverage amount and deductible) so we can reimburse covered damage to the Home promptly — without waiting on a platform claim. Because Airbnb is the only platform offering its own partial coverage, HomeSafe is required for bookings made anywhere other than Airbnb. Owner stays aren’t charged the premium and aren’t covered.' },
     ],
   },
   {
