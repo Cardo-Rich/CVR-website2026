@@ -15,9 +15,9 @@ export interface TermMeta {
 export const TERMS_META: TermMeta[] = [
   { key: 'commissionPct', label: 'Management Commission', sub: '% of rental proceeds · Section 11', suffix: '%', default: '20' },
   { key: 'amenityFee', label: 'Amenity Marketing Program', sub: 'Guest-paid, per reservation', prefix: '$', default: '20' },
-  { key: 'homeSafeFee', label: 'Cardo HomeSafe — Premium', sub: 'Guest-paid, per reservation · Section 13', prefix: '$', default: '12' },
-  { key: 'homeSafeCoverage', label: 'Cardo HomeSafe — Coverage Amount', sub: 'Covered damage, per claim · Section 13', prefix: '$', default: '5,000' },
-  { key: 'homeSafeDeductible', label: 'Cardo HomeSafe — Deductible', sub: 'Per claim · Section 13', prefix: '$', default: '500' },
+  { key: 'homeSafeFee', label: 'Cardo HomeSafe — Premium', sub: 'Guest-paid, per reservation · Section 13', prefix: '$', default: '59' },
+  { key: 'homeSafeCoverage', label: 'Cardo HomeSafe — Coverage Amount', sub: 'Covered damage, per claim · Section 13', prefix: '$', default: '3,500' },
+  { key: 'homeSafeDeductible', label: 'Cardo HomeSafe — Deductible', sub: 'Per claim · Section 13', prefix: '$', default: '0' },
   { key: 'startupFee', label: 'Engagement Fee — Startup', sub: 'Rolled into first payout · non-refundable', prefix: '$', default: '500' },
   { key: 'lockSyncFee', label: 'Engagement Fee — Lock Sync', sub: 'Rolled into first payout · non-refundable', prefix: '$', default: '190' },
 ];
