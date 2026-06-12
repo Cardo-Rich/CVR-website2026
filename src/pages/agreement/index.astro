@@ -1,0 +1,646 @@
+---
+// Client-facing signing page for the Rental Management Agreement.
+// Loaded via the tokenized link emailed from the owner portal: /agreement/?t=TOKEN
+import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, richToHtml } from '../../../supabase/functions/agreements/content.ts';
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Rental Management Agreement · Cardo Vacation Rentals</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<header id="appHeader" data-noprint>
+  <div class="header-inner">
+    <img src="/assets/cardo-logo-horizontal.svg" alt="Cardo Vacation Rentals" style="height: 30px; width: auto; display: block;" />
+    <div id="docTitle">Rental Management Agreement</div>
+    <button id="printBtn" class="ghost-btn" type="button">Print / Save PDF</button>
+  </div>
+  <div class="sunset-bar"></div>
+</header>
+
+<main>
+  <div id="gate" class="gate" hidden>
+    <div class="gate-card">
+      <div id="gateTitle" class="ms-label">Loading agreement&hellip;</div>
+      <p id="gateMsg" class="gate-msg">One moment while we retrieve your agreement.</p>
+    </div>
+  </div>
+
+  <article id="sheet" hidden>
+
+    <!-- Masthead -->
+    <div class="kicker">Rental Property Management Agreement</div>
+    <h1>Rental Management Agreement</h1>
+    <div class="byline">Scherf Property Management, LLC &nbsp;&middot;&nbsp; doing business as Cardo Vacation Rentals &nbsp;&middot;&nbsp; one agreement per property</div>
+    <p class="preamble">{PREAMBLE}</p>
+    <div class="sunset-rule"></div>
+
+    <!-- Signed banner -->
+    <div id="signedBanner" class="signed-banner" hidden>
+      <div class="signed-check">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div style="min-width: 0;">
+        <div class="signed-title">Agreement Signed</div>
+        <div class="signed-sub">Executed by <span data-sig-name></span> on <span data-signed-at></span>. Use Print / Save PDF to keep a copy for your records.</div>
+      </div>
+      <a id="pdfLink" data-noprint class="ghost-btn green" href="#" target="_blank" rel="noopener">Download PDF</a>
+    </div>
+
+    <!-- Terms + Owner panel -->
+    <div class="panel">
+      <div class="panel-grid">
+
+        <!-- Commercial terms (set by Cardo; read-only for the signer) -->
+        <div>
+          <div class="ms-label">Key Commercial Terms</div>
+          <div class="sub">These figures form part of the signed Agreement.</div>
+
+          {TERMS_META.slice(0, 2).map((m, i) => (
+            <div class="term-row" style={i === 0 ? 'margin-top: 12px;' : ''}>
+              <div style="min-width: 0;">
+                <div class="term-name">{m.label}</div>
+                <div class="term-sub">{m.sub}</div>
+              </div>
+              <div class="unit-wrap">
+                {m.prefix && <span class="unit-in left">{m.prefix}</span>}
+                <input data-term={m.key} readonly inputmode="decimal" class={`input term-input${m.prefix ? ' pl' : ''}${m.suffix ? ' pr' : ''}`} value={m.default} />
+                {m.suffix && <span class="unit-in right">{m.suffix}</span>}
+              </div>
+            </div>
+          ))}
+
+          <div class="term-row" style="display: block;">
+            <div class="term-name">Cardo HomeSafe Insurance</div>
+            <div class="term-sub">Guest-paid damage protection, per reservation &middot; Section 13</div>
+            <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px;">
+              <div style="flex: 1 1 90px;">
+                <div class="field-label" style="margin-bottom: 5px;">Premium</div>
+                <div class="unit-wrap fill">
+                  <span class="unit-in left">$</span>
+                  <input data-term="homeSafeFee" readonly inputmode="decimal" class="input term-input pl" value="59" />
+                </div>
+              </div>
+              <div style="flex: 1 1 90px;">
+                <div class="field-label" style="margin-bottom: 5px;">Coverage Amount</div>
+                <div class="unit-wrap fill">
+                  <span class="unit-in left">$</span>
+                  <input data-term="homeSafeCoverage" readonly inputmode="decimal" class="input term-input pl" value="3,500" />
+                </div>
+              </div>
+              <div style="flex: 1 1 90px;">
+                <div class="field-label" style="margin-bottom: 5px;">Deductible</div>
+                <div class="unit-wrap fill">
+                  <span class="unit-in left">$</span>
+                  <input data-term="homeSafeDeductible" readonly inputmode="decimal" class="input term-input pl" value="0" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="term-row" style="display: block; padding-bottom: 4px;">
+            <div class="term-name">Engagement Fee</div>
+            <div class="term-sub">Rolled into first payout &middot; non-refundable</div>
+            <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px;">
+              <div style="flex: 1 1 120px;">
+                <div class="field-label" style="margin-bottom: 5px;">Startup</div>
+                <div class="unit-wrap fill">
+                  <span class="unit-in left">$</span>
+                  <input data-term="startupFee" readonly inputmode="decimal" class="input term-input pl" value="500" />
+                </div>
+              </div>
+              <div style="flex: 1 1 120px;">
+                <div class="field-label" style="margin-bottom: 5px;">Lock Sync</div>
+                <div class="unit-wrap fill">
+                  <span class="unit-in left">$</span>
+                  <input data-term="lockSyncFee" readonly inputmode="decimal" class="input term-input pl" value="190" />
+                </div>
+              </div>
+            </div>
+            <div class="due-box">
+              <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+                <span class="due-label">Total Due at Signing</span>
+                <span class="due-zero">$0</span>
+              </div>
+              <div class="due-note">Your $<span id="engagementTotal">690</span> in startup and lock-sync fees roll into your first monthly payout &mdash; nothing is due today.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Owner & property -->
+        <div>
+          <div class="ms-label">Owner &amp; Property Details</div>
+          <div class="sub">Completed by the property owner.</div>
+
+          <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 18px;">
+            <label class="field">
+              <span class="field-label">Full Name (&ldquo;Owner&rdquo;)</span>
+              <input data-owner="fullName" class="input" placeholder="Jane A. Owner" />
+            </label>
+            <label class="field">
+              <span class="field-label">Address of Managed Property (&ldquo;Home&rdquo;)</span>
+              <input data-owner="homeAddress" class="input" placeholder="123 Ocean View Dr, San Diego, CA 92107" />
+            </label>
+            <label class="field">
+              <span class="field-label">Personal Mailing Address</span>
+              <input data-owner="mailingAddress" class="input" placeholder="Where statements are sent" />
+            </label>
+            <div class="two-col">
+              <label class="field">
+                <span class="field-label">Phone Number</span>
+                <input data-owner="phone" inputmode="tel" class="input" placeholder="(619) 555-0142" />
+              </label>
+              <label class="field">
+                <span class="field-label">Email Address</span>
+                <input data-owner="email" inputmode="email" class="input" placeholder="jane@email.com" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk-free commitment callout -->
+      <div class="callout">
+        <div class="callout-badge">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#E8CB85" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>
+        </div>
+        <div style="min-width: 0;">
+          <div class="callout-kicker">{BACKOUT_CALLOUT.kicker}</div>
+          <div class="callout-title">{BACKOUT_CALLOUT.title}</div>
+          <p class="callout-body">{BACKOUT_CALLOUT.body}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acknowledgments -->
+    <div style="margin-top: 30px;">
+      <div class="ms-label">By Signing, I Acknowledge</div>
+      {ACKS.map((ack, i) => (
+        <label class="ack-row" style={i === 0 ? 'margin-top: 10px;' : ''} data-last={i === ACKS.length - 1 ? 'true' : undefined}>
+          <input type="checkbox" data-ack={ack.key} data-required={ack.required ? 'true' : 'false'} />
+          <span set:html={richToHtml(ack.text, 'color: #9C7A2E; font-weight: 600;')} />
+        </label>
+      ))}
+    </div>
+
+    <!-- Addendum (set per-deal in the owner portal) -->
+    <div id="addendumWrap" style="margin-top: 30px;" hidden>
+      <div class="ms-label">Addendum</div>
+      <p class="sub" style="margin: 6px 0 12px; font-size: 13.5px; line-height: 1.6;">Any terms entered here supersede anything written elsewhere in this Agreement.</p>
+      <textarea id="addendum" readonly rows="3" class="input" style="width: 100%; resize: vertical; line-height: 1.6; font-size: 15px; border-radius: 12px;"></textarea>
+    </div>
+
+    <!-- Signature -->
+    <div class="sig-box">
+      <div class="ms-label">Owner Signature</div>
+      <div class="sub" style="font-size: 13.5px;">Sign in the box below using your mouse, trackpad, or finger.</div>
+
+      <div class="sig-pad">
+        <div class="sig-line"></div>
+        <div class="sig-x">&times;</div>
+        <canvas id="sigCanvas"></canvas>
+      </div>
+
+      <div id="signedLine" class="signed-line" hidden>Signed by <span data-sig-name></span> &middot; <span data-signed-at></span></div>
+
+      <div id="clearWrap" style="margin-top: 10px;">
+        <button id="clearSig" type="button" data-noprint class="clear-btn">Clear Signature</button>
+      </div>
+
+      <div class="two-col" style="margin-top: 18px;">
+        <label class="field">
+          <span class="field-label">Type Full Legal Name</span>
+          <input id="sigName" class="input" placeholder="Jane A. Owner" />
+        </label>
+        <label class="field">
+          <span class="field-label">Date</span>
+          <input id="sigDate" type="date" class="input" style="padding: 11px 14px;" />
+        </label>
+      </div>
+
+      <div id="submitWrap" style="margin-top: 20px;">
+        <div id="errorBox" class="error-box" hidden></div>
+        <button id="submitBtn" type="button" data-noprint class="submit-btn">Sign &amp; Submit Agreement</button>
+        <div class="submit-note">Electronic signatures are as valid as originals. You may cancel within 14 days of signing with no termination fee &mdash; see Section 15.</div>
+      </div>
+    </div>
+
+    <!-- Full agreement -->
+    <div style="margin-top: 56px;">
+      <div class="sunset-rule" style="width: 64px; margin: 0;"></div>
+      <h2>Full Agreement</h2>
+      <div class="sub" style="margin-top: 8px; font-size: 15px;">The following numbered terms govern the relationship between Cardo and the Owner.</div>
+    </div>
+
+    <div style="max-width: 840px; margin-top: 14px;">
+      {SECTIONS.map((section) => (
+        <section class="legal">
+          <h3><span class="num">{section.n}.</span>&nbsp; {section.title}</h3>
+          {section.blocks.map((block) => (
+            <>
+              {block.p && <p set:html={richToHtml(block.p)} />}
+              {block.ul && (
+                <ul>
+                  {block.ul.map((item) => <li set:html={richToHtml(item)} />)}
+                </ul>
+              )}
+            </>
+          ))}
+        </section>
+      ))}
+      <div class="footer-line">{FOOTER_LINE}</div>
+    </div>
+
+  </article>
+</main>
+
+<script>
+  import { AGREEMENTS_API } from '../../lib/portal-config.js';
+
+  const $ = (sel: string) => document.querySelector(sel) as HTMLElement;
+  const $$ = (sel: string) => Array.from(document.querySelectorAll(sel)) as HTMLElement[];
+  const token = new URLSearchParams(location.search).get('t') || '';
+  const DRAFT_KEY = 'cardo-rma-' + token;
+
+  const gate = $('#gate');
+  const sheet = $('#sheet');
+  const errorBox = $('#errorBox');
+
+  function showGate(title: string, msg: string) {
+    gate.hidden = false;
+    sheet.hidden = true;
+    $('#gateTitle').textContent = title;
+    $('#gateMsg').textContent = msg;
+  }
+
+  async function api(body: Record<string, unknown>) {
+    const res = await fetch(AGREEMENTS_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
+    return data;
+  }
+
+  // ----- Signature pad -----
+  const canvas = $('#sigCanvas') as HTMLCanvasElement;
+  let hasInk = false;
+  let sigData = '';
+  let locked = false;
+
+  function resizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (!w || !h) return;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    const ctx = canvas.getContext('2d')!;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (sigData) drawSaved(sigData);
+  }
+
+  function drawSaved(data: string) {
+    const ctx = canvas.getContext('2d')!;
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0, canvas.clientWidth, canvas.clientHeight);
+    img.src = data;
+  }
+
+  function initSig() {
+    resizeCanvas();
+    const ctx = canvas.getContext('2d')!;
+    let drawing = false;
+    let last: { x: number; y: number } | null = null;
+    const pos = (e: MouseEvent | TouchEvent) => {
+      const r = canvas.getBoundingClientRect();
+      const t = 'touches' in e && e.touches[0] ? e.touches[0] : (e as MouseEvent);
+      return { x: t.clientX - r.left, y: t.clientY - r.top };
+    };
+    const start = (e: MouseEvent | TouchEvent) => {
+      if (locked) return;
+      e.preventDefault();
+      drawing = true;
+      last = pos(e);
+    };
+    const move = (e: MouseEvent | TouchEvent) => {
+      if (!drawing || !last) return;
+      e.preventDefault();
+      const pt = pos(e);
+      ctx.strokeStyle = '#0E1528';
+      ctx.lineWidth = 2.2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(last.x, last.y);
+      ctx.lineTo(pt.x, pt.y);
+      ctx.stroke();
+      last = pt;
+    };
+    const end = () => {
+      if (!drawing) return;
+      drawing = false;
+      hasInk = true;
+      sigData = canvas.toDataURL('image/png');
+      hideError();
+      persist();
+    };
+    canvas.addEventListener('mousedown', start);
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', end);
+    canvas.addEventListener('touchstart', start, { passive: false });
+    canvas.addEventListener('touchmove', move, { passive: false });
+    window.addEventListener('touchend', end);
+    window.addEventListener('resize', resizeCanvas);
+  }
+
+  $('#clearSig').addEventListener('click', () => {
+    const ctx = canvas.getContext('2d')!;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasInk = false;
+    sigData = '';
+    hideError();
+    persist();
+  });
+
+  // ----- Draft persistence -----
+  function collect() {
+    const owner: Record<string, string> = {};
+    $$('[data-owner]').forEach((el) => (owner[el.dataset.owner!] = (el as HTMLInputElement).value));
+    const acks: Record<string, boolean> = {};
+    $$('[data-ack]').forEach((el) => (acks[el.dataset.ack!] = (el as HTMLInputElement).checked));
+    return {
+      owner,
+      acks,
+      sigName: ($('#sigName') as HTMLInputElement).value,
+      sigDate: ($('#sigDate') as HTMLInputElement).value,
+      sigData,
+    };
+  }
+
+  function persist() {
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(collect())); } catch {}
+  }
+
+  function restoreDraft() {
+    let draft: ReturnType<typeof collect> | null = null;
+    try { draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch {}
+    if (!draft) return;
+    applyData(draft.owner, draft.acks, draft.sigName, draft.sigDate);
+    if (draft.sigData) {
+      sigData = draft.sigData;
+      hasInk = true;
+      drawSaved(sigData);
+    }
+  }
+
+  function applyData(owner: Record<string, string> | null, acks: Record<string, boolean> | null, sigName?: string | null, sigDate?: string | null) {
+    if (owner) $$('[data-owner]').forEach((el) => ((el as HTMLInputElement).value = owner[el.dataset.owner!] || ''));
+    if (acks) $$('[data-ack]').forEach((el) => ((el as HTMLInputElement).checked = !!acks[el.dataset.ack!]));
+    if (sigName != null) ($('#sigName') as HTMLInputElement).value = sigName;
+    if (sigDate != null && sigDate) ($('#sigDate') as HTMLInputElement).value = sigDate;
+  }
+
+  function hideError() {
+    errorBox.hidden = true;
+  }
+
+  function showError(msg: string) {
+    errorBox.textContent = msg;
+    errorBox.hidden = false;
+  }
+
+  function lockForm(sigName: string, signedAtText: string) {
+    locked = true;
+    $$('[data-owner], #sigName, #sigDate, #addendum').forEach((el) => (el as HTMLInputElement).setAttribute('readonly', ''));
+    $$('[data-ack]').forEach((el) => ((el as HTMLInputElement).disabled = true));
+    $('#submitWrap').hidden = true;
+    $('#clearWrap').hidden = true;
+    $('#signedBanner').hidden = false;
+    $('#signedLine').hidden = false;
+    $$('[data-sig-name]').forEach((el) => (el.textContent = sigName));
+    $$('[data-signed-at]').forEach((el) => (el.textContent = signedAtText));
+    ($('#pdfLink') as HTMLAnchorElement).href = `${AGREEMENTS_API}?action=pdf&t=${token}`;
+  }
+
+  // ----- Wiring -----
+  $$('[data-owner], #sigName, #sigDate').forEach((el) =>
+    el.addEventListener('input', () => { hideError(); persist(); }),
+  );
+  $$('[data-ack]').forEach((el) =>
+    el.addEventListener('change', () => { hideError(); persist(); }),
+  );
+
+  $('#printBtn').addEventListener('click', () => window.print());
+
+  $('#submitBtn').addEventListener('click', async () => {
+    const data = collect();
+    const need: string[] = [];
+    if (!data.owner.fullName.trim()) need.push('full legal name');
+    if (!data.owner.homeAddress.trim()) need.push('managed property address');
+    if (!data.owner.email.trim()) need.push('email address');
+    if (!data.sigName.trim()) need.push('typed signature');
+    if (!hasInk) need.push('drawn signature');
+    const acksOk = $$('[data-ack][data-required="true"]').every((el) => (el as HTMLInputElement).checked);
+    if (!acksOk) need.push('all acknowledgements');
+    if (need.length) {
+      showError('Please complete: ' + need.join(', ') + '.');
+      return;
+    }
+    const btn = $('#submitBtn') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+    try {
+      const res = await api({ action: 'sign', token, ...data });
+      const when = new Date(res.signedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      lockForm(data.sigName, when);
+      try { localStorage.removeItem(DRAFT_KEY); } catch {}
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) {
+      showError((e as Error).message);
+      btn.disabled = false;
+      btn.textContent = 'Sign & Submit Agreement';
+    }
+  });
+
+  // ----- Load -----
+  async function load() {
+    if (!token) {
+      showGate('Link not valid', 'This signing link is missing its access code. Please use the link from your email, or contact owners@cardorentals.com.');
+      return;
+    }
+    showGate('Loading agreement…', 'One moment while we retrieve your agreement.');
+    let data;
+    try {
+      data = await api({ action: 'get', token });
+    } catch (e) {
+      showGate('Agreement not found', (e as Error).message + ' Please use the link from your email, or contact owners@cardorentals.com.');
+      return;
+    }
+    gate.hidden = true;
+    sheet.hidden = false;
+
+    // Terms (read-only, set in the owner portal)
+    $$('[data-term]').forEach((el) => {
+      const input = el as HTMLInputElement;
+      input.value = data.terms?.[input.dataset.term!] ?? input.value;
+    });
+    const total = (parseFloat(data.terms?.startupFee) || 0) + (parseFloat(data.terms?.lockSyncFee) || 0);
+    $('#engagementTotal').textContent = total.toLocaleString('en-US');
+
+    if (data.addendum && data.addendum.trim()) {
+      $('#addendumWrap').hidden = false;
+      ($('#addendum') as HTMLTextAreaElement).value = data.addendum;
+    }
+
+    ($('#sigDate') as HTMLInputElement).value = new Date().toLocaleDateString('en-CA');
+    initSig();
+
+    if (data.status === 'signed') {
+      applyData(data.owner, data.acks, data.sigName, data.sigDate);
+      if (data.sigData) { sigData = data.sigData; drawSaved(sigData); }
+      const when = data.signedAt
+        ? new Date(data.signedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        : '';
+      lockForm(data.sigName || '', when);
+    } else {
+      if (data.clientName) ($('#sheet [data-owner="fullName"]') as HTMLInputElement).value = data.clientName;
+      if (data.clientEmail) ($('#sheet [data-owner="email"]') as HTMLInputElement).value = data.clientEmail;
+      restoreDraft();
+    }
+  }
+
+  load();
+</script>
+
+<style is:global>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #EDEAE2; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; font-family: 'Barlow', sans-serif; min-height: 100vh; }
+  input, textarea, button { font-family: inherit; }
+  input::placeholder, textarea::placeholder { color: #B4B0A6; }
+  input:focus, textarea:focus { border-color: #ED3C78 !important; box-shadow: 0 0 0 3px rgba(237,60,120,0.13) !important; outline: none; }
+  input[readonly], textarea[readonly] { background: #F6F5F1 !important; color: #2A3451 !important; cursor: default; }
+  ::selection { background: rgba(237,60,120,0.18); }
+
+  #appHeader { position: sticky; top: 0; z-index: 50; background: rgba(250,250,246,0.82); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); border-bottom: 1px solid rgba(14,17,27,0.08); }
+  .header-inner { max-width: 1080px; margin: 0 auto; padding: 14px clamp(18px,4vw,40px); display: flex; align-items: center; gap: 18px; }
+  #docTitle { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #6B6D78; padding-left: 18px; border-left: 1px solid rgba(14,17,27,0.12); }
+  .sunset-bar { height: 4px; background: linear-gradient(45deg, #ED3C78 0%, #E78670 38%, #F2BE63 70%, #F3D061 100%); }
+  .sunset-rule { height: 3px; width: 100%; margin: 28px 0 0; border-radius: 2px; background: linear-gradient(45deg, #ED3C78 0%, #E78670 38%, #F2BE63 70%, #F3D061 100%); }
+
+  .ghost-btn { margin-left: auto; appearance: none; cursor: pointer; background: transparent; border: 1px solid rgba(42,52,81,0.35); color: #2A3451; font-family: 'Montserrat', sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 18px; border-radius: 999px; text-decoration: none; }
+  .ghost-btn:hover { border-color: #2A3451; background: rgba(42,52,81,0.04); }
+  .ghost-btn.green { flex: 0 0 auto; border-color: rgba(47,110,85,0.4); color: #2F6E55; font-size: 11px; padding: 8px 14px; }
+
+  main { max-width: 1080px; margin: 0 auto; padding: clamp(20px,4vw,52px) clamp(14px,4vw,40px) 80px; }
+  #sheet { background: #FFFFFF; border: 1px solid rgba(14,17,27,0.08); border-radius: 16px; box-shadow: 0 24px 60px -28px rgba(14,21,40,0.28), 0 2px 8px rgba(14,21,40,0.04); padding: clamp(26px,5vw,72px); }
+
+  .gate { display: flex; justify-content: center; padding: 60px 0; }
+  .gate-card { background: #fff; border: 1px solid rgba(14,17,27,0.08); border-radius: 16px; padding: 38px 42px; max-width: 460px; text-align: center; box-shadow: 0 24px 60px -28px rgba(14,21,40,0.28); }
+  .gate-msg { font-size: 15px; line-height: 1.6; color: #3D3E47; margin: 12px 0 0; }
+
+  .kicker { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #ED3C78; }
+  h1 { margin: 14px 0 0; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(28px,4.4vw,42px); line-height: 1.05; letter-spacing: -0.015em; color: #0E1528; }
+  h2 { margin: 16px 0 0; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(22px,3vw,30px); letter-spacing: -0.01em; color: #0E1528; }
+  .byline { margin-top: 12px; font-size: 15px; color: #6B6D78; }
+  .preamble { margin: 22px 0 0; max-width: 820px; font-size: 16px; line-height: 1.7; color: #3D3E47; }
+
+  .signed-banner { display: flex; gap: 14px; align-items: center; background: #E8F2EC; border: 1px solid rgba(47,110,85,0.28); border-radius: 14px; padding: 16px 20px; margin: 26px 0 0; }
+  .signed-check { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; background: #2F6E55; display: flex; align-items: center; justify-content: center; }
+  .signed-title { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: #2F6E55; }
+  .signed-sub { font-size: 14.5px; color: #2F6E55; margin-top: 2px; }
+  .signed-banner .ghost-btn { margin-left: auto; }
+
+  .panel { margin-top: 30px; background: #F4EFE6; border: 1px solid rgba(14,17,27,0.07); border-radius: 18px; padding: clamp(20px,3.5vw,34px); }
+  .panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: clamp(24px,4vw,44px); }
+
+  .ms-label { font-family: 'Montserrat', sans-serif; font-size: 12.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #2A3451; }
+  .sub { font-size: 13px; color: #6B6D78; margin-top: 4px; }
+
+  .term-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 0; border-top: 1px solid rgba(14,17,27,0.10); }
+  .term-name { font-family: 'Montserrat', sans-serif; font-size: 13.5px; font-weight: 600; letter-spacing: 0.02em; color: #0E1528; }
+  .term-sub { font-size: 12.5px; color: #6B6D78; margin-top: 2px; }
+  .unit-wrap { position: relative; flex: 0 0 auto; width: 96px; }
+  .unit-wrap.fill { width: 100%; }
+  .unit-wrap .term-input { width: 100%; }
+  .unit-in { position: absolute; top: 50%; transform: translateY(-50%); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; color: #6B6D78; pointer-events: none; }
+  .unit-in.left { left: 11px; }
+  .unit-in.right { right: 11px; }
+
+  .input { font-size: 16px; color: #0E1528; border: 1px solid rgba(14,17,27,0.18); border-radius: 10px; padding: 12px 14px; background: #fff; transition: border-color .14s, box-shadow .14s; }
+  .term-input { text-align: right; font-weight: 600; border-radius: 9px; padding: 9px 11px; }
+  .term-input.pl { padding-left: 24px; }
+  .term-input.pr { padding-right: 28px; }
+
+  .due-box { margin-top: 14px; background: #fff; border: 1px solid rgba(14,17,27,0.10); border-radius: 10px; padding: 13px 16px; }
+  .due-label { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #2A3451; }
+  .due-zero { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 800; color: #2F6E55; }
+  .due-note { margin-top: 7px; font-size: 12.5px; line-height: 1.5; color: #6B6D78; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-label { font-family: 'Montserrat', sans-serif; font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #6B6D78; }
+  .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 16px; }
+  .sig-box .two-col { grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); }
+
+  .callout { margin-top: 24px; display: flex; gap: 18px; align-items: flex-start; background: #0E1528; border-radius: 14px; padding: clamp(20px,3vw,26px) clamp(20px,3vw,28px); }
+  .callout-badge { flex: 0 0 auto; width: 56px; height: 56px; border-radius: 50%; background: rgba(232,203,133,0.12); border: 1px solid rgba(232,203,133,0.38); display: flex; align-items: center; justify-content: center; }
+  .callout-kicker { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #E8CB85; }
+  .callout-title { margin-top: 6px; font-family: 'Montserrat', sans-serif; font-size: clamp(17px,2.4vw,20px); font-weight: 700; letter-spacing: -0.01em; color: #FAFAF6; }
+  .callout-body { margin: 10px 0 0; font-size: 14.5px; line-height: 1.6; color: rgba(250,250,246,0.82); }
+
+  .ack-row { display: flex; gap: 12px; align-items: flex-start; padding: 15px 0; border-top: 1px solid rgba(14,17,27,0.10); cursor: pointer; }
+  .ack-row[data-last="true"] { border-bottom: 1px solid rgba(14,17,27,0.10); }
+  .ack-row input[type="checkbox"] { width: 20px; height: 20px; margin-top: 1px; accent-color: #ED3C78; flex: 0 0 auto; }
+  .ack-row span { font-size: 15px; line-height: 1.55; color: #3D3E47; }
+
+  .sig-box { margin-top: 30px; background: #FAFAF6; border: 1px solid rgba(14,17,27,0.10); border-radius: 16px; padding: clamp(20px,3.5vw,30px); }
+  .sig-pad { position: relative; margin-top: 14px; height: 170px; background: #fff; border: 1px solid rgba(14,17,27,0.18); border-radius: 12px; overflow: hidden; }
+  .sig-line { position: absolute; left: 22px; right: 22px; bottom: 38px; border-bottom: 1.5px dashed rgba(14,17,27,0.18); pointer-events: none; }
+  .sig-x { position: absolute; left: 22px; bottom: 16px; font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 700; color: rgba(14,17,27,0.16); pointer-events: none; }
+  #sigCanvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+  .signed-line { margin-top: 10px; font-size: 13.5px; color: #2F6E55; font-weight: 600; }
+  .clear-btn { appearance: none; cursor: pointer; background: transparent; border: none; color: #6B6D78; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 0; }
+  .clear-btn:hover { color: #ED3C78; }
+
+  .error-box { margin-bottom: 14px; background: #F6E4E9; border: 1px solid rgba(156,58,85,0.25); border-radius: 10px; padding: 11px 15px; font-size: 14px; color: #9C3A55; }
+  .submit-btn { appearance: none; border: none; cursor: pointer; width: 100%; background: #ED3C78; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 0.09em; font-size: 14px; text-transform: uppercase; padding: 17px 28px; border-radius: 999px; box-shadow: 0 10px 26px -8px rgba(237,60,120,0.5); transition: background .14s, transform .05s; }
+  .submit-btn:hover { background: #D8316C; }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { opacity: 0.6; cursor: default; }
+  .submit-note { margin-top: 12px; text-align: center; font-size: 12.5px; color: #6B6D78; }
+
+  .legal { margin-top: 30px; }
+  .legal:first-of-type { margin-top: 34px; }
+  .legal h3 { margin: 0 0 10px; font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 0.01em; color: #0E1528; }
+  .legal h3 .num { color: #ED3C78; }
+  .legal p { margin: 0 0 10px; font-size: 15.5px; line-height: 1.72; color: #3D3E47; }
+  .legal p:last-child { margin-bottom: 0; }
+  .legal ul { margin: 0 0 10px; padding-left: 22px; font-size: 15.5px; line-height: 1.7; color: #3D3E47; }
+  .legal ul:last-child { margin-bottom: 0; }
+  .legal li { margin-bottom: 8px; }
+  .legal li:last-child { margin-bottom: 0; }
+  .footer-line { margin-top: 36px; padding-top: 22px; border-top: 1px solid rgba(14,17,27,0.10); font-size: 13px; color: #9A9CA6; }
+
+  @media (max-width: 680px) { #docTitle { display: none !important; } }
+  @media print {
+    body { background: #fff !important; }
+    [data-noprint] { display: none !important; }
+    #appHeader { position: static !important; box-shadow: none !important; border-bottom: 1px solid #ddd !important; }
+    #sheet { box-shadow: none !important; margin: 0 !important; max-width: none !important; border-radius: 0 !important; }
+    main { padding: 0 !important; }
+  }
+</style>
+
+</body>
+</html>

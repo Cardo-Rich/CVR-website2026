@@ -1,0 +1,371 @@
+---
+// Owner portal (v1, quick & dirty): set per-deal contract terms and send the
+// signing link to a client. Guarded by a single shared admin key.
+import { TERMS_META } from '../../../supabase/functions/agreements/content.ts';
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Agreements · Cardo Owner Portal</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<header id="appHeader">
+  <div class="header-inner">
+    <img src="/assets/cardo-logo-horizontal.svg" alt="Cardo Vacation Rentals" style="height: 30px; width: auto; display: block;" />
+    <div id="docTitle">Owner Portal &middot; Agreements</div>
+    <button id="lockBtn" class="ghost-btn" type="button" hidden>Lock Portal</button>
+  </div>
+  <div class="sunset-bar"></div>
+</header>
+
+<main>
+
+  <!-- Admin key gate -->
+  <section id="keyGate" class="card" style="max-width: 460px; margin: 40px auto;">
+    <div class="ms-label">Portal Access</div>
+    <p class="hint" style="margin-top: 8px;">Enter the portal admin key to manage agreements.</p>
+    <input id="adminKeyInput" class="input" type="password" placeholder="Admin key" style="width: 100%; margin-top: 14px;" />
+    <div id="keyError" class="error-box" hidden></div>
+    <button id="unlockBtn" class="submit-btn" type="button" style="margin-top: 16px;">Unlock</button>
+  </section>
+
+  <div id="portal" hidden>
+
+    <section class="card">
+      <div class="kicker">New Agreement</div>
+      <h1>Send a Rental Management Agreement</h1>
+      <p class="hint">Set the commercial terms for this deal, then send. The client gets an email with a private signing link — no account needed. When they sign, the executed PDF is emailed to both of you.</p>
+
+      <div class="grid-2" style="margin-top: 26px;">
+        <div>
+          <div class="ms-label">Key Commercial Terms</div>
+          {TERMS_META.map((m) => (
+            <div class="term-row">
+              <div style="min-width: 0;">
+                <div class="term-name">{m.label}</div>
+                <div class="term-sub">{m.sub}</div>
+              </div>
+              <div class="unit-wrap">
+                {m.prefix && <span class="unit-in left">{m.prefix}</span>}
+                <input data-term={m.key} inputmode="decimal" class={`input term-input${m.prefix ? ' pl' : ''}${m.suffix ? ' pr' : ''}`} value={m.default} />
+                {m.suffix && <span class="unit-in right">{m.suffix}</span>}
+              </div>
+            </div>
+          ))}
+          <p class="hint" style="margin-top: 12px;">Engagement fees show as &ldquo;$0 due at signing&rdquo; on the contract &mdash; they roll into the first payout.</p>
+        </div>
+
+        <div>
+          <div class="ms-label">Client</div>
+          <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 14px;">
+            <label class="field">
+              <span class="field-label">Client Full Name</span>
+              <input id="clientName" class="input" placeholder="Jane A. Owner" />
+            </label>
+            <label class="field">
+              <span class="field-label">Client Email</span>
+              <input id="clientEmail" class="input" inputmode="email" placeholder="jane@email.com" />
+            </label>
+            <label class="field">
+              <span class="field-label">Addendum (optional &mdash; shown on the contract)</span>
+              <textarea id="addendum" rows="4" class="input" style="resize: vertical; line-height: 1.6;" placeholder="Optional additional terms agreed between Owner and Cardo&hellip;"></textarea>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div id="sendError" class="error-box" hidden></div>
+      <button id="sendBtn" class="submit-btn" type="button" style="margin-top: 22px;">Create &amp; Send Signing Link</button>
+
+      <div id="sendResult" class="result-box" hidden>
+        <div class="ms-label" style="color: #2F6E55;">Link created</div>
+        <p id="sendResultMsg" class="hint" style="margin: 8px 0 10px;"></p>
+        <div class="link-row">
+          <input id="resultLink" class="input" readonly style="flex: 1; font-size: 13px;" />
+          <button id="copyLink" class="ghost-btn" type="button" style="margin: 0;">Copy</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div style="display: flex; align-items: baseline; gap: 14px;">
+        <div class="ms-label">Recent Agreements</div>
+        <button id="refreshBtn" class="text-btn" type="button">Refresh</button>
+      </div>
+      <div id="listWrap" style="margin-top: 6px; overflow-x: auto;">
+        <table id="listTable">
+          <thead>
+            <tr><th>Client</th><th>Status</th><th>Commission</th><th>Created</th><th>Signed</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <p id="listEmpty" class="hint" hidden>No agreements yet.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <details>
+        <summary class="ms-label" style="cursor: pointer;">Email Settings</summary>
+        <p class="hint" style="margin-top: 10px;">Emails are sent through <a href="https://resend.com" target="_blank" rel="noopener">Resend</a>. Create a free account, verify your sending domain (cardorentals.com), and paste an API key here. Until a key is saved, links are still created &mdash; just copy and send them yourself.</p>
+        <div class="grid-2" style="margin-top: 16px; gap: 16px;">
+          <label class="field">
+            <span class="field-label">Resend API Key <span id="keyStatus"></span></span>
+            <input id="resendKey" class="input" type="password" placeholder="re_..." />
+          </label>
+          <label class="field">
+            <span class="field-label">From Address</span>
+            <input id="fromEmail" class="input" placeholder="Cardo Vacation Rentals <owners@cardorentals.com>" />
+          </label>
+          <label class="field">
+            <span class="field-label">Notify Email (gets the signed PDF)</span>
+            <input id="notifyEmail" class="input" placeholder="rich@cardorentals.com" />
+          </label>
+        </div>
+        <div id="settingsError" class="error-box" hidden></div>
+        <button id="saveSettings" class="ghost-btn" type="button" style="margin: 16px 0 0;">Save Settings</button>
+        <span id="settingsSaved" class="hint" style="margin-left: 12px; color: #2F6E55;" hidden>Saved ✓</span>
+      </details>
+    </section>
+
+  </div>
+</main>
+
+<script>
+  import { AGREEMENTS_API } from '../../lib/portal-config.js';
+
+  const $ = (sel: string) => document.querySelector(sel) as HTMLElement;
+  const $$ = (sel: string) => Array.from(document.querySelectorAll(sel)) as HTMLElement[];
+  const KEY_STORE = 'cardo-portal-admin-key';
+
+  let adminKey = localStorage.getItem(KEY_STORE) || '';
+
+  async function api(body: Record<string, unknown>) {
+    const res = await fetch(AGREEMENTS_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...body, adminKey }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      if (res.status === 401) lock();
+      throw new Error(data.error || 'Request failed');
+    }
+    return data;
+  }
+
+  function setError(sel: string, msg: string) {
+    const el = $(sel);
+    el.textContent = msg;
+    el.hidden = !msg;
+  }
+
+  function lock() {
+    adminKey = '';
+    localStorage.removeItem(KEY_STORE);
+    $('#portal').hidden = true;
+    $('#lockBtn').hidden = true;
+    $('#keyGate').hidden = false;
+  }
+
+  async function unlock(key: string) {
+    adminKey = key;
+    try {
+      const settings = await api({ action: 'get_settings' });
+      localStorage.setItem(KEY_STORE, key);
+      $('#keyGate').hidden = true;
+      $('#portal').hidden = false;
+      $('#lockBtn').hidden = false;
+      ($('#notifyEmail') as HTMLInputElement).value = settings.notifyEmail || '';
+      ($('#fromEmail') as HTMLInputElement).value = settings.fromEmail || '';
+      $('#keyStatus').textContent = settings.hasResendKey ? '· key on file' : '· not set (emails disabled)';
+      await refreshList();
+    } catch (e) {
+      adminKey = '';
+      setError('#keyError', (e as Error).message);
+      $('#keyGate').hidden = false;
+    }
+  }
+
+  $('#unlockBtn').addEventListener('click', () => {
+    const key = ($('#adminKeyInput') as HTMLInputElement).value.trim();
+    if (key) unlock(key);
+  });
+  $('#adminKeyInput').addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter') ($('#unlockBtn') as HTMLButtonElement).click();
+  });
+  $('#lockBtn').addEventListener('click', lock);
+
+  // ----- Create & send -----
+  $('#sendBtn').addEventListener('click', async () => {
+    setError('#sendError', '');
+    $('#sendResult').hidden = true;
+    const terms: Record<string, string> = {};
+    $$('[data-term]').forEach((el) => (terms[el.dataset.term!] = (el as HTMLInputElement).value.trim()));
+    const clientName = ($('#clientName') as HTMLInputElement).value.trim();
+    const clientEmail = ($('#clientEmail') as HTMLInputElement).value.trim();
+    const addendum = ($('#addendum') as HTMLTextAreaElement).value;
+    if (!clientEmail) {
+      setError('#sendError', 'Client email is required.');
+      return;
+    }
+    const btn = $('#sendBtn') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const res = await api({ action: 'create', clientName, clientEmail, terms, addendum, siteOrigin: location.origin });
+      ($('#resultLink') as HTMLInputElement).value = res.url;
+      $('#sendResultMsg').textContent = res.emailed
+        ? `Signing link emailed to ${clientEmail}. You can also share it directly:`
+        : `Email isn't configured yet, so send this link to ${clientEmail} yourself:`;
+      $('#sendResult').hidden = false;
+      ($('#clientName') as HTMLInputElement).value = '';
+      ($('#clientEmail') as HTMLInputElement).value = '';
+      ($('#addendum') as HTMLTextAreaElement).value = '';
+      await refreshList();
+    } catch (e) {
+      setError('#sendError', (e as Error).message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Create & Send Signing Link';
+    }
+  });
+
+  $('#copyLink').addEventListener('click', async () => {
+    const input = $('#resultLink') as HTMLInputElement;
+    input.select();
+    try { await navigator.clipboard.writeText(input.value); } catch { document.execCommand('copy'); }
+    $('#copyLink').textContent = 'Copied ✓';
+    setTimeout(() => ($('#copyLink').textContent = 'Copy'), 1600);
+  });
+
+  // ----- List -----
+  async function refreshList() {
+    const { agreements } = await api({ action: 'list' });
+    const tbody = document.querySelector('#listTable tbody')!;
+    tbody.innerHTML = '';
+    $('#listEmpty').hidden = agreements.length > 0;
+    ($('#listTable') as HTMLElement).hidden = agreements.length === 0;
+    const fmt = (d: string | null) => (d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—');
+    const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+    for (const a of agreements) {
+      const tr = document.createElement('tr');
+      const link = `${location.origin}/agreement/?t=${a.token}`;
+      const pdf = `${AGREEMENTS_API}?action=pdf&t=${a.token}`;
+      tr.innerHTML = `
+        <td><strong>${esc(a.client_name || a.sig_name) || '—'}</strong><br><span class="hint">${esc(a.client_email)}</span></td>
+        <td><span class="status status-${a.status}">${a.status}</span></td>
+        <td>${a.terms?.commissionPct ?? '—'}%</td>
+        <td>${fmt(a.created_at)}</td>
+        <td>${fmt(a.signed_at)}</td>
+        <td class="row-actions">
+          <a href="${link}" target="_blank" rel="noopener">Open</a>
+          ${a.status === 'signed' ? `&nbsp;·&nbsp;<a href="${pdf}" target="_blank" rel="noopener">PDF</a>` : ''}
+        </td>`;
+      tbody.appendChild(tr);
+    }
+  }
+  $('#refreshBtn').addEventListener('click', () => refreshList().catch(() => {}));
+
+  // ----- Settings -----
+  $('#saveSettings').addEventListener('click', async () => {
+    setError('#settingsError', '');
+    try {
+      await api({
+        action: 'set_settings',
+        resendApiKey: ($('#resendKey') as HTMLInputElement).value.trim(),
+        fromEmail: ($('#fromEmail') as HTMLInputElement).value.trim(),
+        notifyEmail: ($('#notifyEmail') as HTMLInputElement).value.trim(),
+      });
+      ($('#resendKey') as HTMLInputElement).value = '';
+      $('#settingsSaved').hidden = false;
+      setTimeout(() => ($('#settingsSaved').hidden = true), 2400);
+    } catch (e) {
+      setError('#settingsError', (e as Error).message);
+    }
+  });
+
+  // Auto-unlock if a key is remembered.
+  if (adminKey) {
+    $('#keyGate').hidden = true;
+    unlock(adminKey);
+  }
+</script>
+
+<style is:global>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #EDEAE2; -webkit-font-smoothing: antialiased; font-family: 'Barlow', sans-serif; min-height: 100vh; }
+  input, textarea, button { font-family: inherit; }
+  input::placeholder, textarea::placeholder { color: #B4B0A6; }
+  input:focus, textarea:focus { border-color: #ED3C78 !important; box-shadow: 0 0 0 3px rgba(237,60,120,0.13) !important; outline: none; }
+
+  #appHeader { position: sticky; top: 0; z-index: 50; background: rgba(250,250,246,0.82); backdrop-filter: blur(20px) saturate(140%); border-bottom: 1px solid rgba(14,17,27,0.08); }
+  .header-inner { max-width: 1080px; margin: 0 auto; padding: 14px clamp(18px,4vw,40px); display: flex; align-items: center; gap: 18px; }
+  #docTitle { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #6B6D78; padding-left: 18px; border-left: 1px solid rgba(14,17,27,0.12); }
+  .sunset-bar { height: 4px; background: linear-gradient(45deg, #ED3C78 0%, #E78670 38%, #F2BE63 70%, #F3D061 100%); }
+  @media (max-width: 680px) { #docTitle { display: none; } }
+
+  main { max-width: 1080px; margin: 0 auto; padding: clamp(20px,4vw,40px) clamp(14px,4vw,40px) 80px; }
+  .card { background: #fff; border: 1px solid rgba(14,17,27,0.08); border-radius: 16px; box-shadow: 0 24px 60px -28px rgba(14,21,40,0.18), 0 2px 8px rgba(14,21,40,0.04); padding: clamp(22px,4vw,40px); margin-top: 24px; }
+
+  .kicker { font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #ED3C78; }
+  h1 { margin: 12px 0 0; font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(22px,3.4vw,32px); line-height: 1.1; letter-spacing: -0.015em; color: #0E1528; }
+  .hint { font-size: 14px; line-height: 1.6; color: #6B6D78; margin: 10px 0 0; max-width: 720px; }
+  .hint a { color: #ED3C78; }
+
+  .ms-label { font-family: 'Montserrat', sans-serif; font-size: 12.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #2A3451; }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: clamp(24px,4vw,44px); }
+
+  .term-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 0; border-top: 1px solid rgba(14,17,27,0.10); }
+  .term-row:first-of-type { margin-top: 12px; }
+  .term-name { font-family: 'Montserrat', sans-serif; font-size: 13.5px; font-weight: 600; color: #0E1528; }
+  .term-sub { font-size: 12.5px; color: #6B6D78; margin-top: 2px; }
+  .unit-wrap { position: relative; flex: 0 0 auto; width: 96px; }
+  .unit-wrap .term-input { width: 100%; }
+  .unit-in { position: absolute; top: 50%; transform: translateY(-50%); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; color: #6B6D78; pointer-events: none; }
+  .unit-in.left { left: 11px; }
+  .unit-in.right { right: 11px; }
+
+  .input { font-size: 16px; color: #0E1528; border: 1px solid rgba(14,17,27,0.18); border-radius: 10px; padding: 12px 14px; background: #fff; transition: border-color .14s, box-shadow .14s; }
+  .term-input { text-align: right; font-weight: 600; border-radius: 9px; padding: 9px 11px; }
+  .term-input.pl { padding-left: 24px; }
+  .term-input.pr { padding-right: 28px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-label { font-family: 'Montserrat', sans-serif; font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #6B6D78; }
+
+  .submit-btn { appearance: none; border: none; cursor: pointer; background: #ED3C78; color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: 0.09em; font-size: 13px; text-transform: uppercase; padding: 15px 28px; border-radius: 999px; box-shadow: 0 10px 26px -8px rgba(237,60,120,0.5); transition: background .14s; }
+  .submit-btn:hover { background: #D8316C; }
+  .submit-btn:disabled { opacity: 0.6; cursor: default; }
+  .ghost-btn { appearance: none; cursor: pointer; background: transparent; border: 1px solid rgba(42,52,81,0.35); color: #2A3451; font-family: 'Montserrat', sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 18px; border-radius: 999px; margin-left: auto; }
+  .ghost-btn:hover { border-color: #2A3451; background: rgba(42,52,81,0.04); }
+  .text-btn { appearance: none; cursor: pointer; background: none; border: none; color: #ED3C78; font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0; }
+
+  .error-box { margin-top: 14px; background: #F6E4E9; border: 1px solid rgba(156,58,85,0.25); border-radius: 10px; padding: 11px 15px; font-size: 14px; color: #9C3A55; }
+  .result-box { margin-top: 18px; background: #E8F2EC; border: 1px solid rgba(47,110,85,0.28); border-radius: 14px; padding: 18px 20px; }
+  .link-row { display: flex; gap: 10px; align-items: center; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px; }
+  th { text-align: left; font-family: 'Montserrat', sans-serif; font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #6B6D78; padding: 10px 12px 10px 0; border-bottom: 1px solid rgba(14,17,27,0.12); }
+  td { padding: 12px 12px 12px 0; border-bottom: 1px solid rgba(14,17,27,0.07); color: #3D3E47; vertical-align: top; }
+  .status { display: inline-block; font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
+  .status-sent { background: #FBEEDD; color: #9C7A2E; }
+  .status-signed { background: #E8F2EC; color: #2F6E55; }
+  .row-actions a { color: #ED3C78; font-weight: 600; text-decoration: none; }
+  .row-actions a:hover { text-decoration: underline; }
+
+  details summary::-webkit-details-marker { display: none; }
+  details summary { list-style: none; }
+  details[open] summary { margin-bottom: 4px; }
+</style>
+
+</body>
+</html>
