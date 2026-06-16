@@ -28,16 +28,17 @@ export const COMPANY = {
   ratingCount: "2000",
 };
 
-// Live Supabase edge function (writes to public.leads, notifies
-// sales@cardorentals.com via Resend once a key is configured).
-export const LEADS_API = "https://yyfckfuzoutmdwconrnm.supabase.co/functions/v1/leads";
+// Live Supabase edge function (writes to public.leads on the Cardo project,
+// notifies sales@cardorentals.com via Resend once a key is configured).
+export const LEADS_API = "https://ywoijwhntsttqitfhhsh.supabase.co/functions/v1/leads";
 
-// Supabase project — anon key is public by design (RLS restricts access).
-// Used at build time to fetch published blog posts.
+// Cardo website Supabase project (separate from the Waypoints platform).
+// anon key is public by design (RLS restricts access). Used at build time
+// to fetch published blog posts.
 export const SUPABASE = {
-  url: "https://yyfckfuzoutmdwconrnm.supabase.co",
+  url: "https://ywoijwhntsttqitfhhsh.supabase.co",
   anonKey:
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5ZmNrZnV6b3V0bWR3Y29ucm5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE0OTAsImV4cCI6MjA5MzI4NzQ5MH0.pxbBgCYdJmqIunhiZa440W9hBMQHV3m-DASHDqggjg8",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3b2lqd2hudHN0dHFpdGZoaHNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2NDQwMjcsImV4cCI6MjA5NzIyMDAyN30.sFirPEn5Kr8PJrG2qyOJ0P7AJLGYapcRJkkQjkDe6Ko",
 };
 
 export const NAV = [
