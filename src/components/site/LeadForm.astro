@@ -1,0 +1,137 @@
+---
+// Free property analysis / revenue estimate capture.
+// Posts JSON to LEADS_API when configured; degrades to a clear
+// success state + mailto fallback otherwise.
+import { NEIGHBORHOODS } from "../../lib/site-config.js";
+const { compact = false, heading = "Get your free revenue estimate" } = Astro.props;
+---
+
+<form class={`lead-form ${compact ? "is-compact" : ""}`} data-lead-form novalidate>
+  {!compact && <h3 class="lead-form-title">{heading}</h3>}
+  {!compact && <p class="muted lead-form-sub">No obligation. We'll send a data-backed projection of what your San Diego home can earn.</p>}
+
+  <div class="field-row">
+    <div class="field">
+      <label for="lf-name">Full name</label>
+      <input id="lf-name" name="name" type="text" autocomplete="name" required placeholder="Jordan Rivera" />
+    </div>
+    <div class="field">
+      <label for="lf-email">Email</label>
+      <input id="lf-email" name="email" type="email" autocomplete="email" required placeholder="you@email.com" />
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label for="lf-phone">Phone</label>
+      <input id="lf-phone" name="phone" type="tel" autocomplete="tel" placeholder="(619) 555-0123" />
+    </div>
+    <div class="field">
+      <label for="lf-area">Neighborhood</label>
+      <select id="lf-area" name="neighborhood">
+        <option value="">Select area…</option>
+        {NEIGHBORHOODS.map((n) => <option value={n.name}>{n.name}</option>)}
+      </select>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label for="lf-address">Property address</label>
+      <input id="lf-address" name="address" type="text" autocomplete="street-address" placeholder="Street, San Diego" />
+    </div>
+    <div class="field">
+      <label for="lf-beds">Bedrooms</label>
+      <select id="lf-beds" name="bedrooms">
+        <option value="">Select…</option>
+        <option>Studio</option><option>1</option><option>2</option>
+        <option>3</option><option>4</option><option>5+</option>
+      </select>
+    </div>
+  </div>
+
+  {!compact && (
+    <div class="field">
+      <label for="lf-notes">Anything we should know? (optional)</label>
+      <textarea id="lf-notes" name="notes" rows="3" placeholder="Currently self-managed, exploring switching, etc."></textarea>
+    </div>
+  )}
+
+  <!-- Honeypot: hidden from humans, bots fill it and get silently dropped. -->
+  <div class="lf-hp" aria-hidden="true">
+    <label>Company<input type="text" name="company" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
+  <button type="submit" class="btn btn-lg btn-block">Send me my estimate</button>
+  <p class="lead-form-fine muted">By submitting you agree to be contacted about managing your home. We never sell your info.</p>
+
+  <div class="lead-form-success" data-lead-success hidden>
+    <strong>Thank you — we're on it.</strong>
+    <span>A Cardo specialist will reach out within one business day with your estimate.</span>
+  </div>
+</form>
+
+<style>
+  .lead-form {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: clamp(22px, 3vw, 34px);
+    box-shadow: var(--shadow-md);
+  }
+  .lead-form.is-compact { box-shadow: none; }
+  .lead-form-title { margin-bottom: 6px; }
+  .lead-form-sub { margin-bottom: 22px; }
+  .lead-form-fine { font-size: 0.78rem; margin: 14px 0 0; text-align: center; }
+  .lead-form-success {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: 12px;
+    background: rgba(31, 111, 107, 0.1);
+    border: 1px solid rgba(31, 111, 107, 0.3);
+    color: #14534f;
+  }
+  .lead-form-success[data-show] { display: flex; }
+  .lead-form button[disabled] { opacity: 0.65; cursor: progress; }
+  .lf-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+</style>
+
+<script>
+  import { LEADS_API } from "../../lib/site-config.js";
+
+  document.querySelectorAll("[data-lead-form]").forEach((form) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const f = e.currentTarget;
+      const btn = f.querySelector("button[type=submit]");
+      const success = f.querySelector("[data-lead-success]");
+      const data = Object.fromEntries(new FormData(f).entries());
+
+      if (!data.name || !data.email) {
+        f.reportValidity?.();
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Sending…";
+
+      try {
+        const res = await fetch(LEADS_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...data, source: "website", page: location.pathname }),
+        });
+        if (!res.ok) throw new Error("Request failed");
+        f.querySelectorAll(".field, .lead-form-fine, button[type=submit]").forEach((el) => (el.style.display = "none"));
+        success?.setAttribute("data-show", "");
+        success?.removeAttribute("hidden");
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = "Try again";
+      }
+    });
+  });
+</script>

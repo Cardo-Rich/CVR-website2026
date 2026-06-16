@@ -1,0 +1,192 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LeadForm from "../components/site/LeadForm.astro";
+import { SITE, PILLARS, FAQS, STATS } from "../lib/site-config.js";
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
+const included = [
+  "Professional photography & styling",
+  "Listing creation across Airbnb, Vrbo, Booking.com & direct",
+  "Dynamic, data-driven pricing",
+  "24/7 guest communication & screening",
+  "Professional cleaning & quality inspections",
+  "STRO permitting & TOT tax filing",
+  "Preventive & emergency maintenance",
+  "Restocking & supply management",
+  "Real-time owner dashboard & monthly statements",
+  "Dedicated local account manager",
+];
+---
+
+<Layout
+  title="List Your San Diego Home"
+  description="Partner with Cardo to manage your San Diego vacation rental. Pro marketing, transparent accounting, and maintenance that never lets your home slip. Get a free revenue estimate."
+  path="/owners"
+  schema={[faqSchema]}
+>
+  <!-- ===================== HERO + FORM ===================== -->
+  <section class="o-hero" id="estimate">
+    <div class="container o-hero-inner">
+      <div class="o-hero-copy" data-reveal>
+        <span class="eyebrow">For homeowners &amp; investors</span>
+        <h1>List with Cardo. Earn more, worry less.</h1>
+        <p class="lede">
+          We manage San Diego's most-loved short-term rentals like a luxury hospitality brand —
+          and back it with marketing pros, transparent accounting, and maintenance that never slips.
+          See what your home could earn, free.
+        </p>
+        <ul class="o-hero-points">
+          <li><strong>Marketing pros</strong> who treat your calendar like a revenue asset</li>
+          <li><strong>Transparent accounting</strong> — every dollar, in real time</li>
+          <li><strong>Always-on maintenance</strong> — small issues fixed before they grow</li>
+        </ul>
+        <div class="o-hero-stats">
+          {STATS.map((s) => (
+            <div><strong>{s.value}</strong><span>{s.label}</span></div>
+          ))}
+        </div>
+      </div>
+      <div class="o-form" data-reveal>
+        <LeadForm heading="Get your free property analysis" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WHY SWITCH ===================== -->
+  <section class="section surface-paper">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow center">Why owners switch</span>
+        <h2 class="center">Everything a national manager promises — actually delivered.</h2>
+      </div>
+      <div class="grid cols-2 o-pillars">
+        {PILLARS.map((p) => (
+          <article class="o-pillar card" data-reveal>
+            <h3>{p.title}</h3>
+            <p class="muted">{p.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WHAT'S INCLUDED ===================== -->
+  <section class="section surface-cream2">
+    <div class="container o-included">
+      <div class="o-included-copy" data-reveal>
+        <span class="eyebrow">Full-service, all-in</span>
+        <h2>One team. Everything your home needs.</h2>
+        <p class="lede">
+          No piecing together cleaners, handymen, and a pricing tool. Cardo runs the whole
+          operation under one roof — and one transparent fee.
+        </p>
+        <a href="#estimate" class="btn btn-lg">Get my free estimate</a>
+      </div>
+      <ul class="o-included-list" data-reveal>
+        {included.map((i) => <li>{i}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="section">
+    <div class="container narrow">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow center">Good questions</span>
+        <h2 class="center">The things owners ask first.</h2>
+      </div>
+      <div class="faqs" data-reveal>
+        {FAQS.map((f) => (
+          <details class="faq">
+            <summary>{f.q}<span class="faq-mark" aria-hidden="true">+</span></summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FINAL CTA ===================== -->
+  <section class="section surface-ink">
+    <div class="container center o-final" data-reveal>
+      <h2>Your home is an asset. Let's make it perform.</h2>
+      <p class="lede mx-auto" style="max-width: 50ch; color: rgba(248,243,236,0.78);">
+        Get a free, no-obligation revenue estimate and see exactly how Cardo would run your San Diego home.
+      </p>
+      <a href="#estimate" class="btn btn-lg">Get your free revenue estimate</a>
+      <p class="o-final-call">Prefer to talk? Call <a href={SITE.phoneHref}>{SITE.phone}</a></p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .o-hero {
+    background:
+      radial-gradient(70% 110% at 90% -10%, rgba(237, 60, 120, 0.08), transparent 55%),
+      linear-gradient(180deg, var(--cream), var(--cream-2));
+    padding: clamp(48px, 7vw, 96px) 0;
+  }
+  .o-hero-inner { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: start; }
+  .o-hero-copy .lede { max-width: 52ch; margin-top: 16px; }
+  .o-hero-points { list-style: none; padding: 0; margin: 26px 0; display: grid; gap: 12px; }
+  .o-hero-points li { position: relative; padding-left: 30px; color: var(--ink-soft); }
+  .o-hero-points li::before {
+    content: "✓"; position: absolute; left: 0; top: 1px;
+    width: 21px; height: 21px; border-radius: 50%;
+    background: rgba(237,60,120,0.12); color: var(--rose);
+    display: grid; place-items: center; font-size: 0.75rem; font-weight: 700;
+  }
+  .o-hero-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 30px; max-width: 440px; }
+  .o-hero-stats div { display: flex; flex-direction: column; padding: 14px 16px; background: rgba(255,255,255,0.55); border: 1px solid var(--line); border-radius: 12px; }
+  .o-hero-stats strong { font-family: var(--font-display); font-size: 1.5rem; color: var(--ink); }
+  .o-hero-stats span { font-size: 0.8rem; color: var(--muted); }
+
+  .section-head { margin-bottom: 48px; }
+
+  .o-pillar { padding: 30px 28px; }
+  .o-pillar h3 { font-size: 1.3rem; }
+
+  .o-included { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 52px; align-items: center; }
+  .o-included-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 28px; }
+  .o-included-list li { position: relative; padding-left: 30px; color: var(--ink-soft); }
+  .o-included-list li::before {
+    content: "✓"; position: absolute; left: 0; top: 1px;
+    width: 21px; height: 21px; border-radius: 50%;
+    background: rgba(31,111,107,0.14); color: var(--sea);
+    display: grid; place-items: center; font-size: 0.75rem; font-weight: 700;
+  }
+
+  .faqs { display: flex; flex-direction: column; gap: 12px; }
+  .faq { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 4px 22px; }
+  .faq summary {
+    list-style: none; cursor: pointer; padding: 18px 0;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    font-family: var(--font-display); font-size: 1.12rem; color: var(--ink);
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq-mark { font-family: var(--font-body); font-size: 1.5rem; color: var(--rose); transition: transform 0.2s var(--ease); }
+  .faq[open] .faq-mark { transform: rotate(45deg); }
+  .faq p { margin: 0 0 20px; color: var(--muted); }
+
+  .o-final h2 { max-width: 20ch; margin-inline: auto; }
+  .o-final .btn { margin-top: 12px; }
+  .o-final-call { margin-top: 22px; color: rgba(248,243,236,0.7); }
+  .o-final-call a { color: var(--rose); font-weight: 600; }
+
+  @media (max-width: 960px) {
+    .o-hero-inner, .o-included { grid-template-columns: 1fr; gap: 38px; }
+  }
+  @media (max-width: 540px) {
+    .o-hero-stats { grid-template-columns: 1fr 1fr; }
+    .o-included-list { grid-template-columns: 1fr; }
+  }
+</style>

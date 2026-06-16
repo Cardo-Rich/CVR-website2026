@@ -1,0 +1,94 @@
+---
+// Dummy direct-booking widget. Composes a URL with query variables
+// (?checkin=&checkout=&guests=) and opens it — a stand-in for the real
+// WanderOS booking engine. Replace BOOKING.baseUrl in site-config.js (or
+// drop WanderOS's own embed snippet in place of this component).
+import { BOOKING } from "../../lib/site-config.js";
+---
+
+<div class="bw card" data-booking data-base={BOOKING.baseUrl}>
+  <div class="bw-field">
+    <label for="bw-in">Check in</label>
+    <input id="bw-in" type="date" name="checkin" />
+  </div>
+  <div class="bw-field">
+    <label for="bw-out">Check out</label>
+    <input id="bw-out" type="date" name="checkout" />
+  </div>
+  <div class="bw-field">
+    <label for="bw-guests">Guests</label>
+    <select id="bw-guests" name="guests">
+      {Array.from({ length: 16 }, (_, i) => i + 1).map((n) => (
+        <option value={n}>{n} {n === 1 ? "guest" : "guests"}</option>
+      ))}
+    </select>
+  </div>
+  <button type="button" class="btn bw-go" data-booking-go>Check availability</button>
+  <p class="bw-error" data-booking-error hidden>Please pick a check-out date after check-in.</p>
+  {BOOKING.demo && (
+    <p class="bw-demo">Demo widget — your WanderOS booking engine plugs in here.</p>
+  )}
+</div>
+
+<style>
+  .bw {
+    display: grid;
+    grid-template-columns: 1fr 1fr 0.8fr auto;
+    gap: 14px;
+    align-items: end;
+    padding: 18px;
+    position: relative;
+  }
+  .bw-field { display: flex; flex-direction: column; gap: 6px; }
+  .bw-field label { font-size: 0.78rem; font-weight: 600; color: var(--ink-soft); }
+  .bw-field input, .bw-field select {
+    font-family: var(--font-body); font-size: 1rem;
+    padding: 13px 14px; border: 1px solid var(--line-strong);
+    border-radius: 12px; background: #fff; color: var(--ink);
+  }
+  .bw-field input:focus, .bw-field select:focus {
+    outline: none; border-color: var(--rose); box-shadow: 0 0 0 3px rgba(237, 60, 120, 0.14);
+  }
+  .bw-go { height: 49px; white-space: nowrap; }
+  .bw-error { grid-column: 1 / -1; margin: 0; color: var(--rose-deep); font-size: 0.85rem; font-weight: 600; }
+  .bw-demo { grid-column: 1 / -1; margin: 2px 0 0; font-size: 0.78rem; color: var(--muted); text-align: center; }
+  @media (max-width: 760px) {
+    .bw { grid-template-columns: 1fr 1fr; }
+    .bw-go { grid-column: 1 / -1; }
+  }
+  @media (max-width: 420px) { .bw { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  document.querySelectorAll("[data-booking]").forEach((widget) => {
+    const base = widget.getAttribute("data-base") || "";
+    const go = widget.querySelector("[data-booking-go]");
+    const err = widget.querySelector("[data-booking-error]");
+    const checkin = widget.querySelector('input[name="checkin"]');
+    const checkout = widget.querySelector('input[name="checkout"]');
+    const guests = widget.querySelector('select[name="guests"]');
+
+    // Default to a sensible upcoming weekend.
+    const today = new Date();
+    const inDate = new Date(today.getTime() + 7 * 86400000);
+    const outDate = new Date(today.getTime() + 9 * 86400000);
+    const iso = (d) => d.toISOString().slice(0, 10);
+    if (checkin && !checkin.value) checkin.value = iso(inDate);
+    if (checkout && !checkout.value) checkout.value = iso(outDate);
+    if (checkin) checkin.min = iso(today);
+
+    go?.addEventListener("click", () => {
+      err?.setAttribute("hidden", "");
+      if (!checkin.value || !checkout.value || checkout.value <= checkin.value) {
+        err?.removeAttribute("hidden");
+        return;
+      }
+      const params = new URLSearchParams({
+        checkin: checkin.value,
+        checkout: checkout.value,
+        guests: guests.value,
+      });
+      window.open(`${base}?${params.toString()}`, "_blank", "noopener");
+    });
+  });
+</script>
