@@ -1,81 +1,225 @@
 ---
-// Dummy direct-booking widget. Composes a URL with query variables
-// (?checkin=&checkout=&guests=) and opens it — a stand-in for the real
-// WanderOS booking engine. Replace BOOKING.baseUrl in site-config.js (or
-// drop WanderOS's own embed snippet in place of this component).
+// Direct-booking search widget. Models the live cardorentals.com search:
+// a primary row (Where / Check in / Check out / Guests / Search) plus an
+// expandable filter panel (bedrooms, bathrooms, price, pets, amenities).
+// On submit it composes the exact production search URL and opens /s/.
+//
+// Location note: the live engine filters by a map `boundaries` bbox that its
+// geocoder derives from a typed location. We don't have that geocoder here,
+// so "Where" sends city/state (+ the county-wide bbox for "All San Diego").
+// Per-neighborhood bounding boxes can be wired in once sourced from the
+// booking platform.
 import { BOOKING } from "../../lib/site-config.js";
+
+const d = BOOKING.defaults;
+// Locations we can send confidently. "All San Diego" carries the real bbox;
+// the rest send city/state only (no precise bbox available yet).
+const LOCATIONS = [
+  { label: "All San Diego", city: "San Diego", state: "California", boundaries: d.boundaries },
+  { label: "La Jolla", city: "La Jolla", state: "California" },
+  { label: "Pacific Beach", city: "San Diego", state: "California" },
+  { label: "Mission Beach", city: "San Diego", state: "California" },
+  { label: "Del Mar", city: "Del Mar", state: "California" },
+  { label: "Encinitas", city: "Encinitas", state: "California" },
+  { label: "Carlsbad", city: "Carlsbad", state: "California" },
+  { label: "Coronado", city: "Coronado", state: "California" },
+];
+// Price stops (dollars/night) → sent as cents.
+const PRICES = [100, 150, 200, 300, 400, 500, 650, 800, 1000, 1100, 1500];
 ---
 
-<div class="bw card" data-booking data-base={BOOKING.baseUrl}>
-  <div class="bw-field">
-    <label for="bw-in">Check in</label>
-    <input id="bw-in" type="date" name="checkin" />
+<div
+  class="bw card"
+  data-booking
+  data-search={BOOKING.searchUrl}
+  data-pricemin={d.priceMin}
+  data-pricemax={d.priceMax}
+>
+  <div class="bw-primary">
+    <div class="bw-field bw-where">
+      <label for="bw-where">Where</label>
+      <select id="bw-where" name="where">
+        {LOCATIONS.map((l, i) => (
+          <option
+            value={i}
+            data-city={l.city}
+            data-state={l.state}
+            data-boundaries={l.boundaries || ""}
+          >{l.label}</option>
+        ))}
+      </select>
+    </div>
+    <div class="bw-field">
+      <label for="bw-in">Check in</label>
+      <input id="bw-in" type="date" name="checkin" />
+    </div>
+    <div class="bw-field">
+      <label for="bw-out">Check out</label>
+      <input id="bw-out" type="date" name="checkout" />
+    </div>
+    <div class="bw-field bw-guests">
+      <label for="bw-guests">Guests</label>
+      <select id="bw-guests" name="guests">
+        {Array.from({ length: 16 }, (_, i) => i + 1).map((n) => (
+          <option value={n}>{n} {n === 1 ? "guest" : "guests"}</option>
+        ))}
+      </select>
+    </div>
+    <button type="button" class="btn bw-go" data-booking-go>Search</button>
   </div>
-  <div class="bw-field">
-    <label for="bw-out">Check out</label>
-    <input id="bw-out" type="date" name="checkout" />
+
+  <button type="button" class="bw-toggle" data-booking-toggle aria-expanded="false">
+    <span>More filters</span>
+    <span class="bw-toggle-mark" aria-hidden="true">+</span>
+  </button>
+
+  <div class="bw-filters" data-booking-filters hidden>
+    <div class="bw-filters-row">
+      <div class="bw-field">
+        <label for="bw-beds">Bedrooms</label>
+        <select id="bw-beds" name="minBedrooms">
+          <option value="">Any</option>
+          {[1, 2, 3, 4, 5, 6].map((n) => <option value={n}>{n}+</option>)}
+        </select>
+      </div>
+      <div class="bw-field">
+        <label for="bw-baths">Bathrooms</label>
+        <select id="bw-baths" name="minBathrooms">
+          <option value="">Any</option>
+          {[1, 2, 3, 4, 5].map((n) => <option value={n}>{n}+</option>)}
+        </select>
+      </div>
+      <div class="bw-field">
+        <label for="bw-pets">Pets</label>
+        <select id="bw-pets" name="pets">
+          <option value="0">No pets</option>
+          {[1, 2, 3].map((n) => <option value={n}>{n} {n === 1 ? "pet" : "pets"}</option>)}
+        </select>
+      </div>
+    </div>
+
+    <div class="bw-filters-row">
+      <div class="bw-field">
+        <label for="bw-pmin">Min nightly</label>
+        <select id="bw-pmin" name="priceMin">
+          {PRICES.map((p) => (
+            <option value={p * 100} selected={p * 100 === d.priceMin}>${p}</option>
+          ))}
+        </select>
+      </div>
+      <div class="bw-field">
+        <label for="bw-pmax">Max nightly</label>
+        <select id="bw-pmax" name="priceMax">
+          {PRICES.map((p) => (
+            <option value={p * 100} selected={p * 100 === d.priceMax}>${p}</option>
+          ))}
+          <option value="0">No max</option>
+        </select>
+      </div>
+    </div>
+
+    <fieldset class="bw-amenities">
+      <legend>Amenities</legend>
+      <div class="bw-amenities-grid">
+        {BOOKING.amenities.map((a) => (
+          <label class="bw-check">
+            <input type="checkbox" name="amenities" value={a.code} />
+            <span>{a.label}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
   </div>
-  <div class="bw-field">
-    <label for="bw-guests">Guests</label>
-    <select id="bw-guests" name="guests">
-      {Array.from({ length: 16 }, (_, i) => i + 1).map((n) => (
-        <option value={n}>{n} {n === 1 ? "guest" : "guests"}</option>
-      ))}
-    </select>
-  </div>
-  <button type="button" class="btn bw-go" data-booking-go>Check availability</button>
+
   <p class="bw-error" data-booking-error hidden>Please pick a check-out date after check-in.</p>
   {BOOKING.demo && (
-    <p class="bw-demo">Demo widget — your WanderOS booking engine plugs in here.</p>
+    <p class="bw-demo">Demo widget — your booking engine plugs in here.</p>
   )}
 </div>
 
 <style>
-  .bw {
+  .bw { padding: 18px; position: relative; }
+  .bw-primary {
     display: grid;
-    grid-template-columns: 1fr 1fr 0.8fr auto;
+    grid-template-columns: 1.1fr 1fr 1fr 0.9fr auto;
     gap: 14px;
     align-items: end;
-    padding: 18px;
-    position: relative;
   }
   .bw-field { display: flex; flex-direction: column; gap: 6px; }
   .bw-field label { font-size: 0.78rem; font-weight: 600; color: var(--ink-soft); }
   .bw-field input, .bw-field select {
     font-family: var(--font-body); font-size: 1rem;
     padding: 13px 14px; border: 1px solid var(--line-strong);
-    border-radius: 12px; background: #fff; color: var(--ink);
+    border-radius: 12px; background: #fff; color: var(--ink); width: 100%;
   }
   .bw-field input:focus, .bw-field select:focus {
     outline: none; border-color: var(--rose); box-shadow: 0 0 0 3px rgba(237, 60, 120, 0.14);
   }
   .bw-go { height: 49px; white-space: nowrap; }
-  .bw-error { grid-column: 1 / -1; margin: 0; color: var(--rose-deep); font-size: 0.85rem; font-weight: 600; }
-  .bw-demo { grid-column: 1 / -1; margin: 2px 0 0; font-size: 0.78rem; color: var(--muted); text-align: center; }
-  @media (max-width: 760px) {
-    .bw { grid-template-columns: 1fr 1fr; }
-    .bw-go { grid-column: 1 / -1; }
+
+  .bw-toggle {
+    margin-top: 14px; background: none; border: none; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px; padding: 4px 0;
+    font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; color: var(--rose);
   }
-  @media (max-width: 420px) { .bw { grid-template-columns: 1fr; } }
+  .bw-toggle-mark { font-size: 1.2rem; line-height: 1; transition: transform 0.2s var(--ease); }
+  .bw-toggle[aria-expanded="true"] .bw-toggle-mark { transform: rotate(45deg); }
+
+  .bw-filters { margin-top: 14px; padding-top: 18px; border-top: 1px solid var(--line); display: grid; gap: 18px; }
+  .bw-filters-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+  .bw-amenities { border: none; margin: 0; padding: 0; }
+  .bw-amenities legend { font-size: 0.78rem; font-weight: 600; color: var(--ink-soft); padding: 0; margin-bottom: 10px; }
+  .bw-amenities-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 16px; }
+  .bw-check { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--ink-soft); cursor: pointer; }
+  .bw-check input { width: 16px; height: 16px; accent-color: var(--rose); }
+
+  .bw-error { margin: 14px 0 0; color: var(--rose-deep); font-size: 0.85rem; font-weight: 600; }
+  .bw-demo { margin: 10px 0 0; font-size: 0.78rem; color: var(--muted); text-align: center; }
+
+  @media (max-width: 860px) {
+    .bw-primary { grid-template-columns: 1fr 1fr; }
+    .bw-where, .bw-go { grid-column: 1 / -1; }
+    .bw-filters-row, .bw-amenities-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 460px) {
+    .bw-primary { grid-template-columns: 1fr; }
+    .bw-filters-row, .bw-amenities-grid { grid-template-columns: 1fr; }
+  }
 </style>
 
 <script>
   document.querySelectorAll("[data-booking]").forEach((widget) => {
-    const base = widget.getAttribute("data-base") || "";
+    const searchUrl = widget.getAttribute("data-search") || "";
     const go = widget.querySelector("[data-booking-go]");
     const err = widget.querySelector("[data-booking-error]");
+    const toggle = widget.querySelector("[data-booking-toggle]");
+    const filters = widget.querySelector("[data-booking-filters]");
+    const where = widget.querySelector('select[name="where"]');
     const checkin = widget.querySelector('input[name="checkin"]');
     const checkout = widget.querySelector('input[name="checkout"]');
     const guests = widget.querySelector('select[name="guests"]');
+    const beds = widget.querySelector('select[name="minBedrooms"]');
+    const baths = widget.querySelector('select[name="minBathrooms"]');
+    const pets = widget.querySelector('select[name="pets"]');
+    const priceMin = widget.querySelector('select[name="priceMin"]');
+    const priceMax = widget.querySelector('select[name="priceMax"]');
 
     // Default to a sensible upcoming weekend.
     const today = new Date();
     const inDate = new Date(today.getTime() + 7 * 86400000);
     const outDate = new Date(today.getTime() + 9 * 86400000);
-    const iso = (d) => d.toISOString().slice(0, 10);
+    const iso = (dt) => dt.toISOString().slice(0, 10);
     if (checkin && !checkin.value) checkin.value = iso(inDate);
     if (checkout && !checkout.value) checkout.value = iso(outDate);
     if (checkin) checkin.min = iso(today);
+
+    toggle?.addEventListener("click", () => {
+      const open = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!open));
+      if (open) filters.setAttribute("hidden", "");
+      else filters.removeAttribute("hidden");
+    });
 
     go?.addEventListener("click", () => {
       err?.setAttribute("hidden", "");
@@ -83,12 +227,34 @@ import { BOOKING } from "../../lib/site-config.js";
         err?.removeAttribute("hidden");
         return;
       }
-      const params = new URLSearchParams({
-        checkin: checkin.value,
-        checkout: checkout.value,
-        guests: guests.value,
-      });
-      window.open(`${base}?${params.toString()}`, "_blank", "noopener");
+
+      const params = new URLSearchParams();
+      const loc = where?.selectedOptions[0];
+      if (loc?.dataset.city) params.set("city", loc.dataset.city);
+      if (loc?.dataset.state) params.set("state", loc.dataset.state);
+      if (loc?.dataset.boundaries) params.set("boundaries", loc.dataset.boundaries);
+
+      params.set("checkin", checkin.value);
+      params.set("checkout", checkout.value);
+      params.set("guests", guests.value);
+
+      if (beds?.value) params.set("minBedrooms", beds.value);
+      if (baths?.value) params.set("minBathrooms", baths.value);
+      if (priceMin?.value && priceMin.value !== "0") params.set("priceMin", priceMin.value);
+      if (priceMax?.value && priceMax.value !== "0") params.set("priceMax", priceMax.value);
+
+      const petCount = parseInt(pets?.value || "0", 10);
+      if (petCount > 0) {
+        params.set("petAllowed", "true");
+        params.set("pets", String(petCount));
+      }
+
+      const amenities = Array.from(
+        widget.querySelectorAll('input[name="amenities"]:checked'),
+      ).map((el) => el.value);
+      if (amenities.length) params.set("amenities", amenities.join(","));
+
+      window.open(`${searchUrl}?${params.toString()}`, "_blank", "noopener");
     });
   });
 </script>

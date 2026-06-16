@@ -48,11 +48,46 @@ export const NAV = [
   { label: "Book a Stay", href: "/#book" },
 ];
 
-// Booking engine. The widget composes ?checkin=&checkout=&guests=.
-// Swap baseUrl for the real WanderOS URL; set demo:false to hide the note.
+// Booking engine. The widget composes the live cardorentals.com search URL
+// (https://www.cardorentals.com/s/) exactly as the production site does:
+//   /s/?city=&state=&boundaries=&checkin=&checkout=&guests=&minBedrooms=
+//       &minBathrooms=&priceMin=&priceMax=&petAllowed=&pets=&amenities=
+// priceMin/priceMax are in CENTS (20000 = $200/night). boundaries is a map
+// bbox: minLng,minLat,maxLng,maxLat. Set demo:false now that it's live.
 export const BOOKING = {
-  baseUrl: "https://book.cardorentals.com/search",
-  demo: true,
+  searchUrl: "https://www.cardorentals.com/s/",
+  demo: false,
+  // Default San Diego county context — mirrors the live site's default search.
+  defaults: {
+    city: "San Diego",
+    state: "California",
+    boundaries: "-117.288597,32.710388,-117.078951,32.956436",
+    priceMin: 20000, // $200/night
+    priceMax: 110000, // $1,100/night
+  },
+  // Amenity filter — exact enum codes the search engine expects, with labels.
+  amenities: [
+    { code: "WIFI", label: "Wifi" },
+    { code: "KITCHEN", label: "Kitchen" },
+    { code: "FREE_PARKING", label: "Free parking" },
+    { code: "WASHER", label: "Washer" },
+    { code: "DRYER", label: "Dryer" },
+    { code: "TV", label: "TV" },
+    { code: "HEATING", label: "Heating" },
+    { code: "HOT_WATER", label: "Hot water" },
+    { code: "OVEN", label: "Oven" },
+    { code: "STOVE", label: "Stove" },
+    { code: "FRIDGE", label: "Refrigerator" },
+    { code: "MICROWAVE", label: "Microwave" },
+    { code: "DISHES", label: "Dishes & utensils" },
+    { code: "BED_LINENS", label: "Bed linens" },
+    { code: "HANGERS", label: "Hangers" },
+    { code: "SHAMPOO", label: "Shampoo" },
+    { code: "FIRST_AID_KIT", label: "First aid kit" },
+    { code: "SMOKE_DETECTOR", label: "Smoke detector" },
+    { code: "CARBON_MONOXIDE_DETECTOR", label: "CO detector" },
+    { code: "FIRE_EXTINGUISHER", label: "Fire extinguisher" },
+  ],
 };
 
 // Distribution channels (from the established Cardo network).
