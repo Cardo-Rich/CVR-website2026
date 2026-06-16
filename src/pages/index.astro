@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import LeadForm from "../components/site/LeadForm.astro";
+import Photo from "../components/site/Photo.astro";
+import BookingWidget from "../components/site/BookingWidget.astro";
 import {
   SITE, STATS, PILLARS, CASE_STUDIES, GALLERY, TESTIMONIALS,
   NEIGHBORHOODS, HOW_IT_WORKS, FAQS,
@@ -56,10 +58,16 @@ const icons = {
       </div>
 
       <div class="hero-card" data-reveal>
-        <div class="photo hero-photo" style="--ph-a:#15324a; --ph-b:#1f6f6b;">
-          <span class="photo-meta">La Jolla</span>
-          <span class="photo-tag">Bluff-top villa · booked 92% of nights</span>
-        </div>
+        <Photo
+          class="hero-photo"
+          img="https://images.unsplash.com/photo-1512917774080-9991f1c4c750"
+          alt="Luxury coastal home managed by Cardo in La Jolla, San Diego"
+          meta="La Jolla"
+          tag="Bluff-top villa · booked 92% of nights"
+          grad={["#15324a", "#1f6f6b"]}
+          w={760}
+          eager={true}
+        />
         <div class="hero-floating card">
           <strong>+24%</strong>
           <span>avg. revenue over market</span>
@@ -130,10 +138,15 @@ const icons = {
       <div class="grid cols-4 results-grid">
         {CASE_STUDIES.map((c) => (
           <article class="result-card" data-reveal>
-            <div class="photo result-photo" style={`--ph-a:${c.grad[0]}; --ph-b:${c.grad[1]};`}>
-              <span class="photo-meta">{c.neighborhood}</span>
-              <span class="photo-tag">{c.beds}</span>
-            </div>
+            <Photo
+              class="result-photo"
+              img={c.img}
+              alt={`${c.home} in ${c.neighborhood}, managed by Cardo`}
+              meta={c.neighborhood}
+              tag={c.beds}
+              grad={c.grad}
+              w={520}
+            />
             <div class="result-body">
               <strong class="result-gross">{c.gross}</strong>
               <span class="result-name">{c.home}</span>
@@ -161,12 +174,32 @@ const icons = {
       </div>
       <div class="gallery">
         {GALLERY.map((g) => (
-          <div class={`photo gallery-tile span-${g.span}`} style={`--ph-a:${g.grad[0]}; --ph-b:${g.grad[1]};`} data-reveal>
-            <span class="photo-meta">{g.meta}</span>
-            <span class="photo-tag">{g.tag}</span>
-          </div>
+          <Photo
+            class={`gallery-tile span-${g.span}`}
+            img={g.img}
+            alt={`${g.tag} — Cardo design & styling`}
+            meta={g.meta}
+            tag={g.tag}
+            grad={g.grad}
+            w={g.span === 2 ? 900 : 520}
+          />
         ))}
       </div>
+    </div>
+  </section>
+
+  <!-- ===================== BOOK A STAY ===================== -->
+  <section class="section surface-cream2" id="book">
+    <div class="container book-band">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow center">Plan your stay</span>
+        <h2 class="center">Book a Cardo home, direct.</h2>
+        <p class="lede center mx-auto" style="max-width: 52ch;">
+          Best available rates, no junk fees, and a real local team behind every stay.
+          Check dates and book straight through.
+        </p>
+      </div>
+      <div data-reveal><BookingWidget /></div>
     </div>
   </section>
 
@@ -360,6 +393,9 @@ const icons = {
   .gallery-tile.span-2 { grid-column: span 2; }
   @media (max-width: 860px) { .gallery { grid-template-columns: repeat(2, 1fr); } .gallery-tile.span-2 { grid-column: span 2; } }
   @media (max-width: 520px) { .gallery { grid-template-columns: 1fr; grid-auto-rows: 200px; } .gallery-tile.span-2 { grid-column: span 1; } }
+
+  /* ---------- Book a stay ---------- */
+  .book-band { max-width: 880px; }
 
   /* ---------- Steps ---------- */
   .steps { counter-reset: step; }

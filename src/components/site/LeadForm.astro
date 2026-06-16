@@ -57,6 +57,11 @@ const { compact = false, heading = "Get your free revenue estimate" } = Astro.pr
     </div>
   )}
 
+  <!-- Honeypot: hidden from humans, bots fill it and get silently dropped. -->
+  <div class="lf-hp" aria-hidden="true">
+    <label>Company<input type="text" name="company" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
   <button type="submit" class="btn btn-lg btn-block">Send me my estimate</button>
   <p class="lead-form-fine muted">By submitting you agree to be contacted about managing your home. We never sell your info.</p>
 
@@ -91,10 +96,11 @@ const { compact = false, heading = "Get your free revenue estimate" } = Astro.pr
   }
   .lead-form-success[data-show] { display: flex; }
   .lead-form button[disabled] { opacity: 0.65; cursor: progress; }
+  .lf-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 </style>
 
 <script>
-  import { LEADS_API, SITE } from "../../lib/site-config.js";
+  import { LEADS_API } from "../../lib/site-config.js";
 
   document.querySelectorAll("[data-lead-form]").forEach((form) => {
     form.addEventListener("submit", async (e) => {
@@ -113,19 +119,12 @@ const { compact = false, heading = "Get your free revenue estimate" } = Astro.pr
       btn.textContent = "Sending…";
 
       try {
-        if (LEADS_API) {
-          await fetch(LEADS_API, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...data, source: "website", page: location.pathname }),
-          });
-        } else {
-          // No endpoint wired yet — fall back to email so no lead is lost.
-          const body = encodeURIComponent(
-            Object.entries(data).map(([k, v]) => `${k}: ${v}`).join("\n")
-          );
-          window.location.href = `mailto:${SITE.email}?subject=${encodeURIComponent("Free estimate request")}&body=${body}`;
-        }
+        const res = await fetch(LEADS_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...data, source: "website", page: location.pathname }),
+        });
+        if (!res.ok) throw new Error("Request failed");
         f.querySelectorAll(".field, .lead-form-fine, button[type=submit]").forEach((el) => (el.style.display = "none"));
         success?.setAttribute("data-show", "");
         success?.removeAttribute("hidden");

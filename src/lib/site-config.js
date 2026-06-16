@@ -12,25 +12,34 @@ export const SITE = {
   tagline: "Luxury short-term rental management in San Diego",
   description:
     "Cardo is San Diego's design-led vacation rental manager. We market like pros, account for every dollar, and never let your home slip. Get a free revenue estimate.",
-  email: "hello@cardorentals.com",
-  phone: "(619) 555-0148", // TODO: replace with real number
-  phoneHref: "tel:+16195550148",
+  // No public email by request — owners reach us via forms or phone.
+  // (sales@cardorentals.com is used server-side for lead notifications.)
+  phone: "619-719-5282",
+  phoneHref: "tel:+16197195282",
   city: "San Diego",
   region: "CA",
 };
 
-// Lead capture endpoint. Mirror of portal-config.js AGREEMENTS_API.
-// TODO: stand up a Supabase edge function / table to receive leads,
-// then point this at it. Until then the form degrades gracefully.
-export const LEADS_API = "";
+// Lead capture endpoint — live Supabase edge function (writes to public.leads
+// and notifies sales@cardorentals.com via Resend once a key is configured).
+export const LEADS_API = "https://yyfckfuzoutmdwconrnm.supabase.co/functions/v1/leads";
 
 export const NAV = [
   { label: "For Owners", href: "/owners" },
   { label: "Results", href: "/#results" },
   { label: "Design", href: "/#design" },
-  { label: "Neighborhoods", href: "/#neighborhoods" },
+  { label: "Book a Stay", href: "/#book" },
   { label: "Blog", href: "/blog" },
 ];
+
+// Booking engine. The widget composes a URL with query variables
+// (?checkin=&checkout=&guests=). Swap baseUrl for the real WanderOS
+// booking/search URL once we have the engine; set demo:false to hide
+// the "demo" note.
+export const BOOKING = {
+  baseUrl: "https://book.cardorentals.com/search",
+  demo: true,
+};
 
 // Headline trust stats (placeholders — confirm real figures).
 export const STATS = [
@@ -73,20 +82,21 @@ export const PILLARS = [
 ];
 
 // OODA-style results / case-study cards.
+// NOTE: images are Unsplash placeholders — swap for Cardo's own photography.
 export const CASE_STUDIES = [
-  { home: "La Jolla Bluff Villa", neighborhood: "La Jolla", gross: "$214,800", lift: "+57% over market", beds: "4 BR", grad: ["#15324a", "#1f6f6b"] },
-  { home: "Cardiff Surf House", neighborhood: "Encinitas", gross: "$168,300", lift: "+41% over market", beds: "3 BR", grad: ["#1b3a52", "#3a5d77"] },
-  { home: "Del Mar Racetrack Retreat", neighborhood: "Del Mar", gross: "$192,500", lift: "+48% over market", beds: "4 BR", grad: ["#23344a", "#c19a5b"] },
-  { home: "Mission Beach Boardwalk Flat", neighborhood: "Mission Beach", gross: "$141,900", lift: "+33% over market", beds: "2 BR", grad: ["#1a2c3e", "#2c6e6b"] },
+  { home: "La Jolla Bluff Villa", neighborhood: "La Jolla", gross: "$214,800", lift: "+57% over market", beds: "4 BR", grad: ["#15324a", "#1f6f6b"], img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811" },
+  { home: "Cardiff Surf House", neighborhood: "Encinitas", gross: "$168,300", lift: "+41% over market", beds: "3 BR", grad: ["#1b3a52", "#3a5d77"], img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9" },
+  { home: "Del Mar Racetrack Retreat", neighborhood: "Del Mar", gross: "$192,500", lift: "+48% over market", beds: "4 BR", grad: ["#23344a", "#c19a5b"], img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c" },
+  { home: "Mission Beach Boardwalk Flat", neighborhood: "Mission Beach", gross: "$141,900", lift: "+33% over market", beds: "2 BR", grad: ["#1a2c3e", "#2c6e6b"], img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688" },
 ];
 
-// Decor / design showcase tiles.
+// Decor / design showcase tiles. (Unsplash placeholders — swap for real photos.)
 export const GALLERY = [
-  { tag: "Coastal Primary Suite", meta: "Styling", grad: ["#1f3a52", "#2c6e6b"], span: 2 },
-  { tag: "Chef's Kitchen", meta: "Decor", grad: ["#23344a", "#c19a5b"], span: 1 },
-  { tag: "Sunset Terrace", meta: "Outdoor", grad: ["#3a2c44", "#ed3c78"], span: 1 },
-  { tag: "Reading Nook", meta: "Detail", grad: ["#15324a", "#1f6f6b"], span: 1 },
-  { tag: "Plunge Pool", meta: "Amenity", grad: ["#1b3a52", "#3a5d77"], span: 2 },
+  { tag: "Coastal Primary Suite", meta: "Styling", grad: ["#1f3a52", "#2c6e6b"], span: 2, img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" },
+  { tag: "Chef's Kitchen", meta: "Decor", grad: ["#23344a", "#c19a5b"], span: 1, img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c" },
+  { tag: "Sunset Terrace", meta: "Outdoor", grad: ["#3a2c44", "#ed3c78"], span: 1, img: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2" },
+  { tag: "Reading Nook", meta: "Detail", grad: ["#15324a", "#1f6f6b"], span: 1, img: "https://images.unsplash.com/photo-1493809842364-78817add7ffb" },
+  { tag: "Plunge Pool", meta: "Amenity", grad: ["#1b3a52", "#3a5d77"], span: 2, img: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9" },
 ];
 
 export const TESTIMONIALS = [
