@@ -1,96 +1,103 @@
 // =============================================================
 // Central content + config for the Cardo marketing site.
-// Keeping copy/data here makes it easy to edit and to migrate
-// into Supabase later (the chosen CMS direction).
+// Copy is intentionally tight (luxury reads better lean); keyword
+// depth lives on dedicated pages + the blog. Facts are real:
+// founded 2013, 2,000+ 5-star reviews, in-house design & cleaning.
 // =============================================================
 
 export const SITE = {
   name: "Cardo Vacation Rentals",
   shortName: "Cardo",
-  // TODO: confirm production domain (currently assumes cardorentals.com).
+  // Keep cardorentals.com — a 10-year-old domain's accumulated authority
+  // is worth far more than a shorter name.
   url: "https://www.cardorentals.com",
   tagline: "Luxury short-term rental management in San Diego",
   description:
-    "Cardo is San Diego's design-led vacation rental manager. We market like pros, account for every dollar, and never let your home slip. Get a free revenue estimate.",
-  // No public email by request — owners reach us via forms or phone.
-  // (sales@cardorentals.com is used server-side for lead notifications.)
+    "Cardo is San Diego's design-led vacation rental manager — a 5-star Superhost since 2013. Pro marketing, transparent accounting, in-house design, and care that never lets your home slip.",
   phone: "619-719-5282",
   phoneHref: "tel:+16197195282",
   city: "San Diego",
   region: "CA",
 };
 
-// Lead capture endpoint — live Supabase edge function (writes to public.leads
-// and notifies sales@cardorentals.com via Resend once a key is configured).
+// Real company facts (used in copy + schema).
+export const COMPANY = {
+  founded: 2013,
+  reviews: "2,000+",
+  rating: "4.9",
+  ratingCount: "2000",
+};
+
+// Live Supabase edge function (writes to public.leads, notifies
+// sales@cardorentals.com via Resend once a key is configured).
 export const LEADS_API = "https://yyfckfuzoutmdwconrnm.supabase.co/functions/v1/leads";
 
 export const NAV = [
   { label: "For Owners", href: "/owners" },
+  { label: "Design", href: "/design" },
   { label: "Results", href: "/#results" },
-  { label: "Design", href: "/#design" },
   { label: "Book a Stay", href: "/#book" },
   { label: "Blog", href: "/blog" },
 ];
 
-// Booking engine. The widget composes a URL with query variables
-// (?checkin=&checkout=&guests=). Swap baseUrl for the real WanderOS
-// booking/search URL once we have the engine; set demo:false to hide
-// the "demo" note.
+// Booking engine. The widget composes ?checkin=&checkout=&guests=.
+// Swap baseUrl for the real WanderOS URL; set demo:false to hide the note.
 export const BOOKING = {
   baseUrl: "https://book.cardorentals.com/search",
   demo: true,
 };
 
-// Headline trust stats (placeholders — confirm real figures).
+// Distribution channels (from the established Cardo network).
+export const CHANNELS = ["Airbnb", "Vrbo", "Booking.com", "Google Vacation Rentals", "Hopper", "Direct"];
+
+// Headline trust stats — all defensible facts.
 export const STATS = [
-  { value: "+24%", label: "Avg. revenue over market" },
-  { value: "4.9★", label: "Guest rating across stays" },
-  { value: "< 60 min", label: "Maintenance response" },
-  { value: "100%", label: "Transparent owner accounting" },
+  { value: "2,000+", label: "5-star guest reviews" },
+  { value: "Since 2013", label: "San Diego Superhost" },
+  { value: "24/7", label: "Guest support" },
+  { value: "In-house", label: "Design & cleaning" },
 ];
 
-// Owner value pillars — the four differentiators the brand leads with.
+// Owner value pillars — the four differentiators, kept to one line each.
 export const PILLARS = [
   {
     key: "marketing",
-    title: "Marketing pros, not order-takers",
-    body:
-      "Pro photography, copy that converts, and dynamic pricing across Airbnb, Vrbo, Booking.com and direct. We treat your calendar like the revenue asset it is.",
+    title: "Marketing pros",
+    body: "Pro photography, sharp listings, and dynamic pricing across every channel — your calendar run like the asset it is.",
     icon: "spark",
   },
   {
     key: "accounting",
-    title: "Transparent to the dollar",
-    body:
-      "Real-time owner dashboard, itemized monthly statements, and no mystery fees. You can see every booking, payout, and expense whenever you want.",
+    title: "Transparent accounting",
+    body: "A real-time dashboard and itemized monthly statements. Every dollar visible, no mystery fees.",
     icon: "ledger",
   },
   {
     key: "maintenance",
-    title: "We never let the home slip",
-    body:
-      "Inspections after every stay, a vetted local vendor bench, and sub-hour response on urgent issues. Small things get fixed before guests — or you — ever notice.",
+    title: "Care that never slips",
+    body: "Inspected after every stay, vetted local vendors, sub-hour urgent response. Fixed before anyone notices.",
     icon: "shield",
   },
   {
     key: "design",
-    title: "Design that earns more",
-    body:
-      "In-house styling and decor that photographs beautifully and commands higher nightly rates. Homes guests screenshot are homes that book out.",
+    title: "In-house design",
+    body: "Home Designs by Cardo styles your home to photograph beautifully and command higher nightly rates.",
     icon: "palette",
   },
 ];
 
-// OODA-style results / case-study cards.
-// NOTE: images are Unsplash placeholders — swap for Cardo's own photography.
+// OODA-style results / case studies.
+// NOTE: numbers are illustrative; real case study to follow. Images are
+// Unsplash placeholders — swap for Cardo's own photography.
 export const CASE_STUDIES = [
   { home: "La Jolla Bluff Villa", neighborhood: "La Jolla", gross: "$214,800", lift: "+57% over market", beds: "4 BR", grad: ["#15324a", "#1f6f6b"], img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811" },
   { home: "Cardiff Surf House", neighborhood: "Encinitas", gross: "$168,300", lift: "+41% over market", beds: "3 BR", grad: ["#1b3a52", "#3a5d77"], img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9" },
-  { home: "Del Mar Racetrack Retreat", neighborhood: "Del Mar", gross: "$192,500", lift: "+48% over market", beds: "4 BR", grad: ["#23344a", "#c19a5b"], img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c" },
-  { home: "Mission Beach Boardwalk Flat", neighborhood: "Mission Beach", gross: "$141,900", lift: "+33% over market", beds: "2 BR", grad: ["#1a2c3e", "#2c6e6b"], img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688" },
+  { home: "Del Mar Retreat", neighborhood: "Del Mar", gross: "$192,500", lift: "+48% over market", beds: "4 BR", grad: ["#23344a", "#c19a5b"], img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c" },
+  { home: "Mission Beach Flat", neighborhood: "Mission Beach", gross: "$141,900", lift: "+33% over market", beds: "2 BR", grad: ["#1a2c3e", "#2c6e6b"], img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688" },
 ];
 
-// Decor / design showcase tiles. (Unsplash placeholders — swap for real photos.)
+// Decor / design showcase tiles. (Unsplash placeholders — swap for the
+// Home Designs by Cardo portfolio photos.)
 export const GALLERY = [
   { tag: "Coastal Primary Suite", meta: "Styling", grad: ["#1f3a52", "#2c6e6b"], span: 2, img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" },
   { tag: "Chef's Kitchen", meta: "Decor", grad: ["#23344a", "#c19a5b"], span: 1, img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c" },
@@ -101,20 +108,17 @@ export const GALLERY = [
 
 export const TESTIMONIALS = [
   {
-    quote:
-      "I switched from a national manager and my net was up double digits in the first quarter. The monthly statements are so clear I stopped second-guessing.",
+    quote: "Switched from a national manager and my net was up double digits in the first quarter. The statements are so clear I stopped second-guessing.",
     name: "Marcus T.",
     home: "Oceanfront condo, Pacific Beach",
   },
   {
-    quote:
-      "They restyled the whole house before launch and the photos are unreal. Booked 26 nights in the first month at a rate I didn't think was possible.",
+    quote: "Their design team restyled the whole house before launch and the photos are unreal. Booked 26 nights the first month at a rate I didn't think was possible.",
     name: "Priya & Sam",
     home: "Hillside home, La Jolla",
   },
   {
-    quote:
-      "A pipe let go at 11pm. Someone was there within the hour and I found out after it was already fixed. That's the whole reason I sleep at night.",
+    quote: "A pipe let go at 11pm. Someone was there within the hour and I found out after it was fixed. That's why I sleep at night.",
     name: "Diane R.",
     home: "Beach cottage, Encinitas",
   },
@@ -132,32 +136,36 @@ export const NEIGHBORHOODS = [
   { name: "Greater San Diego", note: "Countywide coverage & support", slug: "san-diego" },
 ];
 
-// FAQ — also rendered as FAQ schema for SEO.
+// FAQ — also rendered as FAQ schema.
 export const FAQS = [
-  {
-    q: "What does Cardo charge?",
-    a: "We work on a straightforward management percentage of booking revenue — no setup fees and no charge until your home is earning. We'll quote it exactly in your free property analysis.",
-  },
-  {
-    q: "How fast can my home go live?",
-    a: "Most homes launch within 2–3 weeks: onboarding and permitting, professional styling and photography, listing build-out, and pricing setup before your first guest.",
-  },
-  {
-    q: "Will I still control my calendar?",
-    a: "Always. You can block owner stays anytime from your dashboard. It's your home — we just keep it performing when you're not using it.",
-  },
-  {
-    q: "Do you handle San Diego STR permits and TOT?",
-    a: "Yes. We manage STRO licensing, compliance reporting, and transient occupancy tax filings so your home stays fully compliant.",
-  },
-  {
-    q: "How do I see my numbers?",
-    a: "Through a real-time owner dashboard plus itemized monthly statements. Every booking, payout, and expense is visible whenever you want it.",
-  },
+  { q: "What does Cardo charge?", a: "A straightforward management percentage of booking revenue — no setup fees, no charge until your home is earning. We quote it exactly in your free property analysis." },
+  { q: "How fast can my home go live?", a: "Most homes launch within a few weeks: onboarding and permitting, in-house design and photography, listing build-out, and pricing setup before your first guest." },
+  { q: "Will I still control my calendar?", a: "Always. Block owner stays anytime from your dashboard. It's your home — we keep it performing when you're not using it." },
+  { q: "Do you handle San Diego STR permits and TOT?", a: "Yes — STRO licensing, compliance reporting, and transient occupancy tax filings so your home stays fully compliant." },
+  { q: "How do I see my numbers?", a: "A real-time owner dashboard plus itemized monthly statements. Every booking, payout, and expense, whenever you want it." },
 ];
 
 export const HOW_IT_WORKS = [
-  { step: "01", title: "Free revenue estimate", body: "Tell us about your home. We'll send a data-backed projection of what it can earn in your San Diego market — no obligation." },
-  { step: "02", title: "We style & launch", body: "In-house design, professional photography, listing build, dynamic pricing, and permitting. We handle the heavy lifting end to end." },
-  { step: "03", title: "You earn, hands-off", body: "Guests are cared for, the home is maintained, and you watch it all in a transparent dashboard with clear monthly payouts." },
+  { step: "01", title: "Free revenue estimate", body: "Send your home's details. We return a data-backed projection for your San Diego market — no obligation." },
+  { step: "02", title: "We design & launch", body: "Home Designs by Cardo furnishes and stages; we shoot, list, and price it to win." },
+  { step: "03", title: "You earn, hands-off", body: "Guests cared for, home maintained, everything visible in your owner dashboard." },
+];
+
+// ---- Home Designs by Cardo (design service page) ----
+export const DESIGN_PROCESS = [
+  { step: "01", title: "Photo review", body: "Send photos of your home — a listing link or quick phone pics. We return a furnishing estimate and decorator's fee." },
+  { step: "02", title: "Sign & schedule", body: "Approve your management and decorating agreements, then we book a two-hour preparation walkthrough." },
+  { step: "03", title: "Prep walkthrough", body: "We note maintenance fixes, deep-clean needs, and junk removal, and line up trusted local vendors to handle them." },
+  { step: "04", title: "Decorate & stage", body: "Paint, furniture, kitchen, decor, and electronics — built, styled, and staged for the photographer. Typically 2–4 weeks." },
+];
+
+export const DESIGN_SCOPE = [
+  "Select the design style for your property",
+  "Source, purchase & ship furniture and decor",
+  "Build furniture and set up electronics",
+  "Stock kitchenware and organize cabinets",
+  "Hang art and style every room",
+  "Coordinate and schedule contracted trades",
+  "Keep receipts and accurate accounting",
+  "Stage the home for professional photography",
 ];

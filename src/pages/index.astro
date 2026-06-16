@@ -5,7 +5,7 @@ import Photo from "../components/site/Photo.astro";
 import BookingWidget from "../components/site/BookingWidget.astro";
 import {
   SITE, STATS, PILLARS, CASE_STUDIES, GALLERY, TESTIMONIALS,
-  NEIGHBORHOODS, HOW_IT_WORKS, FAQS,
+  NEIGHBORHOODS, HOW_IT_WORKS, FAQS, CHANNELS, COMPANY,
 } from "../lib/site-config.js";
 
 const faqSchema = {
@@ -42,16 +42,15 @@ const icons = {
         <span class="eyebrow">San Diego · Luxury STR Management</span>
         <h1>The homes guests remember aren't managed.<br /><em>They're cared for.</em></h1>
         <p class="lede">
-          Cardo runs your San Diego vacation rental like a luxury hospitality brand —
-          marketed by pros, accounted to the dollar, and maintained so it never slips.
-          You earn more and never think about it.
+          Design-led short-term rental management in San Diego — a 5-star Superhost since 2013.
+          Marketing, transparent accounting, and care, all in-house. You earn more and think about it less.
         </p>
         <div class="hero-cta">
           <a href="/owners#estimate" class="btn btn-lg">Get your free revenue estimate</a>
-          <a href="/#design" class="btn btn-ghost btn-lg">See our homes</a>
+          <a href="/design" class="btn btn-ghost btn-lg">See our design work</a>
         </div>
         <ul class="hero-trust">
-          <li><span class="divider-dot">●</span> Airbnb Superhost standard</li>
+          <li><span class="divider-dot">●</span> 5-star Superhost since 2013</li>
           <li><span class="divider-dot">●</span> Real-time owner dashboard</li>
           <li><span class="divider-dot">●</span> No setup fees</li>
         </ul>
@@ -69,8 +68,8 @@ const icons = {
           eager={true}
         />
         <div class="hero-floating card">
-          <strong>+24%</strong>
-          <span>avg. revenue over market</span>
+          <strong>{COMPANY.rating}★</strong>
+          <span>{COMPANY.reviews} 5-star reviews</span>
         </div>
       </div>
     </div>
@@ -90,10 +89,9 @@ const icons = {
   <!-- ===================== TRUST STRIP ===================== -->
   <section class="section-sm surface-paper trust-strip">
     <div class="container">
-      <p class="center muted trust-lead">Trusted by San Diego homeowners across the coast</p>
+      <p class="center muted trust-lead">Your home, booked across every major channel</p>
       <div class="trust-logos">
-        <span>Airbnb&nbsp;Superhost</span><span>Vrbo&nbsp;Premier</span><span>Booking.com</span>
-        <span>Google&nbsp;4.9★</span><span>STRO&nbsp;Compliant</span>
+        {CHANNELS.map((c) => <span>{c}</span>)}
       </div>
     </div>
   </section>
@@ -164,12 +162,12 @@ const icons = {
     <div class="container">
       <div class="section-head split-head" data-reveal>
         <div>
-          <span class="eyebrow">Design that earns more</span>
+          <span class="eyebrow">Home Designs by Cardo</span>
           <h2>Homes guests screenshot are homes that book out.</h2>
         </div>
         <p class="lede" style="max-width: 42ch;">
-          Our in-house stylists stage every home to photograph beautifully and live well —
-          the difference between a listing that blends in and one that commands a premium.
+          Our in-house design team styles every home to photograph beautifully and live well —
+          the difference between blending in and commanding a premium.
         </p>
       </div>
       <div class="gallery">
@@ -184,6 +182,9 @@ const icons = {
             w={g.span === 2 ? 900 : 520}
           />
         ))}
+      </div>
+      <div class="center" style="margin-top: 40px;" data-reveal>
+        <a href="/design" class="btn btn-ink btn-lg">Explore Home Designs by Cardo</a>
       </div>
     </div>
   </section>
