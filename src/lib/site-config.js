@@ -13,7 +13,7 @@ export const SITE = {
   url: "https://www.cardorentals.com",
   tagline: "Luxury short-term rental management in San Diego",
   description:
-    "Cardo is San Diego's design-led vacation rental manager — a 5-star Superhost since 2013. Pro marketing, transparent accounting, in-house design, and care that never lets your home slip.",
+    "Cardo is San Diego's design-led vacation rental manager — trusted with homes since 2013 and 2,000+ five-star guest reviews. Pro marketing, transparent accounting, in-house design, and care that never lets your home slip.",
   phone: "619-719-5282",
   phoneHref: "tel:+16197195282",
   city: "San Diego",
@@ -61,7 +61,7 @@ export const CHANNELS = ["Airbnb", "Vrbo", "Booking.com", "Google Vacation Renta
 // Headline trust stats — all defensible facts.
 export const STATS = [
   { value: "2,000+", label: "5-star guest reviews" },
-  { value: "Since 2013", label: "San Diego Superhost" },
+  { value: "Since 2013", label: "Caring for San Diego homes" },
   { value: "24/7", label: "Guest support" },
   { value: "In-house", label: "Design & cleaning" },
 ];

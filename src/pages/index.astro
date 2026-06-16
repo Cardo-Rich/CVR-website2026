@@ -17,13 +17,15 @@ const faqSchema = {
     acceptedAnswer: { "@type": "Answer", text: f.a },
   })),
 };
-const ratingSchema = {
+// Vacation rental management service. Aggregate rating lives on the
+// LodgingBusiness schema in Layout.astro (single source of truth) so we
+// never publish two conflicting review counts.
+const serviceSchema = {
   "@context": "https://schema.org",
   "@type": "Service",
   serviceType: "Vacation rental property management",
   provider: { "@type": "LodgingBusiness", name: SITE.name },
   areaServed: "San Diego County, California",
-  aggregateRating: { "@type": "AggregateRating", ratingValue: "4.9", reviewCount: "180" },
 };
 
 const icons = {
@@ -34,7 +36,7 @@ const icons = {
 };
 ---
 
-<Layout path="/" schema={[ratingSchema, faqSchema]}>
+<Layout path="/" schema={[serviceSchema, faqSchema]}>
   <!-- ===================== HERO ===================== -->
   <section class="hero">
     <div class="container hero-inner">
@@ -42,15 +44,16 @@ const icons = {
         <span class="eyebrow">San Diego · Luxury STR Management</span>
         <h1>The homes guests remember aren't managed.<br /><em>They're cared for.</em></h1>
         <p class="lede">
-          Design-led short-term rental management in San Diego — a 5-star Superhost since 2013.
-          Marketing, transparent accounting, and care, all in-house. You earn more and think about it less.
+          Design-led short-term rental management in San Diego — trusted with homes since 2013,
+          with 2,000+ five-star guest reviews. Marketing, transparent accounting, and care, all in-house.
+          Your home stays immaculate and your guests cared for — without the 11pm phone call.
         </p>
         <div class="hero-cta">
           <a href="/owners#estimate" class="btn btn-lg">Get your free revenue estimate</a>
           <a href="/design" class="btn btn-ghost btn-lg">See our design work</a>
         </div>
         <ul class="hero-trust">
-          <li><span class="divider-dot">●</span> 5-star Superhost since 2013</li>
+          <li><span class="divider-dot">●</span> Trusted with San Diego homes since 2013</li>
           <li><span class="divider-dot">●</span> Real-time owner dashboard</li>
           <li><span class="divider-dot">●</span> No setup fees</li>
         </ul>
@@ -127,10 +130,11 @@ const icons = {
   <section class="section surface-ink" id="results">
     <div class="container">
       <div class="section-head" data-reveal>
-        <span class="eyebrow center">Real homes, real numbers</span>
-        <h2 class="center">Owners earn more with Cardo — here's the receipts.</h2>
+        <span class="eyebrow center">What strong management looks like</span>
+        <h2 class="center">Run well, a San Diego home performs like this.</h2>
         <p class="lede center mx-auto" style="max-width: 56ch; color: rgba(248,243,236,0.74);">
-          Trailing-12-month gross revenue on homes we manage, versus their San Diego market comp.
+          Illustrative annual gross by home type, modeled on our San Diego portfolio versus market comps.
+          Your own projection is built from your home's specifics.
         </p>
       </div>
       <div class="grid cols-4 results-grid">
