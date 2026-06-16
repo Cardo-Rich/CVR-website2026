@@ -116,6 +116,15 @@ const PRICES = [100, 150, 200, 300, 400, 500, 650, 800, 1000, 1100, 1500];
           <option value="0">No max</option>
         </select>
       </div>
+      <div class="bw-field">
+        <label for="bw-flex">Date flexibility</label>
+        <select id="bw-flex" name="dateFlexibility">
+          <option value="0">Exact dates</option>
+          <option value="1">± 1 day</option>
+          <option value="2">± 2 days</option>
+          <option value="3">± 3 days</option>
+        </select>
+      </div>
     </div>
 
     <fieldset class="bw-amenities">
@@ -204,6 +213,7 @@ const PRICES = [100, 150, 200, 300, 400, 500, 650, 800, 1000, 1100, 1500];
     const pets = widget.querySelector('select[name="pets"]');
     const priceMin = widget.querySelector('select[name="priceMin"]');
     const priceMax = widget.querySelector('select[name="priceMax"]');
+    const flex = widget.querySelector('select[name="dateFlexibility"]');
 
     // Default to a sensible upcoming weekend.
     const today = new Date();
@@ -242,6 +252,7 @@ const PRICES = [100, 150, 200, 300, 400, 500, 650, 800, 1000, 1100, 1500];
       if (baths?.value) params.set("minBathrooms", baths.value);
       if (priceMin?.value && priceMin.value !== "0") params.set("priceMin", priceMin.value);
       if (priceMax?.value && priceMax.value !== "0") params.set("priceMax", priceMax.value);
+      if (flex?.value && flex.value !== "0") params.set("dateFlexibility", flex.value);
 
       const petCount = parseInt(pets?.value || "0", 10);
       if (petCount > 0) {
@@ -254,7 +265,9 @@ const PRICES = [100, 150, 200, 300, 400, 500, 650, 800, 1000, 1100, 1500];
       ).map((el) => el.value);
       if (amenities.length) params.set("amenities", amenities.join(","));
 
-      window.open(`${searchUrl}?${params.toString()}`, "_blank", "noopener");
+      // Live engine uses literal commas in boundaries/amenities — keep them raw.
+      const qs = params.toString().replace(/%2C/g, ",");
+      window.open(`${searchUrl}?${qs}`, "_blank", "noopener");
     });
   });
 </script>
