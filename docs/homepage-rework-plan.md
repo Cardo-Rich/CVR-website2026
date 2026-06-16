@@ -29,13 +29,17 @@ These were live claims on a site bound to a real, paying business — liability,
 
 ---
 
-## Phase 1 — Refocus homepage on ONE audience (owners)
+## Phase 1 — Refocus homepage on ONE audience (owners) ✅ (done)
 
-- Remove the guest "Book a Stay" section + `BookingWidget` from `index.astro`.
-- Move guest booking to a dedicated `/book` page; keep it in nav only.
-- Re-sequence to a single-intent funnel: Hero → Trust strip → Why owners switch →
-  Proof (real) → Design showcase → How it works → Transparency → Testimonials (real)
-  → Neighborhoods → Final CTA + lead form.
+- Removed the guest "Book a Stay" section + inline `BookingWidget` from `index.astro`.
+- Guest booking now lives in a **global "Book direct" modal** (`BookingModal.astro`)
+  launched from a header **"Book now"** button (desktop), the mobile nav, and the
+  footer — keeping the homepage body owner-focused.
+- The modal dims the site and pairs the search widget with three direct-booking
+  value props (save 10% direct, guest damage protection, flexible cancellation).
+- Homepage funnel is now single-intent: Hero → Trust strip → Why owners switch →
+  Proof → Design showcase → How it works → Transparency → Testimonials →
+  Neighborhoods → Final CTA + lead form.
 
 ## Phase 2 — Reposition for the luxury / second-home owner
 

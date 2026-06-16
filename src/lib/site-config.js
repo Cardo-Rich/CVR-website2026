@@ -45,7 +45,6 @@ export const NAV = [
   { label: "Design", href: "/design" },
   { label: "Neighborhoods", href: "/neighborhoods" },
   { label: "Blog", href: "/blog" },
-  { label: "Book a Stay", href: "/#book" },
 ];
 
 // Booking engine. The widget composes the live cardorentals.com search URL

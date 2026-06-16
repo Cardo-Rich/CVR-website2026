@@ -18,6 +18,7 @@ const year = new Date().getFullYear();
       <h4>Explore</h4>
       <ul>
         {NAV.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        <li><button type="button" class="footer-linkbtn" data-book-open>Book a stay</button></li>
         <li><a href="/owners">List your home</a></li>
       </ul>
     </div>
@@ -70,6 +71,11 @@ const year = new Date().getFullYear();
   .footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
   .footer-col a { color: rgba(248, 243, 236, 0.72); font-size: 0.95rem; }
   .footer-col a:hover { color: var(--rose); }
+  .footer-linkbtn {
+    background: none; border: 0; padding: 0; cursor: pointer;
+    font-family: inherit; font-size: 0.95rem; color: rgba(248, 243, 236, 0.72);
+  }
+  .footer-linkbtn:hover { color: var(--rose); }
 
   .footer-bottom {
     display: flex;

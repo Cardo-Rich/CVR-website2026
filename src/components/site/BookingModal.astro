@@ -1,0 +1,164 @@
+---
+// Global "Book direct" modal. Opened by any [data-book-open] trigger
+// (header "Book now", mobile nav, footer). Dims the whole site and centers
+// the search widget alongside the three direct-booking value props.
+import BookingWidget from "./BookingWidget.astro";
+
+const PERKS = [
+  {
+    title: "Save 10% booking direct",
+    body: "Skip the Airbnb & Vrbo service fees — our best rate is always right here.",
+  },
+  {
+    title: "Guest damage protection",
+    body: "Every direct stay is covered, so a small mishap never turns into a big bill.",
+  },
+  {
+    title: "Flexible cancellation",
+    body: "Plans change. Adjust your dates or cancel with room to breathe.",
+  },
+];
+---
+
+<div class="book-modal" data-book-modal hidden aria-hidden="true">
+  <div class="book-backdrop" data-book-close></div>
+  <div class="book-panel" role="dialog" aria-modal="true" aria-label="Book a Cardo home direct">
+    <button class="book-x" data-book-close aria-label="Close booking search">&times;</button>
+
+    <div class="book-head">
+      <span class="eyebrow">Book direct with Cardo</span>
+      <h2>Find your San Diego stay.</h2>
+    </div>
+
+    <ul class="book-perks">
+      {PERKS.map((p) => (
+        <li>
+          <strong>{p.title}</strong>
+          <span>{p.body}</span>
+        </li>
+      ))}
+    </ul>
+
+    <BookingWidget />
+  </div>
+</div>
+
+<style>
+  .book-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    align-items: flex-start;
+    justify-content: center;
+    padding: clamp(16px, 5vh, 64px) 16px;
+    overflow-y: auto;
+  }
+  .book-modal[data-open] { display: flex; }
+
+  .book-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 18, 28, 0.92);
+    backdrop-filter: blur(3px);
+  }
+
+  .book-panel {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 760px;
+    margin: auto;
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    padding: clamp(24px, 4vw, 40px);
+    animation: book-rise 0.28s var(--ease) both;
+  }
+  @keyframes book-rise {
+    from { opacity: 0; transform: translateY(14px) scale(0.985); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .book-x {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: none;
+    border: 0;
+    font-size: 1.9rem;
+    line-height: 1;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  .book-x:hover { color: var(--ink); }
+
+  .book-head { margin-bottom: 22px; }
+  .book-head h2 { margin: 6px 0 0; }
+
+  .book-perks {
+    list-style: none;
+    margin: 0 0 24px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .book-perks li {
+    position: relative;
+    padding: 16px 16px 16px 18px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    border-left: 3px solid var(--rose);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .book-perks strong { font-family: var(--font-display); font-size: 1.02rem; color: var(--ink); }
+  .book-perks span { font-size: 0.86rem; color: var(--muted); line-height: 1.45; }
+
+  @media (max-width: 680px) {
+    .book-perks { grid-template-columns: 1fr; gap: 10px; }
+  }
+</style>
+
+<script>
+  const modal = document.querySelector("[data-book-modal]");
+  if (modal) {
+    const body = document.body;
+    const header = document.querySelector("[data-site-header]");
+    const mobileNav = document.querySelector("[data-mobile-nav]");
+
+    const open = () => {
+      modal.removeAttribute("hidden");
+      modal.setAttribute("data-open", "");
+      modal.setAttribute("aria-hidden", "false");
+      body.style.overflow = "hidden";
+      // If the mobile menu was open, close it behind the modal.
+      mobileNav?.removeAttribute("data-open");
+      mobileNav?.setAttribute("hidden", "");
+      header?.classList.remove("nav-open");
+    };
+    const close = () => {
+      modal.setAttribute("hidden", "");
+      modal.removeAttribute("data-open");
+      modal.setAttribute("aria-hidden", "true");
+      body.style.overflow = "";
+    };
+
+    document.querySelectorAll("[data-book-open]").forEach((btn) =>
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        open();
+      }),
+    );
+    modal.querySelectorAll("[data-book-close]").forEach((btn) =>
+      btn.addEventListener("click", close),
+    );
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.hasAttribute("data-open")) close();
+    });
+  }
+</script>

@@ -14,6 +14,7 @@ import { NAV, SITE } from "../../lib/site-config.js";
 
     <div class="header-cta">
       <a href={SITE.phoneHref} class="header-phone">{SITE.phone}</a>
+      <button type="button" class="btn btn-sm btn-ghost" data-book-open>Book now</button>
       <a href="/owners#estimate" class="btn btn-sm">Free estimate</a>
     </div>
 
@@ -24,6 +25,7 @@ import { NAV, SITE } from "../../lib/site-config.js";
 
   <div class="mobile-nav" data-mobile-nav hidden>
     {NAV.map((item) => <a href={item.href}>{item.label}</a>)}
+    <button type="button" class="btn btn-ghost btn-block" data-book-open>Book a stay</button>
     <a href="/owners#estimate" class="btn btn-block">Get my free estimate</a>
   </div>
 </header>
