@@ -32,12 +32,20 @@ export const COMPANY = {
 // sales@cardorentals.com via Resend once a key is configured).
 export const LEADS_API = "https://yyfckfuzoutmdwconrnm.supabase.co/functions/v1/leads";
 
+// Supabase project — anon key is public by design (RLS restricts access).
+// Used at build time to fetch published blog posts.
+export const SUPABASE = {
+  url: "https://yyfckfuzoutmdwconrnm.supabase.co",
+  anonKey:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl5ZmNrZnV6b3V0bWR3Y29ucm5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE0OTAsImV4cCI6MjA5MzI4NzQ5MH0.pxbBgCYdJmqIunhiZa440W9hBMQHV3m-DASHDqggjg8",
+};
+
 export const NAV = [
   { label: "For Owners", href: "/owners" },
   { label: "Design", href: "/design" },
-  { label: "Results", href: "/#results" },
-  { label: "Book a Stay", href: "/#book" },
+  { label: "Neighborhoods", href: "/neighborhoods" },
   { label: "Blog", href: "/blog" },
+  { label: "Book a Stay", href: "/#book" },
 ];
 
 // Booking engine. The widget composes ?checkin=&checkout=&guests=.
@@ -124,16 +132,58 @@ export const TESTIMONIALS = [
   },
 ];
 
-// Markets we build local SEO / landing pages around.
+// Markets we build local SEO / landing pages around. Each becomes a
+// /neighborhoods/[slug] landing page targeting "[area] vacation rental
+// management" / "Airbnb management [area]".
 export const NEIGHBORHOODS = [
-  { name: "La Jolla", note: "Bluff-top luxury & coastal estates", slug: "la-jolla" },
-  { name: "Pacific Beach", note: "Walkable, high-occupancy favorites", slug: "pacific-beach" },
-  { name: "Mission Beach", note: "Boardwalk & bayfront classics", slug: "mission-beach" },
-  { name: "Del Mar", note: "Racetrack-season premium homes", slug: "del-mar" },
-  { name: "Encinitas", note: "Surf-town charm, strong year-round", slug: "encinitas" },
-  { name: "Carlsbad", note: "Family coastal & North County demand", slug: "carlsbad" },
-  { name: "Coronado", note: "Island prestige & event demand", slug: "coronado" },
-  { name: "Greater San Diego", note: "Countywide coverage & support", slug: "san-diego" },
+  {
+    name: "La Jolla", slug: "la-jolla", note: "Bluff-top luxury & coastal estates",
+    img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811",
+    intro: "La Jolla is San Diego's premier luxury rental market — bluff-top views, walkable village charm, and a guest who pays for an experience.",
+    highlights: ["Premium nightly rates for ocean-view homes", "Year-round demand with no true off-season", "Guests who expect concierge-level hospitality"],
+  },
+  {
+    name: "Pacific Beach", slug: "pacific-beach", note: "Walkable, high-occupancy favorites",
+    img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9",
+    intro: "Pacific Beach is one of San Diego's highest-occupancy markets — young, walkable, and booked for the boardwalk, bars, and beach.",
+    highlights: ["Exceptional occupancy and weekend demand", "Strong appeal to groups and younger travelers", "Steady bookings well beyond peak summer"],
+  },
+  {
+    name: "Mission Beach", slug: "mission-beach", note: "Boardwalk & bayfront classics",
+    img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
+    intro: "Mission Beach is iconic San Diego vacation territory — boardwalk cottages and bayfront homes with its own STRO licensing tier.",
+    highlights: ["Classic, high-demand vacation location", "Bay and ocean access drives premium stays", "We handle the Mission Beach Tier 4 licensing"],
+  },
+  {
+    name: "Del Mar", slug: "del-mar", note: "Racetrack-season premium homes",
+    img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c",
+    intro: "Del Mar blends quiet coastal luxury with surges around the racetrack and fairgrounds — a market that rewards smart seasonal pricing.",
+    highlights: ["Premium rates during racing and event season", "Affluent, design-conscious guests", "Less inventory than the central beaches"],
+  },
+  {
+    name: "Encinitas", slug: "encinitas", note: "Surf-town charm, strong year-round",
+    img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85",
+    intro: "Encinitas is North County's surf-town gem — laid-back, beautiful, and increasingly in demand from travelers seeking the real coastal California.",
+    highlights: ["Strong, steady year-round bookings", "Growing North County demand", "Character homes that photograph beautifully"],
+  },
+  {
+    name: "Carlsbad", slug: "carlsbad", note: "Family coastal & North County demand",
+    img: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9",
+    intro: "Carlsbad draws steady family travel — beaches, the lagoon, and major attractions make it a dependable North County performer.",
+    highlights: ["Reliable family and multi-night stays", "Attraction-driven demand beyond the beach", "Broad appeal across seasons"],
+  },
+  {
+    name: "Coronado", slug: "coronado", note: "Island prestige & event demand",
+    img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750",
+    intro: "Coronado is prestige San Diego — a resort island with limited inventory, event-driven peaks, and guests who pay for the address.",
+    highlights: ["High rates from a prestigious location", "Event and wedding-season demand", "Scarce supply keeps quality homes booked"],
+  },
+  {
+    name: "Greater San Diego", slug: "san-diego", note: "Countywide coverage & support",
+    img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+    intro: "From downtown to the North County coast, we manage homes across San Diego County with the same design-led, transparent approach.",
+    highlights: ["Local expertise in every submarket", "One team for design, marketing & maintenance", "STRO compliance handled countywide"],
+  },
 ];
 
 // FAQ — also rendered as FAQ schema.

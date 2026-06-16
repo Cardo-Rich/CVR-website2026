@@ -1,0 +1,87 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Photo from "../../components/site/Photo.astro";
+import { getPublishedPosts, renderBody, formatDate, readingTime } from "../../lib/blog.js";
+import { SITE } from "../../lib/site-config.js";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const html = renderBody(post.body);
+const grad = post.cover_grad ? post.cover_grad.split(",") : ["#1b3a52", "#2c6e6b"];
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.title,
+  description: post.seo_description || post.excerpt,
+  image: post.cover_image ? `${post.cover_image}?auto=format&fit=crop&w=1200&q=70` : undefined,
+  datePublished: post.published_at,
+  author: { "@type": "Organization", name: post.author || SITE.name },
+  publisher: { "@type": "Organization", name: SITE.name },
+  mainEntityOfPage: new URL(`/blog/${post.slug}`, SITE.url).href,
+};
+---
+
+<Layout
+  title={post.title}
+  description={post.seo_description || post.excerpt}
+  path={`/blog/${post.slug}`}
+  image={post.cover_image ? `${post.cover_image}?auto=format&fit=crop&w=1200&q=70` : undefined}
+  schema={[articleSchema]}
+>
+  <article class="post">
+    <header class="post-head">
+      <div class="container narrow">
+        <a href="/blog" class="post-back">← All articles</a>
+        <h1>{post.title}</h1>
+        <p class="post-meta">
+          {post.author || "Cardo Team"} · {formatDate(post.published_at)} · {readingTime(post.body)} min read
+        </p>
+      </div>
+    </header>
+
+    {post.cover_image && (
+      <div class="container">
+        <Photo class="post-cover" img={post.cover_image} alt={post.title} grad={grad} w={1100} eager={true} />
+      </div>
+    )}
+
+    <div class="container narrow">
+      <div class="prose" set:html={html} />
+
+      {post.tags?.length > 0 && (
+        <div class="post-tags">
+          {post.tags.map((t) => <span class="tag">{t}</span>)}
+        </div>
+      )}
+
+      <div class="post-cta card">
+        <div>
+          <h3>See what your home could earn.</h3>
+          <p class="muted">A free, data-backed revenue estimate for your San Diego property.</p>
+        </div>
+        <a href="/owners#estimate" class="btn btn-lg">Get my free estimate</a>
+      </div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .post-head { padding: clamp(40px, 6vw, 72px) 0 28px; background: linear-gradient(180deg, var(--cream), var(--cream-2)); }
+  .post-back { font-weight: 600; color: var(--rose); font-size: 0.9rem; }
+  .post-head h1 { margin: 18px 0 12px; font-size: clamp(2rem, 4.5vw, 3.2rem); }
+  .post-meta { color: var(--muted); font-size: 0.92rem; margin: 0; }
+
+  .post-cover { aspect-ratio: 16 / 8; margin: 28px auto 8px; box-shadow: var(--shadow-md); }
+
+  .post-tags { display: flex; flex-wrap: wrap; gap: 10px; margin: 36px 0; }
+  .tag { font-size: 0.78rem; font-weight: 600; color: var(--ink-soft); background: var(--cream-2); border: 1px solid var(--line); padding: 6px 13px; border-radius: var(--radius-pill); text-transform: capitalize; }
+
+  .post-cta { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 28px 32px; margin: 8px 0 24px; flex-wrap: wrap; }
+  .post-cta h3 { margin: 0 0 4px; }
+  .post-cta .btn { white-space: nowrap; }
+</style>

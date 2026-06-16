@@ -1,0 +1,205 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Photo from "../../components/site/Photo.astro";
+import LeadForm from "../../components/site/LeadForm.astro";
+import { NEIGHBORHOODS, PILLARS, FAQS, SITE } from "../../lib/site-config.js";
+
+export async function getStaticPaths() {
+  return NEIGHBORHOODS.map((n) => ({ params: { slug: n.slug }, props: { n } }));
+}
+
+const { n } = Astro.props;
+const others = NEIGHBORHOODS.filter((x) => x.slug !== n.slug).slice(0, 4);
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+const areaSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "Vacation rental property management",
+  provider: { "@type": "LodgingBusiness", name: SITE.name },
+  areaServed: { "@type": "Place", name: `${n.name}, San Diego, CA` },
+};
+---
+
+<Layout
+  title={`${n.name} Vacation Rental Management`}
+  description={`${n.intro} Cardo manages ${n.name} short-term rentals — design, marketing, transparent accounting, and care. Get a free revenue estimate.`}
+  path={`/neighborhoods/${n.slug}`}
+  image={`${n.img}?auto=format&fit=crop&w=1200&q=70`}
+  schema={[areaSchema, faqSchema]}
+>
+  <!-- HERO -->
+  <section class="nh-hero">
+    <div class="container nh-hero-inner">
+      <div class="nh-copy" data-reveal>
+        <span class="eyebrow">{n.name} · San Diego</span>
+        <h1>{n.name} vacation rental management.</h1>
+        <p class="lede">{n.intro}</p>
+        <div class="nh-cta">
+          <a href="#estimate" class="btn btn-lg">Get your free estimate</a>
+          <a href="/design" class="btn btn-ghost btn-lg">See our design work</a>
+        </div>
+      </div>
+      <Photo
+        class="nh-photo"
+        img={n.img}
+        alt={`${n.name} luxury vacation rental managed by Cardo`}
+        meta="Managed by Cardo"
+        tag={n.name}
+        grad={["#15324a", "#1f6f6b"]}
+        w={760}
+        eager={true}
+      />
+    </div>
+  </section>
+
+  <!-- WHY THIS MARKET -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow center">Why {n.name} works</span>
+        <h2 class="center">What makes this market earn.</h2>
+      </div>
+      <div class="grid cols-3 nh-highlights">
+        {n.highlights.map((h, i) => (
+          <article class="nh-highlight card" data-reveal>
+            <span class="nh-num">0{i + 1}</span>
+            <p>{h}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT WE DO -->
+  <section class="section surface-cream2">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow center">How we run your {n.name} home</span>
+        <h2 class="center">Full-service, all in-house.</h2>
+      </div>
+      <div class="grid cols-4 nh-pillars">
+        {PILLARS.map((p) => (
+          <article class="nh-pillar" data-reveal>
+            <h3>{p.title}</h3>
+            <p class="muted">{p.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FORM -->
+  <section class="section" id="estimate">
+    <div class="container nh-form-grid">
+      <div data-reveal>
+        <span class="eyebrow">Free property analysis</span>
+        <h2>What could your {n.name} home earn?</h2>
+        <p class="lede">
+          Get a free, data-backed revenue projection built around your {n.name} property —
+          plus exactly how we'd run it. No obligation.
+        </p>
+        <ul class="check-list">
+          <li>Custom projection in 1 business day</li>
+          <li>Transparent, all-in pricing</li>
+          <li>A real local expert — not a chatbot</li>
+        </ul>
+      </div>
+      <div data-reveal><LeadForm /></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section surface-cream2">
+    <div class="container narrow">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow center">Good questions</span>
+        <h2 class="center">The things owners ask first.</h2>
+      </div>
+      <div class="faqs" data-reveal>
+        {FAQS.map((f) => (
+          <details class="faq">
+            <summary>{f.q}<span class="faq-mark" aria-hidden="true">+</span></summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- OTHER NEIGHBORHOODS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <span class="eyebrow center">Nearby</span>
+        <h2 class="center">Other areas we manage.</h2>
+      </div>
+      <div class="grid cols-4 nh-others">
+        {others.map((o) => (
+          <a class="nh-other card" href={`/neighborhoods/${o.slug}`} data-reveal>
+            <strong>{o.name}</strong>
+            <span class="muted">{o.note}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .nh-hero {
+    background:
+      radial-gradient(70% 110% at 90% -10%, rgba(237, 60, 120, 0.08), transparent 55%),
+      linear-gradient(180deg, var(--cream), var(--cream-2));
+    padding: clamp(48px, 7vw, 92px) 0;
+  }
+  .nh-hero-inner { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+  .nh-copy .lede { max-width: 50ch; margin-top: 14px; }
+  .nh-cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
+  .nh-photo { aspect-ratio: 4 / 5; box-shadow: var(--shadow-lg); }
+
+  .section-head { margin-bottom: 44px; }
+
+  .nh-highlight { padding: 28px 26px; }
+  .nh-num { font-family: var(--font-display); font-size: 1.8rem; color: var(--gold); display: block; margin-bottom: 8px; }
+  .nh-highlight p { margin: 0; color: var(--ink-soft); font-size: 1.05rem; }
+
+  .nh-pillar { padding: 4px; }
+  .nh-pillar h3 { font-size: 1.18rem; }
+
+  .nh-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
+  .check-list { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 12px; }
+  .check-list li { position: relative; padding-left: 32px; color: var(--ink-soft); }
+  .check-list li::before {
+    content: "✓"; position: absolute; left: 0; top: 0;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(31, 111, 107, 0.14); color: var(--sea);
+    display: grid; place-items: center; font-size: 0.78rem; font-weight: 700;
+  }
+
+  .faqs { display: flex; flex-direction: column; gap: 12px; }
+  .faq { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 4px 22px; }
+  .faq summary { list-style: none; cursor: pointer; padding: 18px 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: var(--font-display); font-size: 1.1rem; color: var(--ink); }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq-mark { font-family: var(--font-body); font-size: 1.5rem; color: var(--rose); transition: transform 0.2s var(--ease); }
+  .faq[open] .faq-mark { transform: rotate(45deg); }
+  .faq p { margin: 0 0 20px; color: var(--muted); }
+
+  .nh-other { padding: 22px; display: flex; flex-direction: column; gap: 5px; transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease); }
+  .nh-other:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .nh-other strong { font-family: var(--font-display); font-size: 1.2rem; }
+  .nh-other span { font-size: 0.9rem; }
+
+  @media (max-width: 960px) {
+    .nh-hero-inner, .nh-form-grid { grid-template-columns: 1fr; gap: 38px; }
+    .nh-photo { max-width: 440px; }
+  }
+</style>

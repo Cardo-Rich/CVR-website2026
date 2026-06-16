@@ -25,7 +25,7 @@ const year = new Date().getFullYear();
     <div class="footer-col">
       <h4>Neighborhoods</h4>
       <ul>
-        {NEIGHBORHOODS.slice(0, 6).map((n) => <li><a href={`/#neighborhoods`}>{n.name}</a></li>)}
+        {NEIGHBORHOODS.slice(0, 6).map((n) => <li><a href={`/neighborhoods/${n.slug}`}>{n.name}</a></li>)}
       </ul>
     </div>
 

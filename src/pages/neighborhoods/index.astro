@@ -1,0 +1,56 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Photo from "../../components/site/Photo.astro";
+import { NEIGHBORHOODS } from "../../lib/site-config.js";
+---
+
+<Layout
+  title="Neighborhoods We Manage Across San Diego"
+  description="Cardo manages luxury short-term rentals across San Diego — La Jolla, Pacific Beach, Mission Beach, Del Mar, Encinitas, Carlsbad, Coronado and countywide. Local expertise in every market."
+  path="/neighborhoods"
+>
+  <section class="nb-hero">
+    <div class="container center">
+      <span class="eyebrow center">Where we manage</span>
+      <h1>Local experts, coast to coast of the county.</h1>
+      <p class="lede mx-auto">
+        Pricing, permits, and guest expectations change block to block. We know yours —
+        and we run your home like a local who's done it since 2013.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid cols-3 nb-grid">
+        {NEIGHBORHOODS.map((n) => (
+          <a class="nb-card" href={`/neighborhoods/${n.slug}`} data-reveal>
+            <Photo class="nb-photo" img={n.img} alt={`${n.name} vacation rental management`} meta="San Diego" tag={n.name} grad={["#1b3a52", "#2c6e6b"]} w={520} />
+            <div class="nb-card-body">
+              <p class="muted">{n.note}</p>
+              <span class="link-arrow">Explore {n.name} →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm surface-cream2">
+    <div class="container center">
+      <h2>Don't see your street?</h2>
+      <p class="lede mx-auto" style="max-width: 44ch;">We manage homes countywide. Get a free estimate for your specific address.</p>
+      <a href="/owners#estimate" class="btn btn-lg">Get your free estimate</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .nb-hero { background: linear-gradient(180deg, var(--cream), var(--cream-2)); padding: clamp(56px, 8vw, 104px) 0 clamp(36px, 5vw, 56px); }
+  .nb-hero .lede { max-width: 56ch; }
+  .nb-grid { gap: 30px; }
+  .nb-card { display: flex; flex-direction: column; transition: transform 0.18s var(--ease); }
+  .nb-card:hover { transform: translateY(-4px); }
+  .nb-photo { aspect-ratio: 4 / 3; box-shadow: var(--shadow-sm); }
+  .nb-card-body { padding: 16px 4px 4px; display: flex; flex-direction: column; gap: 8px; }
+</style>

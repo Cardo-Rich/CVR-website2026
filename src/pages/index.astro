@@ -289,12 +289,15 @@ const icons = {
       </div>
       <div class="grid cols-4 hoods">
         {NEIGHBORHOODS.map((n) => (
-          <a class="hood card" href="/owners#estimate" data-reveal>
+          <a class="hood card" href={`/neighborhoods/${n.slug}`} data-reveal>
             <strong>{n.name}</strong>
             <span class="muted">{n.note}</span>
             <span class="hood-arrow">→</span>
           </a>
         ))}
+      </div>
+      <div class="center" style="margin-top: 36px;" data-reveal>
+        <a href="/neighborhoods" class="link-arrow">View all neighborhoods →</a>
       </div>
     </div>
   </section>
