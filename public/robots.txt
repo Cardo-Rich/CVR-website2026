@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Keep internal owner tooling out of the index
+Disallow: /portal/
+Disallow: /agreement/
+
+Sitemap: https://www.cardorentals.com/sitemap-index.xml

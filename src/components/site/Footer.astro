@@ -1,0 +1,94 @@
+---
+import { SITE, NAV, NEIGHBORHOODS } from "../../lib/site-config.js";
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <img src="/assets/cardo-logo-horizontal.svg" alt={SITE.name} width="130" height="32" />
+      <p class="muted-light">
+        Design-led luxury vacation rental management across San Diego County.
+        We market like pros, account for every dollar, and never let your home slip.
+      </p>
+      <a href="/owners#estimate" class="btn">Get your free estimate</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        {NAV.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        <li><a href="/owners">List your home</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Neighborhoods</h4>
+      <ul>
+        {NEIGHBORHOODS.slice(0, 6).map((n) => <li><a href={`/#neighborhoods`}>{n.name}</a></li>)}
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Get in touch</h4>
+      <ul>
+        <li><a href={SITE.phoneHref}>{SITE.phone}</a></li>
+        <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+        <li><a href="/portal/agreements">Owner portal</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <span>© {year} {SITE.name}. All rights reserved.</span>
+    <span class="footer-legal">San Diego, CA · STRO compliant management</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--ink);
+    color: rgba(248, 243, 236, 0.78);
+    padding: clamp(56px, 8vw, 88px) 0 32px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    gap: 40px;
+  }
+  .footer-brand img { height: 32px; width: auto; filter: brightness(0) invert(1); margin-bottom: 18px; }
+  .muted-light { color: rgba(248, 243, 236, 0.62); max-width: 34ch; margin-bottom: 22px; }
+
+  .footer-col h4 {
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 6px 0 16px;
+  }
+  .footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
+  .footer-col a { color: rgba(248, 243, 236, 0.72); font-size: 0.95rem; }
+  .footer-col a:hover { color: var(--rose); }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(248, 243, 236, 0.14);
+    font-size: 0.85rem;
+    color: rgba(248, 243, 236, 0.5);
+  }
+
+  @media (max-width: 860px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .footer-brand { grid-column: 1 / -1; }
+  }
+  @media (max-width: 520px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; align-items: flex-start; }
+  }
+</style>
