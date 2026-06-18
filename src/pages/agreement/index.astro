@@ -500,7 +500,11 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
 
     if (data.addendum && data.addendum.trim()) {
       $('#addendumWrap').hidden = false;
-      ($('#addendum') as HTMLTextAreaElement).value = data.addendum;
+      const addendumEl = $('#addendum') as HTMLTextAreaElement;
+      addendumEl.value = data.addendum;
+      addendumEl.style.overflow = 'hidden';
+      addendumEl.style.height = 'auto';
+      addendumEl.style.height = addendumEl.scrollHeight + 'px';
     }
 
     ($('#sigDate') as HTMLInputElement).value = new Date().toLocaleDateString('en-CA');
