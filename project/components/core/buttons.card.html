@@ -1,0 +1,38 @@
+<!-- @dsCard group="Components" viewport="700x230" name="Buttons & Badges" subtitle="Pill buttons, variants, and label chips" -->
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style> body { margin: 0; background: var(--cream); font-family: var(--font-body); padding: 26px; } </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+  const { Button, Badge } = window.CardoDesignSystem_9e0709;
+  const Row = ({children, gap=14, style}) => <div style={{display:"flex",alignItems:"center",gap,flexWrap:"wrap",...style}}>{children}</div>;
+  ReactDOM.createRoot(document.getElementById("root")).render(
+    <div style={{display:"flex",flexDirection:"column",gap:20}}>
+      <Row>
+        <Button variant="primary">Get my estimate</Button>
+        <Button variant="ink">Book a stay</Button>
+        <Button variant="ghost">Learn more</Button>
+        <Button variant="primary" size="sm">Small</Button>
+        <Button variant="primary" iconEnd="→">With icon</Button>
+      </Row>
+      <Row>
+        <Badge tone="rose">Superhost</Badge>
+        <Badge tone="neutral">4 BR</Badge>
+        <Badge tone="gold">Featured</Badge>
+        <Badge tone="sea">Coastal</Badge>
+        <Badge tone="ink">La Jolla</Badge>
+      </Row>
+    </div>
+  );
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!-- @dsCard group="Colors" viewport="700x130" name="Status & Interaction" subtitle="Hover/pressed accents and sparingly-used status colors" -->
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; background: var(--paper); font-family: var(--font-body); }
+  .row { display: flex; gap: 14px; padding: 20px; }
+  .sw { flex: 1; display: flex; flex-direction: column; }
+  .chip { height: 52px; border-radius: 10px; }
+  .name { font-size: 12px; font-weight: 600; color: var(--ink); margin-top: 8px; }
+  .hex { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="sw"><div class="chip" style="background:var(--rose-deep)"></div><div class="name">Rose deep · hover</div><div class="hex">#D12C66</div></div>
+    <div class="sw"><div class="chip" style="background:var(--success)"></div><div class="name">Success</div><div class="hex">#2F8F6B</div></div>
+    <div class="sw"><div class="chip" style="background:var(--warning)"></div><div class="name">Warning</div><div class="hex">#C98A2B</div></div>
+    <div class="sw"><div class="chip" style="background:var(--danger)"></div><div class="name">Danger</div><div class="hex">#C2403C</div></div>
+    <div class="sw"><div class="chip" style="background:var(--info)"></div><div class="name">Info</div><div class="hex">#1F6F6B</div></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!-- @dsCard group="Spacing" viewport="700x150" name="Spacing Scale" subtitle="8px base rhythm, tokens --space-1 through --space-9" -->
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; background: var(--paper); font-family: var(--font-body); padding: 20px 24px; }
+  .row { display: flex; align-items: flex-end; gap: 16px; }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .bar { background: var(--rose); border-radius: 4px; width: 100%; }
+  .box { width: 40px; display: flex; flex-direction: column; align-items: center; }
+  .lbl { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="box"><div class="bar" style="height:8px"></div><div class="lbl">8</div></div>
+    <div class="box"><div class="bar" style="height:12px"></div><div class="lbl">12</div></div>
+    <div class="box"><div class="bar" style="height:16px"></div><div class="lbl">16</div></div>
+    <div class="box"><div class="bar" style="height:24px"></div><div class="lbl">24</div></div>
+    <div class="box"><div class="bar" style="height:32px"></div><div class="lbl">32</div></div>
+    <div class="box"><div class="bar" style="height:48px"></div><div class="lbl">48</div></div>
+    <div class="box"><div class="bar" style="height:64px"></div><div class="lbl">64</div></div>
+    <div class="box"><div class="bar" style="height:96px"></div><div class="lbl">96</div></div>
+  </div>
+</body>
+</html>

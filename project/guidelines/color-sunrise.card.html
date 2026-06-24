@@ -1,0 +1,27 @@
+<!-- @dsCard group="Colors" viewport="700x180" name="Sunrise Gradient" subtitle="Reserved for the logomark and rare hero accents" -->
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; background: var(--paper); font-family: var(--font-body); padding: 20px; }
+  .bar { height: 64px; border-radius: 14px; background: var(--gradient-sunrise); box-shadow: var(--shadow-sm); }
+  .stops { display: flex; gap: 14px; margin-top: 16px; }
+  .stop { flex: 1; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 22px; height: 22px; border-radius: 50%; }
+  .meta { display: flex; flex-direction: column; }
+  .name { font-size: 12px; font-weight: 600; color: var(--ink); }
+  .hex { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+  <div class="bar"></div>
+  <div class="stops">
+    <div class="stop"><span class="dot" style="background:var(--sun-1)"></span><span class="meta"><span class="name">Sun 1</span><span class="hex">#F6C544</span></span></div>
+    <div class="stop"><span class="dot" style="background:var(--sun-2)"></span><span class="meta"><span class="name">Sun 2</span><span class="hex">#F2913C</span></span></div>
+    <div class="stop"><span class="dot" style="background:var(--sun-3)"></span><span class="meta"><span class="name">Sun 3</span><span class="hex">#ED5A5A</span></span></div>
+    <div class="stop"><span class="dot" style="background:var(--sun-4)"></span><span class="meta"><span class="name">Sun 4 · rose</span><span class="hex">#ED3C78</span></span></div>
+  </div>
+</body>
+</html>

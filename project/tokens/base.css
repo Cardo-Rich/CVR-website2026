@@ -1,0 +1,168 @@
+/* =============================================================
+   Cardo — Base elements & signature utilities
+   Ported from the live marketing site. Element defaults +
+   the brand's reusable classes (.btn, .eyebrow, .card, .photo).
+   ============================================================= */
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text-strong);
+  background: var(--surface-page);
+  font-size: var(--root-font-size);
+  line-height: var(--body-line);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  line-height: var(--display-line);
+  letter-spacing: var(--display-tracking);
+  margin: 0 0 0.4em;
+  color: var(--text-strong);
+}
+h1 { font-size: var(--display-1); }
+h2 { font-size: var(--display-2); }
+h3 { font-size: var(--display-3); }
+p { margin: 0 0 1em; }
+
+/* ---------- Layout helpers ---------- */
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+.narrow { max-width: var(--container-narrow); }
+.section { padding: var(--section-pad) 0; }
+.section-sm { padding: var(--section-pad-sm) 0; }
+.center { text-align: center; }
+.mx-auto { margin-inline: auto; }
+.muted { color: var(--text-muted); }
+.lede { font-size: var(--lede); color: var(--text-body); line-height: 1.6; }
+
+/* ---------- Eyebrow / overline ---------- */
+.eyebrow {
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  font-size: var(--eyebrow-size);
+  letter-spacing: var(--eyebrow-tracking);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.eyebrow::before {
+  content: "";
+  width: 26px; height: 1px;
+  background: var(--detail);
+  display: inline-block;
+}
+.eyebrow.center { justify-content: center; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  --btn-bg: var(--accent);
+  --btn-fg: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 16px 28px;
+  border-radius: var(--radius-pill);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+  box-shadow: var(--shadow-accent);
+}
+.btn:hover { transform: translateY(-2px); background: var(--accent-hover); box-shadow: 0 12px 28px rgba(237, 60, 120, 0.34); }
+.btn:active { transform: translateY(0); }
+
+.btn-ink { --btn-bg: var(--ink); box-shadow: 0 8px 22px rgba(16, 34, 52, 0.22); }
+.btn-ink:hover { background: var(--ink-soft); box-shadow: 0 12px 28px rgba(16, 34, 52, 0.28); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  box-shadow: none;
+}
+.btn-ghost:hover { background: rgba(16, 34, 52, 0.04); transform: translateY(-2px); box-shadow: none; }
+
+.btn-ghost-light {
+  background: transparent;
+  color: #fff;
+  border: 1px solid var(--line-light);
+  box-shadow: none;
+}
+.btn-ghost-light:hover { background: rgba(255, 255, 255, 0.12); transform: translateY(-2px); box-shadow: none; }
+
+.btn-lg { padding: 19px 36px; font-size: 1.08rem; }
+.btn-block { width: 100%; }
+
+.link-arrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-weight: var(--weight-semibold); color: var(--ink);
+  border-bottom: 1.5px solid var(--accent);
+  padding-bottom: 2px;
+  transition: gap var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.link-arrow:hover { gap: 14px; color: var(--accent); }
+
+/* ---------- Surfaces ---------- */
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.surface-ink { background: var(--ink); color: var(--cream); }
+.surface-ink h1, .surface-ink h2, .surface-ink h3 { color: #fff; }
+.surface-cream2 { background: var(--cream-2); }
+.surface-paper { background: var(--paper); }
+
+/* ---------- Photo treatment ---------- */
+.photo {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background:
+    radial-gradient(120% 120% at 20% 10%, rgba(255,255,255,0.18), transparent 50%),
+    linear-gradient(135deg, var(--ph-a, #1b3a52), var(--ph-b, #2c6e6b));
+  color: #fff;
+  isolation: isolate;
+}
+.photo img.photo-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.photo::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 35%, rgba(8, 18, 28, 0.66));
+  z-index: 1;
+}
+.photo .photo-tag { position: absolute; left: 18px; bottom: 16px; z-index: 2; font-family: var(--font-display); font-size: 1.15rem; }
+.photo .photo-meta {
+  position: absolute; right: 16px; top: 16px; z-index: 2;
+  font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+  background: rgba(255,255,255,0.16); backdrop-filter: blur(4px);
+  padding: 6px 12px; border-radius: var(--radius-pill);
+}
+
+/* ---------- Grid ---------- */
+.grid { display: grid; gap: 28px; }
+.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .cols-3, .cols-4 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .cols-2, .cols-3, .cols-4 { grid-template-columns: 1fr; } }

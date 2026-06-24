@@ -1,0 +1,46 @@
+/* =============================================================
+   Cardo — Spacing, radii, layout & elevation tokens
+   8px base rhythm. Soft, generous radii. Shadows are low,
+   navy-tinted and diffuse — never harsh black.
+   ============================================================= */
+
+:root {
+  /* ---- Spacing scale (8px base) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 120px;
+
+  /* ---- Section rhythm ---- */
+  --section-pad: clamp(64px, 9vw, 120px);
+  --section-pad-sm: clamp(44px, 6vw, 72px);
+
+  /* ---- Layout widths ---- */
+  --container: 1180px;
+  --container-narrow: 880px;
+  --gutter: 24px;
+
+  /* ---- Radii ---- */
+  --radius-sm: 8px;
+  --radius: 14px;       /* default control radius */
+  --radius-lg: 24px;    /* cards, photos */
+  --radius-pill: 999px; /* buttons, chips */
+
+  /* ---- Elevation (navy-tinted, diffuse) ---- */
+  --shadow-sm: 0 1px 2px rgba(16, 34, 52, 0.06), 0 2px 8px rgba(16, 34, 52, 0.05);
+  --shadow-md: 0 12px 30px rgba(16, 34, 52, 0.10);
+  --shadow-lg: 0 30px 60px rgba(16, 34, 52, 0.16);
+  --shadow-accent: 0 8px 22px rgba(237, 60, 120, 0.28);
+
+  /* ---- Motion ---- */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --dur-fast: 0.18s; /* @kind other */
+  --dur: 0.3s; /* @kind other */
+  --dur-slow: 0.6s; /* @kind other */
+}
