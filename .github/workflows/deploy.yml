@@ -1,10 +1,12 @@
 name: Deploy to Firebase Hosting (live)
 
-# Runs when a PR is merged (i.e. a push lands on main). Builds the Astro
-# site and deploys it to the live Firebase Hosting channel.
+# Runs when a PR is merged (i.e. a push lands on main), or manually via the
+# Actions tab. Builds the Astro site and deploys it to the live Firebase
+# Hosting channel.
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   build_and_deploy:
@@ -20,6 +22,6 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}
           projectId: cardo-website-2026
           channelId: live
