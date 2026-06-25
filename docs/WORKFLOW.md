@@ -56,16 +56,17 @@ npm run dev        # open http://localhost:4321
 - **Claude Code** (this tool) edits the *real* code: `src/pages/`, `src/components/`,
   data, build config, deploys. Use it for new pages, new sections, logic, refactors,
   fixing bugs, anything structural. It opens PRs and runs the dev server for you.
-- **Claude Design** edits the *design system* in `project/` — the tokens, the visual
-  foundations, and prototype "UI kits." Use it to explore a new look, a restyle, a new
-  component's appearance, before committing to code.
+- **Claude Design** edits the *design system* in `.claude/skills/cardo-design/` — the tokens,
+  the visual foundations, and prototype "UI kits." Use it to explore a new look, a restyle, a
+  new component's appearance, before committing to code. Attach this GitHub repo to your Claude
+  Design project so it reads (and updates) the embedded system in place.
 
-**The handoff loop:** Claude Design changes land in `project/` (tokens in
-`project/tokens/*.css`, prototypes in `project/ui_kits/`). To bring those into the live
-site, point Claude Code at the changed design files and ask it to port them into
-`src/styles/tokens/` and the relevant `src/components/`. Because the site's tokens are
-copied verbatim from the design system, a token change is often a near-mechanical sync.
-The `project/SKILL.md` file is written to be loadable by Claude Code as a brand skill.
+**The handoff loop:** Claude Design changes land in `.claude/skills/cardo-design/` (tokens in
+`.claude/skills/cardo-design/tokens/*.css`, prototypes in `.claude/skills/cardo-design/ui_kits/`).
+To bring those into the live site, point Claude Code at the changed design files and ask it to
+port them into `src/styles/tokens/` and the relevant `src/components/`. Because the site's tokens
+are copied verbatim from the design system, a token change is often a near-mechanical sync. The
+`cardo-design` skill auto-loads in Claude Code, so it already knows the brand language.
 
 ## Deploying manually (escape hatch)
 

@@ -48,10 +48,33 @@ src/
     index.astro           # the homepage — composes the sections in order
 public/
   assets/                 # logo lockups + favicons
+.claude/
+  skills/
+    cardo-design/         # the Cardo Design System, embedded as a Claude Code skill
+                          # (tokens, component prototypes, UI kit, assets, brand guide)
+docs/
+  WORKFLOW.md             # local-dev / PR / design-handoff playbook
+  design-handoff/         # original Claude Design transcript + handoff notes (provenance)
 ```
 
-The CSS tokens and `base.css` utilities are ported **verbatim** from the design system, so
-this site is the single source of truth and any future design-system update drops in cleanly.
+The CSS tokens and `base.css` utilities are ported **verbatim** from the embedded design
+system, so this repo is the single source of truth and any future design-system update drops
+in cleanly.
+
+## One codebase: Claude Design + Claude Code
+
+This repo is set up so both tools work against the **same** source:
+
+- **Claude Code** edits the real site (`src/`, build config, deploy) and automatically loads
+  the brand context from the `cardo-design` skill in `.claude/skills/` — so anything it builds
+  is on-brand without re-explaining the design language.
+- **Claude Design** (claude.ai/design) iterates on the design system. Attach **this GitHub
+  repo** to your Claude Design project so it reads the embedded system in
+  `.claude/skills/cardo-design/`; export design updates back into that folder, then have Claude
+  Code port token/component changes into `src/`.
+
+Because the design system lives *inside* the repo, there's one Git source of truth instead of
+two diverging copies. See `docs/WORKFLOW.md` for the day-to-day loop.
 
 ## Design tokens at a glance
 
@@ -78,12 +101,10 @@ this site is the single source of truth and any future design-system update drop
 
 ## Source of truth
 
-This site was generated from the design bundle in `project/` (left in place for reference) and
-the original marketing repo it was derived from:
+- `.claude/skills/cardo-design/readme.md` — the full design-system guide (content fundamentals,
+  visual foundations, iconography, manifest).
+- `docs/design-handoff/` — the original Claude Design handoff notes + conversation transcript,
+  kept for provenance.
 
-- **GitHub:** [`Cardo-Rich/CVR-website2026`](https://github.com/Cardo-Rich/CVR-website2026) —
-  the live design system (`src/styles/global.css`) and marketing copy (`src/lib/site-config.js`).
-- `project/readme.md` — the full design-system guide (content fundamentals, visual foundations,
-  iconography).
-- `HANDOFF.md` — the original Claude Design handoff instructions.
-- `chats/` — the design conversation transcript.
+This repo is a fresh start: it supersedes the earlier contents of
+[`Cardo-Rich/CVR-website2026`](https://github.com/Cardo-Rich/CVR-website2026).
