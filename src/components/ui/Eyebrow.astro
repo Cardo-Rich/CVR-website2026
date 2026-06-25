@@ -1,0 +1,18 @@
+---
+/**
+ * Uppercase overline with a brass rule — the brand's section kicker.
+ * Sits above section headings. Use `light` on dark/photo surfaces so the
+ * label reads cream while the brass rule stays gold.
+ */
+interface Props {
+  center?: boolean;
+  light?: boolean;
+  class?: string;
+}
+const { center = false, light = false, class: className = '' } = Astro.props;
+const classes = ['eyebrow', center ? 'center' : '', className].filter(Boolean).join(' ');
+---
+
+<span class={classes} style={light ? 'color: var(--cream);' : undefined}>
+  <slot />
+</span>

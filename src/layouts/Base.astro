@@ -1,0 +1,37 @@
+---
+import '../styles/styles.css';
+import { company } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = `${company.name} — Luxury STR management, San Diego`,
+  description = "San Diego's design-led vacation rental manager — a 5-star Superhost with 2,000+ reviews. Pro marketing, transparent accounting, and care that never lets your home slip.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/assets/favicon.svg" />
+    <link rel="alternate icon" href="/assets/favicon.png" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style>
+  body {
+    background: var(--cream);
+  }
+</style>

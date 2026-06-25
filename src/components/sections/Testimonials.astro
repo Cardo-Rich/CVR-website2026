@@ -1,0 +1,86 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import { testimonials } from '../../data/site';
+---
+
+<section class="tess">
+  <div class="tess__inner">
+    <div class="section-head">
+      <Eyebrow>Owners on the record</Eyebrow>
+      <h2>Trusted with San Diego's best homes.</h2>
+    </div>
+    <div class="tess__grid">
+      {
+        testimonials.map((t) => (
+          <figure class="tess__card">
+            <div class="tess__stars">★★★★★</div>
+            <blockquote class="tess__quote">"{t.quote}"</blockquote>
+            <figcaption class="tess__cap">
+              <div class="tess__name">{t.name}</div>
+              <div class="tess__home">{t.home}</div>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .tess {
+    padding: clamp(64px, 9vw, 120px) 0;
+  }
+  .tess__inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .tess__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .tess__card {
+    margin: 0;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+  }
+  .tess__stars {
+    color: var(--gold);
+    font-size: 1rem;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+  .tess__quote {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.18rem;
+    line-height: 1.45;
+    color: var(--ink);
+    flex: 1;
+  }
+  .tess__cap {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .tess__name {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .tess__home {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  @media (max-width: 900px) {
+    .tess__grid {
+      grid-template-columns: 1fr;
+      max-width: 560px;
+    }
+  }
+</style>

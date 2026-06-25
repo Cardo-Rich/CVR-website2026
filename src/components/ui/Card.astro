@@ -1,0 +1,32 @@
+---
+/**
+ * White surface card with soft 24px radius and diffuse navy shadow.
+ * `hover` lifts the card ~3px and deepens the shadow on hover.
+ */
+interface Props {
+  padding?: number;
+  hover?: boolean;
+  class?: string;
+  style?: string;
+  [key: string]: any;
+}
+const { padding = 28, hover = false, class: className = '', style = '', ...rest } = Astro.props;
+const inlineStyle = `padding: ${padding}px;${style ? ' ' + style : ''}`;
+---
+
+<div class:list={['card', hover ? 'card--hover' : '', className]} style={inlineStyle} {...rest}>
+  <slot />
+</div>
+
+<style>
+  /* base .card styling lives in base.css; this adds the hover lift */
+  .card {
+    transition:
+      box-shadow var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+  }
+  .card--hover:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+  }
+</style>

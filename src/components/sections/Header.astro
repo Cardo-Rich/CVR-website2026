@@ -1,0 +1,70 @@
+---
+import Button from '../ui/Button.astro';
+import { nav } from '../../data/site';
+---
+
+<header class="site-header" data-header>
+  <div class="site-header__inner">
+    <a href="/" class="site-header__logo" aria-label="Cardo Vacation Rentals — home">
+      <img src="/assets/logo-horizontal-color.png" alt="Cardo Vacation Rentals" />
+    </a>
+    <nav class="site-header__nav">
+      {nav.map((n) => <a href="#">{n}</a>)}
+      <Button variant="primary" size="sm" href="#estimate">Free estimate</Button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s var(--ease);
+  }
+  .site-header.is-scrolled {
+    background: rgba(248, 243, 236, 0.86);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .site-header__inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .site-header__logo img {
+    height: 38px;
+    width: auto;
+  }
+  .site-header__nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+  .site-header__nav > a {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .site-header__nav > a:hover {
+    color: var(--rose);
+  }
+  @media (max-width: 720px) {
+    .site-header__nav > a {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector('[data-header]');
+  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 12);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+</script>

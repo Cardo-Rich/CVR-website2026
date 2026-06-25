@@ -1,0 +1,61 @@
+---
+/**
+ * Cardo pill button — the brand's primary call to action.
+ * Maps to the brand's `.btn` system in base.css.
+ *
+ * Variants: primary (rose, the controlled action color), ink (navy),
+ * ghost (hairline on light), ghost-light (hairline on dark/photo).
+ */
+interface Props {
+  variant?: 'primary' | 'ink' | 'ghost' | 'ghost-light';
+  size?: 'sm' | 'md' | 'lg';
+  block?: boolean;
+  /** Render as an anchor when provided. */
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+  [key: string]: any;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  block = false,
+  href,
+  type = 'button',
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const variantClass: Record<string, string> = {
+  primary: '',
+  ink: 'btn-ink',
+  ghost: 'btn-ghost',
+  'ghost-light': 'btn-ghost-light',
+};
+const sizeClass: Record<string, string> = { sm: 'btn-sm', md: '', lg: 'btn-lg' };
+
+const classes = [
+  'btn',
+  variantClass[variant],
+  sizeClass[size],
+  block ? 'btn-block' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+const Tag = href ? 'a' : 'button';
+---
+
+{
+  href ? (
+    <a class={classes} href={href} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button class={classes} type={type} {...rest}>
+      <slot />
+    </button>
+  )
+}

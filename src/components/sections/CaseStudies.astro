@@ -1,0 +1,124 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import Badge from '../ui/Badge.astro';
+import { cases } from '../../data/site';
+---
+
+<section class="cases surface-cream2">
+  <div class="cases__inner">
+    <div class="section-head">
+      <Eyebrow>Real results</Eyebrow>
+      <h2>Homes that perform above their market.</h2>
+    </div>
+    <div class="cases__grid">
+      {
+        cases.map((c) => (
+          <article class="case">
+            <div class="case__media">
+              <img src={`${c.img}?auto=format&fit=crop&w=900&q=80`} alt={c.home} loading="lazy" />
+              <span class="case__beds">
+                <Badge tone="ink">{c.beds}</Badge>
+              </span>
+            </div>
+            <div class="case__body">
+              <div class="case__hood">{c.neighborhood}</div>
+              <h3 class="case__home">{c.home}</h3>
+              <div class="case__metrics">
+                <div>
+                  <div class="case__gross">{c.gross}</div>
+                  <div class="case__grosslabel">annual gross</div>
+                </div>
+                <span class="case__lift">{c.lift}</span>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .cases {
+    background: var(--cream-2);
+    padding: clamp(64px, 9vw, 120px) 0;
+  }
+  .cases__inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .cases__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .case {
+    background: var(--paper);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+  }
+  .case__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+  }
+  .case__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .case__beds {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+  }
+  .case__body {
+    padding: 24px;
+  }
+  .case__hood {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .case__home {
+    font-size: 1.3rem;
+    margin: 0 0 16px;
+  }
+  .case__metrics {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .case__gross {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .case__grosslabel {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .case__lift {
+    color: var(--sea);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  @media (max-width: 900px) {
+    .cases__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 620px) {
+    .cases__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

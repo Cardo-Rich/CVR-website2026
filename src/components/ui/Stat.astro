@@ -1,0 +1,43 @@
+---
+/**
+ * Headline statistic — large Fraunces number over an uppercase label.
+ * `onDark` switches to light text for ink/dark surfaces.
+ */
+interface Props {
+  value: string;
+  label: string;
+  align?: 'left' | 'center';
+  onDark?: boolean;
+}
+const { value, label, align = 'left', onDark = false } = Astro.props;
+---
+
+<div class:list={['stat', onDark ? 'stat--dark' : '']} style={`text-align: ${align};`}>
+  <div class="stat__value">{value}</div>
+  <div class="stat__label">{label}</div>
+</div>
+
+<style>
+  .stat__value {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2rem, 3.4vw, 2.9rem);
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .stat__label {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .stat--dark .stat__value {
+    color: #fff;
+  }
+  .stat--dark .stat__label {
+    color: rgba(248, 243, 236, 0.7);
+  }
+</style>

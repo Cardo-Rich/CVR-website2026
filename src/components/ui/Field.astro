@@ -1,0 +1,86 @@
+---
+/**
+ * Labeled form control: text input, textarea, or select with a rose focus ring.
+ * Pass `options` for selects (strings or { label, value }).
+ */
+interface Option {
+  label: string;
+  value: string;
+}
+interface Props {
+  label?: string;
+  as?: 'input' | 'textarea' | 'select';
+  id?: string;
+  name?: string;
+  type?: string;
+  placeholder?: string;
+  required?: boolean;
+  value?: string;
+  options?: Array<string | Option>;
+  class?: string;
+  [key: string]: any;
+}
+const {
+  label,
+  as = 'input',
+  id,
+  type = 'text',
+  options = [],
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const fieldId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
+const normOptions: Option[] = options.map((o) =>
+  typeof o === 'string' ? { label: o, value: o } : o,
+);
+---
+
+<div class:list={['field', className]}>
+  {label && <label for={fieldId}>{label}</label>}
+  {
+    as === 'textarea' ? (
+      <textarea id={fieldId} class="field__control" rows="4" {...rest} />
+    ) : as === 'select' ? (
+      <select id={fieldId} class="field__control" {...rest}>
+        {normOptions.map((o) => (
+          <option value={o.value}>{o.label}</option>
+        ))}
+      </select>
+    ) : (
+      <input id={fieldId} class="field__control" type={type} {...rest} />
+    )
+  }
+</div>
+
+<style>
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 16px;
+  }
+  .field label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .field__control {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    padding: 13px 15px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--ink);
+    outline: none;
+    width: 100%;
+    transition:
+      border-color 0.15s var(--ease),
+      box-shadow 0.15s var(--ease);
+  }
+  .field__control:focus {
+    border-color: var(--rose);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+</style>

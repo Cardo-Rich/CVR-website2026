@@ -1,0 +1,94 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import { neighborhoods } from '../../data/site';
+---
+
+<section class="hoods" id="neighborhoods">
+  <div class="hoods__inner">
+    <div class="section-head">
+      <Eyebrow>Where we manage</Eyebrow>
+      <h2>Local experts across coastal San Diego.</h2>
+    </div>
+    <div class="hoods__grid">
+      {
+        neighborhoods.map((h) => (
+          <a class="hood" href="#">
+            <img src={`${h.img}?auto=format&fit=crop&w=800&q=80`} alt={h.name} loading="lazy" />
+            <div class="hood__scrim" />
+            <div class="hood__label">
+              <div class="hood__name">{h.name}</div>
+              <div class="hood__note">{h.note}</div>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .hoods {
+    padding: clamp(64px, 9vw, 120px) 0;
+  }
+  .hoods__inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .hoods__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .hood {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+    display: block;
+    isolation: isolate;
+  }
+  .hood img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s var(--ease);
+  }
+  .hood:hover img {
+    transform: scale(1.06);
+  }
+  .hood__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, transparent 40%, rgba(8, 18, 28, 0.78));
+  }
+  .hood__label {
+    position: absolute;
+    left: 20px;
+    bottom: 18px;
+    z-index: 2;
+    color: #fff;
+  }
+  .hood__name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+  }
+  .hood__note {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.82);
+    margin-top: 2px;
+  }
+  @media (max-width: 900px) {
+    .hoods__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 620px) {
+    .hoods__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

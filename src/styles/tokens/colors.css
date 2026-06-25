@@ -1,0 +1,58 @@
+/* =============================================================
+   Cardo — Color tokens
+   "Luxury coastal, fun without kitschy."
+   Deep ink navy + warm cream + brass, with the Cardo brand rose
+   as the controlled action/accent. Sunrise gradient is reserved
+   for the logomark and rare hero accents.
+   ============================================================= */
+
+:root {
+  /* ---- Brand core ---- */
+  --ink: #102234;          /* primary text + dark surfaces */
+  --ink-soft: #2A3B4D;     /* secondary ink / hover */
+  --ink-70: rgba(16, 34, 52, 0.7);
+  --cream: #F8F3EC;        /* default page background */
+  --cream-2: #F1E9DC;      /* alt section background */
+  --paper: #FFFFFF;        /* cards, inputs */
+
+  --rose: #ED3C78;         /* Cardo brand — the action color */
+  --rose-deep: #D12C66;    /* rose hover / pressed */
+  --gold: #C19A5B;         /* brass detail, dividers, eyebrows */
+  --gold-deep: #A07C3E;
+  --sea: #1F6F6B;          /* secondary accent, coastal teal */
+  --muted: #5C6B78;        /* tertiary text */
+
+  /* ---- Sunrise gradient (logomark + rare hero accents) ---- */
+  --sun-1: #F6C544;        /* gold-yellow ray */
+  --sun-2: #F2913C;        /* orange */
+  --sun-3: #ED5A5A;        /* coral */
+  --sun-4: #ED3C78;        /* rose (meets brand) */
+  --gradient-sunrise: linear-gradient(105deg, var(--sun-1), var(--sun-2) 40%, var(--sun-3) 70%, var(--sun-4));
+
+  /* ---- Lines & strokes ---- */
+  --line: rgba(16, 34, 52, 0.12);
+  --line-strong: rgba(16, 34, 52, 0.22);
+  --line-light: rgba(255, 255, 255, 0.22);
+
+  /* ---- Semantic aliases ---- */
+  --text-strong: var(--ink);
+  --text-body: var(--ink-soft);
+  --text-muted: var(--muted);
+  --text-on-dark: var(--cream);
+
+  --surface-page: var(--cream);
+  --surface-alt: var(--cream-2);
+  --surface-card: var(--paper);
+  --surface-ink: var(--ink);
+
+  --accent: var(--rose);
+  --accent-hover: var(--rose-deep);
+  --accent-soft: rgba(237, 60, 120, 0.14);
+  --detail: var(--gold);
+
+  /* ---- Status (kept on-brand, used sparingly) ---- */
+  --success: #2F8F6B;
+  --warning: #C98A2B;
+  --danger: #C2403C;
+  --info: var(--sea);
+}

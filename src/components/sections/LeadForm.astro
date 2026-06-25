@@ -1,0 +1,139 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import Field from '../ui/Field.astro';
+import Button from '../ui/Button.astro';
+import { leadNeighborhoods } from '../../data/site';
+---
+
+<section class="lead surface-ink" id="estimate">
+  <div class="lead__inner">
+    <div class="lead__copy">
+      <Eyebrow light>No obligation</Eyebrow>
+      <h2 class="lead__title">Get your home's revenue estimate.</h2>
+      <p class="lead__lede">
+        Send your home's details and we'll return a data-backed projection for your San Diego
+        market — typically within one business day.
+      </p>
+    </div>
+
+    <div class="lead__panel">
+      <form class="lead__form" data-lead-form>
+        <div class="lead__row">
+          <Field label="Full name" name="name" placeholder="Jane Owner" required />
+          <Field label="Phone" name="phone" type="tel" placeholder="619-555-0100" />
+        </div>
+        <Field label="Email" name="email" type="email" placeholder="jane@email.com" required />
+        <Field
+          label="Neighborhood"
+          name="neighborhood"
+          as="select"
+          options={leadNeighborhoods}
+        />
+        <Button variant="primary" block type="submit" class="lead__submit">
+          Get my free estimate
+        </Button>
+      </form>
+
+      <div class="lead__success" data-lead-success hidden>
+        <div class="lead__check">
+          <svg
+            width="26"
+            height="26"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--rose)"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <h3>Estimate on the way</h3>
+        <p class="muted">We'll email your projection within one business day.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lead {
+    background: var(--ink);
+    padding: clamp(64px, 9vw, 120px) 0;
+  }
+  .lead__inner {
+    max-width: var(--container-narrow);
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .lead__title {
+    color: #fff;
+    margin: 8px 0 16px;
+  }
+  .lead__lede {
+    color: rgba(248, 243, 236, 0.82);
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+  .lead__panel {
+    background: var(--paper);
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    box-shadow: var(--shadow-lg);
+  }
+  .lead__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .lead__submit {
+    margin-top: 6px;
+  }
+  .lead__success {
+    text-align: center;
+    padding: 30px 10px;
+  }
+  .lead__check {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+  }
+  .lead__success h3 {
+    margin: 0 0 8px;
+  }
+  .lead__success p {
+    margin: 0;
+  }
+  @media (max-width: 820px) {
+    .lead__inner {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+  @media (max-width: 460px) {
+    .lead__row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Client-side mock submit: validate required fields, then swap to a success state.
+  const form = document.querySelector('[data-lead-form]') as HTMLFormElement | null;
+  const success = document.querySelector('[data-lead-success]') as HTMLElement | null;
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    form.hidden = true;
+    if (success) success.hidden = false;
+  });
+</script>

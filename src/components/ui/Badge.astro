@@ -1,0 +1,54 @@
+---
+/**
+ * Pill-shaped label/tag chip for metadata, neighborhoods, statuses.
+ * `tone` sets the color treatment.
+ */
+interface Props {
+  tone?: 'neutral' | 'rose' | 'gold' | 'sea' | 'ink';
+  class?: string;
+}
+const { tone = 'neutral', class: className = '' } = Astro.props;
+---
+
+<span class:list={['badge', `badge-${tone}`, className]}>
+  <slot />
+</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+  }
+  .badge-neutral {
+    background: var(--cream-2);
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+  }
+  .badge-rose {
+    background: var(--accent-soft);
+    color: var(--rose-deep);
+    border: 1px solid transparent;
+  }
+  .badge-gold {
+    background: rgba(193, 154, 91, 0.16);
+    color: var(--gold-deep);
+    border: 1px solid transparent;
+  }
+  .badge-sea {
+    background: rgba(31, 111, 107, 0.14);
+    color: var(--sea);
+    border: 1px solid transparent;
+  }
+  .badge-ink {
+    background: var(--ink);
+    color: #fff;
+    border: 1px solid transparent;
+  }
+</style>

@@ -1,0 +1,158 @@
+---
+import Button from '../ui/Button.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+
+const guestOptions = [1, 2, 3, 4, 5, 6, 8];
+---
+
+<section class="hero">
+  <img
+    class="hero__bg"
+    src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2000&q=80"
+    alt=""
+  />
+  <div class="hero__overlay"></div>
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <Eyebrow light>San Diego · Since 2013</Eyebrow>
+      <h1 class="hero__title">Your home, run like the asset it is.</h1>
+      <p class="hero__lede">
+        San Diego's design-led vacation rental manager — a 5-star Superhost with 2,000+ reviews.
+        Pro marketing, transparent accounting, and care that never lets your home slip.
+      </p>
+      <div class="hero__actions">
+        <Button variant="primary" size="lg" href="#estimate">Get my free estimate</Button>
+        <Button variant="ghost-light" size="lg" href="#pillars">See how it works</Button>
+      </div>
+    </div>
+
+    <form class="booking" aria-label="Check availability">
+      <label class="booking__field">
+        Check in
+        <input type="date" value="2026-07-10" />
+      </label>
+      <label class="booking__field">
+        Check out
+        <input type="date" value="2026-07-15" />
+      </label>
+      <label class="booking__field">
+        Guests
+        <select>
+          {guestOptions.map((n) => <option value={n}>{n} guest{n > 1 ? 's' : ''}</option>)}
+        </select>
+      </label>
+      <button type="submit" class="btn booking__submit">Search</button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      100deg,
+      rgba(16, 34, 52, 0.82) 0%,
+      rgba(16, 34, 52, 0.55) 48%,
+      rgba(16, 34, 52, 0.18) 100%
+    );
+  }
+  .hero__inner {
+    position: relative;
+    z-index: 2;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 120px 24px 64px;
+  }
+  .hero__copy {
+    max-width: 680px;
+  }
+  .hero__title {
+    color: #fff;
+    font-size: clamp(2.6rem, 5.2vw, 4.4rem);
+    margin: 10px 0 18px;
+  }
+  .hero__lede {
+    color: rgba(248, 243, 236, 0.9);
+    font-size: 1.28rem;
+    line-height: 1.55;
+    max-width: 560px;
+    margin-bottom: 30px;
+  }
+  .hero__actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 44px;
+  }
+
+  /* Booking widget */
+  .booking {
+    background: var(--paper);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 10px;
+    align-items: end;
+    max-width: 720px;
+  }
+  .booking__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .booking__field input,
+  .booking__field select {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    padding: 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--ink);
+    width: 100%;
+    outline: none;
+  }
+  .booking__field input:focus,
+  .booking__field select:focus {
+    border-color: var(--rose);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .booking__submit {
+    height: 48px;
+    padding: 0 22px;
+  }
+  @media (max-width: 720px) {
+    .booking {
+      grid-template-columns: 1fr 1fr;
+    }
+    .booking__submit {
+      grid-column: 1 / -1;
+    }
+  }
+</style>
+
+<script>
+  // Marketing mock — the booking search has no live backend.
+  document.querySelector('.booking')?.addEventListener('submit', (e) => e.preventDefault());
+</script>

@@ -1,0 +1,30 @@
+---
+import Stat from '../ui/Stat.astro';
+import { stats } from '../../data/site';
+---
+
+<section class="statsbar surface-ink">
+  <div class="statsbar__inner">
+    {stats.map((s) => <Stat value={s.value} label={s.label} onDark align="center" />)}
+  </div>
+</section>
+
+<style>
+  .statsbar {
+    background: var(--ink);
+  }
+  .statsbar__inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 44px 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  @media (max-width: 620px) {
+    .statsbar__inner {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px 24px;
+    }
+  }
+</style>

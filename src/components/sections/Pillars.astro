@@ -1,0 +1,89 @@
+---
+import Card from '../ui/Card.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+import { pillars } from '../../data/site';
+---
+
+<section class="pillars" id="pillars">
+  <div class="pillars__inner">
+    <div class="section-head">
+      <Eyebrow>Why owners switch to Cardo</Eyebrow>
+      <h2>Four things we do better than anyone in San Diego.</h2>
+    </div>
+    <div class="pillars__grid">
+      {
+        pillars.map((p) => (
+          <Card hover>
+            <div class="pillars__icon">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="var(--rose)"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d={p.icon} />
+              </svg>
+            </div>
+            <h3 class="pillars__title">{p.title}</h3>
+            <p class="muted pillars__body">{p.body}</p>
+          </Card>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .pillars {
+    padding: clamp(64px, 9vw, 120px) 0;
+  }
+  .pillars__inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .section-head {
+    max-width: 620px;
+    margin-bottom: 48px;
+  }
+  .section-head h2 {
+    margin: 8px 0 0;
+  }
+  .pillars__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .pillars__icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .pillars__title {
+    font-size: 1.25rem;
+    margin: 0 0 8px;
+  }
+  .pillars__body {
+    margin: 0;
+    font-size: 0.98rem;
+  }
+  @media (max-width: 900px) {
+    .pillars__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 620px) {
+    .pillars__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,32 @@
+name: Preview deploy (PRs)
+
+# On every PR to main, builds the site and deploys it to a temporary
+# Firebase Hosting preview channel. The action comments the preview URL
+# on the PR so reviewers can see the change live before merging.
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  build_and_preview:
+    # Skip PRs from forks (they can't access the deploy secret).
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: cardo-website-2026
