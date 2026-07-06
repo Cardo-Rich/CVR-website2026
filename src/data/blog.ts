@@ -173,9 +173,9 @@ export const articles: Article[] = [
   {
     slug: 'the-real-cost-of-mystery-fees',
     title: 'The real cost of mystery fees',
-    category: 'Operations',
+    category: 'Accounting',
     excerpt:
-      'How to read a management statement — and the line items that quietly eat your net.',
+      "How to read a management statement — and the line items that quietly eat your net.",
     readTime: '6 min',
     dateFull: 'March 9, 2026',
     dateShort: 'Mar 2026',
@@ -183,19 +183,46 @@ export const articles: Article[] = [
     seo: {
       title: 'The real cost of mystery fees — The Cardo Journal',
       description:
-        'How to read a short-term rental management statement — and the line items that quietly eat your net income.',
+        "How to read a short-term rental management statement — and the line items that quietly eat your net income.",
     },
     author: {
       name: 'The Cardo Team',
       initials: 'CV',
     },
-    heroCaption: 'A clear, itemized statement is the easiest way to tell what a management fee is actually buying.',
+    heroCaption: "A clear, itemized statement is the easiest way to tell what a management fee is actually buying.",
     bodyHtml: `<p class="lede">A management fee is easy to compare. What's harder to compare is everything added back in afterward — and that's usually where the real cost of a partnership lives.</p>
 
         <p>Owners often discover the true cost of management only after reading a full season of statements line by line: cleaning markups, "convenience" charges, and vague line items that never quite get explained.</p>
 
         <h2>What a clean statement looks like</h2>
         <p>We believe owners should be able to read their statement in five minutes and understand every dollar on it. A future post will walk through a real, anonymized Cardo statement line by line.</p>`,
+  },
+  {
+    slug: 'turnovers-that-protect-five-star-reviews',
+    title: 'Turnovers that protect five-star reviews',
+    category: 'Operations',
+    excerpt:
+      "The inspection checklist behind a spotless home — and why it never gets skipped.",
+    readTime: '5 min',
+    dateFull: 'March 2, 2026',
+    dateShort: 'Mar 2026',
+    img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80',
+    seo: {
+      title: 'Turnovers that protect five-star reviews — The Cardo Journal',
+      description:
+        "The inspection checklist behind a spotless short-term rental turnover — and why it never gets skipped.",
+    },
+    author: {
+      name: 'The Cardo Team',
+      initials: 'CV',
+    },
+    heroCaption: "A turnover in progress — the unglamorous work behind every five-star review.",
+    bodyHtml: `<p class="lede">Guests never see the turnover. They only see whether it worked — a spotless kitchen, fresh linens, and a home that feels untouched by the guest before them.</p>
+
+        <p>A five-star review is really a verdict on the two hours between checkout and check-in, when a full inspection checklist gets run against every room, every appliance, and every consumable before the next guest ever arrives.</p>
+
+        <h2>Why the checklist never gets shortened</h2>
+        <p>It's tempting to trim the process on a tight same-day turn, but the reviews that slip are almost always traced back to a step that got skipped under time pressure. We'll be publishing our full turnover standard in a future post.</p>`,
   },
   {
     slug: 'why-del-mars-racing-season-changes-your-pricing',
