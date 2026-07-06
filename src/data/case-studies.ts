@@ -103,7 +103,7 @@ export const caseStudies: CaseStudy[] = [
       "It photographed beautifully, booked solid in its first month, and now runs 44% ahead of its Pacific Beach market.",
     ],
     stats: {
-      annualRevenue: '58,300',
+      annualRevenue: '$158,300',
       avgNight: '$412',
       overMarket: '+44%',
       totalInvested: '$52,100',
@@ -144,7 +144,7 @@ export const caseStudies: CaseStudy[] = [
       "Twain now commands Del Mar's racing-season premium and runs 48% above its market across the year.",
     ],
     stats: {
-      annualRevenue: '92,500',
+      annualRevenue: '$192,500',
       avgNight: '$512',
       overMarket: '+48%',
       totalInvested: '$69,800',
@@ -185,7 +185,7 @@ export const caseStudies: CaseStudy[] = [
       "Guests book it for the location and rate it for the comfort — and it now runs 39% above its Mission Beach market.",
     ],
     stats: {
-      annualRevenue: '28,400',
+      annualRevenue: '$128,400',
       avgNight: '$356',
       overMarket: '+39%',
       totalInvested: '$41,600',
@@ -226,7 +226,7 @@ export const caseStudies: CaseStudy[] = [
       "It has become the feature guests search for, lifting both bookings and rate to 41% above its Encinitas market.",
     ],
     stats: {
-      annualRevenue: '68,300',
+      annualRevenue: '$168,300',
       avgNight: '$447',
       overMarket: '+41%',
       totalInvested: '$58,200',
