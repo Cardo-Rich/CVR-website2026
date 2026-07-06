@@ -1,0 +1,43 @@
+---
+import { homePhotos } from '../../data/home';
+---
+
+<section class="section-pad surface-cream2" id="journal" data-screen-label="San Diego journal">
+  <div class="section-wrap">
+    <div class="section-head reveal" style="max-width:760px">
+      <p class="eyebrow">From the Cardo Journal</p>
+      <h2>Time your stay to the city.</h2>
+      <p class="lede muted">San Diego runs on a calendar locals know by heart. Here's what's worth planning around — we'll get you the tickets and the tables.</p>
+    </div>
+  </div>
+  <div class="jshow reveal">
+    <button class="showcase__nav showcase__nav--prev" type="button" data-journal-prev aria-label="Previous articles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="jshow__track" data-journal-track>
+      <a class="jpost" href="/blog">
+        <div class="jpost__media"><img src="https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?auto=format&fit=crop&w=800&q=80" alt="Summer beach season" loading="lazy" /></div>
+        <div class="jpost__body"><div class="post-meta"><span class="post-cat">Seasonal</span><span>Jun – Aug · 4 min</span></div><h3>Summer beach season</h3><p>The stretch when the marine layer burns off by ten and the water finally warms up. Where to post up — and which sands to skip on weekends.</p><span class="link-arrow">Read →</span></div>
+      </a>
+      <a class="jpost" href="/blog">
+        <div class="jpost__media"><img src={homePhotos['pool']} alt="Del Mar racing season" loading="lazy" /></div>
+        <div class="jpost__body"><div class="post-meta"><span class="post-cat">Events</span><span>Jul – Sep · 3 min</span></div><h3>Del Mar racing season</h3><p>Opening-day hats, the turf club, and how to make a day of the track even if you've never placed a bet.</p><span class="link-arrow">Read →</span></div>
+      </a>
+      <a class="jpost" href="/blog">
+        <div class="jpost__media"><img src="https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=800&q=80" alt="Comic-Con weekend" loading="lazy" /></div>
+        <div class="jpost__body"><div class="post-meta"><span class="post-cat">Events</span><span>July · 5 min</span></div><h3>Comic-Con weekend</h3><p>The city hands downtown over for four days. What's worth the crowds, and how to get around while it's on.</p><span class="link-arrow">Read →</span></div>
+      </a>
+      <a class="jpost" href="/blog">
+        <div class="jpost__media"><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80" alt="San Diego Restaurant Week" loading="lazy" /></div>
+        <div class="jpost__body"><div class="post-meta"><span class="post-cat">Food</span><span>Jan &amp; Sep · 4 min</span></div><h3>SD Restaurant Week</h3><p>Two weeks of prix-fixe menus at tables that are usually booked out. The rooms we'd build a night around.</p><span class="link-arrow">Read →</span></div>
+      </a>
+      <a class="jpost" href="/blog">
+        <div class="jpost__media"><img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80" alt="Eat your way down the coast" loading="lazy" /></div>
+        <div class="jpost__body"><div class="post-meta"><span class="post-cat">Food &amp; drink</span><span>6 min</span></div><h3>Eat your way down the coast</h3><p>Fish tacos in OB, pasta in Little Italy, and the North Park breweries our own team actually frequents.</p><span class="link-arrow">Read →</span></div>
+      </a>
+      <a class="jpost" href="/blog">
+        <div class="jpost__media"><img src="https://images.unsplash.com/photo-1502933691298-84fc14542831?auto=format&fit=crop&w=800&q=80" alt="Catch a morning set" loading="lazy" /></div>
+        <div class="jpost__body"><div class="post-meta"><span class="post-cat">Surf &amp; sand</span><span>5 min</span></div><h3>Catch a morning set</h3><p>Tourmaline and Cardiff Reef for beginners, Black's for the brave. A dawn-patrol guide to the local breaks.</p><span class="link-arrow">Read →</span></div>
+      </a>
+    </div>
+    <button class="showcase__nav showcase__nav--next" type="button" data-journal-next aria-label="More articles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+</section>
