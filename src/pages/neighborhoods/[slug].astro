@@ -1,0 +1,174 @@
+---
+import Base from '../../layouts/Base.astro';
+import MarketingHeader from '../../components/sections/MarketingHeader.astro';
+import Footer from '../../components/sections/Footer.astro';
+import { neighborhoods } from '../../data/neighborhoods';
+
+export function getStaticPaths() {
+  return neighborhoods.map((n, i) => ({
+    params: { slug: n.slug },
+    props: { n, others: [neighborhoods[(i + 1) % neighborhoods.length], neighborhoods[(i + 2) % neighborhoods.length], neighborhoods[(i + 3) % neighborhoods.length]] },
+  }));
+}
+const { n, others } = Astro.props;
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs' },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog' },
+];
+const cta = { label: 'Free estimate', href: '/owners#estimate' };
+
+const cheatIcons = [
+  '<path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4z"/><path d="M6 1v3M10 1v3M14 1v3"/>',
+  '<path d="M3 2v7a3 3 0 003 3v10M6 2v6M9 2v6M9 2v0"/><path d="M17 2c-1.5 0-3 2-3 6s1.5 4 3 4v8"/>',
+  '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+  '<path d="M17 18a5 5 0 00-10 0"/><path d="M12 2v7M4.2 10.2l1.4 1.4M1 18h2M21 18h2M18.4 11.6l1.4-1.4M23 22H1M16 5l-4 4-4-4"/>',
+];
+---
+
+<Base title={n.seo.title} description={n.seo.description}>
+  <MarketingHeader {nav} {cta} />
+
+  <main>
+    <!-- HERO -->
+    <section class="phero" data-screen-label="Hero">
+      <img class="phero__bg" src={n.img} alt={`${n.name}, San Diego`} />
+      <div class="phero__overlay"></div>
+      <div class="phero__inner narrow">
+        <p class="eyebrow">Vacation rental management · {n.name}</p>
+        <h1>{n.name} vacation rental management.</h1>
+        <p>{n.intro}</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <a href="/owners#estimate" class="btn btn-lg">Get my free estimate</a>
+          <a href="tel:+16197195282" class="btn btn-ghost-light btn-lg">Call 619-719-5282</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- MARKET -->
+    <section class="section-pad" data-screen-label="Market">
+      <div class="section-wrap">
+        <div class="section-head reveal" style="max-width:720px">
+          <p class="eyebrow">The {n.name} market</p>
+          <h2>What it takes to win in {n.name}.</h2>
+        </div>
+        <div class="nh-stats reveal" style="max-width:720px;margin-bottom:44px">
+          {n.stats.map((s) => (
+            <div class="nh-stat"><div class="v">{s.v}</div><div class="l">{s.l}</div></div>
+          ))}
+        </div>
+        <div class="nh-body">
+          <div class="reveal">
+            {n.body.map((p) => (
+              <p>{p}</p>
+            ))}
+            <h2 style="font-size:1.4rem;margin:1.2em 0 .6em">Why owners choose Cardo in {n.name}</h2>
+            <ul class="nh-highlights">
+              {n.highlights.map((h) => (
+                <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> {h}</li>
+              ))}
+            </ul>
+          </div>
+          <aside class="nh-aside reveal">
+            <h3>Own a home in {n.name}?</h3>
+            <p>{n.asideText}</p>
+            <a href="/owners#estimate" class="btn btn-block">Get my free estimate</a>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOCAL CHEAT SHEET -->
+    <section class="section-pad" data-screen-label="Local guide">
+      <div class="section-wrap">
+        <div class="section-head reveal" style="max-width:680px">
+          <p class="eyebrow">A local’s {n.name}</p>
+          <h2>Where we’d actually send you.</h2>
+          <p class="lede muted">{n.guide.lede}</p>
+        </div>
+        <div class="cheat">
+          {n.guide.items.map((it, i) => (
+            <div class="cheat__item reveal">
+              <div class="cheat__ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={cheatIcons[i]} /></div>
+              <div>
+                <div class="cheat__k">{it.k}</div>
+                <div class="cheat__v">{it.v}</div>
+                <div class="cheat__d">{it.d}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- OTHER AREAS -->
+    <section class="section-pad surface-cream2" data-screen-label="Other areas">
+      <div class="section-wrap">
+        <div class="section-head reveal"><p class="eyebrow">More San Diego markets</p><h2>Other areas we serve.</h2></div>
+        <div class="nh-index">
+          {others.map((o) => (
+            <a class="nh-card reveal" href={`/neighborhoods/${o.slug}`}>
+              <img src={o.img} alt={o.name} loading="lazy" />
+              <div class="nh-card__scrim"></div>
+              <div class="nh-card__label"><div class="nh-card__name">{o.name}</div><div class="nh-card__note">{o.note}</div></div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" data-screen-label="CTA">
+      <div class="cta__inner reveal">
+        <p class="eyebrow">Local experts, since 2013</p>
+        <h2>See what your {n.name} home could earn.</h2>
+        <p>{n.ctaText}</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
+          <a href="/owners#estimate" class="btn btn-lg">Get my free estimate</a>
+          <a href="/home-designs#case-studies" class="btn btn-ghost-light btn-lg">See our design case studies</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<script>
+  import '../../scripts/reveal.js';
+</script>
+
+<style>
+  .nh-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: 0 0 8px; }
+  .nh-stat { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 22px; box-shadow: var(--shadow-sm); }
+  .nh-stat .v { font-family: var(--font-display); font-weight: 500; font-size: 1.7rem; color: var(--ink); line-height: 1; }
+  .nh-stat .l { font-size: .82rem; color: var(--muted); margin-top: 8px; }
+  .nh-body { display: grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: start; }
+  .nh-body p { font-size: 1.08rem; line-height: 1.7; color: var(--ink-soft); margin: 0 0 1.2em; }
+  .nh-highlights { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .nh-highlights li { display: flex; gap: 12px; align-items: flex-start; color: var(--ink-soft); font-size: 1rem; }
+  .nh-highlights svg { flex: none; margin-top: 3px; }
+  .nh-aside { background: var(--cream-2); border-radius: var(--radius-lg); padding: 28px; position: sticky; top: 90px; }
+  .nh-aside h3 { font-size: 1.2rem; margin: 0 0 8px; }
+  .nh-aside p { font-size: .96rem; color: var(--muted); line-height: 1.55; margin: 0 0 18px; }
+  @media (max-width: 860px) { .nh-body { grid-template-columns: 1fr; gap: 30px; } .nh-aside { position: static; } }
+  .nh-index { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .nh-card { position: relative; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 3/2; display: block; isolation: isolate; }
+  .nh-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease); }
+  .nh-card:hover img { transform: scale(1.06); }
+  .nh-card__scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, transparent 40%, rgba(8,18,28,.8)); }
+  .nh-card__label { position: absolute; left: 20px; bottom: 18px; z-index: 2; color: #fff; }
+  .nh-card__name { font-family: var(--font-display); font-size: 1.5rem; }
+  .nh-card__note { font-size: .85rem; color: rgba(255,255,255,.82); margin-top: 2px; }
+  @media (max-width: 900px) { .nh-index { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 620px) { .nh-index { grid-template-columns: 1fr; } }
+  .cheat { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .cheat__item { display: flex; gap: 15px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 20px 22px; box-shadow: var(--shadow-sm); }
+  .cheat__ic { width: 42px; height: 42px; border-radius: 11px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; flex: none; }
+  .cheat__ic svg { width: 21px; height: 21px; stroke: var(--rose); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .cheat__k { font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .cheat__v { font-weight: 600; color: var(--ink); font-size: 1.02rem; margin-top: 2px; }
+  .cheat__d { font-size: .9rem; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+  @media (max-width: 700px) { .cheat { grid-template-columns: 1fr; } }
+</style>
