@@ -1,0 +1,35 @@
+---
+import { homePhotos } from '../../data/home';
+---
+
+<section class="welcome" data-screen-label="The Cardo welcome">
+  <div class="welcome__inner">
+    <div class="welcome__copy reveal">
+      <p class="eyebrow">The Cardo welcome</p>
+      <h2>You arrive to more than a key code.</h2>
+      <p class="lede">Every Cardo home is set up so your vacation starts the moment you walk in — no grocery run for salt and pepper, no hunting for beach chairs. We stock the things that make a San Diego stay effortless.</p>
+      <ul class="welcome__list">
+        <li><svg width="20" height="20" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Beach chairs, umbrella &amp; sand toys</li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Cruiser bikes at select homes</li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Local coffee &amp; welcome basket</li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Starter kit: coffee, oils, spices</li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Hotel-grade linens &amp; towels</li>
+        <li><svg width="20" height="20" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Curated San Diego guidebook</li>
+      </ul>
+    </div>
+    <div class="welcome__media reveal">
+      <img src={homePhotos['amenities']} alt="A Cardo home set up and ready for guests" loading="lazy" />
+      <div class="welcome__badge"><b>Ready on arrival</b><span>Every stay, every home</span></div>
+    </div>
+  </div>
+  <div class="welcome__promise">
+    <div class="guarantee reveal">
+      <div class="guarantee__seal"><svg viewBox="0 0 24 24"><path d="M12 2l2.4 1.8 3 .1 1 2.8 2.4 1.8-.9 2.9.9 2.9-2.4 1.8-1 2.8-3 .1L12 22l-2.4-1.8-3-.1-1-2.8L3.2 15.5l.9-2.9-.9-2.9 2.4-1.8 1-2.8 3-.1z"/><path d="M8.5 12l2.2 2.2 4.8-4.8" stroke-width="2"/></svg></div>
+      <div>
+        <h3>The Cardo Clean Promise</h3>
+        <p>Arrive to a spotless home, every time. If something needs attention, tell us and we'll have it handled within two hours — or your cleaning fee is on us.</p>
+      </div>
+      <a href="#results" class="btn btn-blackpink">Find your home</a>
+    </div>
+  </div>
+</section>
