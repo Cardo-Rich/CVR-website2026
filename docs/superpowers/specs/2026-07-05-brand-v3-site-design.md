@@ -97,11 +97,21 @@ New typed exports, reconciling existing `cases`/`nav`:
 
 ## CSS strategy
 
-Fold the reference stylesheets into the token layer + per-component `<style>` blocks rather
-than shipping raw `.css` files. Reference load order (styles → site → home-extra → guest →
-additions → v3-overrides) is preserved in effect. `v3-overrides.css` is distributed into the
-home sections it targets. Page-specific sheets (`case-study.css`, `portal.css`) fold into
-their respective templates.
+Port the reference stylesheets into the repo's `src/styles/` layer as real global
+stylesheets rather than shredding them into per-component `<style>` blocks. The reference
+CSS is ~1,000+ lines of proven, page-oriented rules whose global class names the ported JS
+queries directly (`.scard`, `.greviews__track`, `.cphotos`) and which include cross-cutting
+`!important` override layering — keeping it intact as global CSS is faithful and low-regression.
+Section components carry markup only. Concretely:
+
+- `src/styles/site.css` — shared site chrome + section utilities (`.section-pad`,
+  `.section-wrap`, `.section-head`, `.reveal`), ported from the reference `site.css`.
+- `src/styles/home.css` — the home/guest experience: `guest.css` + `home-extra.css` + the
+  home slice of `additions.css` (welcome, nav search, `.pm-*` control), with `v3-overrides.css`
+  folded in last so its retunes win. Imported by the home page only.
+- Reference load order (styles → site → home-extra → guest → additions → v3-overrides) is
+  preserved in effect by import order.
+- Later page-specific sheets (`case-study.css`, `portal.css`) port the same way in their phases.
 
 ## Key interactions (from handoff)
 
