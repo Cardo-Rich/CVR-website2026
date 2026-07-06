@@ -1,0 +1,53 @@
+---
+import { homePhotos } from '../../data/home';
+---
+
+<section class="abshow" data-screen-label="Airbnb listings">
+  <div class="abshow__inner">
+    <div class="abshow__copy reveal">
+      <p class="eyebrow">Proven on Airbnb</p>
+      <h2>Your short-term rental expert in San Diego.</h2>
+      <p class="lede">We have a proven track record of managing properties that earn <b>Guest Favorite</b> and <b>Top 5–10%</b> status among listings worldwide. That status means your home stands out for exceptional quality and service — driving higher visibility, more bookings, and happier guests.</p>
+      <div class="abshow__badges">
+        <span class="abchip"><svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> Guest Favorite homes</span>
+        <span class="abchip"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-deep)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 15.4 6.8 18l1-5.8L3.6 8.1l5.8-.8z"/></svg> Top 5–10% worldwide</span>
+      </div>
+      <a href="#estimate" class="btn btn-lg">Get my free estimate</a>
+    </div>
+    <div class="abshow__phones reveal">
+      <div class="phone phone--side">
+        <span class="phone__notch"></span>
+        <div class="phone__screen">
+          <div class="phone__photo"><img src={homePhotos['living-craftsman']} alt="Modern Retreat listing" loading="lazy" /><span class="phone__count">1 / 34</span></div>
+          <div class="phone__info">
+            <h3 class="phone__title">Modern Retreat | Gym, Pool Table</h3>
+            <p class="phone__meta">Entire home · 8 guests · 4 beds · 2 baths</p>
+            <div class="phone__row"><span class="phone__fav"><svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2C5 2 3 9 3 9s2 7 6 7M21 2c4 0 6 7 6 7s-2 7-6 7"/></svg> Guest favorite</span><span class="phone__rev">34 reviews</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone phone--mid">
+        <span class="phone__notch"></span>
+        <div class="phone__screen">
+          <div class="phone__photo"><img src={homePhotos['living-bright']} alt="Walk to Park listing" loading="lazy" /><span class="phone__count">1 / 28</span></div>
+          <div class="phone__info">
+            <h3 class="phone__title">Walk to Park | Close to Zoo &amp; Downtown</h3>
+            <p class="phone__meta">Entire home · 6 guests · 2 BR · 2 beds</p>
+            <div class="phone__row"><span class="phone__rating"><span class="st">★</span> 4.90</span><span class="phone__fav"><svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2C5 2 3 9 3 9s2 7 6 7M21 2c4 0 6 7 6 7s-2 7-6 7"/></svg> Guest favorite</span><span class="phone__rev">51 reviews</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone phone--side">
+        <span class="phone__notch"></span>
+        <div class="phone__screen">
+          <div class="phone__photo"><img src={homePhotos['living-fireplace']} alt="Cozy Living listing" loading="lazy" /><span class="phone__count">1 / 22</span></div>
+          <div class="phone__info">
+            <h3 class="phone__title">Cozy Living | Steps to Bars &amp; Restaurants</h3>
+            <p class="phone__meta">Entire unit · 4 guests · 2 BR · 3 beds</p>
+            <div class="phone__row"><span class="phone__rating"><span class="st">★</span> 4.95</span><span class="phone__fav"><svg viewBox="0 0 30 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2C5 2 3 9 3 9s2 7 6 7M21 2c4 0 6 7 6 7s-2 7-6 7"/></svg> Guest favorite</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
