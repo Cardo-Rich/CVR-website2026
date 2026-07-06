@@ -1,7 +1,7 @@
 /* =============================================================
    Cardo — Spacing, radii, layout & elevation tokens
-   8px base rhythm. Soft, generous radii. Shadows are low,
-   navy-tinted and diffuse — never harsh black.
+   8px base rhythm. Crisp, restrained radii for a modern-luxury
+   feel. Shadows are low, ink-tinted and diffuse — never harsh black.
    ============================================================= */
 
 :root {
@@ -27,15 +27,15 @@
   --gutter: 24px;
 
   /* ---- Radii ---- */
-  --radius-sm: 8px;
-  --radius: 14px;       /* default control radius */
-  --radius-lg: 24px;    /* cards, photos */
-  --radius-pill: 999px; /* buttons, chips */
+  --radius-sm: 0px;     /* buttons */
+  --radius: 0px;        /* form boxes — inputs, selects */
+  --radius-lg: 0px;     /* cards, photos */
+  --radius-pill: 999px; /* chips, tags, small pills */
 
   /* ---- Elevation (navy-tinted, diffuse) ---- */
-  --shadow-sm: 0 1px 2px rgba(16, 34, 52, 0.06), 0 2px 8px rgba(16, 34, 52, 0.05);
-  --shadow-md: 0 12px 30px rgba(16, 34, 52, 0.10);
-  --shadow-lg: 0 30px 60px rgba(16, 34, 52, 0.16);
+  --shadow-sm: 0 1px 2px rgba(14, 17, 27, 0.06), 0 2px 8px rgba(14, 17, 27, 0.05);
+  --shadow-md: 0 12px 30px rgba(14, 17, 27, 0.10);
+  --shadow-lg: 0 30px 60px rgba(14, 17, 27, 0.16);
   --shadow-accent: 0 8px 22px rgba(237, 60, 120, 0.28);
 
   /* ---- Motion ---- */

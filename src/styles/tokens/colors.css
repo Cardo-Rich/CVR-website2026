@@ -8,17 +8,19 @@
 
 :root {
   /* ---- Brand core ---- */
-  --ink: #102234;          /* primary text + dark surfaces */
-  --ink-soft: #2A3B4D;     /* secondary ink / hover */
-  --ink-70: rgba(16, 34, 52, 0.7);
+  --ink: #0E111B;          /* primary text + dark surfaces */
+  --ink-soft: #232838;     /* secondary ink / hover */
+  --ink-70: rgba(14, 17, 27, 0.7);
   --cream: #F8F3EC;        /* default page background */
   --cream-2: #F1E9DC;      /* alt section background */
   --paper: #FFFFFF;        /* cards, inputs */
 
-  --rose: #ED3C78;         /* Cardo brand — the action color */
+  --rose: #ED3C78;         /* Cardo Pink — the action color */
   --rose-deep: #D12C66;    /* rose hover / pressed */
   --gold: #C19A5B;         /* brass detail, dividers, eyebrows */
   --gold-deep: #A07C3E;
+  --sunset: #F2913C;       /* Golden Sunset — warm secondary */
+  --sunny: #FBD24E;        /* Sunny San Diego — bright secondary */
   --sea: #1F6F6B;          /* secondary accent, coastal teal */
   --muted: #5C6B78;        /* tertiary text */
 
@@ -29,9 +31,16 @@
   --sun-4: #ED3C78;        /* rose (meets brand) */
   --gradient-sunrise: linear-gradient(105deg, var(--sun-1), var(--sun-2) 40%, var(--sun-3) 70%, var(--sun-4));
 
+  /* ---- Signature gradients ---- */
+  /* Accent: Cardo Pink → Sunny San Diego, bottom-left to top-right (45deg).
+     For visual accents, dividers, decorative marks. */
+  --gradient-accent: linear-gradient(45deg, var(--rose) 0%, var(--sunset) 55%, var(--sunny) 100%);
+  /* Gold bar: warm rose→gold→sunny rule, left to right. For thin accent bars. */
+  --gradient-gold: linear-gradient(90deg, var(--rose-deep) 0%, var(--gold) 55%, var(--sunny) 100%);
+
   /* ---- Lines & strokes ---- */
-  --line: rgba(16, 34, 52, 0.12);
-  --line-strong: rgba(16, 34, 52, 0.22);
+  --line: rgba(14, 17, 27, 0.12);
+  --line-strong: rgba(14, 17, 27, 0.22);
   --line-light: rgba(255, 255, 255, 0.22);
 
   /* ---- Semantic aliases ---- */
@@ -40,8 +49,8 @@
   --text-muted: var(--muted);
   --text-on-dark: var(--cream);
 
-  --surface-page: var(--cream);
-  --surface-alt: var(--cream-2);
+  --surface-page: var(--paper);
+  --surface-alt: var(--cream);
   --surface-card: var(--paper);
   --surface-ink: var(--ink);
 
@@ -49,6 +58,7 @@
   --accent-hover: var(--rose-deep);
   --accent-soft: rgba(237, 60, 120, 0.14);
   --detail: var(--gold);
+  --eyebrow: var(--gold);  /* section kickers — gold, so rose stays reserved for callouts */
 
   /* ---- Status (kept on-brand, used sparingly) ---- */
   --success: #2F8F6B;

@@ -1,23 +1,24 @@
 /* =============================================================
    Cardo — Typography tokens
-   Display = Fraunces (serif, 500 weight is the brand default,
+   Display = Cardo (humanist serif; 400 is the brand default,
    tight tracking). Body = Inter. Eyebrows are uppercase Inter
    600 with wide tracking + a brass rule.
    ============================================================= */
 
 :root {
   /* ---- Families ---- */
-  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-display: "Cardo", "Iowan Old Style", Georgia, serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
 
   /* ---- Weights ---- */
   --weight-regular: 400;
-  --weight-medium: 500;   /* display default */
-  --weight-semibold: 600; /* body emphasis, buttons, eyebrows */
+  --weight-medium: 500;   /* body emphasis */
+  --weight-semibold: 600; /* buttons, eyebrows, strong body */
   --weight-bold: 700;
+  --weight-display: 400;  /* Cardo display default */
 
-  /* ---- Display scale (Fraunces) ---- */
+  /* ---- Display scale (Cardo) ---- */
   --display-1: clamp(2.5rem, 6vw, 4.4rem);   /* @kind font */
   --display-2: clamp(2rem, 4vw, 3.1rem);     /* @kind font */
   --display-3: clamp(1.3rem, 2.4vw, 1.7rem); /* @kind font */

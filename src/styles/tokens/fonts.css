@@ -1,9 +1,10 @@
 /* =============================================================
    Cardo — Webfonts
-   Display: Fraunces (optical serif, the brand voice)
+   Display: Cardo (classic humanist serif — the brand namesake,
+            quiet and editorial). Weights 400 / 700 + italic.
    Body:    Inter (clean, legible UI sans)
    Loaded from Google Fonts. If you self-host, replace these
    @import lines with local @font-face rules pointing at woff2.
    ============================================================= */
 
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap");

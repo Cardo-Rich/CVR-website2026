@@ -24,7 +24,7 @@ a { color: inherit; text-decoration: none; }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-display);
   line-height: var(--display-line);
   letter-spacing: var(--display-tracking);
   margin: 0 0 0.4em;
@@ -52,12 +52,23 @@ p { margin: 0 0 1em; }
   font-size: var(--eyebrow-size);
   letter-spacing: var(--eyebrow-tracking);
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--eyebrow);
   margin: 0 0 16px;
   display: inline-flex;
   align-items: center;
   gap: 10px;
 }
+
+/* ---------- Gold gradient bar (accent divider / card top-rule) ---------- */
+.gold-bar {
+  display: block;
+  width: 100%;
+  height: 3px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gradient-gold);
+}
+.accent-fill { background: var(--gradient-accent); }
 .eyebrow::before {
   content: "";
   width: 26px; height: 1px;
@@ -79,7 +90,7 @@ p { margin: 0 0 1em; }
   font-size: 1rem;
   line-height: 1;
   padding: 16px 28px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
   background: var(--btn-bg);
   color: var(--btn-fg);
   border: 1px solid transparent;
@@ -90,8 +101,8 @@ p { margin: 0 0 1em; }
 .btn:hover { transform: translateY(-2px); background: var(--accent-hover); box-shadow: 0 12px 28px rgba(237, 60, 120, 0.34); }
 .btn:active { transform: translateY(0); }
 
-.btn-ink { --btn-bg: var(--ink); box-shadow: 0 8px 22px rgba(16, 34, 52, 0.22); }
-.btn-ink:hover { background: var(--ink-soft); box-shadow: 0 12px 28px rgba(16, 34, 52, 0.28); }
+.btn-ink { --btn-bg: var(--ink); box-shadow: 0 8px 22px rgba(14, 17, 27, 0.22); }
+.btn-ink:hover { background: var(--ink-soft); box-shadow: 0 12px 28px rgba(14, 17, 27, 0.28); }
 
 .btn-ghost {
   background: transparent;
@@ -99,7 +110,7 @@ p { margin: 0 0 1em; }
   border: 1px solid var(--line-strong);
   box-shadow: none;
 }
-.btn-ghost:hover { background: rgba(16, 34, 52, 0.04); transform: translateY(-2px); box-shadow: none; }
+.btn-ghost:hover { background: rgba(14, 17, 27, 0.04); transform: translateY(-2px); box-shadow: none; }
 
 .btn-ghost-light {
   background: transparent;
@@ -111,7 +122,7 @@ p { margin: 0 0 1em; }
 
 .btn-lg { padding: 19px 36px; font-size: 1.08rem; }
 .btn-sm { padding: 11px 20px; font-size: 0.9rem; }
-.btn-block { width: 100%; display: flex; }
+.btn-block { width: 100%; }
 
 .link-arrow {
   display: inline-flex; align-items: center; gap: 8px;
@@ -131,8 +142,26 @@ p { margin: 0 0 1em; }
 }
 .surface-ink { background: var(--ink); color: var(--cream); }
 .surface-ink h1, .surface-ink h2, .surface-ink h3 { color: #fff; }
-.surface-cream2 { background: var(--cream-2); }
+.surface-sand { background: var(--cream); }   /* light-sand accent section */
+.surface-cream2 { background: var(--cream); } /* legacy alias — now light sand */
 .surface-paper { background: var(--paper); }
+
+/* ---------- Full-bleed & motion ---------- */
+/* Break out of any container to span the full viewport width. */
+.bleed { width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); }
+/* Editorial media: clips an inner .photo/img and zooms it slowly on hover. */
+.media { position: relative; overflow: hidden; isolation: isolate; }
+.media > .photo, .media > img { height: 100%; width: 100%; will-change: transform;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .media:hover > .photo, .media:hover > img { transform: scale(1.06); }
+}
+/* Caption that rides on top of a .media, steady while the image zooms. */
+.media-label { position: absolute; left: 28px; bottom: 24px; right: 28px; z-index: 3; color: #fff;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .media:hover .media-label { transform: translateY(-6px); }
+}
 
 /* ---------- Photo treatment ---------- */
 .photo {
