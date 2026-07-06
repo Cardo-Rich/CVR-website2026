@@ -1,28 +1,42 @@
 ---
 import Base from '../layouts/Base.astro';
 import Header from '../components/sections/Header.astro';
-import Hero from '../components/sections/Hero.astro';
-import StatsBar from '../components/sections/StatsBar.astro';
-import Pillars from '../components/sections/Pillars.astro';
-import CaseStudies from '../components/sections/CaseStudies.astro';
-import Neighborhoods from '../components/sections/Neighborhoods.astro';
-import Testimonials from '../components/sections/Testimonials.astro';
-import FAQ from '../components/sections/FAQ.astro';
-import LeadForm from '../components/sections/LeadForm.astro';
 import Footer from '../components/sections/Footer.astro';
+import BookingHero from '../components/home/BookingHero.astro';
+import FeaturedHomes from '../components/home/FeaturedHomes.astro';
+import Locals from '../components/home/Locals.astro';
+import Welcome from '../components/home/Welcome.astro';
+import Concierge from '../components/home/Concierge.astro';
+import ThingsToDo from '../components/home/ThingsToDo.astro';
+import Journal from '../components/home/Journal.astro';
+import OwnerCrossover from '../components/home/OwnerCrossover.astro';
+import GuestPhotos from '../components/home/GuestPhotos.astro';
+import Reviews from '../components/home/Reviews.astro';
+import '../styles/home.css';
 ---
 
-<Base>
+<Base
+  title="Book a San Diego Vacation Rental | Cardo Vacation Rentals"
+  description="Book a luxury San Diego vacation rental with Cardo — keyless check-in, a spotless-home guarantee, 24/7 local concierge, and honest pricing. A 5-star Superhost since 2013."
+>
   <Header />
   <main>
-    <Hero />
-    <StatsBar />
-    <Pillars />
-    <CaseStudies />
-    <Neighborhoods />
-    <Testimonials />
-    <FAQ />
-    <LeadForm />
+    <BookingHero />
+    <FeaturedHomes />
+    <Locals />
+    <Welcome />
+    <Concierge />
+    <ThingsToDo />
+    <Journal />
+    <OwnerCrossover />
+    <GuestPhotos />
+    <Reviews />
   </main>
   <Footer />
 </Base>
+
+<script>
+  document.documentElement.setAttribute('data-h2reveal', 'wipe');
+  import('../scripts/guest.js');
+  import('../scripts/v3-home.js');
+</script>
