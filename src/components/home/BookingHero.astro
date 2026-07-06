@@ -1,0 +1,38 @@
+---
+import { heroPoster } from '../../data/home';
+---
+
+<section class="ghero" data-screen-label="Hero">
+  <video class="ghero__bg" autoplay muted loop playsinline preload="auto" poster={heroPoster}>
+    <source src="/assets/video/san-diego-hero.mp4" type="video/mp4" />
+  </video>
+  <div class="ghero__inner">
+    <div class="ghero__copy">
+      <h1>Vacation in San Diego</h1>
+      <p>Curated vacation homes and thoughtful services to experience living like a local.</p>
+    </div>
+
+    <form class="bookbar bookbar--hero" data-bookbar aria-label="Search rentals">
+      <div class="bookbar__card">
+        <label class="bookbar__field"><span>Where</span>
+          <select aria-label="Neighborhood">
+            <option>Anywhere in San Diego</option><option>La Jolla</option><option>Pacific Beach</option><option>Mission Beach</option><option>Del Mar</option><option>Encinitas</option><option>Carlsbad</option><option>Coronado</option>
+          </select>
+        </label>
+        <label class="bookbar__field"><span>Check in</span><input type="date" value="2026-07-10" aria-label="Check in" /></label>
+        <label class="bookbar__field"><span>Check out</span><input type="date" value="2026-07-15" aria-label="Check out" /></label>
+        <label class="bookbar__field"><span>Guests</span>
+          <select aria-label="Guests"><option>2 guests</option><option>4 guests</option><option>6 guests</option><option>8 guests</option><option>10+ guests</option></select>
+        </label>
+        <button type="submit" class="bookbar__search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg> Search</button>
+      </div>
+    </form>
+
+    <div class="gtrust gtrust--hero">
+      <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 20l-5.2 2.7 1-5.8L3.6 8.1l5.8-.8z"/></svg> <b>4.9</b>&nbsp;· 2,000+ guest reviews</span>
+      <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3z"/></svg> <b>Spotless-home</b>&nbsp;guarantee</span>
+      <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg> <b>Keyless</b>&nbsp;check-in</span>
+      <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1118 0v5a2 2 0 01-2 2h-1v-7h3"/><path d="M3 12v5a2 2 0 002 2h1v-7H3"/></svg> <b>24/7</b>&nbsp;local concierge</span>
+    </div>
+  </div>
+</section>
