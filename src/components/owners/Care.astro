@@ -1,0 +1,70 @@
+---
+import { homePhotos } from '../../data/home';
+---
+
+<!-- ===================== BENEFITS ===================== -->
+<section class="section-pad included--dark" id="care" data-screen-label="Premium care">
+  <div class="section-wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Premium care</p>
+      <h2>What comes standard with Cardo.</h2>
+      <p class="lede muted">A dedicated property manager, white-linen service, luxury amenities, and sub-hour response — the things that protect your home and your time are simply part of the service.</p>
+    </div>
+    <div class="picker picker--media-left reveal" data-picker>
+      <div class="picker__media">
+        <div class="picker__slide is-active"><img src={homePhotos['living-craftsman']} alt="A well-cared-for Cardo home" loading="lazy" /><div class="picker__cap"><div class="k">Everything handled</div><h4>Damage protection</h4></div></div>
+        <div class="picker__slide"><img src={homePhotos['bedroom-floral']} alt="Fresh hotel-grade linens" loading="lazy" /><div class="picker__cap"><div class="k">Everything handled</div><h4>White-linen program</h4></div></div>
+        <div class="picker__slide"><img src={homePhotos['living-bright']} alt="A pristine, freshly cleaned interior" loading="lazy" /><div class="picker__cap"><div class="k">Everything handled</div><h4>In-house cleaning &amp; laundry</h4></div></div>
+        <div class="picker__slide"><img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1100&q=80" alt="A coastal home lit at dusk" loading="lazy" /><div class="picker__cap"><div class="k">Everything handled</div><h4>After-hours support</h4></div></div>
+        <div class="picker__slide"><img src={homePhotos['amenities']} alt="A home kept in immaculate condition" loading="lazy" /><div class="picker__cap"><div class="k">Everything handled</div><h4>Rapid maintenance</h4></div></div>
+        <div class="picker__slide"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1100&q=80" alt="San Diego civic architecture" loading="lazy" /><div class="picker__cap"><div class="k">Everything handled</div><h4>Permits &amp; compliance</h4></div></div>
+        <div class="picker__slide"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1100&q=80" alt="Performance data and pricing trends" loading="lazy" /><div class="picker__cap"><div class="k">Everything handled</div><h4>Data-driven pricing</h4></div></div>
+        <div class="picker__slide"><img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1100&q=80" alt="A portfolio of coastal San Diego homes" loading="lazy" /><div class="picker__cap"><div class="k">Everything handled</div><h4>Built for investors</h4></div></div>
+        <div class="picker__slide"><img src="/assets/photos/team-brandon-rivera.png" alt="Your dedicated Cardo property manager" loading="lazy" /><div class="picker__cap"><div class="k">Everything handled</div><h4>Dedicated property manager</h4></div></div>
+        <div class="picker__slide"><img src={homePhotos['amenities']} alt="Luxury guest amenities, restocked every stay" loading="lazy" /><div class="picker__cap"><div class="k">Everything handled</div><h4>Luxury amenities</h4></div></div>
+      </div>
+      <div class="picker__list">
+        <button type="button" class="picker__item is-active" data-i="0">
+          <div class="picker__head"><span class="picker__ic"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></span><h3>Damage protection</h3><svg class="picker__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="picker__more"><p>Coverage on every stay, so an accident is never your problem to chase down. We handle the claim and the repair, and keep the home guest-ready throughout.</p></div>
+        </button>
+        <button type="button" class="picker__item" data-i="1">
+          <div class="picker__head"><span class="picker__ic"><svg viewBox="0 0 24 24"><path d="M12 2l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 17l9 5 9-5"/></svg></span><h3>White-linen program</h3><svg class="picker__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="picker__more"><p>We supply and launder crisp, hotel-grade linens and towels — so you never buy sheets again, and every guest arrives to a fresh, consistent bed.</p></div>
+        </button>
+        <button type="button" class="picker__item" data-i="2">
+          <div class="picker__head"><span class="picker__ic"><svg viewBox="0 0 24 24"><path d="M12 3s6 6 6 10a6 6 0 01-12 0c0-4 6-10 6-10z"/></svg></span><h3>In-house cleaning &amp; laundry</h3><svg class="picker__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="picker__more"><p>We own the entire cleaning and laundry process rather than subcontracting it — the single most reliable way to hold quality and protect your reviews stay after stay.</p></div>
+        </button>
+        <button type="button" class="picker__item" data-i="3">
+          <div class="picker__head"><span class="picker__ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><h3>After-hours support</h3><svg class="picker__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="picker__more"><p>Real people answer guests at any hour, so a lockout or a question at midnight is met before it becomes a one-star review. Your phone stays quiet.</p></div>
+        </button>
+        <button type="button" class="picker__item" data-i="4">
+          <div class="picker__head"><span class="picker__ic"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg></span><h3>Rapid maintenance</h3><svg class="picker__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="picker__more"><p>Fast response and vetted local vendors mean small problems get fixed before they grow into expensive ones — usually before the next guest ever arrives.</p></div>
+        </button>
+        <button type="button" class="picker__item" data-i="5">
+          <div class="picker__head"><span class="picker__ic"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M9 14l2 2 4-4"/></svg></span><h3>Permits &amp; compliance</h3><svg class="picker__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="picker__more"><p>STRO licensing and transient-occupancy tax filed and kept current on your behalf, so your home stays fully compliant with San Diego's rules without you tracking a single deadline.</p></div>
+        </button>
+        <button type="button" class="picker__item" data-i="6">
+          <div class="picker__head"><span class="picker__ic"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></span><h3>Data-driven pricing</h3><svg class="picker__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="picker__more"><p>Rates tuned to live demand to win the high-value nights and beat the market on occupancy — the same engine that drives the performance you see in our case studies.</p></div>
+        </button>
+        <button type="button" class="picker__item" data-i="7">
+          <div class="picker__head"><span class="picker__ic"><svg viewBox="0 0 24 24"><path d="M3 8h18v11a1 1 0 01-1 1H4a1 1 0 01-1-1V8z"/><path d="M8 8V6a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></span><h3>Built for investors</h3><svg class="picker__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="picker__more"><p>Scaling a portfolio? We help owners underwrite, onboard, and grow new doors across San Diego — one partner as you go from one home to many.</p></div>
+        </button>
+        <button type="button" class="picker__item" data-i="8">
+          <div class="picker__head"><span class="picker__ic"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><h3>Dedicated property manager</h3><svg class="picker__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="picker__more"><p>One named manager who knows your home and your preferences — a single point of contact for you and a familiar face holding the standard on the ground.</p></div>
+        </button>
+        <button type="button" class="picker__item" data-i="9">
+          <div class="picker__head"><span class="picker__ic"><svg viewBox="0 0 24 24"><path d="M6 2l1.5 4h9L18 2"/><path d="M5 6h14l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6z"/></svg></span><h3>Luxury amenities</h3><svg class="picker__chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="picker__more"><p>Hotel-grade toiletries, coffee, and guest essentials curated and restocked every stay, so your home always feels considered — never bare.</p></div>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
