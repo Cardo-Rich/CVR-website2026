@@ -1,0 +1,166 @@
+---
+import Base from '../layouts/Base.astro';
+import MarketingHeader from '../components/sections/MarketingHeader.astro';
+import Footer from '../components/sections/Footer.astro';
+import { articles, categories } from '../data/blog';
+
+const featured = articles.find((a) => a.featured);
+const rest = articles.filter((a) => !a.featured);
+
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs' },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog', active: true },
+];
+const cta = { label: 'Free estimate', href: '/owners#estimate' };
+---
+
+<Base
+  title="The Cardo Journal — Owner insights for San Diego STR"
+  description="Revenue, design, compliance, and neighborhood insight for San Diego vacation rental owners — from the Cardo team."
+>
+  <MarketingHeader {nav} {cta} />
+
+  <main>
+    <!-- TOP -->
+    <section class="blog-top" data-screen-label="Blog header">
+      <div class="section-wrap">
+        <div class="blog-top__head">
+          <p class="eyebrow">The Cardo Journal</p>
+          <h1>Insight for San Diego owners.</h1>
+          <p>Revenue, design, compliance, and neighborhood know-how — the things that actually move what your home earns.</p>
+        </div>
+        <div class="cats">
+          {categories.map((c, i) => (
+            <span class={i === 0 ? 'cat is-active' : 'cat'}>{c}</span>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED -->
+    {featured && (
+      <section class="section-pad-sm" data-screen-label="Featured post" style="padding-top:clamp(32px,5vw,56px)">
+        <div class="section-wrap">
+          <a class="feat reveal" href={`/blog/${featured.slug}`}>
+            <div class="feat__media"><img src={featured.img} alt={featured.title} loading="lazy" /></div>
+            <div class="feat__body">
+              <div class="post-meta"><span class="post-cat">{featured.category}</span><span>{featured.readTime}</span><span>{featured.dateShort}</span></div>
+              <h2>{featured.title}</h2>
+              <p>{featured.excerpt}</p>
+              <span class="link-arrow">Read the analysis →</span>
+            </div>
+          </a>
+        </div>
+      </section>
+    )}
+
+    <!-- POSTS -->
+    <section class="section-pad-sm" data-screen-label="Posts" style="padding-top:0">
+      <div class="section-wrap">
+        <div class="posts">
+          {rest.map((p) => (
+            <a class="post reveal" href={`/blog/${p.slug}`}>
+              <div class="post__media"><img src={p.img} alt={p.title} loading="lazy" /></div>
+              <div class="post__body">
+                <div class="post-meta"><span class="post-cat">{p.category}</span><span>{p.readTime}</span></div>
+                <h3>{p.title}</h3>
+                <p>{p.excerpt}</p>
+                <span class="link-arrow">Read →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN CASE STUDIES (link to Design page) -->
+    <section class="section-pad-sm surface-cream2" data-screen-label="Design case studies">
+      <div class="section-narrow">
+        <div class="cta__inner" style="padding:0;text-align:center">
+          <p class="eyebrow" style="justify-content:center">Design case studies</p>
+          <h2 style="margin:8px 0 14px">See the homes we designed beat their market.</h2>
+          <p class="lede muted" style="margin:0 auto 24px;max-width:560px">Six San Diego homes furnished and styled end to end by Cardo — each with the full story, the scope of work, and what it returned.</p>
+          <a href="/home-designs#case-studies" class="btn btn-lg">Explore the design case studies</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="news" data-screen-label="Newsletter">
+      <div class="news__inner reveal">
+        <div>
+          <p class="eyebrow">Owner notes</p>
+          <h2>San Diego STR insight, monthly.</h2>
+          <p>Pricing trends, design ideas, and compliance updates. No noise — unsubscribe anytime.</p>
+        </div>
+        <form class="news__form" onsubmit="this.querySelector('input').value='Thanks — you're subscribed.';this.querySelector('input').disabled=true;return false;">
+          <input type="email" placeholder="you@email.com" aria-label="Email" required />
+          <button class="btn" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<script>
+  (function () {
+    var cats = document.querySelectorAll('.cat');
+    cats.forEach(function (c) {
+      c.addEventListener('click', function () {
+        cats.forEach(function (x) { x.classList.remove('is-active'); });
+        c.classList.add('is-active');
+      });
+    });
+  })();
+
+  import '../scripts/reveal.js';
+</script>
+
+<style>
+  .blog-top { padding: 128px 0 0; }
+  .blog-top__head { max-width: var(--container-narrow); }
+  .blog-top h1 { font-size: clamp(2.4rem,4.6vw,3.6rem); margin: 12px 0 16px; }
+  .blog-top p { font-size: 1.18rem; color: var(--ink-soft); max-width: 600px; }
+  .cats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+  .cat { font-size: .85rem; font-weight: 600; color: var(--ink-soft); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); padding: 9px 18px; transition: all var(--dur-fast) var(--ease); cursor: pointer; }
+  .cat:hover, .cat.is-active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  /* Featured */
+  .feat { display: grid; grid-template-columns: 1.15fr 1fr; gap: 40px; align-items: center; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+  .feat:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .feat__media { aspect-ratio: 16/11; }
+  .feat__media img { width: 100%; height: 100%; object-fit: cover; }
+  .feat__body { padding: 16px 40px 16px 0; }
+  .feat__body h2 { font-size: clamp(1.6rem,2.6vw,2.2rem); margin: 10px 0 14px; }
+  .feat__body p { color: var(--muted); margin: 0 0 20px; }
+  @media (max-width: 820px) { .feat { grid-template-columns: 1fr; } .feat__media { aspect-ratio: 16/9; } .feat__body { padding: 0 28px 30px; } }
+
+  .post-meta { display: flex; gap: 14px; align-items: center; font-size: .82rem; color: var(--muted); }
+  .post-cat { color: var(--rose); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: .76rem; }
+
+  /* Grid */
+  .posts { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; }
+  .post { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+  .post:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .post__media { aspect-ratio: 16/10; }
+  .post__media img { width: 100%; height: 100%; object-fit: cover; }
+  .post__body { padding: 24px; display: flex; flex-direction: column; flex: 1; }
+  .post__body h3 { font-size: 1.28rem; margin: 10px 0 10px; }
+  .post__body p { color: var(--muted); font-size: .95rem; margin: 0 0 18px; flex: 1; }
+  @media (max-width: 900px) { .posts { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .posts { grid-template-columns: 1fr; } }
+
+  /* Newsletter */
+  .news { background: var(--cream-2); }
+  .news__inner { max-width: var(--container-narrow); margin: 0 auto; padding: clamp(48px,7vw,80px) 24px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; }
+  .news h2 { margin: 8px 0 10px; }
+  .news p { color: var(--muted); margin: 0; }
+  .news__form { display: flex; gap: 10px; }
+  .news__form input { flex: 1; font-family: var(--font-body); font-size: .98rem; padding: 14px 16px; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); background: #fff; outline: none; }
+  .news__form input:focus { border-color: var(--rose); box-shadow: 0 0 0 3px var(--accent-soft); }
+  @media (max-width: 720px) { .news__inner { grid-template-columns: 1fr; gap: 22px; } }
+</style>
