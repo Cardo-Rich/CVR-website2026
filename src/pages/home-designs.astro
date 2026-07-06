@@ -1,0 +1,204 @@
+---
+import Base from '../layouts/Base.astro';
+import MarketingHeader from '../components/sections/MarketingHeader.astro';
+import Footer from '../components/sections/Footer.astro';
+import { homePhotos } from '../data/home';
+
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs', active: true },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog' },
+];
+const cta = { label: 'Start a design consult', href: '#consult' };
+---
+
+<Base
+  title="Home Designs by Cardo — In-house interior design, San Diego"
+  description="Home Designs by Cardo furnishes and styles your San Diego rental end to end — so it photographs beautifully and commands higher nightly rates."
+>
+  <MarketingHeader {nav} {cta} />
+
+  <main>
+    <!-- HERO -->
+    <section class="phero" data-screen-label="Hero">
+      <img class="phero__bg" src={homePhotos['living-craftsman']} alt="A Cardo-styled San Diego living room" />
+      <div class="phero__overlay"></div>
+      <div class="phero__inner">
+        <p class="eyebrow">Home Designs by Cardo</p>
+        <h1>A home styled to earn more.</h1>
+        <p>Our in-house design team furnishes and styles your home end to end — so it photographs beautifully, reviews well, and commands a higher nightly rate. One team, one invoice, photo-ready for launch.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <a href="#consult" class="btn btn-lg">Start a design consult</a>
+          <a href="#process" class="btn btn-ghost-light btn-lg">See the process</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTRO -->
+    <section class="section-pad" data-screen-label="Intro">
+      <div class="section-wrap">
+        <div class="hd-intro__grid">
+          <div class="reveal">
+            <p class="eyebrow">Design that pays for itself</p>
+            <h2>Beautiful is a strategy, not a splurge.</h2>
+            <p class="lede muted">Guests book the photos and rate the experience. A home designed for short-term rental — durable, photogenic, and complete — earns more per night and turns first stays into five-star reviews. We design for the booking and the long run.</p>
+            <p class="muted">Every project is led by a Cardo designer and built to the standards our management team has to live with after launch. Nothing decorative that won't survive a busy season.</p>
+          </div>
+          <div class="hd-stats reveal">
+            <div class="hd-stat"><div class="hd-stat__v">+18%</div><div class="hd-stat__l">avg. nightly rate vs. comparable unstyled homes*</div></div>
+            <div class="hd-stat"><div class="hd-stat__v">2–4 wk</div><div class="hd-stat__l">typical design to photo-ready turnaround</div></div>
+            <div class="hd-stat"><div class="hd-stat__v">1 invoice</div><div class="hd-stat__l">sourcing, freight, install — itemized</div></div>
+            <div class="hd-stat"><div class="hd-stat__v">In-house</div><div class="hd-stat__l">designers, not a third-party referral</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section class="section-pad surface-cream2" id="process" data-screen-label="Process">
+      <div class="section-wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">How a design comes together</p>
+          <h2>Four steps from empty to earning.</h2>
+          <p class="lede muted">Decorating services are available to Cardo-managed homes — so design and management work from the same plan.</p>
+        </div>
+        <div class="proc">
+          <div class="proc__step reveal"><div class="proc__num">01</div><h3>Photo review</h3><p>Send interior photos — an online listing or phone snaps — to sales@cardorentals.com. You'll get a furnishing estimate and decorator's fee by email.</p></div>
+          <div class="proc__step reveal"><div class="proc__num">02</div><h3>Sign &amp; onboard</h3><p>Once you decide, we set up your management and decorating agreements so your home is ready to start.</p></div>
+          <div class="proc__step reveal"><div class="proc__num">03</div><h3>2-hour prep walkthrough</h3><p>Your decorator visits and notes maintenance, deep-cleaning, and junk-removal needs — shared with your Owner Services Manager and trusted vendors.</p></div>
+          <div class="proc__step reveal"><div class="proc__num">04</div><h3>Decorate</h3><p>Paint, handyman work, kitchen kits, furniture and decor — sourced, built, styled, and staged photo-ready for launch.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN CASE STUDIES -->
+    <section class="section-pad" id="case-studies" data-screen-label="Design case studies" style="scroll-margin-top:80px">
+      <div class="section-wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Design case studies</p>
+          <h2>Homes we designed, then ran past their market.</h2>
+          <p class="lede muted">Each of these San Diego homes was furnished and styled end to end by Cardo — then went on to beat its market. Open any one for the full story, the scope of work, and what it returned.</p>
+        </div>
+        <div class="cases__grid">
+          <a class="case reveal" href="/case-studies/falcon">
+            <div class="case__media"><img src={homePhotos['living-craftsman']} alt="Falcon" loading="lazy" /><span class="case__beds">4 BR</span></div>
+            <div class="case__body"><div class="case__hood">La Jolla</div><h3 class="case__home">Falcon</h3><p class="case__hook">An inherited bluff home, fully reimagined and launched in five weeks.</p><div class="case__rev">$214,800 <small>annual revenue</small></div><div class="case__sub">$589 / night · <span class="lift">+57% over market</span></div><span class="case__more">Read the story →</span></div>
+          </a>
+          <a class="case reveal" href="/case-studies/nute">
+            <div class="case__media"><img src={homePhotos['living-bright']} alt="Nute" loading="lazy" /><span class="case__beds">3 BR</span></div>
+            <div class="case__body"><div class="case__hood">Pacific Beach</div><h3 class="case__home">Nute</h3><p class="case__hook">A tired walk-street rental turned light, bright, and fully booked.</p><div class="case__rev">$158,300 <small>annual revenue</small></div><div class="case__sub">$412 / night · <span class="lift">+44% over market</span></div><span class="case__more">Read the story →</span></div>
+          </a>
+          <a class="case reveal" href="/case-studies/twain">
+            <div class="case__media"><img src={homePhotos['dining']} alt="Twain" loading="lazy" /><span class="case__beds">4 BR</span></div>
+            <div class="case__body"><div class="case__hood">Del Mar</div><h3 class="case__home">Twain</h3><p class="case__hook">A craftsman classic styled to own Del Mar's racing season.</p><div class="case__rev">$192,500 <small>annual revenue</small></div><div class="case__sub">$512 / night · <span class="lift">+48% over market</span></div><span class="case__more">Read the story →</span></div>
+          </a>
+          <a class="case reveal" href="/case-studies/sixth">
+            <div class="case__media"><img src={homePhotos['bedroom-floral']} alt="Sixth" loading="lazy" /><span class="case__beds">2 BR</span></div>
+            <div class="case__body"><div class="case__hood">Mission Beach</div><h3 class="case__home">Sixth</h3><p class="case__hook">A compact two-bedroom that punches well above its size.</p><div class="case__rev">$128,400 <small>annual revenue</small></div><div class="case__sub">$356 / night · <span class="lift">+39% over market</span></div><span class="case__more">Read the story →</span></div>
+          </a>
+          <a class="case reveal" href="/case-studies/kane">
+            <div class="case__media"><img src={homePhotos['gameroom']} alt="Kane" loading="lazy" /><span class="case__beds">3 BR</span></div>
+            <div class="case__body"><div class="case__hood">Encinitas</div><h3 class="case__home">Kane</h3><p class="case__hook">A surf-town home with a game room guests book it for.</p><div class="case__rev">$168,300 <small>annual revenue</small></div><div class="case__sub">$447 / night · <span class="lift">+41% over market</span></div><span class="case__more">Read the story →</span></div>
+          </a>
+          <a class="case reveal" href="/case-studies/mt-ainsworth">
+            <div class="case__media"><img src={homePhotos['pool']} alt="Mt Ainsworth" loading="lazy" /><span class="case__beds">5 BR</span></div>
+            <div class="case__body"><div class="case__hood">Coronado</div><h3 class="case__home">Mt Ainsworth</h3><p class="case__hook">A five-bedroom estate with a resort backyard, top of its market.</p><div class="case__rev">$268,900 <small>annual revenue</small></div><div class="case__sub">$694 / night · <span class="lift">+61% over market</span></div><span class="case__more">Read the story →</span></div>
+          </a>
+        </div>
+        <p class="cases__note">Figures reflect recent San Diego performance. Your projection is built from your home's location, size, and finish.</p>
+      </div>
+    </section>
+
+    <!-- INCLUDED -->
+    <section class="section-pad surface-cream2" data-screen-label="Included">
+      <div class="section-wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">What's included</p>
+          <h2>Everything a guest touches, handled.</h2>
+        </div>
+        <div class="incl">
+          <div class="incl__item reveal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg><div><b>Furniture &amp; decor</b><span>Shopped, purchased, shipped, and built — sourced to your style and budget.</span></div></div>
+          <div class="incl__item reveal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg><div><b>Kitchen &amp; bar kit</b><span>Cookware, dishware, and glassware — unboxed and stocked, guest-ready.</span></div></div>
+          <div class="incl__item reveal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg><div><b>Art &amp; electronics</b><span>Decor hung on every wall, cabinets organized, TVs and electronics set up.</span></div></div>
+          <div class="incl__item reveal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg><div><b>Vendor coordination</b><span>Paint, handyman, and contracted work arranged and managed on your behalf.</span></div></div>
+          <div class="incl__item reveal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg><div><b>Staging &amp; photos</b><span>Home staged for the photographer, with progress photos sent throughout.</span></div></div>
+          <div class="incl__item reveal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg><div><b>Receipts &amp; accounting</b><span>Every purchase tracked with accurate accounting against your budget.</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUOTE -->
+    <section class="qband" data-screen-label="Quote">
+      <div class="qband__inner reveal">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Hands down best property management company in San Diego, let alone the United States! I truly could not have done it without them."</blockquote>
+        <cite><b>Sean M.</b>Cardo home owner</cite>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" id="consult" data-screen-label="CTA">
+      <div class="cta__inner reveal">
+        <p class="eyebrow">Start with a walkthrough</p>
+        <h2>Let's design a home that performs.</h2>
+        <p>Tell us about your home and we'll scope a design plan and budget — and how it pairs with full management.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
+          <a href="/owners#estimate" class="btn btn-lg">Start a design consult</a>
+          <a href="tel:+16197195282" class="btn btn-ghost-light btn-lg">Call 619-719-5282</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<script>
+  import '../scripts/reveal.js';
+</script>
+
+<style>
+  /* Intro stats */
+  .hd-intro__grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: center; }
+  .hd-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .hd-stat { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
+  .hd-stat__v { font-family: var(--font-display); font-size: 2.2rem; color: var(--ink); line-height: 1; }
+  .hd-stat__l { font-size: .92rem; color: var(--muted); margin-top: 8px; }
+  @media (max-width: 820px) { .hd-intro__grid { grid-template-columns: 1fr; gap: 32px; } }
+
+  /* Process */
+  .proc { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .proc__step { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-sm); }
+  .proc__num { font-family: var(--font-display); font-size: 1.05rem; color: var(--rose); letter-spacing: .04em; margin-bottom: 14px; }
+  .proc__step h3 { font-size: 1.18rem; margin: 0 0 8px; }
+  .proc__step p { margin: 0; font-size: .96rem; color: var(--muted); }
+  @media (max-width: 900px) { .proc { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .proc { grid-template-columns: 1fr; } }
+
+  /* Included */
+  .incl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .incl__item { display: flex; gap: 14px; align-items: flex-start; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; }
+  .incl__item svg { flex: none; margin-top: 2px; }
+  .incl__item b { display: block; color: var(--ink); margin-bottom: 3px; }
+  .incl__item span { font-size: .92rem; color: var(--muted); }
+  @media (max-width: 820px) { .incl { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 540px) { .incl { grid-template-columns: 1fr; } }
+
+  /* Gallery */
+  .gal { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 200px; gap: 16px; }
+  .gal a { position: relative; border-radius: var(--radius-lg); overflow: hidden; display: block; }
+  .gal img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease); }
+  .gal a:hover img { transform: scale(1.05); }
+  .gal .wide { grid-column: span 2; }
+  .gal .tall { grid-row: span 2; }
+  @media (max-width: 820px) { .gal { grid-template-columns: 1fr 1fr; grid-auto-rows: 170px; } .gal .wide { grid-column: span 2; } .gal .tall { grid-row: span 1; } }
+
+  /* Quote */
+  .qband { background: var(--cream-2); }
+  .qband__inner { max-width: var(--container-narrow); margin: 0 auto; padding: clamp(56px,8vw,96px) 24px; text-align: center; }
+  .qband blockquote { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.1rem); line-height: 1.3; color: var(--ink); margin: 0 0 22px; }
+  .qband .stars { color: var(--gold); letter-spacing: 3px; margin-bottom: 18px; font-size: 1.05rem; }
+  .qband cite { font-style: normal; color: var(--muted); }
+  .qband cite b { color: var(--ink); display: block; }
+</style>
