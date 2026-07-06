@@ -1,0 +1,29 @@
+---
+interface Props {
+  logoHref?: string;
+  nav: { label: string; href: string; active?: boolean }[];
+  cta?: { label: string; href: string };
+}
+const { logoHref = '/', nav, cta } = Astro.props;
+---
+
+<header class="site-header" data-header data-screen-label="Header">
+  <div class="site-header__inner">
+    <a href={logoHref} class="site-header__logo" aria-label="Cardo — home">
+      <img src="/assets/logo-horizontal-color.png" alt="Cardo Vacation Rentals" />
+    </a>
+    <nav class="site-header__nav">
+      {nav.map((n) => (
+        <a href={n.href} class={n.active ? 'is-active' : undefined}>{n.label}</a>
+      ))}
+      {cta && <a href={cta.href} class="btn btn-sm">{cta.label}</a>}
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector('[data-header]');
+  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 12);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+</script>
