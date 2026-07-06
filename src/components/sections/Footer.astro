@@ -1,28 +1,41 @@
 ---
-import { company, footerCols } from '../../data/site';
+import { company } from '../../data/site';
 ---
 
-<footer class="footer">
+<footer class="footer" data-screen-label="Footer">
   <div class="footer__main">
     <div class="footer__brand">
       <img src="/assets/logo-horizontal-white-color.png" alt="Cardo" class="footer__logo" />
       <p>Luxury short-term rental management in San Diego. 5-star Superhost since 2013.</p>
       <a href={`tel:${company.phoneHref}`} class="footer__phone">{company.phone}</a>
     </div>
-    {
-      footerCols.map((c) => (
-        <div class="footer__col">
-          <div class="footer__h">{c.h}</div>
-          <ul>
-            {c.links.map((l) => (
-              <li>
-                <a href="#">{l}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))
-    }
+    <div class="footer__col">
+      <div class="footer__h">Guests</div>
+      <ul>
+        <li><a href="/">Find a rental</a></li>
+        <li><a href="/#results">The Cardo stay</a></li>
+        <li><a href="/neighborhoods">Neighborhoods</a></li>
+        <li><a href="/#results">Guest support</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <div class="footer__h">Markets</div>
+      <ul>
+        <li><a href="/neighborhoods/la-jolla">La Jolla</a></li>
+        <li><a href="/neighborhoods/pacific-beach">Pacific Beach</a></li>
+        <li><a href="/neighborhoods/del-mar">Del Mar</a></li>
+        <li><a href="/neighborhoods/coronado">Coronado</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <div class="footer__h">Owners</div>
+      <ul>
+        <li><a href="/owners">For owners</a></li>
+        <li><a href="/home-designs">Home Designs by Cardo</a></li>
+        <li><a href="/owners#estimate">Free estimate</a></li>
+        <li><a href="/portal">Owner login</a></li>
+      </ul>
+    </div>
   </div>
   <div class="footer__bar">
     <div class="footer__barinner">
@@ -31,81 +44,3 @@ import { company, footerCols } from '../../data/site';
     </div>
   </div>
 </footer>
-
-<style>
-  .footer {
-    background: #0b1825;
-    color: rgba(248, 243, 236, 0.7);
-  }
-  .footer__main {
-    max-width: var(--container);
-    margin: 0 auto;
-    padding: 64px 24px 40px;
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1fr;
-    gap: 40px;
-  }
-  .footer__logo {
-    height: 40px;
-    width: auto;
-    margin-bottom: 18px;
-  }
-  .footer__brand p {
-    font-size: 0.92rem;
-    line-height: 1.6;
-    max-width: 260px;
-  }
-  .footer__phone {
-    color: #fff;
-    font-weight: 600;
-    font-size: 1.1rem;
-    display: inline-block;
-    margin-top: 10px;
-  }
-  .footer__h {
-    font-size: 0.78rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 16px;
-  }
-  .footer__col ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .footer__col a {
-    font-size: 0.92rem;
-    color: rgba(248, 243, 236, 0.7);
-    transition: color var(--dur-fast) var(--ease);
-  }
-  .footer__col a:hover {
-    color: #fff;
-  }
-  .footer__bar {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  .footer__barinner {
-    max-width: var(--container);
-    margin: 0 auto;
-    padding: 20px 24px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.82rem;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  @media (max-width: 820px) {
-    .footer__main {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  @media (max-width: 520px) {
-    .footer__main {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
