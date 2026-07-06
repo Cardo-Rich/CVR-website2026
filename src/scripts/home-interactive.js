@@ -69,14 +69,14 @@
   (function () {
     var modal = document.querySelector('[data-cmodal]');
     if (!modal) return;
-    var LIVING_CRAFTSMAN = 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=80';
-    var LIVING_BRIGHT = 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=80';
-    var DINING = 'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=900&q=80';
-    var BEDROOM_FLORAL = 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80';
-    var GAMEROOM = 'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=900&q=80';
-    var POOL = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=900&q=80';
-    var AMENITIES = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80';
-    var LIVING_FIREPLACE = 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=80';
+    var LIVING_CRAFTSMAN = '/assets/photos/designs-living-craftsman.jpg';
+    var LIVING_BRIGHT = '/assets/photos/designs-living-bright.jpg';
+    var DINING = '/assets/photos/designs-dining.jpg';
+    var BEDROOM_FLORAL = '/assets/photos/designs-bedroom-floral.jpg';
+    var GAMEROOM = '/assets/photos/designs-gameroom.jpg';
+    var POOL = '/assets/photos/designs-pool.jpg';
+    var AMENITIES = '/assets/photos/designs-amenities.jpg';
+    var LIVING_FIREPLACE = '/assets/photos/designs-living-fireplace.jpg';
     var BEDROOM_FAN = BEDROOM_FLORAL; // no dedicated homePhotos entry; reuse bedroom-floral
     var DATA = {
       'falcon': { hood: 'La Jolla', beds: '4 BR', rev: '$214,800', rate: '$589', lift: '+57%',
