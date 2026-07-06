@@ -1,0 +1,239 @@
+---
+import Base from '../../layouts/Base.astro';
+import MarketingHeader from '../../components/sections/MarketingHeader.astro';
+import Footer from '../../components/sections/Footer.astro';
+import { caseStudies } from '../../data/case-studies';
+
+export function getStaticPaths() {
+  return caseStudies.map((c, i) => ({
+    params: { slug: c.slug },
+    props: { c, related: [caseStudies[(i+1)%caseStudies.length], caseStudies[(i+2)%caseStudies.length], caseStudies[(i+3)%caseStudies.length]] },
+  }));
+}
+const { c, related } = Astro.props;
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs' },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog' },
+];
+const cta = { label: 'Free estimate', href: '/owners#estimate' };
+---
+
+<Base title={c.seo.title} description={c.seo.description}>
+  <MarketingHeader {nav} {cta} />
+
+  <main>
+    <article data-screen-label={`Case study: ${c.name}`}>
+      <div class="cspost-head reveal">
+        <a href="/home-designs#case-studies" class="back">← Design case studies</a>
+        <div class="post-cat">Design case study</div>
+        <h1>{c.name}</h1>
+        <p class="hook">{c.hook}</p>
+        <div class="cspost-meta"><span>{c.neighborhood}</span><span class="dot"></span><span>{c.beds}</span><span class="dot"></span><span>{c.date}</span></div>
+      </div>
+
+      <div class="cspost-gallery reveal">
+        <div class="cspost-gallery__grid">
+          {c.gallery.map((src) => (
+            <a href="#"><img src={src} alt={c.name} loading="lazy" /></a>
+          ))}
+        </div>
+      </div>
+
+      <div class="cspost-body">
+        <div class="cspost-story reveal">
+          {c.story.map((p) => (
+            <p>{p}</p>
+          ))}
+        </div>
+        <aside class="cspost-panel reveal">
+          <div class="cspost-stats">
+            <div class="cspost-stat is-hero"><div class="v">{c.stats.annualRevenue}</div><div class="l">Annual revenue</div></div>
+            <div class="cspost-stat"><div class="v">{c.stats.avgNight}</div><div class="l">Avg / night</div></div>
+            <div class="cspost-stat is-lift"><div class="v">{c.stats.overMarket}</div><div class="l">Over market</div></div>
+            <div class="cspost-stat"><div class="v">{c.stats.totalInvested}</div><div class="l">Total invested</div></div>
+          </div>
+          <div class="cspost-scope">
+            <h3>Scope of work</h3>
+            {c.scope.map((s) => (
+              <div class="cspost-line"><span>{s.label}</span><b>{s.amount}</b></div>
+            ))}
+            <div class="cspost-total"><span>Total invested</span><b>{c.scopeTotal}</b></div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="cspost-cta reveal">
+        <div class="cspost-contact" id="contact">
+          <div class="cspost-contact__copy">
+            <p class="eyebrow">Start with your home</p>
+            <h3>{c.contactTitle}</h3>
+            <p>Tell us about your home and we'll come back with a design plan and a data-backed revenue projection — usually within one business day. No obligation.</p>
+            <ul class="cspost-contact__list">
+              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> Design, furnishing &amp; management under one roof</li>
+              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> A genuinely hands-off owner experience</li>
+              <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> 5-star Superhost since 2013 · 619-719-5282</li>
+            </ul>
+          </div>
+          <div class="cspost-form">
+            <form data-cs-form>
+              <button type="button" class="gbtn" data-cs-google><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Continue with Google</button>
+              <div class="cspost-form__or">or send your details</div>
+              <div class="cspost-form__row">
+                <div class="field"><label>Full name</label><input name="name" placeholder="Jane Owner" required /></div>
+                <div class="field"><label>Phone</label><input name="phone" type="tel" placeholder="619-555-0100" /></div>
+              </div>
+              <div class="field"><label>Email</label><input name="email" type="email" placeholder="jane@email.com" required /></div>
+              <div class="field"><label>Your home's neighborhood</label>
+                <select name="neighborhood"><option>La Jolla</option><option>Pacific Beach</option><option>Mission Beach</option><option>Del Mar</option><option>Encinitas</option><option>Carlsbad</option><option>Coronado</option><option>Other San Diego</option></select>
+              </div>
+              <div class="field"><label>Anything we should know? <span style="color:var(--muted);font-weight:400">(optional)</span></label><textarea name="message" placeholder="Tell us a bit about your home…"></textarea></div>
+              <button type="submit" class="btn btn-block" style="margin-top:4px">Get my free estimate</button>
+            </form>
+            <div class="cspost-form__success" data-cs-success hidden>
+              <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+              <h3 style="margin:0 0 8px">Your owner account is ready</h3>
+              <p class="muted" style="margin:0 0 16px">We're preparing your estimate now — track it, your agreement, and onboarding from your Cardo owner portal.</p>
+              <a href="/portal" class="btn btn-block">Go to my owner portal</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <section class="related" data-screen-label="More case studies">
+      <div class="related__inner">
+        <div class="section-head" style="margin-bottom:0">
+          <p class="eyebrow">More case studies</p>
+          <h2>Other homes, other markets.</h2>
+        </div>
+        <div class="related__grid">
+          {related.map((r) => (
+            <a class="rpost" href={`/case-studies/${r.slug}`}>
+              <img src={r.cardImg} alt={r.name} loading="lazy" />
+              <div class="rpost__b">
+                <span class="rpost__cat">Case study · {r.neighborhood}</span>
+                <h4>{r.name}</h4>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<script>
+  import '../../scripts/reveal.js';
+
+  (function () {
+    var f = document.querySelector('[data-cs-form]');
+    var s = document.querySelector('[data-cs-success]');
+    function done() {
+      if (f) f.hidden = true;
+      if (s) s.hidden = false;
+    }
+    f && f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!f.reportValidity()) return;
+      done();
+    });
+    var g = document.querySelector('[data-cs-google]');
+    g && g.addEventListener('click', done);
+  })();
+</script>
+
+<style>
+  /* case-study.css — shared styles for individual case-study blog posts.
+     Loaded after styles/styles.css + styles/site.css. */
+
+  /* Head */
+  .cspost-head { max-width: var(--container-narrow); margin: 0 auto; padding: 124px 24px 0; }
+  .cspost-head .back { display: inline-block; font-size: .9rem; color: var(--muted); margin-bottom: 18px; }
+  .cspost-head .back:hover { color: var(--rose); }
+  .cspost-head .post-cat { color: var(--rose); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; font-size: .78rem; }
+  .cspost-head h1 { font-size: clamp(2.2rem, 4.4vw, 3.4rem); margin: 12px 0 16px; }
+  .cspost-head .hook { font-size: 1.3rem; line-height: 1.45; color: var(--ink-soft); font-family: var(--font-display); font-weight: 400; margin: 0 0 22px; }
+  .cspost-meta { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: .85rem; color: var(--muted); }
+  .cspost-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--line-strong); }
+
+  /* Gallery */
+  .cspost-gallery { max-width: var(--container); margin: 36px auto 0; padding: 0 24px; }
+  .cspost-gallery__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .cspost-gallery__grid a { border-radius: var(--radius-lg); overflow: hidden; display: block; }
+  .cspost-gallery__grid img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease); }
+  .cspost-gallery__grid a:hover img { transform: scale(1.05); }
+  .cspost-gallery__grid > a:first-child { grid-column: 1 / -1; aspect-ratio: 16 / 6.5; }
+  .cspost-gallery__grid > a:not(:first-child) { aspect-ratio: 4 / 3; }
+  @media (max-width: 620px) { .cspost-gallery__grid { grid-template-columns: 1fr 1fr; } .cspost-gallery__grid > a:first-child { aspect-ratio: 16/10; } }
+
+  /* Body: story + panel */
+  .cspost-body { max-width: var(--container); margin: 0 auto; padding: clamp(40px, 6vw, 64px) 24px clamp(40px, 6vw, 64px); display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: start; }
+  .cspost-story p { font-size: 1.12rem; line-height: 1.72; color: var(--ink-soft); margin: 0 0 1.3em; }
+  .cspost-story p:first-child { font-size: 1.26rem; line-height: 1.55; color: var(--ink); }
+  .cspost-story h2 { font-size: 1.5rem; margin: 1.2em 0 .5em; }
+  .cspost-story a.inline { color: var(--rose); border-bottom: 1px solid var(--accent-soft); }
+  @media (max-width: 860px) { .cspost-body { grid-template-columns: 1fr; gap: 32px; } }
+
+  /* Panel (stats + scope table) */
+  .cspost-panel { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 26px; position: sticky; top: 90px; }
+  .cspost-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+  .cspost-stat { background: var(--cream); border-radius: var(--radius); padding: 16px; }
+  .cspost-stat.is-hero { grid-column: 1 / -1; background: var(--ink); }
+  .cspost-stat.is-hero .v { color: #fff; font-size: 2.3rem; }
+  .cspost-stat.is-hero .l { color: rgba(248,243,236,.62); }
+  .cspost-stat.is-spend { background: var(--ink); }
+  .cspost-stat .v { font-family: var(--font-display); font-weight: 500; font-size: 1.5rem; color: var(--ink); line-height: 1; }
+  .cspost-stat .l { font-size: .76rem; letter-spacing: .04em; color: var(--muted); margin-top: 6px; text-transform: uppercase; }
+  .cspost-stat.is-lift .v { color: var(--success); }
+  .cspost-stat.is-spend .v { color: #fff; }
+  .cspost-stat.is-spend .l { color: rgba(248,243,236,.6); }
+  .cspost-scope h3 { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+  .cspost-line { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 11px 0; border-top: 1px solid var(--line); font-size: .96rem; }
+  .cspost-line span { color: var(--ink-soft); }
+  .cspost-line b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .cspost-total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 14px; padding-top: 14px; border-top: 2px solid var(--ink); }
+  .cspost-total span { font-weight: 600; color: var(--ink); }
+  .cspost-total b { font-family: var(--font-display); font-weight: 500; font-size: 1.4rem; color: var(--ink); }
+
+  /* CTA — full contact form */
+  .cspost-cta { max-width: var(--container); margin: 0 auto; padding: 0 24px clamp(48px, 7vw, 80px); }
+  .cspost-contact { background: var(--ink); border-radius: var(--radius-lg); padding: clamp(30px, 4.5vw, 52px); display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(28px, 4vw, 52px); align-items: center; }
+  .cspost-contact__copy h3 { color: #fff; font-size: clamp(1.6rem, 2.6vw, 2rem); margin: 0 0 12px; }
+  .cspost-contact__copy p { color: rgba(248,243,236,.82); margin: 0 0 18px; line-height: 1.6; }
+  .cspost-contact__copy .eyebrow { color: #fff; }
+  .cspost-contact__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .cspost-contact__list li { display: flex; gap: 10px; align-items: center; color: rgba(248,243,236,.9); font-size: .96rem; }
+  .cspost-contact__list svg { flex: none; }
+  .cspost-form { background: var(--paper); border-radius: var(--radius-lg); padding: 26px; box-shadow: var(--shadow-lg); }
+  .cspost-form .gbtn { display: inline-flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 13px 18px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: #fff; color: #1f2937; font-family: var(--font-body); font-weight: 600; font-size: .98rem; cursor: pointer; transition: box-shadow var(--dur-fast) var(--ease); }
+  .cspost-form .gbtn:hover { box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+  .cspost-form .gbtn svg { width: 19px; height: 19px; flex: none; }
+  .cspost-form__or { display: flex; align-items: center; gap: 14px; margin: 16px 0; color: var(--muted); font-size: .8rem; }
+  .cspost-form__or::before, .cspost-form__or::after { content: ""; height: 1px; background: var(--line); flex: 1; }
+  .cspost-form .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .cspost-form .field label { font-size: .78rem; font-weight: 600; color: var(--ink); }
+  .cspost-form .field input, .cspost-form .field select, .cspost-form .field textarea { font-family: var(--font-body); font-size: .96rem; padding: 12px 13px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: #fff; color: var(--ink); outline: none; width: 100%; }
+  .cspost-form .field textarea { resize: vertical; min-height: 70px; }
+  .cspost-form .field input:focus, .cspost-form .field select:focus, .cspost-form .field textarea:focus { border-color: var(--rose); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .cspost-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cspost-form__success { text-align: center; padding: 24px 8px; }
+  .cspost-form__success .ic { width: 52px; height: 52px; border-radius: 50%; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+  @media (max-width: 820px) { .cspost-contact { grid-template-columns: 1fr; } }
+  @media (max-width: 460px) { .cspost-form__row { grid-template-columns: 1fr; } }
+
+  /* Related case studies */
+  .related { background: var(--cream-2); }
+  .related__inner { max-width: var(--container); margin: 0 auto; padding: clamp(56px, 8vw, 88px) 24px; }
+  .related__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 32px; }
+  .rpost { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); display: block; color: inherit; text-decoration: none; }
+  .rpost:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .rpost img { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
+  .rpost__b { padding: 22px; }
+  .rpost__cat { color: var(--rose); font-size: .74rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+  .rpost__b h4 { font-family: var(--font-display); font-weight: 500; font-size: 1.18rem; margin: 6px 0 0; color: var(--ink); }
+  @media (max-width: 820px) { .related__grid { grid-template-columns: 1fr; max-width: 460px; } }
+</style>
