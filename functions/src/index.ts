@@ -1,7 +1,7 @@
 import { onRequest, onCall, HttpsError } from 'firebase-functions/v2/https';
 import { defineSecret } from 'firebase-functions/params';
 import { getAuth } from 'firebase-admin/auth';
-import { getDb, getBucket } from './db.js';
+import { getDb, getBucket, getAdminApp } from './db.js';
 import { makeSendEmail, signingInviteHtml } from './email.js';
 import { buildPdf } from './pdf.js';
 import {
@@ -92,6 +92,6 @@ export const bootstrapAdmin = onCall(async (req) => {
   const t = req.auth.token as { email?: string; email_verified?: boolean; firebase?: { sign_in_provider?: string } };
   const verified = t.email_verified === true && t.firebase?.sign_in_provider === 'google.com';
   const isAdmin = verified ? await resolveAdmin(getDb(), t.email) : false;
-  await getAuth().setCustomUserClaims(req.auth.uid, { admin: isAdmin }); // only 'admin' claim today; overwrites the claims object
+  await getAuth(getAdminApp()).setCustomUserClaims(req.auth.uid, { admin: isAdmin }); // only 'admin' claim today; overwrites the claims object
   return { admin: isAdmin };
 });
