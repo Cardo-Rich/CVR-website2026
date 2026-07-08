@@ -9,8 +9,14 @@ function fromSeed(): CaseStudy[] {
 export async function getPublishedCaseStudies(): Promise<CaseStudy[]> {
   const db = getDb();
   if (!db) return fromSeed();
-  const snap = await db.collection('caseStudies').where('status', '==', 'published').get();
-  return snap.docs.map(d => d.data() as CaseStudy);
+  // Firestore-if-available, else seed. A build-time query failure (perms,
+  // connectivity, unpopulated collection) must never break the static build.
+  try {
+    const snap = await db.collection('caseStudies').where('status', '==', 'published').get();
+    return snap.empty ? fromSeed() : snap.docs.map(d => d.data() as CaseStudy);
+  } catch {
+    return fromSeed();
+  }
 }
 
 export async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {

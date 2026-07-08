@@ -24,12 +24,15 @@ npx tsx scripts/migrate.ts           # migrates for real (idempotent — safe to
 ```
 - **Verify:** Firestore has 3 `agreements/*` docs + `config/portalSettings`; Storage has 1 `agreements/<token>/executed.pdf`.
 
-## 3. Go live — merge to main
-Merge `feat/cms-agreements` → `main`. This triggers `deploy.yml` (`build:all`), publishing the static site (with the **repointed owner signing page** + the `/admin` SPA) to the live Hosting channel. Only after step 2.
+## 3. Go live — merge to main ✅ DONE (2026-07-08)
+Merged `feat/cms-agreements` → `main` (fast-forward, `41688b3`; PRs #10/#11 auto-closed as fully-contained). `deploy.yml` (`build:all`) published to the live Hosting channel.
 
-## 4. Authorize the production domain for sign-in
-Firebase Auth → Settings → Authorized domains → https://console.firebase.google.com/project/cardo-website-2026/authentication/settings
-- Add `cardorentals.com` (and any custom admin domain). Without it, `signInWithPopup` fails on the production domain. (`*.web.app`/`*.firebaseapp.com` are auto-authorized, so the preview works already.)
+**Scope note:** this deploy published the **entire Brand-V3 site** (multi-page: home, blog, neighborhoods, case-studies, home-designs, owners) **+ `/admin` SPA + agreements** — not just the signing page. The prior live site was the older single-page marketing site.
+
+**Domain decision:** staging/build happens on the permanent live channel **`https://cardo-website-2026.web.app`** for now. `cardorentals.com` is **not** repointed — it still serves the legacy booking site and will become the booking engine at **`reserve.cardorentals.com`**; the apex/`www` will point at Firebase Hosting at the real launch (a later, explicit DNS step). Because signing links derive from `window.location.origin` (`functions/src/index.ts` + `admin/.../AgreementsModule.tsx`), moving to a custom domain later needs no code change.
+
+## 4. Authorize the production domain for sign-in — ⏸️ NOT NEEDED YET
+`*.web.app`/`*.firebaseapp.com` are auto-authorized, so `/admin` Google sign-in already works on `cardo-website-2026.web.app`. **Only required when a custom domain is added** (do it as part of the DNS cutover): Firebase Auth → Settings → Authorized domains → https://console.firebase.google.com/project/cardo-website-2026/authentication/settings → add the apex/`www` domain that will serve the site.
 
 ## 5. Make outbound email real
 The Supabase system used the default `onboarding@resend.dev` (which only delivers to the Resend account owner) and had **no** Resend key. For invites + executed-agreement emails to reach real owners:
@@ -37,7 +40,8 @@ The Supabase system used the default `onboarding@resend.dev` (which only deliver
 - In the `/admin` **Email Settings**, set the **From address** to a verified-domain sender (e.g. `Cardo Vacation Rentals <owners@cardorentals.com>`) and the **Notify** address.
 
 ## 6. Live smoke test
-- Open a **migrated** signing link `https://cardorentals.com/agreement/?t=<existing-token>` → the RMA loads from Firebase.
+(While staging on `.web.app`, use that host in place of `cardorentals.com` below.)
+- Open a **migrated** signing link `https://cardo-website-2026.web.app/agreement/?t=<existing-token>` → the RMA loads from Firebase.
 - In `/admin`, create a new agreement (your own email) → invite email arrives → open the link → sign → executed PDF emails to you + the notify address, and the row flips to **signed** in the admin list; the PDF link works.
 
 ## 7. Decommission Supabase
