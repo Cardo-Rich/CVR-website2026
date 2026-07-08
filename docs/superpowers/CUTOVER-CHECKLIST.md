@@ -25,7 +25,7 @@ npx tsx scripts/migrate.ts           # migrates for real (idempotent — safe to
 - **Verify:** Firestore has 3 `agreements/*` docs + `config/portalSettings`; Storage has 1 `agreements/<token>/executed.pdf`.
 
 ## 3. Go live — merge to main ✅ DONE (2026-07-08)
-Merged `feat/cms-agreements` → `main` (fast-forward, `41688b3`; PRs #10/#11 auto-closed as fully-contained). `deploy.yml` (`build:all`) published to the live Hosting channel.
+Merged `feat/cms-agreements` → `main` (fast-forward, `41688b3`; PRs #10/#11 auto-closed as fully-contained). The first deploy **failed** (build queried Firestore at build time and threw uncaught — see `src/lib/content/*`; fixed in `24683b9` so content fetchers fall back to seed). Re-deploy succeeded — **live at `https://cardo-website-2026.web.app`** (verified: `/blog`, `/owners`, `/neighborhoods`, `/case-studies/*`, `/admin`, `/agreement` all serve; blog renders seed content).
 
 **Scope note:** this deploy published the **entire Brand-V3 site** (multi-page: home, blog, neighborhoods, case-studies, home-designs, owners) **+ `/admin` SPA + agreements** — not just the signing page. The prior live site was the older single-page marketing site.
 
