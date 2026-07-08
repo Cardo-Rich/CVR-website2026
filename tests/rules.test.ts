@@ -29,4 +29,12 @@ describe('firestore rules', () => {
     const db = env.authenticatedContext('u1', { admin: true }).firestore();
     await assertFails(setDoc(doc(db, 'properties/p1'), { name: 'Villa' }));
   });
+  it('denies anonymous read of an agreement', async () => {
+    const db = env.unauthenticatedContext().firestore();
+    await assertFails(getDoc(doc(db, 'agreements/tok1')));
+  });
+  it('denies even an admin client-writing an agreement', async () => {
+    const db = env.authenticatedContext('u1', { admin: true }).firestore();
+    await assertFails(setDoc(doc(db, 'agreements/tok1'), { status: 'sent' }));
+  });
 });

@@ -7,5 +7,8 @@ service cloud.firestore {
     match /properties/{id}   { allow read: if isAdmin(); allow write: if false; } // sync-only (server)
     match /homepage/{id}     { allow read, write: if isAdmin(); }
     match /config/{id}       { allow read, write: if isAdmin(); }
+
+    // All agreement access is mediated by Cloud Functions (Admin SDK). No client reads/writes.
+    match /agreements/{token} { allow read, write: if false; }
   }
 }
