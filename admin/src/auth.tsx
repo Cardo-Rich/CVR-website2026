@@ -3,13 +3,16 @@ import { onAuthStateChanged, signInWithPopup, signOut as fbSignOut, type User } 
 import { httpsCallable } from 'firebase/functions';
 import { auth, googleProvider, functions } from './firebase';
 
-type AuthStatus = 'loading' | 'signed-out' | 'checking' | 'admin' | 'denied';
-interface AuthValue { status: AuthStatus; user: User | null; signIn: () => Promise<void>; signOut: () => Promise<void>; }
+type AuthStatus = 'loading' | 'signed-out' | 'checking' | 'admin' | 'denied' | 'error';
+interface AuthValue { status: AuthStatus; user: User | null; signInError: string | null; signIn: () => Promise<void>; signOut: () => Promise<void>; }
 const Ctx = createContext<AuthValue | null>(null);
+
+const BENIGN_SIGNIN_ERROR_CODES = new Set(['auth/popup-closed-by-user', 'auth/cancelled-popup-request']);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<AuthStatus>('loading');
+  const [signInError, setSignInError] = useState<string | null>(null);
 
   useEffect(() => onAuthStateChanged(auth, async (u) => {
     setUser(u);
@@ -25,14 +28,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setStatus('denied');
       }
     } catch {
-      setStatus('denied');
+      // bootstrapAdmin threw (network/callable error) or token refresh failed — this is
+      // NOT a genuine allowlist miss, so don't show "denied". Fail closed into 'error'
+      // instead, which offers a retry rather than a dead-end permanent denial.
+      setStatus('error');
     }
   }), []);
 
-  const signIn = async () => { await signInWithPopup(auth, googleProvider); };
+  const signIn = async () => {
+    setSignInError(null);
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (err) {
+      const code = (err as { code?: string })?.code;
+      if (code && BENIGN_SIGNIN_ERROR_CODES.has(code)) return;
+      setSignInError(err instanceof Error ? err.message : 'Sign-in failed. Please try again.');
+    }
+  };
   const signOut = async () => { await fbSignOut(auth); };
 
-  return <Ctx.Provider value={{ status, user, signIn, signOut }}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={{ status, user, signInError, signIn, signOut }}>{children}</Ctx.Provider>;
 }
 export function useAuth() {
   const v = useContext(Ctx);

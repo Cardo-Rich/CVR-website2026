@@ -2,7 +2,7 @@ import { useAuth } from './auth';
 import Shell from './Shell';
 
 export default function App() {
-  const { status, signIn, signOut } = useAuth();
+  const { status, signInError, signIn, signOut } = useAuth();
 
   if (status === 'admin') return <Shell />;
 
@@ -28,12 +28,21 @@ export default function App() {
                 <button className="btn-ghost" onClick={() => signOut()}>Sign out</button>
               </>
             )}
+            {status === 'error' && (
+              <>
+                <div className="kicker">Error</div>
+                <h1>Couldn't verify access</h1>
+                <p>Couldn't verify access — check your connection and try again.</p>
+                <button className="btn" onClick={() => window.location.reload()}>Try again</button>
+              </>
+            )}
             {status === 'signed-out' && (
               <>
                 <div className="kicker">Cardo CMS</div>
                 <h1>Sign in to continue</h1>
                 <p>Use your Cardo Google account to access the admin panel.</p>
                 <button className="btn" onClick={() => signIn()}>Sign in with Google</button>
+                {signInError && <p className="auth-error">{signInError}</p>}
               </>
             )}
           </div>
