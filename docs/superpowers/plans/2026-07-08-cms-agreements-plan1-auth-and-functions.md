@@ -19,6 +19,7 @@
 - **Admin identity:** Firebase Auth Google sign-in; `admin: true` custom claim granted only to emails in `config/admins`. First admin: `rich@cardorentals.com`.
 - **Field casing:** Firestore docs use **camelCase** (the Supabase Postgres columns were snake_case; map on port).
 - **Do not touch** `src/pages/agreement/index.astro`, `src/pages/portal/agreements.astro`, or the live Supabase function in this plan. The owner page is repointed in Plan 2; Supabase is retired in Plan 3. The legal-content module is *copied* here and de-duplicated in Plan 3.
+- **ESM import extensions:** the `functions/` package is ESM (`"type": "module"`, tsconfig `module/moduleResolution: NodeNext`). **All relative imports inside `functions/src/*.ts` MUST carry a `.js` extension** (e.g. `import { buildPdf } from './pdf.js'`) or `tsc` fails with TS2835. This applies to `src/` only — test files under `functions/test/` run through vitest's transform and may use extensionless imports. (The code blocks below show `.js` extensions on `src/` relative imports for this reason.)
 - **TDD, frequent commits.** Every task ends green and committed.
 
 ## File Structure
@@ -316,8 +317,8 @@ git commit -m "feat(agreements): port PDF builder to functions"
 - [ ] **Step 1: Create `functions/src/email.ts`** — port `escHtml`, `emailShell`, and the Resend `sendEmail` from `supabase/functions/agreements/index.ts:93-104` and `:66-91`, wrapped in a factory that closes over the key + settings:
 
 ```ts
-import { FOOTER_LINE } from './content';
-import type { PortalSettings } from './types';
+import { FOOTER_LINE } from './content.js';
+import type { PortalSettings } from './types.js';
 
 export function escHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -404,9 +405,9 @@ git commit -m "feat(agreements): email (Resend) + db/storage init modules"
 ```ts
 import { randomBytes } from 'node:crypto';
 import type { Firestore } from 'firebase-admin/firestore';
-import { TERMS_META, ACKS } from './content';
-import { buildPdf } from './pdf';
-import type { AgreementDoc, PortalSettings, PublicAgreementView } from './types';
+import { TERMS_META, ACKS } from './content.js';
+import { buildPdf } from './pdf.js';
+import type { AgreementDoc, PortalSettings, PublicAgreementView } from './types.js';
 
 export function newToken(): string { return randomBytes(18).toString('hex'); } // 36 hex chars
 
@@ -706,15 +707,15 @@ import { onRequest } from 'firebase-functions/v2/https';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { defineSecret } from 'firebase-functions/params';
 import { getAuth } from 'firebase-admin/auth';
-import { getDb, getBucket } from './db';
-import { makeSendEmail } from './email';
-import { buildPdf } from './pdf';
+import { getDb, getBucket } from './db.js';
+import { makeSendEmail } from './email.js';
+import { buildPdf } from './pdf.js';
 import {
   createAgreement, getAgreementPublic, signAgreement, listAgreements,
   getSettings, setSettings, HttpErr,
-} from './actions';
-import { resolveAdmin } from './claims';
-import type { AgreementDoc } from './types';
+} from './actions.js';
+import { resolveAdmin } from './claims.js';
+import type { AgreementDoc } from './types.js';
 
 const RESEND_API_KEY = defineSecret('RESEND_API_KEY');
 const CORS = {
