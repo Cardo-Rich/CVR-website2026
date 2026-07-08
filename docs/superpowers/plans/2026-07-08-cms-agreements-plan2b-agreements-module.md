@@ -136,6 +136,14 @@ export default defineConfig({
 });
 ```
 
+- [ ] **Step 1b: Add the `@shared` path mapping to `admin/tsconfig.json`** so `tsc` (not just Vite) resolves `@shared/*` — add to `compilerOptions`:
+
+```json
+"baseUrl": ".",
+"paths": { "@shared/*": ["../src/shared/*"] }
+```
+(Vite's alias covers the bundle; tsconfig `paths` covers the typecheck. Both are required or `tsc --noEmit` fails on the `@shared/agreement-content` import in Task 4.)
+
 - [ ] **Step 2: Create `admin/src/agreements/api.ts`** — typed `httpsCallable` wrappers (exact interfaces in "Interfaces" above):
 
 ```ts
