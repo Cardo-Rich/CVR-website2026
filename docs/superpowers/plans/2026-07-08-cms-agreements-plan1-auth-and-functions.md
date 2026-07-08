@@ -918,3 +918,16 @@ git push -u origin feat/cms-agreements
 **Type consistency:** `AgreementDoc`/`PortalSettings`/`PublicAgreementView` defined in Task 3 and consumed unchanged in Tasks 5, 7. `HttpErr` (Task 5) is thrown by actions and mapped to HTTP/callable codes in Task 7. `makeSendEmail`'s signature (Task 4) matches the `sendMail` parameter of `signAgreement` (Task 5). `resolveAdmin` (Task 6) is consumed by `bootstrapAdmin` (Task 7). Token format is 36 hex chars everywhere (`newToken`, the `< 20` length guard, and the `/^[0-9a-f]{36}$/` test).
 
 **Open follow-ups for Plan 2 (recorded, not gaps):** the `create` action currently does not send the initial email (that moves to the `adminCreate` path with the full marketing HTML when the SPA is built); `getAgreementPublic`'s response shape matches what the existing owner page expects, easing the Plan 2 repoint.
+
+---
+
+## Final review fixes (applied — commit f84a2a3)
+
+The final whole-branch review returned "Ready to merge: With fixes"; the following were applied and re-verified (tsc clean, 14/14 functions tests, slash-token→404), then re-confirmed "Ready to merge: Yes":
+
+1. **(Important, security)** `bootstrapAdmin` grants `admin` only when `token.email_verified === true` **and** `firebase.sign_in_provider === 'google.com'` — closes an unverified-email privilege-escalation path if a non-Google provider is ever enabled.
+2. `isValidToken(t) = /^[0-9a-f]{20,}$/` now guards both `getDoc` (actions.ts) and the `?action=pdf` branch (index.ts) — a slash/`..`-laden token returns 404, not 500.
+3. `adminCreate` maps only a status-400 `HttpErr` → `invalid-argument`; other errors propagate and log. Dropped its unused `RESEND_API_KEY` binding (Plan 2 re-adds it when create emails the signing link).
+4. `bucket: any` → a minimal `BucketLike` interface (`download()` widened to `Promise<Buffer[]>`).
+
+**Deploy-time note (Task 9):** `getStorage().bucket()` uses the project **default** Storage bucket. Confirm the default bucket exists in `cardo-website-2026` before the first `sign`, or `.bucket()` throws "Bucket name not specified". Smoke-test the sign→store→download→email path against the real project after deploy.
