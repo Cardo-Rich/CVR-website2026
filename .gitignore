@@ -14,10 +14,21 @@ npm-debug.log*
 # firebase
 .firebase/
 firebase-debug.log
+firestore-debug.log
 *serviceaccount*.json
+# Firebase service-account / admin keys — never commit
+*-firebase-adminsdk-*.json
+*adminsdk*.json
+*[Ss]ervice[Aa]ccount*.json
 # agent/skill install clutter — ignore everything under .claude/skills
 # except the hand-maintained cardo-design skill
 .claude/skills/*
 !.claude/skills/cardo-design/
 .agents/
 skills-lock.json
+
+
+# accidental large/local files — never commit
+.claude/skills/cardo-design/assets/*.mp4
+CVR-website2026.zip
+design_handoff_v3_site/

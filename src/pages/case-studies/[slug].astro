@@ -2,9 +2,10 @@
 import Base from '../../layouts/Base.astro';
 import MarketingHeader from '../../components/sections/MarketingHeader.astro';
 import Footer from '../../components/sections/Footer.astro';
-import { caseStudies } from '../../data/case-studies';
+import { getPublishedCaseStudies } from '../../lib/content/case-studies';
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const caseStudies = await getPublishedCaseStudies();
   return caseStudies.map((c, i) => ({
     params: { slug: c.slug },
     props: { c, related: [caseStudies[(i+1)%caseStudies.length], caseStudies[(i+2)%caseStudies.length], caseStudies[(i+3)%caseStudies.length]] },

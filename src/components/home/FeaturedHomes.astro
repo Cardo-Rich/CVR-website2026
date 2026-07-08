@@ -1,14 +1,7 @@
 ---
-import { homePhotos } from '../../data/home';
+import { getFeaturedProperties } from '../../lib/content/properties';
 
-const cards = [
-  { slug: 'la-jolla',      photo: 'living-craftsman', name: 'Bluff Villa',      loc: 'La Jolla',      specs: ['4 bedrooms', '3 bathrooms', '8 guests'],  premier: true,  alt: 'Bluff Villa in La Jolla' },
-  { slug: 'pacific-beach', photo: 'living-bright',    name: 'Surf Bungalow',    loc: 'Pacific Beach', specs: ['3 bedrooms', '2 bathrooms', '6 guests'],  premier: false, alt: 'Surf Bungalow in Pacific Beach' },
-  { slug: 'del-mar',       photo: 'dining',           name: 'Craftsman Retreat', loc: 'Del Mar',      specs: ['4 bedrooms', '3 bathrooms', '8 guests'],  premier: false, alt: 'Craftsman Retreat in Del Mar' },
-  { slug: 'mission-beach', photo: 'bedroom-floral',   name: 'Sand Cottage',     loc: 'Mission Beach', specs: ['2 bedrooms', '2 bathrooms', '4 guests'],  premier: false, alt: 'Sand Cottage in Mission Beach' },
-  { slug: 'encinitas',     photo: 'gameroom',         name: 'Surf House',       loc: 'Encinitas',     specs: ['3 bedrooms', '2 bathrooms', '6 guests'],  premier: false, alt: 'Surf House in Encinitas' },
-  { slug: 'coronado',      photo: 'pool',             name: 'Island Estate',    loc: 'Coronado',      specs: ['5 bedrooms', '4 bathrooms', '10 guests'], premier: true,  alt: 'Island Estate in Coronado' },
-];
+const cards = await getFeaturedProperties();
 const premierSvg = 'M12 1.6l2.1 6.4 6.7.2-5.3 4.1 1.9 6.5L12 15.6l-5.4 3.8 1.9-6.5-5.3-4.1 6.7-.2z';
 ---
 
@@ -23,15 +16,15 @@ const premierSvg = 'M12 1.6l2.1 6.4 6.7.2-5.3 4.1 1.9 6.5L12 15.6l-5.4 3.8 1.9-6
       <button class="showcase__nav showcase__nav--prev" type="button" data-showcase-prev aria-label="Previous homes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
       <div class="showcase__track" data-showcase-track>
         {cards.map((c) => (
-          <a class="scard" href={`/neighborhoods/${c.slug}`}>
-            <img src={homePhotos[c.photo]} alt={c.alt} loading="lazy" />
+          <a class="scard" href={c.href}>
+            <img src={c.photo} alt={`${c.name} in ${c.neighborhood}`} loading="lazy" />
             {c.premier && (
               <span class="scard__premier"><svg viewBox="0 0 24 24" aria-hidden="true"><path d={premierSvg}/></svg>Premier</span>
             )}
             <div class="scard__scrim"></div>
             <div class="scard__body">
               <h3 class="scard__name">{c.name}</h3>
-              <p class="scard__loc">{c.loc}</p>
+              <p class="scard__loc">{c.neighborhood}</p>
               <div class="scard__specs">
                 <span>{c.specs[0]}</span><i></i><span>{c.specs[1]}</span><i></i><span>{c.specs[2]}</span>
               </div>

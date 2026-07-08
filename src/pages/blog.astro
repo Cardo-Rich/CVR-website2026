@@ -2,8 +2,10 @@
 import Base from '../layouts/Base.astro';
 import MarketingHeader from '../components/sections/MarketingHeader.astro';
 import Footer from '../components/sections/Footer.astro';
-import { articles, categories } from '../data/blog';
+import { categories } from '../data/blog';
+import { getPublishedArticles } from '../lib/content/articles';
 
+const articles = await getPublishedArticles();
 const featured = articles.find((a) => a.featured);
 const rest = articles.filter((a) => !a.featured);
 
