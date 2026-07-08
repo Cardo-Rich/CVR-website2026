@@ -1,26 +1,44 @@
 import { useAuth } from './auth';
+import Shell from './Shell';
 
 export default function App() {
-  const { status, user, signIn, signOut } = useAuth();
-  if (status === 'loading') return <p style={{ padding: 40 }}>Loading…</p>;
-  if (status === 'checking') return <p style={{ padding: 40 }}>Checking access…</p>;
-  if (status === 'denied') return (
-    <div style={{ fontFamily: 'system-ui', padding: 40 }}>
-      <h1>Access denied</h1>
-      <p>This account isn’t authorized for the Cardo CMS. Contact an administrator.</p>
-      <button onClick={() => signOut()}>Sign out</button>
-    </div>
-  );
-  if (status !== 'admin') return (
-    <div style={{ fontFamily: 'system-ui', padding: 40 }}>
-      <h1>Cardo CMS</h1>
-      <button onClick={() => signIn()}>Sign in with Google</button>
-    </div>
-  );
+  const { status, signIn, signOut } = useAuth();
+
+  if (status === 'admin') return <Shell />;
+
   return (
-    <div style={{ fontFamily: 'system-ui', padding: 40 }}>
-      <p>Signed in as {user?.email}</p>
-      <button onClick={() => signOut()}>Sign out</button>
+    <div>
+      <header className="app-header">
+        <div className="header-inner">
+          <strong>Cardo CMS</strong>
+          <span className="spacer" />
+        </div>
+        <div className="sunset-bar" />
+      </header>
+      <main className="main">
+        <div className="auth-screen">
+          <div className="auth-card">
+            {status === 'loading' && <p>Loading…</p>}
+            {status === 'checking' && <p>Checking access…</p>}
+            {status === 'denied' && (
+              <>
+                <div className="kicker">Access Denied</div>
+                <h1>Not authorized</h1>
+                <p>This account isn’t authorized for the Cardo CMS. Contact an administrator.</p>
+                <button className="btn-ghost" onClick={() => signOut()}>Sign out</button>
+              </>
+            )}
+            {status === 'signed-out' && (
+              <>
+                <div className="kicker">Cardo CMS</div>
+                <h1>Sign in to continue</h1>
+                <p>Use your Cardo Google account to access the admin panel.</p>
+                <button className="btn" onClick={() => signIn()}>Sign in with Google</button>
+              </>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
