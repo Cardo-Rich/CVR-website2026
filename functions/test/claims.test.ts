@@ -3,7 +3,7 @@ import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { resolveAdmin } from '../src/claims';
 
-function db() { if (!getApps().length) initializeApp({ projectId: 'demo-agreements' }); return getFirestore(); }
+function db() { if (!getApps().length) initializeApp({ projectId: 'demo-claims' }); return getFirestore(); }
 beforeEach(async () => {
   await db().doc('config/admins').set({ emails: ['rich@cardorentals.com'] });
 });

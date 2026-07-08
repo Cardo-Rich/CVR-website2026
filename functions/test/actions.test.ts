@@ -4,7 +4,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { createAgreement, getAgreementPublic, signAgreement, listAgreements, setSettings, getSettings } from '../src/actions';
 
 function db() {
-  if (!getApps().length) initializeApp({ projectId: 'demo-agreements' });
+  if (!getApps().length) initializeApp({ projectId: 'demo-actions' });
   return getFirestore();
 }
 // Minimal in-memory bucket stub (Storage emulator not required for action logic)
@@ -16,7 +16,7 @@ const bucket = { file: (p: string) => ({
 const noMail = async () => false;
 
 beforeEach(async () => {
-  const base = `http://${process.env.FIRESTORE_EMULATOR_HOST}/emulator/v1/projects/demo-agreements/databases/(default)/documents`;
+  const base = `http://${process.env.FIRESTORE_EMULATOR_HOST}/emulator/v1/projects/demo-actions/databases/(default)/documents`;
   await fetch(base, { method: 'DELETE' }).catch(() => {});
 });
 

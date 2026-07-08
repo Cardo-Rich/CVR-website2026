@@ -3,7 +3,7 @@ import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { migrateAgreements, toAgreementDoc, type SupabaseRow } from '../src/migrate';
 
-function db() { if (!getApps().length) initializeApp({ projectId: 'demo-agreements' }); return getFirestore(); }
+function db() { if (!getApps().length) initializeApp({ projectId: 'demo-migrate' }); return getFirestore(); }
 const files: Record<string, Buffer> = {};
 const bucket = { file: (p: string) => ({ save: async (b: Buffer) => { files[p] = b; }, download: async () => [files[p]] }) };
 
@@ -17,7 +17,7 @@ const rows: SupabaseRow[] = [
 ];
 
 beforeEach(async () => {
-  const base = `http://${process.env.FIRESTORE_EMULATOR_HOST}/emulator/v1/projects/demo-agreements/databases/(default)/documents`;
+  const base = `http://${process.env.FIRESTORE_EMULATOR_HOST}/emulator/v1/projects/demo-migrate/databases/(default)/documents`;
   await fetch(base, { method: 'DELETE' }).catch(() => {});
   for (const k of Object.keys(files)) delete files[k];
 });
@@ -28,6 +28,16 @@ describe('migrateAgreements (emulator)', () => {
     expect(d.token).toBe(rows[0].token);
     expect(d.clientName).toBe('Jane Owner');
     expect(d.sigData).toBe(rows[0].sig_data);
+    expect(d.status).toBe('signed');
+    expect(d.owner).toEqual(rows[0].owner);
+    expect(d.acks).toEqual(rows[0].acks);
+    expect(d.terms).toEqual(rows[0].terms);
+    expect(d.addendum).toBe(rows[0].addendum);
+    expect(d.sigName).toBe(rows[0].sig_name);
+    expect(d.sigDate).toBe(rows[0].sig_date);
+    expect(d.signedAt).toBe(rows[0].signed_at);
+    expect(d.createdAt).toBe(rows[0].created_at);
+    expect(d.pdfPath).toBeNull();
   });
   it('writes docs under their token, regenerates the PDF only for signed', async () => {
     const res = await migrateAgreements(rows, { notifyEmail: 'rich@cardorentals.com', fromEmail: 'X <onboarding@resend.dev>' }, db(), bucket);
@@ -41,5 +51,6 @@ describe('migrateAgreements (emulator)', () => {
     expect(sent.pdfPath).toBeNull();
     const cfg = (await db().doc('config/portalSettings').get()).data()!;
     expect(cfg.notifyEmail).toBe('rich@cardorentals.com');
+    expect(cfg.fromEmail).toBe('X <onboarding@resend.dev>');
   });
 });
