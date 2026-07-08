@@ -1,4 +1,5 @@
 import { useAuth } from './auth';
+import AgreementsModule from './agreements/AgreementsModule';
 
 export default function Shell() {
   const { user, signOut } = useAuth();
@@ -17,8 +18,7 @@ export default function Shell() {
         <div className="sunset-bar" />
       </header>
       <main className="main">
-        {/* Plan 2b mounts the Agreements module here */}
-        <p>Welcome. The Agreements module lands in Plan 2b.</p>
+        <AgreementsModule />
       </main>
     </div>
   );
