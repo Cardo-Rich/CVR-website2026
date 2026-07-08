@@ -32,6 +32,7 @@ export default function AgreementsModule() {
 
   // ----- Email settings -----
   const [settings, setSettingsState] = useState<Settings | null>(null);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [notifyEmail, setNotifyEmail] = useState('');
   const [fromEmail, setFromEmail] = useState('');
   const [settingsError, setSettingsError] = useState('');
@@ -59,6 +60,8 @@ export default function AgreementsModule() {
       setFromEmail(s.fromEmail || '');
     } catch (err) {
       setSettingsError((err as Error).message);
+    } finally {
+      setSettingsLoaded(true);
     }
   }
 
@@ -105,11 +108,12 @@ export default function AgreementsModule() {
     if (!sendResult) return;
     try {
       await navigator.clipboard.writeText(sendResult.url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
     } catch {
-      // Clipboard API can fail (permissions, insecure context) — the link is still visible/selectable.
+      // Clipboard API can fail (permissions, insecure context) — the link is still
+      // visible/selectable in the readonly input above, so don't claim success.
     }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1600);
   }
 
   async function handleSaveSettings(e: FormEvent) {
@@ -307,7 +311,13 @@ export default function AgreementsModule() {
               <div className="ag-field">
                 <span className="ag-field-label">Resend API Key</span>
                 <span className={`ag-key-status ${settings?.hasResendKey ? 'ag-key-on' : 'ag-key-off'}`}>
-                  {settings ? (settings.hasResendKey ? 'Key on file' : 'Not set — emails disabled') : 'Loading…'}
+                  {settings
+                    ? settings.hasResendKey
+                      ? 'Key on file'
+                      : 'Not set — emails disabled'
+                    : settingsLoaded
+                      ? '— unavailable'
+                      : 'Loading…'}
                 </span>
               </div>
               <label className="ag-field">
