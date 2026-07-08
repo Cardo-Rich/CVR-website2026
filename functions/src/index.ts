@@ -1,5 +1,4 @@
-import { onRequest } from 'firebase-functions/v2/https';
-import { onCall, HttpsError } from 'firebase-functions/v2/https';
+import { onRequest, onCall, HttpsError } from 'firebase-functions/v2/https';
 import { defineSecret } from 'firebase-functions/params';
 import { getAuth } from 'firebase-admin/auth';
 import { getDb, getBucket } from './db.js';
@@ -27,12 +26,13 @@ function requireAdmin(auth: { token?: { admin?: boolean; [key: string]: unknown 
 export const agreements = onRequest({ secrets: [RESEND_API_KEY], cors: false }, async (req, res) => {
   Object.entries(CORS).forEach(([k, v]) => res.set(k, v));
   if (req.method === 'OPTIONS') { res.status(204).send(''); return; }
-  const db = getDb();
   try {
+    const db = getDb();
     if (req.method === 'GET' && req.query.action === 'pdf') {
       const token = String(req.query.t || '');
+      if (token.length < 20) throw new HttpErr('Agreement not found', 404);
       const snap = await db.doc(`agreements/${token}`).get();
-      if (token.length < 20 || !snap.exists) throw new HttpErr('Agreement not found', 404);
+      if (!snap.exists) throw new HttpErr('Agreement not found', 404);
       const doc = snap.data() as AgreementDoc;
       const bytes = doc.pdfPath
         ? (await getBucket().file(doc.pdfPath).download())[0]
