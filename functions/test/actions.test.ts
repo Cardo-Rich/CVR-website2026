@@ -1,5 +1,5 @@
 import { beforeEach, describe, it, expect } from 'vitest';
-import { initializeApp, getApps, deleteApp } from 'firebase-admin/app';
+import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { createAgreement, getAgreementPublic, signAgreement, listAgreements, setSettings, getSettings } from '../src/actions';
 
@@ -47,6 +47,7 @@ describe('agreement actions (emulator)', () => {
       sigName: 'Jane A. Owner', sigDate: '2026-07-08', sigData: 'data:image/png;base64,iVBORw0KGgo=',
     }, noMail);
     expect(res.signedAt).toBeTruthy();
+    expect(files[`agreements/${d.token}/executed.pdf`]).toBeInstanceOf(Buffer);
     const view = await getAgreementPublic(db(), d.token);
     expect(view.status).toBe('signed');
     expect(view.owner?.fullName).toBe('Jane A. Owner');

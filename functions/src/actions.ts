@@ -14,8 +14,8 @@ export async function getSettings(db: Firestore): Promise<PortalSettings> {
 
 export async function setSettings(db: Firestore, patch: Partial<PortalSettings>): Promise<void> {
   const clean: Partial<PortalSettings> = {};
-  if (typeof patch.notifyEmail === 'string') clean.notifyEmail = patch.notifyEmail.trim();
-  if (typeof patch.fromEmail === 'string') clean.fromEmail = patch.fromEmail.trim();
+  if (typeof patch.notifyEmail === 'string' && patch.notifyEmail.trim()) clean.notifyEmail = patch.notifyEmail.trim();
+  if (typeof patch.fromEmail === 'string' && patch.fromEmail.trim()) clean.fromEmail = patch.fromEmail.trim();
   if (Object.keys(clean).length) await db.doc('config/portalSettings').set(clean, { merge: true });
 }
 
