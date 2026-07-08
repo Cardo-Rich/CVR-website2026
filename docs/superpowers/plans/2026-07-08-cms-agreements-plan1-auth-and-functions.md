@@ -131,7 +131,7 @@ export async function buildPdf(doc: AgreementDoc): Promise<Uint8Array>;
     "test": "vitest run"
   },
   "dependencies": {
-    "firebase-admin": "^14.1.0",
+    "firebase-admin": "^13.10.0",
     "firebase-functions": "^6.4.0",
     "pdf-lib": "^1.17.1"
   },
@@ -142,6 +142,8 @@ export async function buildPdf(doc: AgreementDoc): Promise<Uint8Array>;
   }
 }
 ```
+
+(Note: `firebase-admin` is pinned to `^13.10.0`, not `^14`, because every published `firebase-functions` release peer-caps `firebase-admin` at `^13`. The v13 APIs used here — `getFirestore`, `getStorage`, `getAuth`, `setCustomUserClaims` — are unchanged. The root `package.json` keeps `firebase-admin@^14` for the build-time content modules; they are independent packages.)
 
 - [ ] **Step 2: Create `functions/tsconfig.json`**
 
