@@ -90,6 +90,8 @@ export function AuthProvider(props: { children: React.ReactNode }): JSX.Element;
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.3.4",
     "typescript": "^5.6.0",
     "vite": "^6.0.0"
@@ -233,7 +235,7 @@ export const googleProvider = new GoogleAuthProvider();
 - [ ] **Step 2: Create `admin/src/auth.tsx`** — sign-in/out + auth-state subscription (Task 3 adds the `bootstrap`/claim step; here `status` is just `loading`/`signed-out`/`checking`, and `checking` resolves to `admin` for any signed-in user *temporarily* until Task 3 wires the claim):
 
 ```tsx
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { onAuthStateChanged, signInWithPopup, signOut as fbSignOut, type User } from 'firebase/auth';
 import { auth, googleProvider } from './firebase';
 
@@ -241,7 +243,7 @@ type AuthStatus = 'loading' | 'signed-out' | 'checking' | 'admin' | 'denied';
 interface AuthValue { status: AuthStatus; user: User | null; signIn: () => Promise<void>; signOut: () => Promise<void>; }
 const Ctx = createContext<AuthValue | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<AuthStatus>('loading');
 
