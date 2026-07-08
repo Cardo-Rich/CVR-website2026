@@ -201,9 +201,21 @@ git commit -m "feat(agreements): scaffold Cloud Functions package + emulator wir
 
 ## Task 2: Port the legal-content module into `functions/`
 
-**Files:** Create `functions/src/content.ts`, `functions/test/content.test.ts`.
+**Files:** Create `functions/vitest.config.ts`, `functions/src/content.ts`, `functions/test/content.test.ts`.
 
 **Interfaces:** Produces `TERMS_META`, `ACKS`, `SECTIONS`, `PREAMBLE`, `BACKOUT_CALLOUT`, `FOOTER_LINE`, `richToPlain` (consumed by `pdf.ts`, `actions.ts`). This is a byte-for-byte copy of `supabase/functions/agreements/content.ts`; a test guards against drift until Plan 3 de-duplicates.
+
+> **Note (why a functions-local vitest config):** the repo root has `vitest.config.ts` with `include: ['tests/**/*.test.ts']`. Running `vitest` from `functions/` with no local config makes vitest walk up and adopt the **root** config, whose `tests/**` glob does not match `functions/test/**` — so 0 tests are found. `functions/` therefore needs its own `vitest.config.ts` (created in this task, used by every later functions test task).
+
+- [ ] **Step 0: Create `functions/vitest.config.ts`** (so functions tests are discovered — see the note above):
+
+```ts
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: { include: ['test/**/*.test.ts'] },
+});
+```
 
 - [ ] **Step 1: Copy the content module**
 
@@ -233,7 +245,7 @@ Expected: PASS (files identical).
 - [ ] **Step 4: Commit**
 
 ```bash
-git add functions/src/content.ts functions/test/content.test.ts
+git add functions/vitest.config.ts functions/src/content.ts functions/test/content.test.ts
 git commit -m "feat(agreements): port legal-content module into functions (drift-guarded)"
 ```
 
