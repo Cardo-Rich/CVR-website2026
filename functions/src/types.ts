@@ -4,7 +4,7 @@ export interface AgreementDoc {
   clientName: string | null;
   clientEmail: string;
   terms: Record<string, string>;
-  addendum: string;
+  addendum: string | null;
   owner: Record<string, string> | null;
   acks: Record<string, boolean> | null;
   sigName: string | null;
@@ -20,7 +20,7 @@ export interface PublicAgreementView {
   clientName: string | null;
   clientEmail: string;
   terms: Record<string, string>;
-  addendum: string;
+  addendum: string | null;
   owner: Record<string, string> | null;
   acks: Record<string, boolean> | null;
   sigName: string | null;
