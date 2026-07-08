@@ -6,7 +6,7 @@ import { makeSendEmail } from './email.js';
 import { buildPdf } from './pdf.js';
 import {
   createAgreement, getAgreementPublic, signAgreement, listAgreements,
-  getSettings, setSettings, HttpErr,
+  getSettings, setSettings, HttpErr, isValidToken,
 } from './actions.js';
 import { resolveAdmin } from './claims.js';
 import type { AgreementDoc } from './types.js';
@@ -30,7 +30,7 @@ export const agreements = onRequest({ secrets: [RESEND_API_KEY], cors: false }, 
     const db = getDb();
     if (req.method === 'GET' && req.query.action === 'pdf') {
       const token = String(req.query.t || '');
-      if (token.length < 20) throw new HttpErr('Agreement not found', 404);
+      if (!isValidToken(token)) throw new HttpErr('Agreement not found', 404);
       const snap = await db.doc(`agreements/${token}`).get();
       if (!snap.exists) throw new HttpErr('Agreement not found', 404);
       const doc = snap.data() as AgreementDoc;
@@ -59,10 +59,14 @@ export const agreements = onRequest({ secrets: [RESEND_API_KEY], cors: false }, 
 });
 
 // ---- Staff callables (require the admin claim) ----
-export const adminCreate = onCall({ secrets: [RESEND_API_KEY] }, async (req) => {
+export const adminCreate = onCall(async (req) => {
   requireAdmin(req.auth);
-  try { return await createAgreement(getDb(), req.data); }
-  catch (e) { throw new HttpsError('invalid-argument', (e as Error).message); }
+  try {
+    return await createAgreement(getDb(), req.data);
+  } catch (e) {
+    if (e instanceof HttpErr && e.status === 400) throw new HttpsError('invalid-argument', e.message);
+    throw e; // real failures propagate and log as internal errors
+  }
 });
 export const adminList = onCall(async (req) => { requireAdmin(req.auth); return { agreements: await listAgreements(getDb()) }; });
 export const adminGetSettings = onCall({ secrets: [RESEND_API_KEY] }, async (req) => {
@@ -75,8 +79,9 @@ export const adminSetSettings = onCall(async (req) => { requireAdmin(req.auth); 
 // ---- Claim bootstrap: any signed-in user calls this; allowlist decides ----
 export const bootstrapAdmin = onCall(async (req) => {
   if (!req.auth) throw new HttpsError('unauthenticated', 'Sign in first.');
-  const email = req.auth.token.email as string | undefined;
-  const isAdmin = await resolveAdmin(getDb(), email);
-  await getAuth().setCustomUserClaims(req.auth.uid, { admin: isAdmin });
+  const t = req.auth.token as { email?: string; email_verified?: boolean; firebase?: { sign_in_provider?: string } };
+  const verified = t.email_verified === true && t.firebase?.sign_in_provider === 'google.com';
+  const isAdmin = verified ? await resolveAdmin(getDb(), t.email) : false;
+  await getAuth().setCustomUserClaims(req.auth.uid, { admin: isAdmin }); // only 'admin' claim today; overwrites the claims object
   return { admin: isAdmin };
 });

@@ -6,6 +6,12 @@ import type { AgreementDoc, PortalSettings, PublicAgreementView } from './types.
 
 export function newToken(): string { return randomBytes(18).toString('hex'); } // 36 hex chars
 
+export function isValidToken(token: string): boolean { return /^[0-9a-f]{20,}$/.test(token); }
+
+export interface BucketLike {
+  file(path: string): { save(data: Buffer, opts?: unknown): Promise<unknown>; download(): Promise<Buffer[]> };
+}
+
 export async function getSettings(db: Firestore): Promise<PortalSettings> {
   const snap = await db.doc('config/portalSettings').get();
   const d = snap.data() as Partial<PortalSettings> | undefined;
@@ -42,7 +48,7 @@ export async function createAgreement(
 }
 
 async function getDoc(db: Firestore, token: string): Promise<AgreementDoc> {
-  if (!token || token.length < 20) throw new HttpErr('Invalid link', 404);
+  if (!isValidToken(token)) throw new HttpErr('Invalid link', 404);
   const snap = await db.doc(`agreements/${token}`).get();
   if (!snap.exists) throw new HttpErr('Agreement not found', 404);
   return snap.data() as AgreementDoc;
@@ -60,7 +66,7 @@ export async function getAgreementPublic(db: Firestore, token: string): Promise<
 }
 
 export async function signAgreement(
-  db: Firestore, bucket: any, token: string,
+  db: Firestore, bucket: BucketLike, token: string,
   input: { owner: Record<string, string>; acks: Record<string, boolean>; sigName: string; sigDate: string; sigData: string },
   sendMail: (to: string[], subject: string, html: string, attachments?: { filename: string; content: string }[]) => Promise<boolean>,
 ): Promise<{ signedAt: string; emailed: boolean }> {
