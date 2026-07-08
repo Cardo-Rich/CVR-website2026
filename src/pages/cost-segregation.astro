@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+import MarketingHeader from '../components/sections/MarketingHeader.astro';
+import Footer from '../components/sections/Footer.astro';
+
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs' },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog' },
+];
+const cta = { label: 'Free estimate', href: '/owners#estimate' };
+---
+
+<Base
+  title="Cost Segregation Study | Cardo Vacation Rentals"
+  description="Placeholder page — a cost segregation study for San Diego short-term rental owners. Content coming soon."
+>
+  <MarketingHeader {nav} {cta} />
+
+  <main>
+    <section class="phero" data-screen-label="Cost segregation hero">
+      <img class="phero__bg" src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1600&q=80" alt="" />
+      <div class="phero__overlay"></div>
+      <div class="phero__inner narrow">
+        <p class="eyebrow">For owners</p>
+        <h1>Cost Segregation Study</h1>
+        <p>Accelerate depreciation and unlock cash flow on your San Diego rental property. Placeholder copy — real details coming soon.</p>
+        <a class="btn btn-lg" href="/owners#estimate">Talk to our team</a>
+      </div>
+    </section>
+
+    <section class="section-pad" data-screen-label="Cost segregation body">
+      <div class="section-narrow">
+        <div class="section-head reveal">
+          <p class="eyebrow">What it is</p>
+          <h2>Placeholder heading for cost segregation.</h2>
+        </div>
+        <p class="lede muted reveal">This is filler text. A cost segregation study reclassifies components of an investment property so owners can accelerate depreciation and improve near-term cash flow. Final copy, examples, and a walkthrough of the process for Cardo owners will live here.</p>
+        <p class="reveal">Lorem ipsum placeholder — we'll outline eligibility, the study process, typical timelines, and how Cardo coordinates with your tax professional. Nothing on this page is final.</p>
+      </div>
+    </section>
+
+    <section class="cta" data-screen-label="CTA">
+      <div class="cta__inner reveal">
+        <p class="eyebrow">Since 2013</p>
+        <h2>Curious what your home could earn — and keep?</h2>
+        <p>Get a free, data-backed projection for your San Diego property.</p>
+        <a class="btn btn-lg" href="/owners#estimate">Get my free estimate</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<script>
+  import '../scripts/reveal.js';
+</script>

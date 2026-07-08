@@ -1,6 +1,11 @@
 ---
-// V3 guest header: centered nav search + black "Manage my home" control with
-// a hover reveal overlay. Styles live in global site.css + home.css.
+// V3 guest header: light-sand bar, a centered nav search that appears on
+// scroll, and a right-aligned "Menu" drawer. The drawer toggles between a
+// light Guests menu and a dark Owners menu; the Owners side reuses the
+// property-management splash on its first open of the session.
+import { articles } from '../../data/blog';
+
+const ownerFeature = articles.find((a) => a.featured) ?? articles[0];
 ---
 
 <header class="site-header" data-header data-screen-label="Header">
@@ -18,33 +23,104 @@
         <input type="date" value="2026-07-15" aria-label="Check out" />
         <button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
       </form>
-      <span class="pm-control" data-pm-control>
-        <a class="pm-link" href="/owners" data-pm-link>Manage my home</a>
-        <a class="pm-cta pm-cta--v3" href="/owners" data-pm-cta tabindex="-1"><span class="pm-cta__swipe"><span>Manage my home</span><span aria-hidden="true">Manage my home</span></span></a>
-      </span>
+      <button type="button" class="menu-btn" data-menu-open aria-expanded="false" aria-controls="site-menu">
+        <span class="menu-btn__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="menu-btn__label">Menu</span>
+      </button>
     </nav>
   </div>
 </header>
 
-<!-- Property Management reveal overlay -->
-<div class="pm-overlay" data-pm-overlay aria-hidden="true">
-  <div class="pm-overlay__inner">
-    <p class="pm-overlay__head" data-pm-anim>
-      <span>Premium Care.</span>
-      <span>Proven Performance.</span>
-      <span>Peace of Mind.</span>
-    </p>
-    <p class="pm-overlay__sub">Thoughtful management that protects your home, delights your guests, and drives stronger results.</p>
-    <div class="pm-overlay__reviews">
-      <span class="pm-grev">
-        <svg class="pm-grev__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        <b>Google</b>
-      </span>
-      <span class="pm-grev__score">4.9</span>
-      <span class="pm-grev__stars" aria-label="4.9 out of 5">★★★★★</span>
-      <span class="pm-grev__count">2,000+ reviews</span>
+<!-- Slide-out menu: Guests (light) ⇄ Owners (dark) -->
+<div class="menu" id="site-menu" data-menu aria-hidden="true">
+  <div class="menu__scrim" data-menu-close></div>
+  <aside class="menu__panel" data-menu-panel data-mode="guests" role="dialog" aria-modal="true" aria-label="Site menu">
+    <div class="menu__bar">
+      <div class="menu__toggle" data-menu-toggle role="tablist" aria-label="Choose menu">
+        <span class="menu__thumb" aria-hidden="true"></span>
+        <button type="button" class="menu__seg is-active" data-mode-btn="guests" role="tab" aria-selected="true">For Guests</button>
+        <button type="button" class="menu__seg" data-mode-btn="owners" role="tab" aria-selected="false">For Owners</button>
+      </div>
+      <button type="button" class="menu__close" data-menu-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
     </div>
-  </div>
+
+    <div class="menu__body">
+      <!-- GUESTS -->
+      <div class="menu__view" data-view="guests">
+        <div class="menu-group">
+          <div class="menu-group__h">By Accommodation Type</div>
+          <div class="menu-chips">
+            <a href="/#results">Pet Friendly</a>
+            <a href="/#results">Pools</a>
+            <a href="/#results">Beachside</a>
+            <a href="/#results">Has a View</a>
+            <a href="/#results">Large Groups</a>
+          </div>
+        </div>
+        <a class="menu-item" href="/#concierge">
+          <span class="menu-item__label">Concierge</span>
+          <span class="menu-item__sub">Make it a vacation worth remembering</span>
+        </a>
+        <a class="menu-item" href="/#locals">
+          <span class="menu-item__label">Local Faves</span>
+          <span class="menu-item__sub">The best of the best</span>
+        </a>
+        <a class="menu-review" href="/#reviews">
+          <span class="menu-review__top"><span class="menu-review__label">Reviews</span><span class="menu-review__stars" aria-label="5 out of 5">★★★★★</span></span>
+          <span class="menu-review__quote">“Easiest check-in we’ve ever had — the house was immaculate and someone texted to make sure we found everything. Felt looked-after the whole trip.”</span>
+          <span class="menu-review__by">Emily R. · Google</span>
+          <span class="menu-item__go">Read all 2,000+ reviews →</span>
+        </a>
+      </div>
+
+      <!-- OWNERS -->
+      <div class="menu__view" data-view="owners">
+        <a class="menu-item" href="/owners#estimate">
+          <span class="menu-item__label">Free Earning Estimate</span>
+          <span class="menu-item__sub">Find out what your property can earn</span>
+        </a>
+        <a class="menu-item" href="/home-designs">
+          <span class="menu-item__label">Interior Decorating</span>
+          <span class="menu-item__sub">Handled completely for you by professional STR designers</span>
+        </a>
+        <a class="menu-item" href="/owners#compare">
+          <span class="menu-item__label">Pricing</span>
+        </a>
+        <a class="menu-item" href="/owners#case-studies">
+          <span class="menu-item__label">Case Studies</span>
+        </a>
+        <a class="menu-feature" href={`/blog/${ownerFeature.slug}`}>
+          <span class="menu-feature__media"><img src={ownerFeature.img} alt="" loading="lazy" /></span>
+          <span class="menu-feature__body">
+            <span class="menu-feature__kicker">Featured · The Cardo Journal</span>
+            <span class="menu-feature__title">{ownerFeature.title}</span>
+          </span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Owners first-open splash (reuses the property-management reveal) -->
+    <div class="menu__splash" data-menu-splash aria-hidden="true">
+      <p class="menu__splash-head">
+        <span>Premium Care.</span>
+        <span>Proven Performance.</span>
+        <span>Peace of Mind.</span>
+      </p>
+      <p class="menu__splash-sub">Thoughtful management that protects your home, delights your guests, and drives stronger results.</p>
+      <div class="menu__splash-reviews">
+        <span class="pm-grev">
+          <svg class="pm-grev__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          <b>Google</b>
+        </span>
+        <span class="pm-grev__score">4.9</span>
+        <span class="pm-grev__stars" aria-label="4.9 out of 5">★★★★★</span>
+        <span class="pm-grev__count">2,000+ reviews</span>
+      </div>
+      <span class="menu__splash-hint">Continue to owners →</span>
+    </div>
+  </aside>
 </div>
 
 <script>
@@ -52,4 +128,79 @@
   const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 12);
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ---- Menu drawer: open/close + Guests⇄Owners toggle + owner splash ---- */
+  (function () {
+    const openBtn = document.querySelector('[data-menu-open]');
+    const menu = document.querySelector('[data-menu]');
+    const panel = document.querySelector('[data-menu-panel]');
+    const splash = document.querySelector('[data-menu-splash]');
+    if (!openBtn || !menu || !panel) return;
+
+    const segs = Array.prototype.slice.call(menu.querySelectorAll('[data-mode-btn]'));
+    const closers = Array.prototype.slice.call(menu.querySelectorAll('[data-menu-close]'));
+    const SPLASH_KEY = 'cardoOwnerSplashSeen';
+    let splashTimer = null;
+
+    function openMenu() {
+      menu.classList.add('is-open');
+      menu.setAttribute('aria-hidden', 'false');
+      openBtn.setAttribute('aria-expanded', 'true');
+      document.documentElement.classList.add('menu-open');
+    }
+    function closeMenu() {
+      menu.classList.remove('is-open');
+      menu.setAttribute('aria-hidden', 'true');
+      openBtn.setAttribute('aria-expanded', 'false');
+      document.documentElement.classList.remove('menu-open');
+      hideSplash();
+    }
+
+    function hideSplash() {
+      if (!splash) return;
+      clearTimeout(splashTimer);
+      splash.classList.remove('is-shown');
+      splash.setAttribute('aria-hidden', 'true');
+    }
+    function showSplash() {
+      if (!splash) return;
+      splash.setAttribute('aria-hidden', 'false');
+      // next frame so the transition runs from the hidden state
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { splash.classList.add('is-shown'); });
+      });
+      clearTimeout(splashTimer);
+      splashTimer = setTimeout(hideSplash, 3000);
+    }
+
+    function setMode(mode) {
+      if (panel.getAttribute('data-mode') === mode) return;
+      panel.setAttribute('data-mode', mode);
+      segs.forEach(function (s) {
+        const on = s.getAttribute('data-mode-btn') === mode;
+        s.classList.toggle('is-active', on);
+        s.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      if (mode === 'owners') {
+        let seen = false;
+        try { seen = sessionStorage.getItem(SPLASH_KEY) === '1'; } catch (e) {}
+        if (!seen) {
+          showSplash();
+          try { sessionStorage.setItem(SPLASH_KEY, '1'); } catch (e) {}
+        }
+      } else {
+        hideSplash();
+      }
+    }
+
+    openBtn.addEventListener('click', openMenu);
+    closers.forEach(function (c) { c.addEventListener('click', closeMenu); });
+    segs.forEach(function (s) {
+      s.addEventListener('click', function () { setMode(s.getAttribute('data-mode-btn')); });
+    });
+    if (splash) splash.addEventListener('click', hideSplash);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menu.classList.contains('is-open')) closeMenu();
+    });
+  })();
 </script>

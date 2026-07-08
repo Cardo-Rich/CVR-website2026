@@ -1134,6 +1134,118 @@ main h2.h2-reveal .h2ch { transition: opacity .22s var(--ease); }
   100% { transform: translateX(260%); opacity: 0; }
 }
 
+/* =========================================================
+   Menu button + slide-out Menu drawer (Guests light ⇄ Owners dark)
+   Replaces the old "Manage my home" nav control on the home page.
+   ========================================================= */
+.menu-btn {
+  position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-body); font-weight: 600; font-size: .95rem; line-height: 1; color: #fff;
+  background: #000; border: none; cursor: pointer; border-radius: 15px; padding: 12px 20px;
+  box-shadow: 0 8px 22px rgba(14,17,27,.22); transition: background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+.menu-btn:hover { background: var(--ink-soft); transform: translateY(-1px); }
+.menu-btn__bars { display: inline-flex; flex-direction: column; gap: 3.5px; width: 17px; }
+.menu-btn__bars span { display: block; height: 2px; width: 100%; background: currentColor; border-radius: 2px; }
+.menu-btn__bars span:nth-child(2) { width: 72%; }
+.menu-btn__label { letter-spacing: .01em; }
+
+/* ---- Drawer shell ---- */
+html.menu-open { overflow: hidden; }
+.menu { position: fixed; inset: 0; z-index: 200; visibility: hidden; pointer-events: none; }
+.menu.is-open { visibility: visible; pointer-events: auto; }
+.menu__scrim { position: absolute; inset: 0; background: rgba(8,16,26,0); backdrop-filter: blur(0); transition: background .45s var(--ease), backdrop-filter .45s var(--ease); }
+.menu.is-open .menu__scrim { background: rgba(8,16,26,.5); backdrop-filter: blur(3px); }
+
+.menu__panel {
+  position: absolute; top: 0; right: 0; height: 100%; width: min(440px, 100vw);
+  display: flex; flex-direction: column; overflow: hidden;
+  transform: translateX(100%); transition: transform .5s cubic-bezier(.22,.61,.36,1), background-color .55s var(--ease), color .55s var(--ease);
+  background: var(--cream); color: var(--ink); box-shadow: -24px 0 60px rgba(14,17,27,.28);
+}
+.menu.is-open .menu__panel { transform: none; }
+/* Owners = dark theme; the shift from light → dark is animated by the transitions above. */
+.menu__panel[data-mode="owners"] { background: #0b1825; color: var(--cream); }
+
+/* ---- Toggle bar ---- */
+.menu__bar { display: flex; align-items: center; gap: 14px; padding: 20px 20px 16px; }
+.menu__toggle { position: relative; display: inline-flex; flex: 1; padding: 4px; border-radius: var(--radius-pill); background: rgba(14,17,27,.06); border: 1px solid var(--line); transition: background .55s var(--ease), border-color .55s var(--ease); }
+.menu__panel[data-mode="owners"] .menu__toggle { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.16); }
+.menu__thumb { position: absolute; top: 4px; left: 4px; width: calc(50% - 4px); height: calc(100% - 8px); border-radius: var(--radius-pill); background: var(--ink); box-shadow: var(--shadow-sm); transition: transform .4s cubic-bezier(.22,.61,.36,1), background .55s var(--ease); }
+.menu__panel[data-mode="owners"] .menu__thumb { transform: translateX(100%); background: var(--gold); }
+.menu__seg { position: relative; z-index: 1; flex: 1; appearance: none; border: none; background: none; cursor: pointer; font-family: var(--font-body); font-weight: 600; font-size: .9rem; padding: 9px 8px; color: var(--muted); transition: color .3s var(--ease); }
+.menu__seg.is-active { color: #fff; }
+.menu__panel[data-mode="owners"] .menu__seg.is-active { color: var(--ink); }
+.menu__close { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: none; color: inherit; cursor: pointer; transition: background var(--dur-fast) var(--ease), border-color .55s var(--ease); }
+.menu__close svg { width: 18px; height: 18px; }
+.menu__close:hover { background: rgba(14,17,27,.06); }
+.menu__panel[data-mode="owners"] .menu__close { border-color: rgba(255,255,255,.18); }
+.menu__panel[data-mode="owners"] .menu__close:hover { background: rgba(255,255,255,.1); }
+
+/* ---- Body + view swap ---- */
+.menu__body { position: relative; flex: 1; overflow-y: auto; padding: 8px 20px 28px; -webkit-overflow-scrolling: touch; }
+.menu__view { display: none; }
+.menu__panel[data-mode="guests"] .menu__view[data-view="guests"],
+.menu__panel[data-mode="owners"] .menu__view[data-view="owners"] { display: block; animation: menuViewIn .45s var(--ease) both; }
+@keyframes menuViewIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ---- Grouped chip links (By Accommodation Type) ---- */
+.menu-group { padding: 14px 0 6px; }
+.menu-group__h { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.menu__panel[data-mode="owners"] .menu-group__h { color: rgba(248,243,236,.55); }
+.menu-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.menu-chips a { font-size: .86rem; font-weight: 500; padding: 8px 14px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); color: var(--ink); transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
+.menu-chips a:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+/* ---- Standard menu item ---- */
+.menu-item { display: block; padding: 16px 2px; border-top: 1px solid var(--line); transition: border-color .55s var(--ease), padding-left var(--dur-fast) var(--ease); }
+.menu-item:first-child { border-top: none; }
+.menu-item:hover { padding-left: 6px; }
+.menu-item__label { display: block; font-family: var(--font-display); font-size: 1.4rem; line-height: 1.1; color: inherit; }
+.menu-item__sub { display: block; margin-top: 4px; font-size: .9rem; color: var(--muted); }
+.menu-item__go { display: inline-block; margin-top: 12px; font-size: .82rem; font-weight: 600; color: var(--rose); }
+.menu__panel[data-mode="owners"] .menu-item { border-color: rgba(255,255,255,.12); }
+.menu__panel[data-mode="owners"] .menu-item__sub { color: rgba(248,243,236,.6); }
+.menu__panel[data-mode="owners"] .menu-item__label:hover { color: var(--gold); }
+
+/* ---- Guest review card ---- */
+.menu-review { display: block; margin-top: 18px; padding: 18px; border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--paper); box-shadow: var(--shadow-sm); transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }
+.menu-review:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.menu-review__top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.menu-review__label { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.menu-review__stars { color: #FBBC04; letter-spacing: 1px; font-size: .92rem; }
+.menu-review__quote { display: block; font-family: var(--font-display); font-size: 1.02rem; line-height: 1.5; color: var(--ink); }
+.menu-review__by { display: block; margin-top: 10px; font-size: .82rem; color: var(--muted); }
+.menu-review .menu-item__go { margin-top: 10px; }
+
+/* ---- Owners featured article card ---- */
+.menu-feature { display: flex; gap: 14px; align-items: center; margin-top: 20px; padding: 12px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.04); transition: background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease); }
+.menu-feature:hover { background: rgba(255,255,255,.08); transform: translateY(-2px); }
+.menu-feature__media { flex: none; width: 84px; height: 64px; overflow: hidden; }
+.menu-feature__media img { width: 100%; height: 100%; object-fit: cover; }
+.menu-feature__kicker { display: block; font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.menu-feature__title { display: block; font-family: var(--font-display); font-size: 1rem; line-height: 1.25; color: var(--cream); }
+
+/* ---- Owners first-open splash ---- */
+.menu__splash { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 8px; padding: 32px; background: #0b1825; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .5s var(--ease), visibility 0s linear .5s; }
+.menu__splash.is-shown { opacity: 1; visibility: visible; pointer-events: auto; cursor: pointer; transition: opacity .5s var(--ease); }
+.menu__splash-head { font-family: var(--font-display); font-weight: 500; color: #fff; font-size: clamp(1.9rem, 7vw, 2.6rem); line-height: 1.1; margin: 0 0 14px; letter-spacing: -.02em; }
+.menu__splash-head span { display: block; opacity: 0; filter: blur(12px); transform: translateY(10px); transition: opacity .6s var(--ease), filter .6s var(--ease), transform .6s var(--ease); }
+.menu__splash.is-shown .menu__splash-head span { opacity: 1; filter: blur(0); transform: none; }
+.menu__splash.is-shown .menu__splash-head span:nth-child(2) { transition-delay: .16s; }
+.menu__splash.is-shown .menu__splash-head span:nth-child(3) { transition-delay: .32s; }
+.menu__splash-sub { color: rgba(248,243,236,.86); font-size: 1rem; line-height: 1.55; max-width: 320px; margin: 0 0 8px; opacity: 0; transition: opacity .6s var(--ease) .42s; }
+.menu__splash.is-shown .menu__splash-sub { opacity: 1; }
+.menu__splash-reviews { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; padding: 10px 16px; border-radius: var(--radius-pill); background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); opacity: 0; transform: translateY(8px); transition: opacity .6s var(--ease) .56s, transform .6s var(--ease) .56s; }
+.menu__splash.is-shown .menu__splash-reviews { opacity: 1; transform: none; }
+.menu__splash-hint { margin-top: 22px; font-size: .82rem; font-weight: 600; letter-spacing: .04em; color: rgba(248,243,236,.55); opacity: 0; transition: opacity .6s var(--ease) .72s; }
+.menu__splash.is-shown .menu__splash-hint { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .menu__panel, .menu__scrim, .menu__view, .menu__splash-head span { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+@media (max-width: 480px) { .menu__panel { width: 100vw; } }
+
 /* ---- The Cardo Journal: full-bleed blog-style carousel (was What's on) ---- */
 #journal .jshow { position: relative; width: 100vw; margin-left: calc(50% - 50vw); margin-top: 18px; }
 #journal .jshow__track {
