@@ -12,6 +12,15 @@ export function emailShell(inner: string): string {
     </div>
   </div>`;
 }
+export function signingInviteHtml(clientName: string, url: string): string {
+  const firstName = escHtml((clientName || '').trim().split(/\s+/)[0] || 'there');
+  return emailShell(`
+    <h2 style="margin:0 0 14px;font-size:20px;">Hi ${firstName},</h2>
+    <p style="font-size:14px;line-height:1.6;color:#3D3E47;">Your Rental Management Agreement with Cardo Vacation Rentals is ready. The key commercial terms have been filled in for you — review the agreement, complete your details, and sign online. It takes about five minutes.</p>
+    <p style="margin:24px 0;"><a href="${url}" style="background:#ED3C78;color:#fff;text-decoration:none;font-weight:bold;font-size:14px;padding:14px 26px;border-radius:999px;display:inline-block;">Review &amp; Sign Agreement</a></p>
+    <p style="font-size:13px;line-height:1.6;color:#6B6D78;">Once signed, a PDF copy is emailed to you automatically. You can cancel for any reason within 14 days of signing with no termination fee.</p>
+    <p style="font-size:12px;color:#9A9CA6;">If the button doesn't work, copy this link: ${url}</p>`);
+}
 export function makeSendEmail(apiKey: string | undefined, settings: PortalSettings) {
   return async (
     to: string[], subject: string, html: string,

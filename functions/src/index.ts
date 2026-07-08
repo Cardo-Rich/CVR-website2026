@@ -2,7 +2,7 @@ import { onRequest, onCall, HttpsError } from 'firebase-functions/v2/https';
 import { defineSecret } from 'firebase-functions/params';
 import { getAuth } from 'firebase-admin/auth';
 import { getDb, getBucket } from './db.js';
-import { makeSendEmail } from './email.js';
+import { makeSendEmail, signingInviteHtml } from './email.js';
 import { buildPdf } from './pdf.js';
 import {
   createAgreement, getAgreementPublic, signAgreement, listAgreements,
@@ -59,14 +59,24 @@ export const agreements = onRequest({ secrets: [RESEND_API_KEY], cors: false }, 
 });
 
 // ---- Staff callables (require the admin claim) ----
-export const adminCreate = onCall(async (req) => {
+export const adminCreate = onCall({ secrets: [RESEND_API_KEY] }, async (req) => {
   requireAdmin(req.auth);
+  let doc;
   try {
-    return await createAgreement(getDb(), req.data);
+    doc = await createAgreement(getDb(), req.data);
   } catch (e) {
     if (e instanceof HttpErr && e.status === 400) throw new HttpsError('invalid-argument', e.message);
     throw e; // real failures propagate and log as internal errors
   }
+  const origin = String(req.data?.siteOrigin || '').replace(/\/$/, '');
+  const url = `${origin}/agreement/?t=${doc.token}`;
+  let emailed = false;
+  try {
+    const settings = await getSettings(getDb());
+    const send = makeSendEmail(RESEND_API_KEY.value(), settings);
+    emailed = await send([doc.clientEmail], 'Your Cardo Vacation Rentals management agreement is ready to sign', signingInviteHtml(doc.clientName || '', url));
+  } catch (e) { console.error('invite email failed', e); }
+  return { token: doc.token, url, emailed };
 });
 export const adminList = onCall(async (req) => { requireAdmin(req.auth); return { agreements: await listAgreements(getDb()) }; });
 export const adminGetSettings = onCall({ secrets: [RESEND_API_KEY] }, async (req) => {
