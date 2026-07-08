@@ -11,5 +11,9 @@ export function getAdminApp(): App {
   if (!cachedApp) cachedApp = getApps()[0] ?? initializeApp();
   return cachedApp;
 }
+// Name the bucket explicitly. In the deployed functions runtime FIREBASE_CONFIG
+// supplies the default bucket, but out-of-runtime callers (e.g. the migration
+// CLI) have no default — so pass the project's default bucket name directly.
+const STORAGE_BUCKET = 'cardo-website-2026.firebasestorage.app';
 export function getDb() { return getFirestore(getAdminApp()); }
-export function getBucket() { return getStorage(getAdminApp()).bucket(); }
+export function getBucket() { return getStorage(getAdminApp()).bucket(STORAGE_BUCKET); }
