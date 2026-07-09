@@ -171,14 +171,6 @@
       if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
-    // OAuth: treat a click as "signed in" and jump straight to the property step.
-    [].slice.call(panel.querySelectorAll('[data-oauth]')).forEach(function(btn){
-      btn.addEventListener('click', function(){
-        saveLead({ provider: btn.getAttribute('data-oauth'), signedIn: true });
-        show(step2);
-      });
-    });
-
     // Early-contact preference updates the record live.
     var early = panel.querySelector('input[name="earlyContact"]');
     early && early.addEventListener('change', function(){ saveLead({ earlyContact: early.checked }); });
@@ -244,16 +236,32 @@
         });
         timesEl.appendChild(b);
       });
+      function pad(n){ return (n < 10 ? '0' : '') + n; }
+      function stamp(dt){ return dt.getFullYear() + pad(dt.getMonth()+1) + pad(dt.getDate()) + 'T' + pad(dt.getHours()) + pad(dt.getMinutes()) + '00'; }
+      function toStart(day, t){
+        var m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        var h = (parseInt(m[1],10) % 12) + (/pm/i.test(m[3]) ? 12 : 0);
+        var d = new Date(day); d.setHours(h, parseInt(m[2],10), 0, 0); return d;
+      }
       confirm.addEventListener('click', function(){
         if (!sel.day || !sel.time) return;
         var label = dn[sel.day.getDay()] + ', ' + mn[sel.day.getMonth()] + ' ' + sel.day.getDate() + ' at ' + sel.time;
-        saveLead({ appointment: label });
+        var start = toStart(sel.day, sel.time), end = new Date(start.getTime() + 30*60000);
+        // Link the booking to Google Calendar (prefilled event, keeps our UI).
+        var gcal = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+          + '&text=' + encodeURIComponent('Cardo — Earning Estimate Review')
+          + '&dates=' + stamp(start) + '/' + stamp(end)
+          + '&details=' + encodeURIComponent('Your Cardo account manager will walk you through your San Diego earning estimate.' + (lead.address ? '\nProperty: ' + lead.address : ''))
+          + '&location=' + encodeURIComponent('Phone call')
+          + '&ctz=America/Los_Angeles';
+        saveLead({ appointment: label, appointmentStart: start.toISOString(), gcalUrl: gcal });
         wrap.querySelector('.leadcal__days').style.display = 'none';
         wrap.querySelector('.leadcal__times').style.display = 'none';
         [].slice.call(wrap.querySelectorAll('.leadcal__label')).forEach(function(l){ l.style.display = 'none'; });
         confirm.style.display = 'none';
         done.hidden = false;
-        done.innerHTML = '<div class="leadcal__doneic">✓</div><div><b>You’re booked for ' + label + '.</b><br>A calendar invite is on its way. See you then!</div>';
+        done.innerHTML = '<div class="leadcal__donerow"><div class="leadcal__doneic">✓</div><div><b>You’re booked for ' + label + '.</b><br>Add it to your calendar below.</div></div>'
+          + '<a class="btn btn-block leadcal__gcal" href="' + gcal + '" target="_blank" rel="noopener">Add to Google Calendar</a>';
       });
       refreshConfirm();
     }

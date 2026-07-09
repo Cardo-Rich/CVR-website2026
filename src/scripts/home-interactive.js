@@ -178,43 +178,58 @@
     });
   })();
 
-  /* ---------------- Address autocomplete (mock San Diego suggestions) ---------------- */
+  /* ---------------- Address autocomplete (live, US-wide) ----------------
+     Uses Photon (photon.komoot.io) — a keyless OpenStreetMap geocoder that
+     supports type-ahead + CORS. Results are filtered to the US. Swap the
+     body of fetchSuggestions for Google Places if/when a key is available. */
   (function () {
     var root = document.querySelector('[data-addr]');
     if (!root) return;
     var input = root.querySelector('input');
     var list = root.querySelector('[data-addr-list]');
-    var streets = ['Camino De La Costa', 'Neptune Ave', 'Ocean Blvd', 'Coast Blvd', 'Mission Blvd', 'Bayside Walk', 'Sunset Cliffs Blvd', 'La Jolla Blvd', 'Cliffridge Ave', 'Pacific Beach Dr'];
-    var cities = ['La Jolla', 'Pacific Beach', 'Mission Beach', 'Del Mar', 'Coronado', 'Encinitas', 'Carlsbad'];
     var pin = '<svg viewBox="0 0 24 24"><path d="M12 21s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>';
-    var active = -1, items = [];
+    var active = -1, timer = null, ctrl = null;
 
-    function build(q) {
-      var num = (q.match(/\d+/) || ['1' + (Math.floor(Math.random() * 9) + 1) + '2' + (Math.floor(Math.random() * 9))])[0];
-      var out = [];
-      for (var i = 0; i < 4; i++) {
-        var st = streets[(q.length + i) % streets.length];
-        var ct = cities[(q.length + i) % cities.length];
-        out.push(num + ' ' + st + ', ' + ct + ', CA');
-      }
-      return out;
+    function label(p) {
+      var line1 = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
+      var line2 = [p.city || p.town || p.village || p.county, p.state, p.postcode].filter(Boolean).join(', ');
+      return [line1, line2].filter(Boolean).join(', ');
     }
-    function render(q) {
-      if (!q || q.trim().length < 3) { list.hidden = true; return; }
-      items = build(q.trim());
+    function fetchSuggestions(q) {
+      if (window.AbortController) { if (ctrl) ctrl.abort(); ctrl = new AbortController(); }
+      var url = 'https://photon.komoot.io/api/?limit=6&lang=en&q=' + encodeURIComponent(q);
+      return fetch(url, ctrl ? { signal: ctrl.signal } : undefined)
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          return (d.features || [])
+            .map(function (f) { return f.properties || {}; })
+            .filter(function (p) { return p.countrycode === 'US' && (p.street || p.name); })
+            .map(label)
+            .filter(function (v, i, a) { return v && a.indexOf(v) === i; });
+        });
+    }
+    function draw(items) {
+      if (!items.length) { list.hidden = true; return; }
       list.innerHTML = items.map(function (a, i) {
-        return '<li data-i="' + i + '">' + pin + '<span>' + a + '</span></li>';
+        return '<li data-i="' + i + '">' + pin + '<span>' + a.replace(/</g, '&lt;') + '</span></li>';
       }).join('');
-      active = -1;
-      list.hidden = false;
+      active = -1; list.hidden = false;
       [].slice.call(list.children).forEach(function (li) {
         li.addEventListener('mousedown', function (e) { e.preventDefault(); choose(li); });
       });
     }
+    function render(q) {
+      if (!q || q.trim().length < 3) { list.hidden = true; return; }
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        fetchSuggestions(q.trim()).then(draw).catch(function () { /* offline / aborted — leave list as-is */ });
+      }, 220);
+    }
     function choose(li) { input.value = li.querySelector('span').textContent; list.hidden = true; }
+    input.setAttribute('autocomplete', 'off');
     input.addEventListener('input', function () { render(input.value); });
     input.addEventListener('focus', function () { if (input.value.trim().length >= 3) render(input.value); });
-    input.addEventListener('blur', function () { setTimeout(function () { list.hidden = true; }, 120); });
+    input.addEventListener('blur', function () { setTimeout(function () { list.hidden = true; }, 150); });
     input.addEventListener('keydown', function (e) {
       if (list.hidden) return;
       var lis = [].slice.call(list.children);
