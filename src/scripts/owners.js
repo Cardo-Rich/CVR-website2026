@@ -126,9 +126,138 @@
   var openItem = list && list.querySelector('[data-faq-item].is-open .faq__panel');
   if (openItem) openItem.style.maxHeight = openItem.scrollHeight + 'px';
 
-  var form = document.querySelector('[data-lead-form]');
-  var success = document.querySelector('[data-lead-success]');
-  form && form.addEventListener('submit', function(e){ e.preventDefault(); if(!form.reportValidity()) return; form.hidden = true; if(success) success.hidden = false; });
+  /* ----- Multi-step lead form + booking ----- */
+  (function(){
+    var panel = document.querySelector('[data-lead]');
+    if (!panel) return;
+    var step1 = panel.querySelector('[data-lead-step="1"]');
+    var step2 = panel.querySelector('[data-lead-step="2"]');
+    var book = panel.querySelector('[data-lead-book]');
+    var back = panel.querySelector('[data-lead-back]');
+    var calMount = panel.querySelector('[data-leadcal]');
+
+    // Mock lead "record" — one row that each step updates. Swap saveLead's body
+    // for a real POST/PATCH to your CRM or Firestore endpoint; it already runs
+    // on step 1, step 2, and when the appointment/early-contact box changes.
+    var lead = { id: 'lead_' + Math.random().toString(36).slice(2, 10) };
+    function saveLead(patch){
+      Object.assign(lead, patch || {});
+      // TODO(backend): persist `lead` here, e.g.
+      //   fetch('/api/leads/' + lead.id, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(lead) });
+      try { window.sessionStorage.setItem('cardoLead', JSON.stringify(lead)); } catch(e) {}
+      return lead;
+    }
+    function values(f){ var o = {}; [].slice.call(f.elements).forEach(function(el){ if (el.name) o[el.name] = el.value; }); return o; }
+
+    function show(which){
+      [step1, step2, book].forEach(function(el){ if (el) el.hidden = el !== which; });
+    }
+
+    step1 && step1.addEventListener('submit', function(e){
+      e.preventDefault();
+      if (!step1.reportValidity()) return;
+      saveLead(values(step1));
+      show(step2);
+    });
+    back && back.addEventListener('click', function(){ show(step1); });
+
+    step2 && step2.addEventListener('submit', function(e){
+      e.preventDefault();
+      if (!step2.reportValidity()) return;
+      saveLead(values(step2));
+      show(book);
+      buildScheduler();
+      var hero = document.getElementById('estimate');
+      if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // OAuth: treat a click as "signed in" and jump straight to the property step.
+    [].slice.call(panel.querySelectorAll('[data-oauth]')).forEach(function(btn){
+      btn.addEventListener('click', function(){
+        saveLead({ provider: btn.getAttribute('data-oauth'), signedIn: true });
+        show(step2);
+      });
+    });
+
+    // Early-contact preference updates the record live.
+    var early = panel.querySelector('input[name="earlyContact"]');
+    early && early.addEventListener('change', function(){ saveLead({ earlyContact: early.checked }); });
+
+    /* ---- Booking calendar: real Google Calendar embed if provided, else a
+            lightweight scheduling placeholder that captures a day + time. ---- */
+    var built = false;
+    function buildScheduler(){
+      if (built || !calMount) return;
+      built = true;
+      var gcal = calMount.getAttribute('data-gcal');
+      if (gcal) {
+        var f = document.createElement('iframe');
+        f.src = gcal; f.width = '100%'; f.height = '600'; f.frameBorder = '0';
+        f.style.border = '0'; f.title = 'Book your estimate review call';
+        calMount.appendChild(f);
+        return;
+      }
+      // Placeholder scheduler — next 8 weekdays + a few time slots.
+      var days = [], d = new Date(); d.setHours(0,0,0,0);
+      while (days.length < 8) { d.setDate(d.getDate() + 1); if (d.getDay() !== 0 && d.getDay() !== 6) days.push(new Date(d)); }
+      var times = ['9:00 AM','10:30 AM','1:00 PM','2:30 PM','4:00 PM'];
+      var dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var sel = { day: null, time: null };
+
+      var wrap = document.createElement('div'); wrap.className = 'leadcal__inner';
+      wrap.innerHTML =
+        '<div class="leadcal__label">Pick a day</div>' +
+        '<div class="leadcal__days"></div>' +
+        '<div class="leadcal__label">Available times</div>' +
+        '<div class="leadcal__times"></div>' +
+        '<button type="button" class="btn btn-block leadcal__confirm" disabled>Select a day &amp; time</button>' +
+        '<div class="leadcal__done" hidden></div>';
+      calMount.appendChild(wrap);
+      var daysEl = wrap.querySelector('.leadcal__days');
+      var timesEl = wrap.querySelector('.leadcal__times');
+      var confirm = wrap.querySelector('.leadcal__confirm');
+      var done = wrap.querySelector('.leadcal__done');
+
+      function refreshConfirm(){
+        var ok = sel.day && sel.time;
+        confirm.disabled = !ok;
+        confirm.textContent = ok ? ('Confirm ' + dn[sel.day.getDay()] + ' ' + sel.time) : 'Select a day & time';
+      }
+      days.forEach(function(day){
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'leadcal__day';
+        b.innerHTML = '<span class="leadcal__dow">' + dn[day.getDay()] + '</span><span class="leadcal__num">' + day.getDate() + '</span><span class="leadcal__mon">' + mn[day.getMonth()] + '</span>';
+        b.addEventListener('click', function(){
+          sel.day = day;
+          [].slice.call(daysEl.children).forEach(function(x){ x.classList.toggle('is-on', x === b); });
+          refreshConfirm();
+        });
+        daysEl.appendChild(b);
+      });
+      times.forEach(function(t){
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'leadcal__time'; b.textContent = t;
+        b.addEventListener('click', function(){
+          sel.time = t;
+          [].slice.call(timesEl.children).forEach(function(x){ x.classList.toggle('is-on', x === b); });
+          refreshConfirm();
+        });
+        timesEl.appendChild(b);
+      });
+      confirm.addEventListener('click', function(){
+        if (!sel.day || !sel.time) return;
+        var label = dn[sel.day.getDay()] + ', ' + mn[sel.day.getMonth()] + ' ' + sel.day.getDate() + ' at ' + sel.time;
+        saveLead({ appointment: label });
+        wrap.querySelector('.leadcal__days').style.display = 'none';
+        wrap.querySelector('.leadcal__times').style.display = 'none';
+        [].slice.call(wrap.querySelectorAll('.leadcal__label')).forEach(function(l){ l.style.display = 'none'; });
+        confirm.style.display = 'none';
+        done.hidden = false;
+        done.innerHTML = '<div class="leadcal__doneic">✓</div><div><b>You’re booked for ' + label + '.</b><br>A calendar invite is on its way. See you then!</div>';
+      });
+      refreshConfirm();
+    }
+  })();
 
   if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches && ('IntersectionObserver' in window)) {
     var io = new IntersectionObserver(function(entries){ entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('is-in'); io.unobserve(en.target); } }); }, { threshold: .12 });
