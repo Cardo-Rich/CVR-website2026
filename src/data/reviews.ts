@@ -1,0 +1,35 @@
+// =============================================================
+// Cardo — guest review seed data.
+// Powers the For-Guests menu carousel and the /reviews waterfall page.
+// Placeholder copy + Unsplash avatars; swap for real Google/Airbnb pulls.
+// =============================================================
+
+export interface Review {
+  name: string;
+  avatar: string;
+  platform: 'google' | 'airbnb';
+  stars: number;
+  meta: string;
+  text: string;
+}
+
+export const reviews: Review[] = [
+  { name: 'Emily R.', platform: 'google', stars: 5, meta: 'La Jolla · 1 week ago', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80', text: 'Easiest check-in we’ve ever had — code arrived the morning of, and the house was immaculate. Someone texted to make sure we found everything. Felt looked-after the whole trip.' },
+  { name: 'Sean M.', platform: 'google', stars: 5, meta: 'Pacific Beach · 1 month ago', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80', text: 'Our second stay with Cardo and somehow even better than the first. Spotless, beautifully styled, and the local recommendations they left were spot-on. The only way we book San Diego now.' },
+  { name: 'Megan T.', platform: 'airbnb', stars: 5, meta: 'Stayed in La Jolla · April 2026', avatar: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=120&q=80', text: 'Five stars isn’t enough. Exactly like the photos, check-in was effortless, and the host’s local guide pointed us to the best little taco spot we’d never have found. Already planning our return.' },
+  { name: 'Jordan K.', platform: 'google', stars: 5, meta: 'Del Mar · 2 months ago', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=120&q=80', text: 'No nickel-and-diming at checkout — the price we saw was the price we paid. The home was even nicer than the photos. We’ve already booked again for next summer.' },
+  { name: 'David L.', platform: 'airbnb', stars: 5, meta: 'Stayed in Coronado · March 2026', avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=120&q=80', text: 'Communication was instant from booking to checkout. Spotless and beautifully designed — felt like a boutique hotel with the space of a house. Superhost status well earned.' },
+  { name: 'Allison P.', platform: 'google', stars: 5, meta: 'Encinitas · 3 months ago', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80', text: 'A dishwasher issue came up mid-stay and someone was there within the hour. We barely noticed. That kind of responsiveness is rare — we felt taken care of.' },
+  { name: 'Sofia G.', platform: 'airbnb', stars: 5, meta: 'Stayed in Pacific Beach · Feb 2026', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=120&q=80', text: 'A small hiccup with the AC was fixed within the hour — someone local came right out. That responsiveness made all the difference. The smoothest stay we’ve had on Airbnb.' },
+  { name: 'Marcus W.', platform: 'google', stars: 5, meta: 'Mission Beach · 3 weeks ago', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&q=80', text: 'Steps from the sand, exactly as described, and the beach gear they stocked meant we didn’t have to pack a thing. Kids never wanted to leave. Ten out of ten.' },
+  { name: 'Rachel B.', platform: 'airbnb', stars: 5, meta: 'Stayed in Carlsbad · Jan 2026', avatar: 'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?auto=format&fit=crop&w=120&q=80', text: 'Every detail was considered — from the coffee setup to the handwritten note. You can tell they actually care about the experience, not just the booking.' },
+  { name: 'Thomas H.', platform: 'google', stars: 5, meta: 'La Jolla · 1 month ago', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80', text: 'We’ve rented all over California and this was the cleanest home we’ve ever walked into. The view was unreal and the whole process was seamless start to finish.' },
+  { name: 'Priya N.', platform: 'airbnb', stars: 5, meta: 'Stayed in Del Mar · Dec 2025', avatar: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?auto=format&fit=crop&w=120&q=80', text: 'Booked for a family reunion and it was flawless. Plenty of space, thoughtful touches everywhere, and a team that answered every question within minutes. Highly recommend.' },
+  { name: 'Chris D.', platform: 'google', stars: 5, meta: 'Coronado · 2 weeks ago', avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=120&q=80', text: 'From the keyless entry to the spotless kitchen, everything just worked. The local concierge tips turned a good trip into a great one. Will absolutely be back.' },
+  { name: 'Hannah S.', platform: 'airbnb', stars: 5, meta: 'Stayed in Encinitas · Nov 2025', avatar: 'https://images.unsplash.com/photo-1546961329-78bef0414d7c?auto=format&fit=crop&w=120&q=80', text: 'The photos don’t do it justice. Immaculate, stylish, and in the perfect spot. Check-in instructions were crystal clear and the team checked in without being intrusive.' },
+  { name: 'Andre F.', platform: 'google', stars: 5, meta: 'Pacific Beach · 5 weeks ago', avatar: 'https://images.unsplash.com/photo-1463453091185-61582044d556?auto=format&fit=crop&w=120&q=80', text: 'Honestly the best-run rental I’ve stayed in. Transparent, responsive, and genuinely welcoming. It felt less like a rental and more like a home someone was proud of.' },
+  { name: 'Grace L.', platform: 'airbnb', stars: 5, meta: 'Stayed in La Jolla · Oct 2025', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80', text: 'Everything was five-star, from the linens to the lighting. You can tell a designer touched this place. We’re already telling friends they have to book with Cardo.' },
+  { name: 'Ben K.', platform: 'google', stars: 5, meta: 'Carlsbad · 6 weeks ago', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80', text: 'Smooth from the first message. The home was gorgeous, spotless, and stocked with everything we needed. Their team clearly takes pride in the details.' },
+  { name: 'Nina C.', platform: 'airbnb', stars: 5, meta: 'Stayed in Mission Beach · Sep 2025', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=120&q=80', text: 'The location, the cleanliness, the communication — all perfect. We’ve stayed in a lot of Airbnbs and this is the new bar. Cannot wait to come back next year.' },
+  { name: 'Owen R.', platform: 'google', stars: 5, meta: 'Del Mar · 2 months ago', avatar: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=120&q=80', text: 'Racing season stay and they made it effortless — parking tips, restaurant bookings, the works. The home was pristine and the whole team was a pleasure to deal with.' },
+];

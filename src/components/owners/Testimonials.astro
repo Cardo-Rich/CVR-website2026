@@ -1,0 +1,49 @@
+---
+import { testimonials } from '../../data/site';
+---
+
+<section class="otest section-pad-sm" id="owner-reviews" data-screen-label="Owner testimonials">
+  <div class="section-wrap">
+    <div class="otest__head reveal">
+      <div>
+        <p class="eyebrow">What owners say</p>
+        <h2>Owners who switched, and never looked back.</h2>
+      </div>
+      <div class="otest__rating">
+        <span class="otest__stars">★★★★★</span>
+        <span class="otest__num">4.9</span>
+        <span class="otest__count">from San Diego homeowners</span>
+      </div>
+    </div>
+    <div class="otest__grid">
+      {testimonials.map((t) => (
+        <figure class="otest__card reveal">
+          <div class="otest__cardstars">★★★★★</div>
+          <blockquote class="otest__quote">“{t.quote}”</blockquote>
+          <figcaption class="otest__who">
+            <span class="otest__name">{t.name}</span>
+            <span class="otest__home">{t.home}</span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .otest { background: var(--cream); }
+  .otest__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 34px; }
+  .otest__head h2 { margin: 8px 0 0; }
+  .otest__rating { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+  .otest__stars { color: var(--gold); letter-spacing: 2px; font-size: 1.05rem; }
+  .otest__num { font-family: var(--font-display); font-size: 1.5rem; line-height: 1; }
+  .otest__count { color: var(--muted); font-size: .9rem; }
+  .otest__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .otest__card { margin: 0; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 26px; display: flex; flex-direction: column; }
+  .otest__cardstars { color: var(--gold); letter-spacing: 2px; font-size: .95rem; margin-bottom: 12px; }
+  .otest__quote { margin: 0 0 18px; font-family: var(--font-display); font-size: 1.12rem; line-height: 1.5; color: var(--ink); flex: 1; }
+  .otest__who { display: flex; flex-direction: column; gap: 2px; }
+  .otest__name { font-weight: 600; }
+  .otest__home { font-size: .85rem; color: var(--muted); }
+  @media (max-width: 900px) { .otest__grid { grid-template-columns: 1fr; } .otest__card { padding: 22px; } }
+</style>
