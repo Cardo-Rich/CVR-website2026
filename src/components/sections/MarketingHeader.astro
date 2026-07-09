@@ -1,10 +1,16 @@
 ---
+// Marketing header for secondary public pages. Matches the home nav: a clean
+// light-sand bar with the logo and a right-aligned "Menu" drawer.
+// `nav` / `cta` are accepted for backwards compatibility but no longer
+// rendered — every public page now routes through the shared <Menu /> drawer.
+import Menu from './Menu.astro';
+
 interface Props {
   logoHref?: string;
-  nav: { label: string; href: string; active?: boolean }[];
+  nav?: { label: string; href: string; active?: boolean }[];
   cta?: { label: string; href: string; floating?: boolean };
 }
-const { logoHref = '/', nav, cta } = Astro.props;
+const { logoHref = '/' } = Astro.props;
 ---
 
 <header class="site-header" data-header data-screen-label="Header">
@@ -13,16 +19,15 @@ const { logoHref = '/', nav, cta } = Astro.props;
       <img src="/assets/logo-horizontal-color.png" alt="Cardo Vacation Rentals" />
     </a>
     <nav class="site-header__nav">
-      {nav.map((n) => (
-        <a href={n.href} class={n.active ? 'is-active' : undefined}>{n.label}</a>
-      ))}
-      {cta && (cta.floating
-        ? <a class="site-header__cta btn btn-sm" data-header-cta href={cta.href}>{cta.label}</a>
-        : <a class="btn btn-sm" href={cta.href}>{cta.label}</a>
-      )}
+      <button type="button" class="menu-btn" data-menu-open aria-expanded="false" aria-controls="site-menu">
+        <span class="menu-btn__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="menu-btn__label">Menu</span>
+      </button>
     </nav>
   </div>
 </header>
+
+<Menu />
 
 <script>
   const header = document.querySelector('[data-header]');
