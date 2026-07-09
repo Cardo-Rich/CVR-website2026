@@ -1,27 +1,61 @@
-<section class="hero" data-screen-label="Hero">
+---
+// Owner hero + multi-step lead form. Step 1 captures contact details, step 2
+// the property; each step "saves" the lead record before advancing. After the
+// final submit the panel reveals a booking step (Google Calendar appointment
+// scheduling) so the owner can book a call to review the estimate.
+// The #estimate anchor sits on the section so menu/footer links land with the
+// "Get your home's revenue estimate" heading at the top of the view.
+---
+
+<section class="hero" id="estimate" data-screen-label="Hero">
   <div class="hero__overlay"></div>
   <div class="hero__inner">
     <div class="hero__copy">
       <p class="eyebrow" style="color:#fff">San Diego · Since 2013</p>
       <h1 class="hero__title">Get your home's revenue estimate.</h1>
-      <p class="hero__lede">Submit your home for an <b style="color:#fff">instant earning estimate</b> — then a personal account manager verifies every detail before your numbers are final.</p>
+      <p class="hero__lede">Submit your home for a free estimate by a personal account manager.</p>
       <div class="hero__trust">
         <span class="stars">★★★★★</span>
         <span>4.9 average · 2,000+ five-star reviews</span>
       </div>
     </div>
-    <div class="lead__panel hero__form" id="estimate">
-      <form class="lead__form" data-lead-form>
+
+    <div class="lead__panel hero__form" data-lead>
+      <!-- STEP 1 — contact -->
+      <form class="lead__form leadstep" data-lead-step="1" novalidate>
+        <div class="leadstep__meta"><span class="leadstep__count">Step 1 of 2</span><span class="leadstep__name">Your details</span></div>
+        <div class="leadprog"><i style="width:50%"></i></div>
+        <div class="field">
+          <label>Full name</label>
+          <input name="name" type="text" autocomplete="name" placeholder="Jane Owner" required />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input name="email" type="email" autocomplete="email" placeholder="jane@email.com" required />
+        </div>
+        <div class="field">
+          <label>Mobile phone</label>
+          <input name="phone" type="tel" autocomplete="tel" placeholder="619-555-0100" required />
+        </div>
+        <button type="submit" class="btn btn-block" style="margin-top:6px">Continue</button>
+        <div class="lead__or">or</div>
+        <div class="oauth-row">
+          <button type="button" class="oauthbtn" data-oauth="google" aria-label="Continue with Google"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg></button>
+          <button type="button" class="oauthbtn" data-oauth="apple" aria-label="Continue with Apple"><svg viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M16.36 12.78c.02 2.6 2.28 3.46 2.3 3.47-.02.06-.36 1.24-1.19 2.46-.72 1.05-1.46 2.1-2.63 2.12-1.15.02-1.52-.68-2.83-.68-1.31 0-1.72.66-2.81.7-1.13.04-1.99-1.13-2.72-2.18-1.48-2.16-2.62-6.1-1.09-8.76.76-1.32 2.11-2.16 3.58-2.18 1.11-.02 2.16.75 2.83.75.67 0 1.95-.92 3.29-.79.56.02 2.13.23 3.14 1.7-.08.05-1.87 1.1-1.85 3.27M14.19 5.5c.6-.73 1-1.74.89-2.75-.86.03-1.9.57-2.52 1.3-.55.64-1.04 1.67-.91 2.65.96.07 1.94-.49 2.54-1.2"/></svg></button>
+        </div>
+        <div class="lead__secure"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg> Secure &amp; private — verified by a real account manager.</div>
+      </form>
+
+      <!-- STEP 2 — property -->
+      <form class="lead__form leadstep" data-lead-step="2" hidden novalidate>
+        <div class="leadstep__meta"><button type="button" class="leadstep__back" data-lead-back>← Back</button><span class="leadstep__count">Step 2 of 2</span><span class="leadstep__name">Your property</span></div>
+        <div class="leadprog"><i style="width:100%"></i></div>
         <div class="field">
           <label>Property address</label>
           <div class="addr" data-addr>
             <input name="address" type="text" autocomplete="off" placeholder="Start typing your address…" required />
             <ul class="addr__list" data-addr-list hidden></ul>
           </div>
-        </div>
-        <div class="field">
-          <label>Mobile phone</label>
-          <input name="phone" type="tel" placeholder="619-555-0100" required />
         </div>
         <button type="button" class="lead__more" data-more-toggle aria-expanded="false">
           <svg class="lead__more-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -45,21 +79,28 @@
             <textarea name="details" rows="3" placeholder="Recent upgrades, views, standout features, sleeping capacity… we use this to build your property profile."></textarea>
           </div>
         </div>
-        <button type="submit" class="btn btn-block" style="margin-top:6px">Get my instant estimate</button>
+        <button type="submit" class="btn btn-block" style="margin-top:6px">Get my free estimate</button>
         <p class="lead__finehint">We'll text a confirmation code to verify your number and create your secure owner account.</p>
-        <div class="lead__or">or</div>
-        <div class="oauth-row">
-          <button type="button" class="oauthbtn" data-oauth="google" aria-label="Continue with Google"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg></button>
-          <button type="button" class="oauthbtn" data-oauth="apple" aria-label="Continue with Apple"><svg viewBox="0 0 24 24" fill="#000" aria-hidden="true"><path d="M16.36 12.78c.02 2.6 2.28 3.46 2.3 3.47-.02.06-.36 1.24-1.19 2.46-.72 1.05-1.46 2.1-2.63 2.12-1.15.02-1.52-.68-2.83-.68-1.31 0-1.72.66-2.81.7-1.13.04-1.99-1.13-2.72-2.18-1.48-2.16-2.62-6.1-1.09-8.76.76-1.32 2.11-2.16 3.58-2.18 1.11-.02 2.16.75 2.83.75.67 0 1.95-.92 3.29-.79.56.02 2.13.23 3.14 1.7-.08.05-1.87 1.1-1.85 3.27M14.19 5.5c.6-.73 1-1.74.89-2.75-.86.03-1.9.57-2.52 1.3-.55.64-1.04 1.67-.91 2.65.96.07 1.94-.49 2.54-1.2"/></svg></button>
-        </div>
-        <div class="lead__secure"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg> Secure &amp; private — verified by a real account manager.</div>
       </form>
-      <div class="lead__success" data-lead-success hidden>
-        <div class="lead__check">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg>
+
+      <!-- STEP 3 — book the review call (revealed after submit) -->
+      <div class="leadbook" data-lead-book hidden>
+        <div class="leadbook__head">
+          <div class="lead__check">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg>
+          </div>
+          <h3>Your estimate is on the way.</h3>
+          <p class="muted">Finish up by booking a quick call — your account rep will walk you through your earning estimate in detail and answer every question.</p>
         </div>
-        <h3>Estimate on the way</h3>
-        <p class="muted">A confirmation code is on its way to verify your number — then your account manager will finalize your numbers.</p>
+        <!-- Google Calendar appointment scheduling. Set data-gcal to your
+             scheduling embed URL (calendar.google.com/calendar/appointments/…?gv=true)
+             and the script drops in the live iframe; until then it renders an
+             interactive scheduling placeholder. -->
+        <div class="leadcal" data-leadcal data-gcal="" aria-live="polite"></div>
+        <label class="leadearly">
+          <input type="checkbox" name="earlyContact" />
+          <span>Have a representative contact me earlier if available</span>
+        </label>
       </div>
     </div>
   </div>

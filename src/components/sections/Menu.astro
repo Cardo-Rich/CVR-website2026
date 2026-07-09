@@ -134,7 +134,18 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
     const segs = Array.prototype.slice.call(menu.querySelectorAll('[data-mode-btn]'));
     const closers = Array.prototype.slice.call(menu.querySelectorAll('[data-menu-close]'));
     const SPLASH_KEY = 'cardoOwnerSplashSeen';
+    const MODE_KEY = 'cardoMenuMode';
     let splashTimer = null;
+
+    // Apply a mode with no animation/splash — used to restore the last choice on load.
+    function applyModeInstant(mode) {
+      panel.setAttribute('data-mode', mode);
+      segs.forEach(function (s) {
+        const on = s.getAttribute('data-mode-btn') === mode;
+        s.classList.toggle('is-active', on);
+        s.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
 
     function openMenu() {
       menu.classList.add('is-open');
@@ -169,6 +180,7 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
     function setMode(mode) {
       if (panel.getAttribute('data-mode') === mode) return;
       panel.setAttribute('data-mode', mode);
+      try { localStorage.setItem(MODE_KEY, mode); } catch (e) {}
       segs.forEach(function (s) {
         const on = s.getAttribute('data-mode-btn') === mode;
         s.classList.toggle('is-active', on);
@@ -185,6 +197,12 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
         hideSplash();
       }
     }
+
+    // Restore the last-selected side across page navigations.
+    try {
+      const savedMode = localStorage.getItem(MODE_KEY);
+      if (savedMode === 'owners') applyModeInstant('owners');
+    } catch (e) {}
 
     openBtn.addEventListener('click', openMenu);
     closers.forEach(function (c) { c.addEventListener('click', closeMenu); });
