@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import MarketingHeader from '../components/sections/MarketingHeader.astro';
 import Footer from '../components/sections/Footer.astro';
 import OwnerHero from '../components/owners/OwnerHero.astro';
+import Testimonials from '../components/owners/Testimonials.astro';
 import Pillars from '../components/owners/Pillars.astro';
 import Partners from '../components/owners/Partners.astro';
 import AirbnbShowcase from '../components/owners/AirbnbShowcase.astro';
@@ -34,6 +35,7 @@ const cta = { label: 'Free estimate', href: '/owners#estimate', floating: true }
   <MarketingHeader {nav} {cta} />
   <main>
     <OwnerHero />
+    <Testimonials />
     <Pillars />
     <Partners />
     <AirbnbShowcase />

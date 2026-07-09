@@ -82,6 +82,26 @@ html.menu-open { overflow: hidden; }
 .menu-review__by { display: block; margin-top: 10px; font-size: .82rem; color: var(--muted); }
 .menu-review .menu-item__go { margin-top: 10px; }
 
+/* ---- Guest reviews: auto-scrolling carousel (For Guests menu) ---- */
+.menu-revs { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.menu-revs__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.menu-revs__rating { font-size: .8rem; font-weight: 600; color: var(--muted); }
+.menu-revs__stars { color: #FBBC04; letter-spacing: 1px; }
+.menu-revs__viewport { overflow: hidden; margin: 0 -20px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent); }
+.menu-revs__track { display: flex; gap: 12px; width: max-content; padding: 4px 20px; animation: menuRevScroll 40s linear infinite; }
+.menu-revs:hover .menu-revs__track { animation-play-state: paused; }
+@keyframes menuRevScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.menu-rev { flex: 0 0 240px; margin: 0; padding: 14px; border: 1px solid var(--line); background: var(--paper); box-shadow: var(--shadow-sm); }
+.menu-rev__top { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+.menu-rev__avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex: none; }
+.menu-rev__g { width: 15px; height: 15px; flex: none; order: 3; margin-left: auto; }
+.menu-rev__g svg { width: 100%; height: 100%; display: block; }
+.menu-rev__name { font-weight: 600; font-size: .86rem; color: var(--ink); }
+.menu-rev__stars { color: #FBBC04; letter-spacing: 1px; font-size: .8rem; margin-bottom: 6px; }
+.menu-rev__text { margin: 0; font-size: .82rem; line-height: 1.5; color: var(--ink-soft); display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+.menu-revs .menu-item__go { margin-top: 14px; }
+@media (prefers-reduced-motion: reduce) { .menu-revs__track { animation: none; } }
+
 /* ---- Owners featured article card ---- */
 .menu-feature { display: flex; gap: 14px; align-items: center; margin-top: 20px; padding: 12px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.04); transition: background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease); }
 .menu-feature:hover { background: rgba(255,255,255,.08); transform: translateY(-2px); }

@@ -33,6 +33,11 @@
 .site-header__nav > a:hover, .site-header__nav > a.is-active { color: var(--rose); }
 @media (max-width: 860px) { .site-header__nav > a { display: none; } }
 
+/* ---------- Black, 15px-rounded button (pairs with .btn / .btn-ink) ---------- */
+.btn-round { border-radius: 15px !important; }
+.btn-blk { background: #000 !important; color: #fff !important; box-shadow: 0 8px 22px rgba(14,17,27,.22); }
+.btn-blk:hover { background: var(--ink-soft) !important; box-shadow: 0 12px 28px rgba(14,17,27,.28); }
+
 /* ---------- Section helpers ---------- */
 .section-wrap { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
 .section-narrow { max-width: var(--container-narrow); margin: 0 auto; padding: 0 24px; }
