@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+import MarketingHeader from '../components/sections/MarketingHeader.astro';
+import Footer from '../components/sections/Footer.astro';
+
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs' },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog' },
+];
+const cta = { label: 'Free estimate', href: '/owners#estimate' };
+---
+
+<Base
+  title="Realtor Referral Program | Cardo Vacation Rentals"
+  description="Placeholder page — refer clients to Cardo and get rewarded. Program details coming soon."
+>
+  <MarketingHeader {nav} {cta} />
+
+  <main>
+    <section class="phero" data-screen-label="Realtor referral hero">
+      <img class="phero__bg" src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80" alt="" />
+      <div class="phero__overlay"></div>
+      <div class="phero__inner narrow">
+        <p class="eyebrow">For agents</p>
+        <h1>Realtor Referral Program</h1>
+        <p>Refer buyers and sellers to Cardo and earn on every home we take on. Placeholder copy — program terms coming soon.</p>
+        <a class="btn btn-lg" href="mailto:referrals@cardorentals.com">Refer a client</a>
+      </div>
+    </section>
+
+    <section class="section-pad" data-screen-label="Realtor referral body">
+      <div class="section-narrow">
+        <div class="section-head reveal">
+          <p class="eyebrow">How it works</p>
+          <h2>Placeholder heading for the referral program.</h2>
+        </div>
+        <p class="lede muted reveal">This is filler text. Realtors who refer clients to Cardo's management or design services can earn a referral reward. The structure, payout, and how to submit a referral will be detailed here.</p>
+        <p class="reveal">Lorem ipsum placeholder — eligibility, tracking, and payout timelines will live on this page. Nothing here is final.</p>
+      </div>
+    </section>
+
+    <section class="cta" data-screen-label="CTA">
+      <div class="cta__inner reveal">
+        <p class="eyebrow">Partner with Cardo</p>
+        <h2>Have a client with a home to rent?</h2>
+        <p>Send them our way — we'll take great care of them, and of you.</p>
+        <a class="btn btn-lg" href="mailto:referrals@cardorentals.com">Submit a referral</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<script>
+  import '../scripts/reveal.js';
+</script>

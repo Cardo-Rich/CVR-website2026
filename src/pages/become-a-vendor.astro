@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+import MarketingHeader from '../components/sections/MarketingHeader.astro';
+import Footer from '../components/sections/Footer.astro';
+
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs' },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog' },
+];
+const cta = { label: 'Free estimate', href: '/owners#estimate' };
+---
+
+<Base
+  title="Become a Vendor | Cardo Vacation Rentals"
+  description="Placeholder page — partner with Cardo as a trusted vendor. Details coming soon."
+>
+  <MarketingHeader {nav} {cta} />
+
+  <main>
+    <section class="phero" data-screen-label="Vendor hero">
+      <img class="phero__bg" src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=1600&q=80" alt="" />
+      <div class="phero__overlay"></div>
+      <div class="phero__inner narrow">
+        <p class="eyebrow">Partners</p>
+        <h1>Become a Vendor</h1>
+        <p>Cleaners, handypeople, designers, and local trades — partner with Cardo to service San Diego's best homes. Placeholder copy, details coming soon.</p>
+        <a class="btn btn-lg" href="mailto:vendors@cardorentals.com">Apply to partner</a>
+      </div>
+    </section>
+
+    <section class="section-pad" data-screen-label="Vendor body">
+      <div class="section-narrow">
+        <div class="section-head reveal">
+          <p class="eyebrow">How it works</p>
+          <h2>Placeholder heading for vendor partnerships.</h2>
+        </div>
+        <p class="lede muted reveal">This is filler text. We work with vetted local vendors who help keep our homes spotless, safe, and beautifully maintained. The application process, requirements, and what we look for in a partner will be detailed here.</p>
+        <p class="reveal">Lorem ipsum placeholder — onboarding steps, insurance requirements, and payment terms will live on this page. Nothing here is final.</p>
+      </div>
+    </section>
+
+    <section class="cta" data-screen-label="CTA">
+      <div class="cta__inner reveal">
+        <p class="eyebrow">Let's work together</p>
+        <h2>Ready to partner with Cardo?</h2>
+        <p>Tell us about your business and the services you offer.</p>
+        <a class="btn btn-lg" href="mailto:vendors@cardorentals.com">Start your application</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<script>
+  import '../scripts/reveal.js';
+</script>

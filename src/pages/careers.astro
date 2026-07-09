@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+import MarketingHeader from '../components/sections/MarketingHeader.astro';
+import Footer from '../components/sections/Footer.astro';
+
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs' },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog' },
+];
+const cta = { label: 'Free estimate', href: '/owners#estimate' };
+---
+
+<Base
+  title="Careers | Cardo Vacation Rentals"
+  description="Placeholder page — careers at Cardo Vacation Rentals. Open roles coming soon."
+>
+  <MarketingHeader {nav} {cta} />
+
+  <main>
+    <section class="phero" data-screen-label="Careers hero">
+      <img class="phero__bg" src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1600&q=80" alt="" />
+      <div class="phero__overlay"></div>
+      <div class="phero__inner narrow">
+        <p class="eyebrow">Join us</p>
+        <h1>Careers at Cardo</h1>
+        <p>Help us run San Diego's most-loved vacation rentals. Placeholder copy — open roles and details coming soon.</p>
+        <a class="btn btn-lg" href="mailto:careers@cardorentals.com">Email our team</a>
+      </div>
+    </section>
+
+    <section class="section-pad" data-screen-label="Careers body">
+      <div class="section-narrow">
+        <div class="section-head reveal">
+          <p class="eyebrow">Open roles</p>
+          <h2>No positions posted yet.</h2>
+        </div>
+        <p class="lede muted reveal">This is filler text. We'll list open positions across operations, design, guest experience, and revenue here as they become available. In the meantime, we're always glad to hear from great people.</p>
+        <p class="reveal">Lorem ipsum placeholder — team culture, benefits, and the hiring process will be described on this page. Nothing here is final.</p>
+      </div>
+    </section>
+
+    <section class="cta" data-screen-label="CTA">
+      <div class="cta__inner reveal">
+        <p class="eyebrow">Work with us</p>
+        <h2>Think you'd be a fit?</h2>
+        <p>Send us a note and tell us what you'd love to do at Cardo.</p>
+        <a class="btn btn-lg" href="mailto:careers@cardorentals.com">Get in touch</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<script>
+  import '../scripts/reveal.js';
+</script>
