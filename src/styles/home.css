@@ -741,6 +741,9 @@ video.ghero__bg { pointer-events: none; }
 .pmark--word { font-weight: 800; font-size: 1.7rem; letter-spacing: -.02em; }
 .pmark--zillow { color: #1277E1; }
 .pmark--hopper { color: #FA4D5E; }
+.pmark--rev { gap: 8px; font-weight: 600; font-size: 1rem; color: var(--ink-soft); }
+.pmark--rev svg { flex: none; display: block; }
+.pmark--rev b { font-weight: 700; color: var(--ink); }
 @media (max-width: 620px) { .partners__inner { gap: 18px 32px; } .pmark img { height: 42px; } .pmark--logo img { height: 24px; } .pmark--word { font-size: 1.4rem; } }
 
 /* ====================================================================

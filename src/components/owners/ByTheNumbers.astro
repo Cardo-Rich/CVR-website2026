@@ -1,0 +1,41 @@
+---
+const stats = [
+  { v: '2,500+', k: '5-star reviews', sub: 'On Airbnb alone' },
+  { v: '3 min', k: 'Guest response', sub: 'Industry-leading care team' },
+  { v: '+20%', k: 'Avg revenue increase', sub: 'Compared to other managers' },
+  { v: '10+', k: 'Booking sites', sub: 'Tailored to your needs' },
+  { v: '$80M+', k: 'Revenue managed', sub: 'For San Diego owners' },
+  { v: '24/7', k: 'Guest & owner support', sub: 'Someone always answers' },
+  { v: '<1 hr', k: 'Urgent response', sub: 'For any on-site issue' },
+  { v: 'Since 2013', k: 'San Diego Superhost', sub: 'A decade of five-star hosting' },
+];
+---
+
+<section class="section-pad bnum" id="numbers" data-screen-label="By the numbers">
+  <div class="section-wrap">
+    <div class="section-head center reveal" style="text-align:center;margin-inline:auto;max-width:640px">
+      <p class="eyebrow" style="justify-content:center">By the numbers</p>
+      <h2>Proof, not promises.</h2>
+      <p class="lede muted">The results owners actually feel — care, reach, and revenue, measured.</p>
+    </div>
+    <div class="bnum__grid reveal">
+      {stats.map((s) => (
+        <div class="bnum__cell">
+          <div class="bnum__val">{s.v}</div>
+          <div class="bnum__k">{s.k}</div>
+          <div class="bnum__sub">{s.sub}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .bnum__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin-top: 40px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+  .bnum__cell { background: var(--paper); padding: 30px 24px; text-align: center; }
+  .bnum__val { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.9rem, 3vw, 2.6rem); line-height: 1; color: var(--rose); }
+  .bnum__k { margin-top: 10px; font-weight: 600; font-size: .82rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
+  .bnum__sub { margin-top: 6px; font-size: .88rem; color: var(--muted); }
+  @media (max-width: 860px) { .bnum__grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 460px) { .bnum__grid { grid-template-columns: 1fr; } }
+</style>

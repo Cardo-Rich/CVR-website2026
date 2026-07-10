@@ -344,6 +344,24 @@
     .consent a { color: var(--ink-soft); text-decoration: underline; }
     .consent a:hover { color: var(--rose); }
 
+    /* Inline-label fields: icon + placeholder-as-title */
+    .ifield { position: relative; display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: #fff; transition: border-color .18s var(--ease), box-shadow .18s var(--ease); }
+    .ifield:focus-within { border-color: var(--rose); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .ifield__ic { flex: none; width: 18px; height: 18px; color: var(--muted); display: grid; place-items: center; }
+    .ifield__ic svg { width: 18px; height: 18px; display: block; }
+    .ifield__at { font-size: 1.2rem; font-weight: 700; line-height: 1; }
+    .ifield input { flex: 1; width: 100%; border: none; background: none; outline: none; font-family: var(--font-body); font-size: .98rem; color: var(--ink); padding: 13px 0; }
+    .ifield.addr .addr__list { left: 0; right: 0; top: calc(100% + 4px); }
+
+    .lead__callus { margin: 16px 0 0; text-align: center; font-size: .9rem; color: var(--muted); }
+    .lead__callus a { color: var(--ink); font-weight: 600; }
+    .lead__callus a:hover { color: var(--rose); }
+
+    /* Floating "get estimate" button (revealed after scrolling past the hero form) */
+    .estimate-fab { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px); z-index: 90; opacity: 0; pointer-events: none; box-shadow: 0 12px 30px rgba(237,60,120,.36); transition: opacity .3s var(--ease), transform .3s var(--ease); }
+    .estimate-fab.is-visible { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+    @media (max-width: 520px) { .estimate-fab { width: calc(100% - 32px); text-align: center; } }
+
     /* Booking step */
     .leadbook__head { text-align: center; margin-bottom: 18px; }
     .leadbook__head h3 { margin: 0 0 6px; font-size: 1.3rem; }

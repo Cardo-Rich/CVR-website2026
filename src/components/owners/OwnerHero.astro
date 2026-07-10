@@ -1,17 +1,17 @@
 ---
-// Owner hero + multi-step lead form. Step 1 captures contact details, step 2
-// the property; each step "saves" the lead record before advancing. After the
-// final submit the panel reveals a booking step (Google Calendar appointment
-// scheduling) so the owner can book a call to review the estimate.
-// The #estimate anchor sits on the section so menu/footer links land with the
-// "Get your home's revenue estimate" heading at the top of the view.
+// Owner hero + multi-step lead form.
+// Step 1 = listing address, first/last name, email, phone (labels sit inside
+// the fields as placeholders, each with a type icon). Step 2 = property
+// details (shown directly, not behind a disclosure). Each step saves the lead
+// record; the final submit reveals a Google Calendar booking step.
+// The #estimate anchor sits on the section so links land on the hero heading.
 ---
 
 <section class="hero" id="estimate" data-screen-label="Hero">
   <div class="hero__overlay"></div>
   <div class="hero__inner">
     <div class="hero__copy">
-      <h1 class="hero__title">Get your home's revenue estimate.</h1>
+      <h1 class="hero__title">Luxury Vacation Rental Management</h1>
       <p class="hero__lede">Submit your home for a free estimate by a personal account manager.</p>
       <div class="hero__trust">
         <span class="stars">★★★★★</span>
@@ -20,22 +20,33 @@
     </div>
 
     <div class="lead__panel hero__form" data-lead>
-      <!-- STEP 1 — contact -->
+      <!-- STEP 1 — listing + contact -->
       <form class="lead__form leadstep" data-lead-step="1" novalidate>
         <div class="leadstep__meta"><span class="leadstep__count">Step 1 of 2</span><span class="leadstep__name">Your details</span></div>
         <div class="leadprog"><i style="width:50%"></i></div>
-        <div class="field">
-          <label>Full name</label>
-          <input name="name" type="text" autocomplete="name" placeholder="Jane Owner" required />
+
+        <div class="ifield addr" data-addr>
+          <span class="ifield__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+          <input name="address" type="text" autocomplete="off" placeholder="Listing address" aria-label="Listing address" required />
+          <ul class="addr__list" data-addr-list hidden></ul>
         </div>
-        <div class="field">
-          <label>Email</label>
-          <input name="email" type="email" autocomplete="email" placeholder="jane@email.com" required />
+        <div class="ifield">
+          <span class="ifield__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+          <input name="firstName" type="text" autocomplete="given-name" placeholder="First name" aria-label="First name" required />
         </div>
-        <div class="field">
-          <label>Mobile phone</label>
-          <input name="phone" type="tel" autocomplete="tel" placeholder="619-555-0100" required />
+        <div class="ifield">
+          <span class="ifield__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+          <input name="lastName" type="text" autocomplete="family-name" placeholder="Last name" aria-label="Last name" required />
         </div>
+        <div class="ifield">
+          <span class="ifield__ic ifield__at" aria-hidden="true">@</span>
+          <input name="email" type="email" autocomplete="email" placeholder="Email" aria-label="Email" required />
+        </div>
+        <div class="ifield">
+          <span class="ifield__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></span>
+          <input name="phone" type="tel" autocomplete="tel" placeholder="Mobile phone" aria-label="Mobile phone" required />
+        </div>
+
         <div class="lead__consent">
           <label class="consent"><input type="checkbox" name="smsConsent" required /><span>I agree to receive text messages from Cardo Vacation Rentals at the number provided (estimate, account, and appointment reminders). Msg &amp; data rates may apply, msg frequency varies. Reply STOP to opt out, HELP for help.</span></label>
           <label class="consent"><input type="checkbox" name="terms" required /><span>I agree to Cardo's <a href="/terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
@@ -44,38 +55,23 @@
         <div class="lead__secure"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg> Secure &amp; private — verified by a real account manager.</div>
       </form>
 
-      <!-- STEP 2 — property -->
+      <!-- STEP 2 — property details (shown directly) -->
       <form class="lead__form leadstep" data-lead-step="2" hidden novalidate>
         <div class="leadstep__meta"><button type="button" class="leadstep__back" data-lead-back>← Back</button><span class="leadstep__count">Step 2 of 2</span><span class="leadstep__name">Your property</span></div>
         <div class="leadprog"><i style="width:100%"></i></div>
         <div class="field">
-          <label>Property address</label>
-          <div class="addr" data-addr>
-            <input name="address" type="text" autocomplete="off" placeholder="Start typing your address…" required />
-            <ul class="addr__list" data-addr-list hidden></ul>
+          <label>Top amenities</label>
+          <div class="amenpills" data-amenities>
+            <button type="button" class="amenpill" data-amenity="Pool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18c2 0 2-1.5 4-1.5S8 18 10 18s2-1.5 4-1.5S16 18 18 18s2-1.5 4-1.5"/><path d="M7 16V5a2 2 0 014 0M13 16V5a2 2 0 014 0"/></svg> Pool</button>
+            <button type="button" class="amenpill" data-amenity="Hot tub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16v6a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M7 12V8a2 2 0 014 0M8 4v.5M16 7c0-1.5-1-2-1-3"/></svg> Hot tub</button>
+            <button type="button" class="amenpill" data-amenity="Game room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="3"/><path d="M7 12h2M8 11v2"/><circle cx="16" cy="11.5" r="1"/><circle cx="18" cy="13.5" r="1"/></svg> Game room</button>
+            <button type="button" class="amenpill" data-amenity="Exercise room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11M21 21l-1-1M3 3l1 1M18 22l4-4M2 6l4-4"/><path d="M7 17L4 20M17 7l3-3"/></svg> Exercise room</button>
+            <button type="button" class="amenpill" data-amenity="Backyard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M12 12c0-3 2-5 5-5 0 3-2 5-5 5zM12 14c0-3-2-5-5-5 0 3 2 5 5 5z"/><path d="M4 22h16"/></svg> Backyard</button>
           </div>
+          <input type="hidden" name="amenities" data-amenities-value />
         </div>
-        <button type="button" class="lead__more" data-more-toggle aria-expanded="false">
-          <svg class="lead__more-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          <span>Add more details</span>
-          <span class="lead__more-hint">helps your estimate</span>
-        </button>
-        <div class="lead__more-fields" data-more-fields hidden>
-          <div class="field">
-            <label>Top amenities</label>
-            <div class="amenpills" data-amenities>
-              <button type="button" class="amenpill" data-amenity="Pool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18c2 0 2-1.5 4-1.5S8 18 10 18s2-1.5 4-1.5S16 18 18 18s2-1.5 4-1.5"/><path d="M7 16V5a2 2 0 014 0M13 16V5a2 2 0 014 0"/></svg> Pool</button>
-              <button type="button" class="amenpill" data-amenity="Hot tub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16v6a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M7 12V8a2 2 0 014 0M8 4v.5M16 7c0-1.5-1-2-1-3"/></svg> Hot tub</button>
-              <button type="button" class="amenpill" data-amenity="Game room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="3"/><path d="M7 12h2M8 11v2"/><circle cx="16" cy="11.5" r="1"/><circle cx="18" cy="13.5" r="1"/></svg> Game room</button>
-              <button type="button" class="amenpill" data-amenity="Exercise room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11M21 21l-1-1M3 3l1 1M18 22l4-4M2 6l4-4"/><path d="M7 17L4 20M17 7l3-3"/></svg> Exercise room</button>
-              <button type="button" class="amenpill" data-amenity="Backyard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M12 12c0-3 2-5 5-5 0 3-2 5-5 5zM12 14c0-3-2-5-5-5 0 3 2 5 5 5z"/><path d="M4 22h16"/></svg> Backyard</button>
-            </div>
-            <input type="hidden" name="amenities" data-amenities-value />
-          </div>
-          <div class="field">
-            <label>Tell us more about your home <span style="color:var(--muted);font-weight:400">(optional)</span></label>
-            <textarea name="details" rows="3" placeholder="Recent upgrades, views, standout features, sleeping capacity… we use this to build your property profile."></textarea>
-          </div>
+        <div class="field">
+          <textarea name="details" rows="4" placeholder="Tell us more about your home or include a link to your listing" aria-label="Tell us more about your home or include a link to your listing"></textarea>
         </div>
         <button type="submit" class="btn btn-block" style="margin-top:6px">Get my free estimate</button>
         <p class="lead__finehint">We'll text a confirmation code to verify your number and create your secure owner account.</p>
@@ -90,16 +86,14 @@
           <h3>Your estimate is on the way.</h3>
           <p class="muted">Finish up by booking a quick call — your account rep will walk you through your earning estimate in detail and answer every question.</p>
         </div>
-        <!-- Google Calendar appointment scheduling. Set data-gcal to your
-             scheduling embed URL (calendar.google.com/calendar/appointments/…?gv=true)
-             and the script drops in the live iframe; until then it renders an
-             interactive scheduling placeholder. -->
         <div class="leadcal" data-leadcal data-gcal="" aria-live="polite"></div>
         <label class="leadearly">
           <input type="checkbox" name="earlyContact" />
           <span>Have a representative contact me earlier if available</span>
         </label>
       </div>
+
+      <p class="lead__callus">Call or text us at <a href="tel:+16197595014">(619) 759-5014</a></p>
     </div>
   </div>
 </section>

@@ -4,9 +4,9 @@
   var onScroll = function(){ header && header.classList.toggle('is-scrolled', window.scrollY > 12); };
   onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
 
-  /* ----- Center "Free estimate" CTA: appears after scrolling past the hero form ----- */
+  /* ----- Floating "Get my free earning estimate" button: appears after scrolling past the hero form ----- */
   (function(){
-    var cta = document.querySelector('[data-header-cta]');
+    var cta = document.querySelector('[data-estimate-fab]');
     var form = document.getElementById('estimate');
     if (!cta || !form) return;
     if ('IntersectionObserver' in window) {
@@ -58,7 +58,7 @@
     var svg = document.querySelector('[data-perf-chart]');
     if(!svg) return;
     var months = ['Mar','Apr','May','Jun','Jul','Aug'];
-    var cardo  = [238,174,167,269,377,304];
+    var cardo  = [196,178,150,232,315,232];
     var market = [158,147,126,191,267,194];
     var W = 960, H = 400, pl = 56, pr = 28, pt = 24, pb = 44;
     var plotW = W - pl - pr, plotH = H - pt - pb, maxY = 400;

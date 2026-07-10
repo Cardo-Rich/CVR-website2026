@@ -4,6 +4,7 @@ import MarketingHeader from '../components/sections/MarketingHeader.astro';
 import Footer from '../components/sections/Footer.astro';
 import OwnerHero from '../components/owners/OwnerHero.astro';
 import Testimonials from '../components/owners/Testimonials.astro';
+import ByTheNumbers from '../components/owners/ByTheNumbers.astro';
 import Pillars from '../components/owners/Pillars.astro';
 import Partners from '../components/owners/Partners.astro';
 import AirbnbShowcase from '../components/owners/AirbnbShowcase.astro';
@@ -23,35 +24,31 @@ import TeamModal from '../components/owners/TeamModal.astro';
 import CaseModal from '../components/owners/CaseModal.astro';
 import '../styles/home.css';
 import '../styles/owners.css';
-
-const nav = [
-  { label: 'Interior Decorating', href: '/home-designs' },
-  { label: 'Case studies', href: '/home-designs#case-studies' },
-];
-const cta = { label: 'Free estimate', href: '/owners#estimate', floating: true };
 ---
 
-<Base title="Get your home's revenue estimate | Cardo Vacation Rentals" description="Submit your San Diego home for an instant earning estimate, verified by a personal account manager. Premium care, above-market performance, and full-service marketing since 2013.">
-  <MarketingHeader {nav} {cta} />
+<Base title="Luxury Vacation Rental Management | Cardo Vacation Rentals" description="Luxury San Diego vacation rental management — a free earning estimate verified by a personal account manager, above-market revenue, and full-service marketing. 5-star Superhost since 2013.">
+  <MarketingHeader />
   <main>
     <OwnerHero />
+    <Performance />
+    <Marketing />
+    <ByTheNumbers />
+    <Partners />
+    <Team />
     <Testimonials />
     <Pillars />
-    <Partners />
+    <CaseStudies />
     <AirbnbShowcase />
     <GoogleReviews />
     <AirbnbReviews />
-    <Performance />
-    <CaseStudies />
-    <Marketing />
     <Care />
     <Investors />
     <Compare />
-    <Team />
     <Founder />
     <Process />
     <Faq />
   </main>
+  <a class="btn estimate-fab" data-estimate-fab href="#estimate">Get my free earning estimate</a>
   <TeamModal />
   <CaseModal />
   <Footer />
