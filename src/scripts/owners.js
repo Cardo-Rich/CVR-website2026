@@ -6,21 +6,22 @@
 
   /* ----- Floating "Get my free earning estimate" button: appears after scrolling past the hero form ----- */
   (function(){
-    var cta = document.querySelector('[data-estimate-fab]');
+    var ctas = [].slice.call(document.querySelectorAll('[data-estimate-fab]'));
     var form = document.getElementById('estimate');
-    if (!cta || !form) return;
+    if (!ctas.length || !form) return;
+    function toggle(on) { ctas.forEach(function(el){ el.classList.toggle('is-visible', on); }); }
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function(entries){
         entries.forEach(function(en){
           // show once the form has scrolled up out of view
           var pastForm = !en.isIntersecting && en.boundingClientRect.top < 0;
-          cta.classList.toggle('is-visible', pastForm);
+          toggle(pastForm);
         });
       }, { threshold: 0 });
       io.observe(form);
     } else {
       window.addEventListener('scroll', function(){
-        cta.classList.toggle('is-visible', form.getBoundingClientRect().bottom < 60);
+        toggle(form.getBoundingClientRect().bottom < 60);
       }, { passive: true });
     }
   })();
