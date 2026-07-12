@@ -1,28 +1,103 @@
-<!-- ===================== ROI COMPARISON ===================== -->
+---
+// ===================== CARDO VS ALTERNATIVES =====================
+// Columns in order: Cardo (highlighted), Ordinary STR Manager, Airbnb Cohost, Self-Managing.
+// Cell values: true = included, false = not offered, string = qualified note.
+const cols = ['Cardo Luxury Management', 'Ordinary STR Manager', 'Airbnb Cohost', 'Self-Managing'];
+
+const rows = [
+  { label: 'Management fee', cells: ['20%', '18–35%', '10–20%', 'Your sanity'], head: true },
+  { label: 'Damage insurance on every stay', cells: [true, 'Sometimes', false, false] },
+  { label: 'Owner portal & real-time dashboard', cells: [true, 'Varies', 'Basic app', false] },
+  { label: 'AI-driven operations', cells: [true, false, false, false] },
+  { label: 'In-house cleaning & white-linen', cells: [true, 'Subcontracted', 'You arrange', 'You'] },
+  { label: 'Dedicated property manager', cells: [true, 'Call center', 'You', 'You'] },
+  { label: 'Full-service marketing · 10+ channels', cells: [true, 'Listing sites', 'Airbnb only', 'You'] },
+  { label: 'Dynamic pricing & revenue management', cells: [true, true, 'Basic', 'Manual'] },
+  { label: 'Direct-booking website', cells: [true, 'Rare', false, false] },
+  { label: 'Permits, TOT & compliance', cells: [true, true, false, 'You'] },
+  { label: '24/7 guest & owner support', cells: [true, 'Business hrs', 'You', 'You'] },
+  { label: 'Interior design & staging', cells: [true, false, false, false] },
+  { label: 'Owner time required', cells: ['Near zero', 'Low', 'High', 'All of it'], foot: true },
+];
+
+const check = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
+const cross = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+---
+
 <section class="section-pad" id="compare" data-screen-label="Comparison">
   <div class="section-wrap">
     <div class="section-head reveal" style="max-width:680px">
       <p class="eyebrow">Cardo vs. the alternatives</p>
-      <h2>The same home, run three different ways.</h2>
-      <p class="lede muted">Most owners are weighing self-managing or a national manager. Here's what changes when it's Cardo.</p>
+      <h2>The same home, run four different ways.</h2>
+      <p class="lede muted">Owners weigh a full-service manager against a cohost or self-managing. Here's what actually changes when it's Cardo.</p>
     </div>
-    <div class="compare__wrap reveal">
-      <table class="compare">
+    <div class="vs__wrap reveal">
+      <table class="vs">
         <thead>
-          <tr><th>&nbsp;</th><th>Self-managing</th><th>National manager</th><th class="col-cardo">Cardo</th></tr>
+          <tr>
+            <th class="vs__rowhead">&nbsp;</th>
+            {cols.map((c, i) => (
+              <th class={i === 0 ? 'vs__cardo' : ''}>
+                {i === 0 && <span class="vs__badge">Best value</span>}
+                <span class="vs__colname">{c}</span>
+              </th>
+            ))}
+          </tr>
         </thead>
         <tbody>
-          <tr><td>In-house interior design</td><td class="x"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M6 6l12 12M18 6L6 18"/></svg></td><td class="x"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M6 6l12 12M18 6L6 18"/></svg></td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>In-house cleaning &amp; white-linen</td><td class="x"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M6 6l12 12M18 6L6 18"/></svg></td><td class="x">Subcontracted</td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>Dynamic pricing &amp; multi-channel</td><td class="x">Manual</td><td class="ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>Local team, sub-hour response</td><td class="x">You</td><td class="x">Call center</td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>Permits, TOT &amp; compliance</td><td class="x">You</td><td class="ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>Damage protection on every stay</td><td class="x"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M6 6l12 12M18 6L6 18"/></svg></td><td class="ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>Transparent, itemized accounting</td><td class="x">DIY</td><td class="x">Often opaque</td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>Owner time required</td><td>High</td><td>Medium</td><td class="col-cardo"><b style="color:var(--rose)">Near zero</b></td></tr>
+          {rows.map((r) => (
+            <tr class={(r.head ? 'vs__row--head ' : '') + (r.foot ? 'vs__row--foot' : '')}>
+              <td class="vs__rowhead">{r.label}</td>
+              {r.cells.map((cell, i) => (
+                <td class={i === 0 ? 'vs__cardo' : ''}>
+                  {cell === true ? (
+                    <span class="vs__yes" set:html={check} />
+                  ) : cell === false ? (
+                    <span class="vs__no" set:html={cross} />
+                  ) : (
+                    <span class="vs__txt">{cell}</span>
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
     <p class="compare__note">Comparison reflects typical service models. Your exact scope is confirmed in your free property analysis.</p>
   </div>
 </section>
+
+<style>
+  .vs__wrap { overflow-x: auto; margin-top: 40px; padding: 4px; }
+  .vs { width: 100%; min-width: 720px; border-collapse: separate; border-spacing: 0; }
+  .vs th, .vs td { padding: 15px 18px; text-align: center; border-bottom: 1px solid var(--line); font-size: .95rem; vertical-align: middle; }
+  .vs thead th { font-size: .82rem; letter-spacing: .02em; color: var(--muted); font-weight: 600; text-transform: none; vertical-align: bottom; padding-top: 8px; }
+  .vs thead th .vs__colname { display: block; font-family: var(--font-display); font-weight: 500; font-size: 1.02rem; color: var(--ink); line-height: 1.25; }
+  .vs__rowhead { text-align: left !important; font-weight: 600; color: var(--ink); white-space: nowrap; }
+  td.vs__rowhead { font-size: .92rem; }
+
+  /* Cardo highlight column — ink + gold, deliberately not pink */
+  .vs th.vs__cardo, .vs td.vs__cardo { background: var(--ink); border-bottom-color: rgba(255,255,255,.08); position: relative; }
+  .vs thead th.vs__cardo .vs__colname { color: #fff; }
+  .vs td.vs__cardo .vs__txt { color: #fff; font-weight: 600; }
+  .vs td.vs__cardo .vs__yes { color: var(--gold); }
+  .vs thead th.vs__cardo { padding-top: 14px; border-top-left-radius: var(--radius-lg); border-top-right-radius: var(--radius-lg); }
+  .vs tbody tr:last-child td.vs__cardo { border-bottom-left-radius: var(--radius-lg); border-bottom-right-radius: var(--radius-lg); }
+  .vs__badge { display: inline-block; margin-bottom: 8px; padding: 3px 11px; border-radius: var(--radius-pill); background: var(--gold); color: var(--ink); font-family: var(--font-body); font-size: .66rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+
+  .vs__yes, .vs__no { display: inline-flex; }
+  .vs__yes svg, .vs__no svg { width: 21px; height: 21px; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+  .vs__yes { color: var(--success); }
+  .vs__no { color: var(--muted); opacity: .45; }
+  .vs__txt { color: var(--ink-soft); }
+
+  .vs__row--head td { font-weight: 700; }
+  .vs__row--head td .vs__txt { font-size: 1.05rem; font-weight: 700; color: var(--ink); }
+  .vs__row--head td.vs__cardo .vs__txt { color: #fff; }
+  .vs__row--foot td { border-bottom: none; }
+  .vs__row--foot td .vs__txt { font-weight: 700; }
+
+  .compare__note { font-size: .82rem; color: var(--muted); margin-top: 14px; }
+  @media (max-width: 680px) { .vs th, .vs td { padding: 12px 12px; font-size: .86rem; } }
+</style>

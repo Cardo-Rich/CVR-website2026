@@ -58,7 +58,7 @@
     var svg = document.querySelector('[data-perf-chart]');
     if(!svg) return;
     var months = ['Mar','Apr','May','Jun','Jul','Aug'];
-    var cardo  = [196,178,150,232,315,232];
+    var cardo  = [182,169,145,220,307,222];
     var market = [158,147,126,191,267,194];
     var W = 960, H = 400, pl = 56, pr = 28, pt = 24, pb = 44;
     var plotW = W - pl - pr, plotH = H - pt - pb, maxY = 400;

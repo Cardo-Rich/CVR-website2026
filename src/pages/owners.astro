@@ -3,13 +3,10 @@ import Base from '../layouts/Base.astro';
 import MarketingHeader from '../components/sections/MarketingHeader.astro';
 import Footer from '../components/sections/Footer.astro';
 import OwnerHero from '../components/owners/OwnerHero.astro';
-import Testimonials from '../components/owners/Testimonials.astro';
 import ByTheNumbers from '../components/owners/ByTheNumbers.astro';
-import Pillars from '../components/owners/Pillars.astro';
 import Partners from '../components/owners/Partners.astro';
 import AirbnbShowcase from '../components/owners/AirbnbShowcase.astro';
-import GoogleReviews from '../components/owners/GoogleReviews.astro';
-import AirbnbReviews from '../components/owners/AirbnbReviews.astro';
+import Reviews from '../components/home/Reviews.astro';
 import Performance from '../components/owners/Performance.astro';
 import CaseStudies from '../components/owners/CaseStudies.astro';
 import Marketing from '../components/owners/Marketing.astro';
@@ -35,16 +32,13 @@ import '../styles/owners.css';
     <ByTheNumbers />
     <Partners />
     <Team />
-    <Testimonials />
-    <Pillars />
+    <Reviews />
     <CaseStudies />
     <AirbnbShowcase />
-    <GoogleReviews />
-    <AirbnbReviews />
     <Care />
-    <Investors />
     <Compare />
     <Founder />
+    <Investors />
     <Process />
     <Faq />
   </main>
@@ -58,4 +52,5 @@ import '../styles/owners.css';
   import '../scripts/owners.js';
   import '../scripts/home-interactive.js';
   import '../scripts/team-modal.js';
+  import '../scripts/guest.js';
 </script>

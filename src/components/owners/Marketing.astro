@@ -1,61 +1,37 @@
-<!-- ===================== MARKETING ===================== -->
-<section class="section-pad surface-cream2 mktg" id="marketing" data-screen-label="Marketing experts">
+---
+// ===================== MARKETING & SALES STRATEGY =====================
+import { homePhotos } from '../../data/home';
+---
+
+<section class="section-pad mktg" id="marketing" data-screen-label="Marketing experts">
+  <img class="mktg__bg" src={homePhotos['pool']} alt="" />
   <div class="section-wrap">
-    <div class="mktg__grid">
-      <div class="mktg__intro reveal">
+    <div class="mktg__top reveal">
+      <div class="mktg__intro">
         <p class="eyebrow">Marketing &amp; sales strategy</p>
         <h2>How we beat the market.</h2>
-        <p class="lede muted">Above-market returns come from a winning marketing and sales strategy — exclusive partnerships with top travel agencies, Airbnb Superhost and VRBO Premier status, and a full creative team that stages, shoots, publishes, and advertises your home across every channel that moves bookings.</p>
-        <div class="mktg__stats">
-          <div class="mktg__stat"><span class="mktg__statnum">300+</span><span class="mktg__statlab">Editorial photos shot per home</span></div>
-          <div class="mktg__stat"><span class="mktg__statnum">75+</span><span class="mktg__statlab">Lifestyle video clips</span></div>
-          <div class="mktg__stat"><span class="mktg__statnum">10<span class="mktg__statunit">/mo</span></span><span class="mktg__statlab">Managed social posts &amp; reels</span></div>
-          <div class="mktg__stat"><span class="mktg__statnum">8,000+</span><span class="mktg__statlab">Guests on our email list</span></div>
-        </div>
-        <a href="#estimate" class="btn btn-lg">Get my marketing plan</a>
+        <p class="lede muted">Hyper focused marketing campaigns, exclusively for short term rentals, that extend way beyond just posting on Airbnb and Vrbo. This is true marketing. Targeted ads, reaching your primary customer before they book, with sales professionals who close leads, for direct bookings that earn you more money.</p>
       </div>
-      <div class="mktg__caps reveal">
-        <div class="mcap">
-          <span class="mcap__ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13A4 4 0 0116 11"/></svg></span>
-          <div><h3>Exclusive travel-agency partnerships</h3><p>Direct relationships with top travel agencies and OTAs put your home in front of high-intent, high-value travelers other managers can't reach.</p></div>
-        </div>
-        <div class="mcap">
-          <span class="mcap__ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 15.4 6.8 18l1-5.8L3.6 8.1l5.8-.8z"/></svg></span>
-          <div><h3>Airbnb Superhost &amp; VRBO Premier status</h3><p>Top-tier host status on both platforms boosts your ranking, badges, and guest trust — so your listing wins the click and the booking.</p></div>
-        </div>
-        <div class="mcap">
-          <span class="mcap__ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 14.5L18 6a2.1 2.1 0 013 3l-8.5 8.5"/><path d="M9.5 14.5a3 3 0 00-3 3c0 1-1 1.6-2 1.6 1.2 1.5 3 2.1 4.6 2.1a3.5 3.5 0 003.4-3.6 3 3 0 00-3-3.1z"/></svg></span>
-          <div><h3>Decor-first content</h3><p>Our in-house design team styles the home before the shoot, so every room photographs like an editorial spread — and books at a premium.</p></div>
-        </div>
-        <div class="mcap">
-          <span class="mcap__ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
-          <div><h3>Editorial photography &amp; video</h3><p>A dedicated content shoot builds a library of 300+ images and 75+ lifestyle videos — fuel for your listing, website, ads, and socials.</p></div>
-        </div>
-        <div class="mcap">
-          <span class="mcap__ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="3.6"/><circle cx="17" cy="7" r="1"/></svg></span>
-          <div><h3>Always-on social media</h3><p>Managed Instagram and Pinterest: ten keyword-optimized posts a month in reels, carousels, and pins that keep your home in front of future guests.</p></div>
-        </div>
-        <div class="mcap">
-          <span class="mcap__ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 15.4 6.8 18l1-5.8L3.6 8.1l5.8-.8z"/></svg></span>
-          <div><h3>Travel-influencer campaigns</h3><p>Paid and trade collaborations with vetted travel creators who stay and film — reels that put your home in front of thousands of new travelers.</p></div>
-        </div>
-        <div class="mcap">
-          <span class="mcap__ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg></span>
-          <div><h3>Paid ads &amp; retargeting</h3><p>We turn the strongest content into PPC campaigns aimed at high-intent traveler personas, driving them straight to your direct-booking site.</p></div>
-        </div>
-        <div class="mcap">
-          <span class="mcap__ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg></span>
-          <div><h3>Airbnb listing SEO</h3><p>Keyword research and monthly listing optimization — with direct access to an Airbnb Senior Market Manager — to rank where your highest-paying guests search.</p></div>
-        </div>
-        <div class="mcap">
-          <span class="mcap__ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01"/></svg></span>
-          <div><h3>Direct-booking website</h3><p>A branded site wired to your live calendar: instant credibility on a name search, commission-free reservations, and a landing page for every ad we run.</p></div>
-        </div>
-        <div class="mcap">
-          <span class="mcap__ic"><svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
-          <div><h3>Realtor network &amp; email funnel</h3><p>A referral network of San Diego agents feeding high-value leads, plus targeted campaigns to 8,000+ past guests for repeat direct bookings on demand.</p></div>
-        </div>
-      </div>
+      <aside class="mktg__cta">
+        <h3>Surpass the competition today</h3>
+        <p>Cardo homes outperform the market average by up to 35%+</p>
+        <a href="#estimate" class="btn btn-lg btn-blk btn-round">Get my free earning estimate</a>
+      </aside>
+    </div>
+
+    <div class="mktg__caps reveal">
+      <div class="mcap"><h3>Exclusive travel-agency partnerships</h3><p>Direct relationships with top travel agencies and OTAs put your home in front of high-intent, high-value travelers other managers can't reach.</p></div>
+      <div class="mcap"><h3>Airbnb Superhost &amp; VRBO Premier status</h3><p>Top-tier host status on both platforms boosts your ranking, badges, and guest trust — so your listing wins the click and the booking.</p></div>
+      <div class="mcap"><h3>Insurance agency partnerships</h3><p>Relationships with specialist short-term-rental insurers mean the right coverage for your home and your guests, arranged and kept current for you.</p></div>
+      <div class="mcap"><h3>Decor-first content</h3><p>Our in-house design team styles the home before the shoot, so every room photographs like an editorial spread — and books at a premium.</p></div>
+      <div class="mcap"><h3>Editorial photography &amp; video</h3><p>A dedicated content shoot builds a full library of images and lifestyle video — fuel for your listing, website, ads, and socials.</p></div>
+      <div class="mcap"><h3>Always-on social media</h3><p>Managed Instagram and Pinterest: keyword-optimized reels, carousels, and pins that keep your home in front of future guests every month.</p></div>
+      <div class="mcap"><h3>Travel-influencer campaigns</h3><p>Paid and trade collaborations with vetted travel creators who stay and film — reels that put your home in front of thousands of new travelers.</p></div>
+      <div class="mcap"><h3>Paid ads &amp; retargeting</h3><p>We turn the strongest content into targeted PPC campaigns aimed at high-intent traveler personas and drive them straight to your booking page.</p></div>
+      <div class="mcap"><h3>Airbnb listing SEO</h3><p>Keyword research and monthly listing optimization — with direct access to an Airbnb Senior Market Manager — to rank where your highest-paying guests search.</p></div>
+      <div class="mcap"><h3>Direct-booking website</h3><p>A branded site wired to your live calendar: instant credibility on a name search and a dedicated landing page for every ad we run.</p></div>
+      <div class="mcap"><h3>Realtor referral network</h3><p>A referral network of San Diego agents feeding high-value owner leads and warm introductions to new doors across the county.</p></div>
+      <div class="mcap"><h3>Past-guest email funnel</h3><p>Targeted email campaigns to our list of past guests, bringing repeat direct bookings on demand — the audience that already loves a Cardo stay.</p></div>
     </div>
   </div>
 </section>
