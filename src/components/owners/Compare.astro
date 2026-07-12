@@ -69,16 +69,20 @@ const cross = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" strok
 </section>
 
 <style>
-  .vs__wrap { overflow-x: auto; margin-top: 40px; padding: 4px; }
+  /* Wrapper scrolls horizontally only on narrow screens; on wide screens it
+     stays overflow-visible so the sticky header can anchor to the page. */
+  .vs__wrap { margin-top: 40px; padding: 4px; }
   .vs { width: 100%; min-width: 720px; border-collapse: separate; border-spacing: 0; }
   .vs th, .vs td { padding: 15px 18px; text-align: center; border-bottom: 1px solid var(--line); font-size: .95rem; vertical-align: middle; }
-  .vs thead th { font-size: .82rem; letter-spacing: .02em; color: var(--muted); font-weight: 600; text-transform: none; vertical-align: bottom; padding-top: 8px; }
+  /* Column headers stay visible below the sticky site header while scrolling. */
+  .vs thead th { position: sticky; top: 84px; z-index: 2; background: var(--paper); box-shadow: inset 0 -1px 0 var(--line); font-size: .82rem; letter-spacing: .02em; color: var(--muted); font-weight: 600; text-transform: none; vertical-align: bottom; padding-top: 8px; }
   .vs thead th .vs__colname { display: block; font-family: var(--font-display); font-weight: 500; font-size: 1.02rem; color: var(--ink); line-height: 1.25; }
   .vs__rowhead { text-align: left !important; font-weight: 600; color: var(--ink); white-space: nowrap; }
   td.vs__rowhead { font-size: .92rem; }
 
   /* Cardo highlight column — ink + gold, deliberately not pink */
   .vs th.vs__cardo, .vs td.vs__cardo { background: var(--ink); border-bottom-color: rgba(255,255,255,.08); position: relative; }
+  .vs thead th.vs__cardo { box-shadow: inset 0 -1px 0 rgba(255,255,255,.08); }
   .vs thead th.vs__cardo .vs__colname { color: #fff; }
   .vs td.vs__cardo .vs__txt { color: #fff; font-weight: 600; }
   .vs td.vs__cardo .vs__yes { color: var(--gold); }
@@ -99,5 +103,9 @@ const cross = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" strok
   .vs__row--foot td .vs__txt { font-weight: 700; }
 
   .compare__note { font-size: .82rem; color: var(--muted); margin-top: 14px; }
+  /* Narrower than the table's min-width: scroll horizontally. The overflow
+     container resets the sticky context, so headers scroll away here (fine on
+     small screens where the whole table is panned). */
+  @media (max-width: 940px) { .vs__wrap { overflow-x: auto; } .vs thead th { position: static; } }
   @media (max-width: 680px) { .vs th, .vs td { padding: 12px 12px; font-size: .86rem; } }
 </style>

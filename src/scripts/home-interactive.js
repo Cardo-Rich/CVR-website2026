@@ -179,9 +179,12 @@
   })();
 
   /* ---------------- Address autocomplete (live, US-wide) ----------------
-     Uses Photon (photon.komoot.io) — a keyless OpenStreetMap geocoder that
-     supports type-ahead + CORS. Results are filtered to the US. Swap the
-     body of fetchSuggestions for Google Places if/when a key is available. */
+     Primary: Google Places Autocomplete (New) — near-complete US address
+     coverage. Enabled when a build-time key is present:
+       PUBLIC_GOOGLE_MAPS_API_KEY  (Astro env var — exposed to the client, so
+       restrict it by HTTP referrer + to the Places API in Google Cloud).
+     Fallback: Photon (photon.komoot.io), a keyless OpenStreetMap geocoder
+     biased toward San Diego — used when no key is set or Google fails. */
   (function () {
     var root = document.querySelector('[data-addr]');
     if (!root) return;
@@ -190,23 +193,67 @@
     var pin = '<svg viewBox="0 0 24 24"><path d="M12 21s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>';
     var active = -1, timer = null, ctrl = null;
 
-    function label(p) {
+    /* ---- Photon fallback (keyless OSM, biased to San Diego) ---- */
+    function photonLabel(p) {
       var line1 = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
       var line2 = [p.city || p.town || p.village || p.county, p.state, p.postcode].filter(Boolean).join(', ');
       return [line1, line2].filter(Boolean).join(', ');
     }
-    function fetchSuggestions(q) {
+    function fetchPhoton(q) {
       if (window.AbortController) { if (ctrl) ctrl.abort(); ctrl = new AbortController(); }
-      var url = 'https://photon.komoot.io/api/?limit=6&lang=en&q=' + encodeURIComponent(q);
+      // lat/lon bias floats nearby (San Diego) matches to the top; still US-wide.
+      var url = 'https://photon.komoot.io/api/?limit=8&lang=en&lat=32.7157&lon=-117.1611&q=' + encodeURIComponent(q);
       return fetch(url, ctrl ? { signal: ctrl.signal } : undefined)
         .then(function (r) { return r.json(); })
         .then(function (d) {
           return (d.features || [])
             .map(function (f) { return f.properties || {}; })
-            .filter(function (p) { return p.countrycode === 'US' && (p.street || p.name); })
-            .map(label)
+            .filter(function (p) { return (p.countrycode === 'US' || !p.countrycode) && (p.street || p.name); })
+            .map(photonLabel)
+            .filter(function (v, i, a) { return v && a.indexOf(v) === i; })
+            .slice(0, 6);
+        });
+    }
+
+    /* ---- Google Places (New) — primary when a key is configured ---- */
+    var GKEY = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
+    var gReady = null;   // Promise -> places library, once loaded
+    var gToken = null;   // per-session token (Places session billing)
+    function loadGoogle() {
+      if (!GKEY) return Promise.reject();
+      if (gReady) return gReady;
+      gReady = new Promise(function (resolve, reject) {
+        if (window.google && window.google.maps && window.google.maps.importLibrary) return resolve();
+        var s = document.createElement('script');
+        s.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(GKEY) + '&libraries=places&loading=async&v=weekly';
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      }).then(function () { return window.google.maps.importLibrary('places'); });
+      return gReady;
+    }
+    function fetchGoogle(q) {
+      return loadGoogle().then(function (places) {
+        if (!gToken) gToken = new places.AutocompleteSessionToken();
+        return places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+          input: q,
+          includedRegionCodes: ['us'],
+          sessionToken: gToken
+        }).then(function (res) {
+          return (res.suggestions || [])
+            .map(function (s) { return s.placePrediction; })
+            .filter(Boolean)
+            .map(function (p) { return (p.text && p.text.text) || ''; })
             .filter(function (v, i, a) { return v && a.indexOf(v) === i; });
         });
+      });
+    }
+
+    // Google when a key exists (Photon rescue on a failed keystroke); else Photon.
+    function fetchSuggestions(q) {
+      if (GKEY) return fetchGoogle(q).catch(function () { return fetchPhoton(q); });
+      return fetchPhoton(q);
     }
     function draw(items) {
       if (!items.length) { list.hidden = true; return; }
@@ -225,7 +272,7 @@
         fetchSuggestions(q.trim()).then(draw).catch(function () { /* offline / aborted — leave list as-is */ });
       }, 220);
     }
-    function choose(li) { input.value = li.querySelector('span').textContent; list.hidden = true; }
+    function choose(li) { input.value = li.querySelector('span').textContent; list.hidden = true; gToken = null; /* selection ends the Places session */ }
     input.setAttribute('autocomplete', 'off');
     input.addEventListener('input', function () { render(input.value); });
     input.addEventListener('focus', function () { if (input.value.trim().length >= 3) render(input.value); });
