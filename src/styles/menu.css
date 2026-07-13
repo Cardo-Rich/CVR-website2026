@@ -163,7 +163,7 @@ html.menu-open { overflow: hidden; }
 /* =========================================================
    Full-screen "Manage My Home" brand splash (nav CTA transition)
    ========================================================= */
-.navsplash { position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; background: var(--ink); opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility 0s linear .5s; }
+.navsplash { position: fixed; inset: 0; z-index: 300; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; background: var(--ink); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .5s var(--ease), visibility 0s linear .5s; }
 .navsplash.is-shown { opacity: 1; visibility: visible; transition: opacity .5s var(--ease); }
 .navsplash__inner { max-width: 640px; }
 .navsplash__head { font-family: var(--font-display); font-weight: 500; font-size: clamp(2rem, 5.4vw, 3.3rem); line-height: 1.12; color: #fff; margin: 0; }
@@ -174,6 +174,8 @@ html.menu-open { overflow: hidden; }
 .navsplash.is-shown .navsplash__head span:nth-child(3) { transition-delay: .46s; }
 .navsplash__sub { color: rgba(248,243,236,.82); font-size: clamp(1rem, 2vw, 1.18rem); line-height: 1.6; max-width: 480px; margin: 22px auto 0; opacity: 0; transition: opacity .6s var(--ease) .66s; }
 .navsplash.is-shown .navsplash__sub { opacity: 1; }
-.navsplash__hint { display: inline-block; margin-top: 26px; font-size: .9rem; letter-spacing: .04em; color: var(--gold); opacity: 0; transition: opacity .6s var(--ease) .86s; }
+.navsplash .menu__splash-reviews { margin-top: 22px; }
+.navsplash.is-shown .menu__splash-reviews { opacity: 1; transform: none; }
+.navsplash__hint { display: block; margin-top: 26px; font-size: .9rem; letter-spacing: .04em; color: var(--gold); opacity: 0; transition: opacity .6s var(--ease) .92s; }
 .navsplash.is-shown .navsplash__hint { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .navsplash { display: none; } }

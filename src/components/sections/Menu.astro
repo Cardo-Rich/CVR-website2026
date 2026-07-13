@@ -128,27 +128,36 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
   <div class="navsplash__inner">
     <p class="navsplash__head"><span>Premium Care.</span><span>Proven Performance.</span><span>Peace of Mind.</span></p>
     <p class="navsplash__sub">Thoughtful management that protects your home, delights your guests, and drives stronger results.</p>
+    <div class="menu__splash-reviews">
+      <span class="pm-grev">
+        <svg class="pm-grev__g" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        <b>Google</b>
+      </span>
+      <span class="pm-grev__score">4.9</span>
+      <span class="pm-grev__stars" aria-label="4.9 out of 5">★★★★★</span>
+      <span class="pm-grev__count">2,000+ reviews</span>
+    </div>
     <span class="navsplash__hint">Continue to owners →</span>
   </div>
 </div>
 
 <script>
-  // "Manage My Home" → play the brand splash, then continue to /owners.
+  // "Manage My Home" → reveal the brand splash on hover/focus; click navigates.
   (function () {
     var splash = document.querySelector('[data-navsplash]');
     var ctas = Array.prototype.slice.call(document.querySelectorAll('a.nav-cta'));
     if (!splash || !ctas.length) return;
-    var reduce = !window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+    if (!window.matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+    function show() {
+      splash.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(function () { requestAnimationFrame(function () { splash.classList.add('is-shown'); }); });
+    }
+    function hide() { splash.classList.remove('is-shown'); splash.setAttribute('aria-hidden', 'true'); }
     ctas.forEach(function (a) {
-      a.addEventListener('click', function (e) {
-        var href = a.getAttribute('href');
-        if (!href || e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
-        e.preventDefault();
-        if (reduce) { window.location.href = href; return; }
-        splash.setAttribute('aria-hidden', 'false');
-        requestAnimationFrame(function () { requestAnimationFrame(function () { splash.classList.add('is-shown'); }); });
-        setTimeout(function () { window.location.href = href; }, 1700);
-      });
+      a.addEventListener('mouseenter', show);
+      a.addEventListener('mouseleave', hide);
+      a.addEventListener('focus', show);
+      a.addEventListener('blur', hide);
     });
   })();
 </script>
