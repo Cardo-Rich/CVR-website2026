@@ -121,11 +121,16 @@
     .mktg__top { margin-bottom: 8px; }
     .mktg__intro h2 { margin: 8px 0 16px; }
     .mktg__intro .lede { margin: 0; max-width: 760px; }
-    .mktg__caps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px 40px; margin-top: 48px; padding-top: 40px; border-top: 1px solid var(--line); }
-    .mcap h3 { font-size: 1.1rem; margin: 0 0 8px; }
-    .mcap p { margin: 0; font-size: .94rem; color: var(--muted); line-height: 1.55; }
-    @media (max-width: 900px) { .mktg__caps { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 560px) { .mktg__caps { grid-template-columns: 1fr; } }
+    /* Clickable topic list + a detail panel that updates on click */
+    .mktg__explore { display: grid; grid-template-columns: 1.05fr .95fr; gap: 40px; align-items: start; margin-top: 44px; padding-top: 40px; border-top: 1px solid var(--line); }
+    .mktg__topics { display: flex; flex-wrap: wrap; gap: 10px; align-content: start; }
+    .mtopic { font-family: var(--font-body); font-weight: 600; font-size: .9rem; padding: 10px 16px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: var(--paper); color: var(--ink-soft); cursor: pointer; transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
+    .mtopic:hover { border-color: var(--rose); color: var(--rose); }
+    .mtopic.is-on { background: var(--ink); border-color: var(--ink); color: #fff; }
+    .mktg__detail { position: sticky; top: 100px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-sm); }
+    .mktg__detail h3 { font-size: 1.28rem; margin: 0 0 10px; }
+    .mktg__detail p { margin: 0; color: var(--muted); line-height: 1.62; font-size: 1.02rem; }
+    @media (max-width: 900px) { .mktg__explore { grid-template-columns: 1fr; gap: 22px; } .mktg__detail { position: static; } }
 
     /* ---------- Performance feature strip ---------- */
     .perf__feats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-top: 52px; padding-top: 44px; border-top: 1px solid var(--line); }
@@ -176,7 +181,9 @@
     @media (max-width: 620px) { .cases__grid { grid-template-columns: 1fr; } }
 
     /* ---------- Performance chart ---------- */
-    .perf { background: var(--cream-2); }
+    .perf { background: var(--paper); }
+    /* Keep owners surfaces to white or light sand only (no deeper sand). */
+    .founder, .abshow { background: var(--paper); }
     .perf__grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: 56px; align-items: center; }
     .perf__legend { display: flex; gap: 22px; margin: 18px 0 8px; flex-wrap: wrap; }
     .perf__leg { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--ink-soft); font-weight: 500; }
@@ -364,7 +371,7 @@
       /* Subtext hidden until hover; re-hides 1s after the pointer leaves (delay on the resting state) */
       .estimate-card__sub { overflow: hidden; max-height: 0; opacity: 0; margin: 0; color: rgba(248,243,236,.85); font-size: .9rem; line-height: 1.5; transition: max-height .35s var(--ease), opacity .3s var(--ease), margin .35s var(--ease); transition-delay: 1s; }
       .estimate-card:hover .estimate-card__sub, .estimate-card:focus-within .estimate-card__sub { max-height: 120px; opacity: 1; margin: 0 0 14px; transition-delay: 0s; }
-      .estimate-card__btn { width: 100%; background: #fff; color: var(--ink); border: 1px solid #fff; box-shadow: 0 6px 18px rgba(0,0,0,.18); transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }
+      .estimate-card__btn { width: 100%; white-space: nowrap; border-radius: 20px; padding: 14px 16px; font-size: .92rem; background: #fff; color: var(--ink); border: 1px solid #fff; box-shadow: 0 6px 18px rgba(0,0,0,.18); transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }
       .estimate-card__btn:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 10px 26px rgba(193,154,91,.4); }
     }
 
