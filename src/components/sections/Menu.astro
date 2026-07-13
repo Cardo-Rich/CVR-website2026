@@ -123,6 +123,36 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
   </aside>
 </div>
 
+<!-- Full-screen brand splash played when a "Manage My Home" nav CTA is clicked -->
+<div class="navsplash" data-navsplash aria-hidden="true">
+  <div class="navsplash__inner">
+    <p class="navsplash__head"><span>Premium Care.</span><span>Proven Performance.</span><span>Peace of Mind.</span></p>
+    <p class="navsplash__sub">Thoughtful management that protects your home, delights your guests, and drives stronger results.</p>
+    <span class="navsplash__hint">Continue to owners →</span>
+  </div>
+</div>
+
+<script>
+  // "Manage My Home" → play the brand splash, then continue to /owners.
+  (function () {
+    var splash = document.querySelector('[data-navsplash]');
+    var ctas = Array.prototype.slice.call(document.querySelectorAll('a.nav-cta'));
+    if (!splash || !ctas.length) return;
+    var reduce = !window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+    ctas.forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var href = a.getAttribute('href');
+        if (!href || e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+        e.preventDefault();
+        if (reduce) { window.location.href = href; return; }
+        splash.setAttribute('aria-hidden', 'false');
+        requestAnimationFrame(function () { requestAnimationFrame(function () { splash.classList.add('is-shown'); }); });
+        setTimeout(function () { window.location.href = href; }, 1700);
+      });
+    });
+  })();
+</script>
+
 <script>
   (function () {
     const openBtn = document.querySelector('[data-menu-open]');

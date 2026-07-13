@@ -184,6 +184,19 @@
       if (open) { var t = guests.querySelector('textarea'); t && t.focus(); }
     });
 
+    // "I don't have a property yet" — hide the address + amenities, keep "tell us more"
+    var noprop = panel.querySelector('[data-noprop]');
+    if (noprop) {
+      var propFields = [].slice.call(panel.querySelectorAll('[data-prop-field]'));
+      var addrInput = panel.querySelector('input[name="address"]');
+      noprop.addEventListener('change', function(){
+        var on = noprop.checked;
+        propFields.forEach(function(el){ el.style.display = on ? 'none' : ''; });
+        if (addrInput) { addrInput.required = !on; if (on) addrInput.value = ''; }
+        saveLead({ noProperty: on });
+      });
+    }
+
     // Back buttons
     panel.querySelectorAll('[data-lead-back]').forEach(function(b){
       b.addEventListener('click', function(){ show(b.getAttribute('data-lead-back')); });
@@ -194,6 +207,7 @@
       e.preventDefault();
       if (!steps['2'].reportValidity()) return;
       saveLead(values(steps['2']));
+      ghlBookLead(); // upsert contact + create the appointment in GHL (no-op if unconfigured)
       if (lead.appointment && apptLabelEl) { apptLabelEl.textContent = lead.appointment; if (apptBanner) apptBanner.hidden = false; }
       show('3');
     });
@@ -203,6 +217,7 @@
       e.preventDefault();
       if (!steps['3'].reportValidity()) return;
       saveLead(values(steps['3']));
+      ghlNoteLead(); // attach property details to the GHL contact as a note
       renderConfirmation();
       show('done');
     });
@@ -223,31 +238,44 @@
       if (gcalBtn) { if (lead.gcalUrl) gcalBtn.href = lead.gcalUrl; else gcalBtn.style.display = 'none'; }
     }
 
-    // Booking is the first step — build the scheduler on load.
-    buildScheduler();
-
-    /* ---- Booking calendar: real Google Calendar embed if provided, else a
-            lightweight scheduling placeholder that captures a day + time. On
-            confirm it stores the appointment and advances to step 2. ---- */
+    // Booking is the first step — load real slots (GHL) or fall back, then render.
     var built = false;
     function buildScheduler(){
       if (built || !calMount) return;
       built = true;
-      var gcal = calMount.getAttribute('data-gcal');
-      if (gcal) {
-        var f = document.createElement('iframe');
-        f.src = gcal; f.width = '100%'; f.height = '600'; f.frameBorder = '0';
-        f.style.border = '0'; f.title = 'Book your consultation';
-        calMount.appendChild(f);
-        return;
-      }
-      // Placeholder scheduler — next 8 weekdays + a few time slots.
-      var days = [], d = new Date(); d.setHours(0,0,0,0);
-      while (days.length < 8) { d.setDate(d.getDate() + 1); if (d.getDay() !== 0 && d.getDay() !== 6) days.push(new Date(d)); }
+      calMount.innerHTML = '<div class="leadcal__loading muted">Loading available times…</div>';
+      loadSlots().then(renderScheduler).catch(function(){ renderScheduler(placeholderModel()); });
+    }
+    buildScheduler();
+
+    // Pull real free slots from the GHL round-robin calendar via our function.
+    function loadSlots(){
+      return fetch('/api/ghl?action=slots&days=21', { headers: { 'Accept': 'application/json' } })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (!d || !d.configured || !d.days || !d.days.length) throw new Error('ghl unavailable');
+          return { tz: d.timezone || 'America/Los_Angeles', days: d.days.map(function(day){
+            return { key: day.date, date: new Date(day.date + 'T12:00:00'), label: day.label, slots: day.slots };
+          }) };
+        });
+    }
+
+    // Offline fallback — next 8 weekdays + fixed slots (keeps the form usable).
+    function placeholderModel(){
       var times = ['9:00 AM','10:30 AM','1:00 PM','2:30 PM','4:00 PM'];
       var dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      var sel = { day: null, time: null };
+      var out = [], d = new Date(); d.setHours(0,0,0,0);
+      function toIso(day, t){ var m=t.match(/(\d+):(\d+)\s*(AM|PM)/i); var h=(parseInt(m[1],10)%12)+(/pm/i.test(m[3])?12:0); var dd=new Date(day); dd.setHours(h,parseInt(m[2],10),0,0); return dd.toISOString(); }
+      while (out.length < 8) { d.setDate(d.getDate()+1); if (d.getDay()!==0 && d.getDay()!==6) { var day=new Date(d);
+        out.push({ key: day.toDateString(), date: day, label: dn[day.getDay()]+', '+mn[day.getMonth()]+' '+day.getDate(),
+          slots: times.map(function(t){ return { iso: toIso(day, t), label: t }; }) }); } }
+      return { tz: 'America/Los_Angeles', days: out };
+    }
 
+    function renderScheduler(model){
+      var dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var sel = { day: null, slot: null };
+      calMount.innerHTML = '';
       var wrap = document.createElement('div'); wrap.className = 'leadcal__inner';
       wrap.innerHTML =
         '<div class="leadcal__label">Pick a day</div>' +
@@ -261,53 +289,74 @@
       var confirm = wrap.querySelector('.leadcal__confirm');
 
       function refreshConfirm(){
-        var ok = sel.day && sel.time;
+        var ok = sel.day && sel.slot;
         confirm.disabled = !ok;
-        confirm.textContent = ok ? ('Continue · ' + dn[sel.day.getDay()] + ' ' + sel.time) : 'Select a day & time';
+        confirm.textContent = ok ? ('Continue · ' + dn[sel.day.date.getDay()] + ' ' + sel.slot.label) : 'Select a day & time';
       }
-      days.forEach(function(day){
+      function renderTimes(){
+        timesEl.innerHTML = ''; sel.slot = null;
+        if (!sel.day) return;
+        sel.day.slots.forEach(function(slot){
+          var b = document.createElement('button');
+          b.type = 'button'; b.className = 'leadcal__time'; b.textContent = slot.label;
+          b.addEventListener('click', function(){
+            sel.slot = slot;
+            [].slice.call(timesEl.children).forEach(function(x){ x.classList.toggle('is-on', x === b); });
+            refreshConfirm();
+          });
+          timesEl.appendChild(b);
+        });
+      }
+      model.days.forEach(function(day){
         var b = document.createElement('button');
         b.type = 'button'; b.className = 'leadcal__day';
-        b.innerHTML = '<span class="leadcal__dow">' + dn[day.getDay()] + '</span><span class="leadcal__num">' + day.getDate() + '</span><span class="leadcal__mon">' + mn[day.getMonth()] + '</span>';
+        b.innerHTML = '<span class="leadcal__dow">' + dn[day.date.getDay()] + '</span><span class="leadcal__num">' + day.date.getDate() + '</span><span class="leadcal__mon">' + mn[day.date.getMonth()] + '</span>';
         b.addEventListener('click', function(){
           sel.day = day;
           [].slice.call(daysEl.children).forEach(function(x){ x.classList.toggle('is-on', x === b); });
-          refreshConfirm();
+          renderTimes(); refreshConfirm();
         });
         daysEl.appendChild(b);
       });
-      times.forEach(function(t){
-        var b = document.createElement('button');
-        b.type = 'button'; b.className = 'leadcal__time'; b.textContent = t;
-        b.addEventListener('click', function(){
-          sel.time = t;
-          [].slice.call(timesEl.children).forEach(function(x){ x.classList.toggle('is-on', x === b); });
-          refreshConfirm();
-        });
-        timesEl.appendChild(b);
-      });
-      function pad(n){ return (n < 10 ? '0' : '') + n; }
-      function stamp(dt){ return dt.getFullYear() + pad(dt.getMonth()+1) + pad(dt.getDate()) + 'T' + pad(dt.getHours()) + pad(dt.getMinutes()) + '00'; }
-      function toStart(day, t){
-        var m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
-        var h = (parseInt(m[1],10) % 12) + (/pm/i.test(m[3]) ? 12 : 0);
-        var d = new Date(day); d.setHours(h, parseInt(m[2],10), 0, 0); return d;
-      }
       confirm.addEventListener('click', function(){
-        if (!sel.day || !sel.time) return;
-        var label = dn[sel.day.getDay()] + ', ' + mn[sel.day.getMonth()] + ' ' + sel.day.getDate() + ' at ' + sel.time;
-        var start = toStart(sel.day, sel.time), end = new Date(start.getTime() + 30*60000);
-        // Prefilled Google Calendar event for the final confirmation step.
-        var gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
-          + '&text=' + encodeURIComponent('Cardo — Earning Estimate Review')
-          + '&dates=' + stamp(start) + '/' + stamp(end)
-          + '&details=' + encodeURIComponent('Your Cardo account manager will walk you through your San Diego earning estimate.' + (lead.address ? '\nProperty: ' + lead.address : ''))
-          + '&location=' + encodeURIComponent('Phone call')
-          + '&ctz=America/Los_Angeles';
-        saveLead({ appointment: label, appointmentStart: start.toISOString(), gcalUrl: gcalUrl });
+        if (!sel.day || !sel.slot) return;
+        var label = dn[sel.day.date.getDay()] + ', ' + mn[sel.day.date.getMonth()] + ' ' + sel.day.date.getDate() + ' at ' + sel.slot.label;
+        saveLead({ appointment: label, appointmentStart: sel.slot.iso, gcalUrl: gcalFromIso(sel.slot.iso) });
         show('2');
       });
       refreshConfirm();
+    }
+
+    function gcalFromIso(iso){
+      function pad(n){ return (n<10?'0':'')+n; }
+      var start = new Date(iso), end = new Date(start.getTime()+30*60000);
+      function stamp(dt){ return dt.getUTCFullYear()+pad(dt.getUTCMonth()+1)+pad(dt.getUTCDate())+'T'+pad(dt.getUTCHours())+pad(dt.getUTCMinutes())+'00Z'; }
+      return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+        + '&text=' + encodeURIComponent('Cardo — Earning Estimate Review')
+        + '&dates=' + stamp(start) + '/' + stamp(end)
+        + '&details=' + encodeURIComponent('Your Cardo account manager will walk you through your San Diego earning estimate.')
+        + '&location=' + encodeURIComponent('Phone call');
+    }
+
+    // ---- GHL writes (all graceful no-ops when the endpoint is unconfigured) ----
+    function ghlBookLead(){
+      try {
+        fetch('/api/ghl', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
+          action:'book', firstName: lead.firstName, lastName: lead.lastName, email: lead.email, phone: lead.phone,
+          startIso: lead.appointmentStart, guests: lead.guests, earlyContact: !!lead.earlyContact
+        })}).then(function(r){ return r.json(); }).then(function(d){
+          if (d && d.configured && d.contactId) saveLead({ contactId: d.contactId, appointmentId: d.appointmentId });
+        }).catch(function(){});
+      } catch (e) {}
+    }
+    function ghlNoteLead(){
+      if (!lead.contactId) return;
+      var text = [ lead.noProperty ? 'No property yet.' : ('Property: ' + (lead.address || '')),
+        lead.amenities ? ('Amenities: ' + lead.amenities) : '',
+        lead.details ? ('Notes: ' + lead.details) : '' ].filter(Boolean).join('\n');
+      try {
+        fetch('/api/ghl', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'note', contactId: lead.contactId, text: text }) }).catch(function(){});
+      } catch (e) {}
     }
   })();
 

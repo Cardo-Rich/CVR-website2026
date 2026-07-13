@@ -395,6 +395,8 @@
     .leadcal__gcal { box-shadow: none; }
     .leadearly { display: flex; align-items: flex-start; gap: 10px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .9rem; color: var(--ink-soft); cursor: pointer; }
     .leadearly input { width: 18px; height: 18px; margin-top: 1px; accent-color: var(--rose); flex: none; cursor: pointer; }
+    .leadnoprop { display: flex; align-items: center; gap: 9px; margin: -2px 0 14px; font-size: .9rem; color: var(--ink-soft); cursor: pointer; }
+    .leadnoprop input { width: 17px; height: 17px; accent-color: var(--rose); flex: none; cursor: pointer; }
 
     /* ---------- Workflow step bar ---------- */
     .leadbar { list-style: none; display: flex; align-items: center; gap: 8px; margin: 0 0 18px; padding: 0; }

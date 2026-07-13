@@ -83,12 +83,13 @@
       <!-- STEP 3 — your property -->
       <form class="lead__form leadstep" data-lead-step="3" hidden novalidate>
         <div class="leadstep__meta"><button type="button" class="leadstep__back" data-lead-back="2">← Back</button><span class="leadstep__count">Step 3 of 3</span><span class="leadstep__name">Your property</span></div>
-        <div class="ifield addr" data-addr>
+        <div class="ifield addr" data-addr data-prop-field>
           <span class="ifield__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
           <input name="address" type="text" autocomplete="off" placeholder="Property address" aria-label="Property address" required />
           <ul class="addr__list" data-addr-list hidden></ul>
         </div>
-        <div class="field">
+        <label class="leadnoprop"><input type="checkbox" name="noProperty" data-noprop /><span>I don't have a property yet</span></label>
+        <div class="field" data-prop-field>
           <label>Top amenities</label>
           <div class="amenpills" data-amenities>
             <button type="button" class="amenpill" data-amenity="Pool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18c2 0 2-1.5 4-1.5S8 18 10 18s2-1.5 4-1.5S16 18 18 18s2-1.5 4-1.5"/><path d="M7 16V5a2 2 0 014 0M13 16V5a2 2 0 014 0"/></svg> Pool</button>

@@ -1,5 +1,5 @@
 import { onRequest, onCall, HttpsError } from 'firebase-functions/v2/https';
-import { defineSecret } from 'firebase-functions/params';
+import { defineSecret, defineString } from 'firebase-functions/params';
 import { getAuth } from 'firebase-admin/auth';
 import { getDb, getBucket, getAdminApp } from './db.js';
 import { makeSendEmail, signingInviteHtml } from './email.js';
@@ -9,9 +9,22 @@ import {
   getSettings, setSettings, HttpErr, isValidToken,
 } from './actions.js';
 import { resolveAdmin } from './claims.js';
+import { getSlots, book as ghlBook, addNote as ghlAddNote, type GhlConfig } from './ghl.js';
 import type { AgreementDoc } from './types.js';
 
 const RESEND_API_KEY = defineSecret('RESEND_API_KEY');
+
+// ---- GoHighLevel booking config (token is a secret; IDs are plain params) ----
+const GHL_API_TOKEN = defineSecret('GHL_API_TOKEN');
+const GHL_CALENDAR_ID = defineString('GHL_CALENDAR_ID', { default: '' });
+const GHL_LOCATION_ID = defineString('GHL_LOCATION_ID', { default: '' });
+const GHL_TIMEZONE = defineString('GHL_TIMEZONE', { default: 'America/Los_Angeles' });
+const ghlCfg: GhlConfig = {
+  token: () => GHL_API_TOKEN.value(),
+  calendarId: () => GHL_CALENDAR_ID.value(),
+  locationId: () => GHL_LOCATION_ID.value(),
+  timezone: () => GHL_TIMEZONE.value() || 'America/Los_Angeles',
+};
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'content-type',
@@ -55,6 +68,42 @@ export const agreements = onRequest({ secrets: [RESEND_API_KEY], cors: false }, 
     const status = (e as HttpErr).status ?? 500;
     if (status === 500) console.error(e);
     res.status(status).json({ error: (e as Error).message || 'Server error' });
+  }
+});
+
+// ---- Public GHL booking proxy (owners lead form) ----
+// GET  /api/ghl?action=slots&days=21  → real free slots (grouped by day)
+// POST /api/ghl  {action:'book', ...contact + startIso}  → upsert contact + appointment
+// POST /api/ghl  {action:'note', contactId, text}        → attach property details as a CRM note
+// Returns { configured:false } when the GHL env vars are unset, so the
+// front-end falls back to its offline scheduler and nothing breaks.
+export const ghl = onRequest({ secrets: [GHL_API_TOKEN], cors: false }, async (req, res) => {
+  Object.entries(CORS).forEach(([k, v]) => res.set(k, v));
+  if (req.method === 'OPTIONS') { res.status(204).send(''); return; }
+  const configured = !!(ghlCfg.token() && ghlCfg.calendarId() && ghlCfg.locationId());
+  try {
+    if (req.method === 'GET' && req.query.action === 'slots') {
+      if (!configured) { res.json({ configured: false }); return; }
+      const days = Math.min(31, Math.max(1, parseInt(String(req.query.days || '21'), 10) || 21));
+      res.json({ configured: true, timezone: ghlCfg.timezone(), days: await getSlots(ghlCfg, days) });
+      return;
+    }
+    const body = req.body ?? {};
+    if (body.action === 'book') {
+      if (!configured) { res.json({ configured: false }); return; }
+      res.json({ configured: true, ...(await ghlBook(ghlCfg, body)) });
+      return;
+    }
+    if (body.action === 'note') {
+      if (!configured) { res.json({ configured: false }); return; }
+      await ghlAddNote(ghlCfg, String(body.contactId || ''), String(body.text || ''));
+      res.json({ configured: true, ok: true });
+      return;
+    }
+    res.status(400).json({ error: 'Unknown action' });
+  } catch (e) {
+    console.error('ghl error', e);
+    res.status(502).json({ error: (e as Error).message || 'GHL request failed' });
   }
 });
 
