@@ -19,9 +19,9 @@ const { logoHref = '/' } = Astro.props;
       <img src="/assets/logo-horizontal-color.png" alt="Cardo Vacation Rentals" />
     </a>
     <nav class="site-header__nav">
-      <button type="button" class="menu-btn" data-menu-open aria-expanded="false" aria-controls="site-menu">
+      <a class="nav-cta" href="/owners"><span>Manage My Home</span></a>
+      <button type="button" class="menu-btn" data-menu-open aria-expanded="false" aria-controls="site-menu" aria-label="Open menu">
         <span class="menu-btn__bars" aria-hidden="true"><span></span><span></span><span></span></span>
-        <span class="menu-btn__label">Menu</span>
       </button>
     </nav>
   </div>

@@ -1,27 +1,31 @@
 ---
-// ===================== CARDO VS ALTERNATIVES =====================
-// Columns in order: Cardo (highlighted), Ordinary STR Manager, Airbnb Cohost, Self-Managing.
-// Cell values: true = included, false = not offered, string = qualified note.
-const cols = ['Cardo', 'Ordinary STR Manager', 'Airbnb Cohost', 'Self-Managing'];
+// ===================== MANAGEMENT OPTIONS (Cardo vs Alternatives) =====================
+// Data mirrors Cardo-vs-Alternatives.xlsx. Cell values: true = included,
+// false = not offered, string = qualified note. `emph` rows (owner time,
+// cost) get a highlighted band; `tip` adds a sleek hover-for-detail popover.
+const cols = ['Cardo', 'Standard STR Manager', 'Airbnb Cohost', 'Self-Managing'];
 
 const rows = [
-  { label: 'Management fee', cells: ['20%', '18–35%', '10–20%', 'Your sanity'], head: true },
-  { label: 'Damage insurance on every stay', cells: [true, 'Sometimes', false, false] },
-  { label: 'Owner portal & real-time dashboard', cells: [true, 'Varies', 'Basic app', false] },
-  { label: 'AI-driven operations', cells: [true, false, false, false] },
-  { label: 'In-house cleaning & white-linen', cells: [true, 'Subcontracted', 'You arrange', 'You'] },
-  { label: 'Dedicated property manager', cells: [true, 'Call center', 'You', 'You'] },
-  { label: 'Full-service marketing · 10+ channels', cells: [true, 'Listing sites', 'Airbnb only', 'You'] },
-  { label: 'Dynamic pricing & revenue management', cells: [true, true, 'Basic', 'Manual'] },
-  { label: 'Direct-booking website', cells: [true, 'Rare', false, false] },
-  { label: 'Permits, TOT & compliance', cells: [true, true, false, 'You'] },
-  { label: '24/7 guest & owner support', cells: [true, 'Business hrs', 'You', 'You'] },
-  { label: 'Interior design & staging', cells: [true, false, false, false] },
-  { label: 'Owner time required', cells: ['Near zero', 'Low', 'High', 'All of it'], foot: true },
+  { label: 'Owner time required', cells: ['Near zero', 'Low', 'High', 'Very High'], emph: true },
+  { label: 'Gross revenue', cells: ['Highest', 'Above average', 'Market average', 'Market average'] },
+  { label: 'Zero-hassle damage insurance', cells: [true, false, false, false], tip: "The Cardo HomeSafe protection ensures you're covered on ANY platform. $0 deductible, high coverage amounts, and immediate payouts." },
+  { label: 'Real-time owner portal', cells: [true, 'Sometimes', false, false] },
+  { label: 'AI-driven operations management', cells: [true, false, false, false], tip: "Our in-house ops software is designed for speed and transparency from the ground up. You'll know what's going on in your home at all times." },
+  { label: '5-star cleanliness guarantee', cells: [true, false, false, false], tip: 'We guarantee a quality clean for every guest, or else Cardo covers their cleaning fee.' },
+  { label: 'Dedicated property manager', cells: [true, 'Sometimes', true, false], tip: 'You have one person who knows your property inside and out — literally.' },
+  { label: 'In-depth revenue management', cells: [true, true, false, false], tip: 'We combine data from 10,000 STRs with AI, a real dedicated human, and a weekly team call to make sure your home is priced perfectly.' },
+  { label: 'Listing on 10+ distribution channels', cells: [true, 'Sometimes', false, false], tip: "Professional managers get exclusive access to the highest-ROI channels, so you get more views and don't need to rely on Airbnb alone." },
+  { label: 'Social media & ads marketing', cells: [true, false, false, false], tip: 'Get seen on Instagram and TikTok. Your home could be the next viral sensation.' },
+  { label: 'Direct-booking website', cells: [true, true, false, false] },
+  { label: 'Permits/TOT guidance & reporting', cells: [true, true, false, false], tip: 'Although the permit must be in your name, Cardo will walk you through every step of the way.' },
+  { label: '24/7 guest support', cells: [true, 'Sometimes', false, false] },
+  { label: 'Interior design & staging', cells: [true, 'Sometimes', false, false] },
+  { label: 'Management cost', cells: ['20%', '18–35%', '10–20%', '—'], emph: true },
 ];
 
 const check = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
 const cross = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const info  = '<svg class="vs__hint-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>';
 ---
 
 <section class="section-pad" id="compare" data-screen-label="Comparison">
@@ -46,8 +50,12 @@ const cross = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" strok
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr class={(r.head ? 'vs__row--head ' : '') + (r.foot ? 'vs__row--foot' : '')}>
-              <td class="vs__rowhead">{r.label}</td>
+            <tr class={r.emph ? 'vs__row--emph' : ''}>
+              <td class="vs__rowhead">
+                {r.tip ? (
+                  <span class="vs__hint" tabindex="0">{r.label}<span set:html={info} /><span class="vs__tip" role="tooltip">{r.tip}</span></span>
+                ) : r.label}
+              </td>
               {r.cells.map((cell, i) => (
                 <td class={i === 0 ? 'vs__cardo' : ''}>
                   {cell === true ? (
@@ -70,20 +78,18 @@ const cross = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" strok
 
 <style>
   /* Wrapper scrolls horizontally only on narrow screens; on wide screens it
-     stays overflow-visible so the sticky header can anchor to the page. */
+     stays overflow-visible so the sticky header and hover tips can escape. */
   .vs__wrap { margin-top: 40px; padding: 4px; }
-  .vs { width: 100%; min-width: 720px; border-collapse: separate; border-spacing: 0; }
+  .vs { width: 100%; min-width: 760px; border-collapse: separate; border-spacing: 0; }
   .vs th, .vs td { padding: 15px 18px; text-align: center; border-bottom: 1px solid var(--line); font-size: .95rem; vertical-align: middle; }
   /* Column headers stay visible below the sticky site header while scrolling. */
   .vs thead th { position: sticky; top: 84px; z-index: 2; background: var(--paper); box-shadow: inset 0 -1px 0 var(--line); font-size: .82rem; letter-spacing: .02em; color: var(--muted); font-weight: 600; text-transform: none; vertical-align: bottom; padding-top: 8px; }
   .vs thead th .vs__colname { display: block; font-family: var(--font-display); font-weight: 500; font-size: 1.02rem; color: var(--ink); line-height: 1.25; }
-  .vs__rowhead { text-align: left !important; font-weight: 600; color: var(--ink); white-space: nowrap; }
-  td.vs__rowhead { font-size: .92rem; }
+  .vs__rowhead { text-align: left !important; font-weight: 600; color: var(--ink); }
+  td.vs__rowhead { font-size: .92rem; position: relative; }
 
   /* Cardo highlight column — ink + gold, deliberately not pink */
   .vs th.vs__cardo, .vs td.vs__cardo { background: var(--ink); border-bottom-color: rgba(255,255,255,.08); position: relative; }
-  /* Keep the ink background on the Cardo header cell — the sticky rule's
-     `.vs thead th { background: var(--paper) }` otherwise wins on specificity. */
   .vs thead th.vs__cardo { background: var(--ink); box-shadow: inset 0 -1px 0 rgba(255,255,255,.08); }
   .vs thead th.vs__cardo .vs__colname { color: #fff; }
   .vs td.vs__cardo .vs__txt { color: #fff; font-weight: 600; }
@@ -93,21 +99,26 @@ const cross = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" strok
   .vs__badge { display: inline-block; margin-bottom: 8px; padding: 3px 11px; border-radius: var(--radius-pill); background: var(--gold); color: var(--ink); font-family: var(--font-body); font-size: .66rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
 
   .vs__yes, .vs__no { display: inline-flex; }
-  .vs__yes svg, .vs__no svg { width: 21px; height: 21px; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; fill: none; }
   .vs__yes { color: var(--success); }
   .vs__no { color: var(--muted); opacity: .45; }
   .vs__txt { color: var(--ink-soft); }
 
-  .vs__row--head td { font-weight: 700; }
-  .vs__row--head td .vs__txt { font-size: 1.05rem; font-weight: 700; color: var(--ink); }
-  .vs__row--head td.vs__cardo .vs__txt { color: #fff; }
-  .vs__row--foot td { border-bottom: none; }
-  .vs__row--foot td .vs__txt { font-weight: 700; }
+  /* Emphasis rows (owner time + cost) — highlighted band, distinct from features */
+  .vs__row--emph td { background: var(--cream-2); }
+  .vs__row--emph td.vs__cardo { background: var(--ink); }
+  .vs__row--emph td.vs__rowhead { font-weight: 700; color: var(--ink); }
+  .vs__row--emph .vs__txt { font-weight: 700; font-size: 1.06rem; color: var(--ink); }
+  .vs__row--emph td.vs__cardo .vs__txt { color: #fff; }
+
+  /* Sleek "hover for detail" call-out — annotation underline + info dot, not a link */
+  .vs__hint { position: relative; cursor: help; border-bottom: 1px dashed var(--gold); outline: none; }
+  .vs__hint-ic { margin-left: 5px; color: var(--gold); vertical-align: middle; }
+  .vs__hint:focus-visible { border-bottom-style: solid; }
+  .vs__tip { position: absolute; left: 0; top: calc(100% + 10px); width: 260px; max-width: 74vw; z-index: 6; background: var(--ink); color: #fff; font-family: var(--font-body); font-weight: 400; font-size: .82rem; line-height: 1.5; letter-spacing: 0; text-transform: none; text-align: left; padding: 12px 14px; border-radius: var(--radius); box-shadow: var(--shadow-md); opacity: 0; visibility: hidden; transform: translateY(-5px); transition: opacity .18s var(--ease), transform .18s var(--ease); pointer-events: none; }
+  .vs__tip::before { content: ""; position: absolute; bottom: 100%; left: 20px; border: 6px solid transparent; border-bottom-color: var(--ink); }
+  .vs__hint:hover .vs__tip, .vs__hint:focus .vs__tip { opacity: 1; visibility: visible; transform: translateY(0); }
 
   .compare__note { font-size: .82rem; color: var(--muted); margin-top: 14px; }
-  /* Narrower than the table's min-width: scroll horizontally. The overflow
-     container resets the sticky context, so headers scroll away here (fine on
-     small screens where the whole table is panned). */
   @media (max-width: 940px) { .vs__wrap { overflow-x: auto; } .vs thead th { position: static; } }
   @media (max-width: 680px) { .vs th, .vs td { padding: 12px 12px; font-size: .86rem; } }
 </style>
