@@ -167,8 +167,10 @@
       [steps['1'], steps['2'], steps['3'], done].forEach(function(el){ if (el) el.hidden = true; });
       if (which === 'done') { if (done) done.hidden = false; setBar('done'); }
       else { steps[which].hidden = false; setBar(which); }
-      var hero = document.getElementById('estimate');
-      if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Jump to the top of the form panel (not the whole hero section), leaving
+      // room for the sticky site header.
+      var top = panel.getBoundingClientRect().top + window.scrollY - 90;
+      window.scrollTo({ top: top, behavior: 'smooth' });
     }
 
     // "Add guests" disclosure
