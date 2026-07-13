@@ -398,3 +398,41 @@
     .leadcal__gcal { box-shadow: none; }
     .leadearly { display: flex; align-items: flex-start; gap: 10px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .9rem; color: var(--ink-soft); cursor: pointer; }
     .leadearly input { width: 18px; height: 18px; margin-top: 1px; accent-color: var(--rose); flex: none; cursor: pointer; }
+
+    /* ---------- Workflow step bar ---------- */
+    .leadbar { list-style: none; display: flex; align-items: center; gap: 8px; margin: 0 0 18px; padding: 0; }
+    .leadbar__step { display: flex; align-items: center; gap: 8px; flex: 1; font-size: .8rem; font-weight: 600; color: var(--muted); min-width: 0; }
+    .leadbar__step:not(:last-child)::after { content: ""; flex: 1; height: 2px; border-radius: 2px; background: var(--line); }
+    .leadbar__dot { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--line); color: var(--muted); font-size: .8rem; font-weight: 700; transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease); }
+    .leadbar__lbl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .leadbar__step.is-active .leadbar__dot { background: var(--rose); color: #fff; }
+    .leadbar__step.is-active { color: var(--ink); }
+    .leadbar__step.is-done .leadbar__dot { background: var(--ink); color: #fff; }
+    .leadbar__step.is-done { color: var(--ink-soft); }
+    .leadbar__step.is-done .leadbar__dot { font-size: 0; }
+    .leadbar__step.is-done .leadbar__dot::after { content: "✓"; font-size: .8rem; }
+    @media (max-width: 420px) { .leadbar__lbl { display: none; } }
+
+    /* Appointment-confirmed banner */
+    .leadappt { display: flex; align-items: center; gap: 10px; margin: 0 0 18px; padding: 12px 14px; border-radius: var(--radius); background: var(--accent-soft); border: 1px solid rgba(237,60,120,.2); font-size: .92rem; color: var(--ink); }
+    .leadappt[hidden] { display: none; }
+    .leadappt__ic { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--rose); color: #fff; display: grid; place-items: center; }
+    .leadappt__ic svg { width: 14px; height: 14px; }
+
+    .leadstep__intro { margin: 0 0 16px; font-size: .95rem; line-height: 1.5; color: var(--ink-soft); }
+
+    /* "Add guests" disclosure */
+    .lead__addguests { display: inline-flex; align-items: center; gap: 7px; margin: 2px 0 12px; padding: 0; background: none; border: none; cursor: pointer; font-family: var(--font-body); font-weight: 600; font-size: .9rem; color: var(--rose); }
+    .lead__addguests svg { transition: transform var(--dur-fast) var(--ease); }
+    .lead__addguests.is-open svg { transform: rotate(45deg); }
+    .lead__guests { margin: 0 0 12px; }
+    .lead__guests[hidden] { display: none; }
+    .lead__guests .lead__finehint { text-align: left; margin: 6px 0 0; }
+
+    /* Final confirmation extras */
+    .leaddone__appt { display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: var(--radius); background: var(--accent-soft); font-size: .94rem; line-height: 1.45; margin-bottom: 16px; }
+    .leaddone__appt .leadappt__ic { font-size: 1rem; }
+    .leaddone__text { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; }
+    .leaddone__text p { margin: 0 0 10px; font-size: .92rem; color: var(--muted); }
+    .btn-outline { background: transparent; color: var(--ink); box-shadow: none; border: 1px solid var(--line-strong); }
+    .btn-outline:hover { background: var(--ink); color: #fff; box-shadow: none; }

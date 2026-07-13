@@ -1,9 +1,10 @@
 ---
-// Owner hero + multi-step lead form.
-// Step 1 = listing address, first/last name, email, phone (labels sit inside
-// the fields as placeholders, each with a type icon). Step 2 = property
-// details (shown directly, not behind a disclosure). Each step saves the lead
-// record; the final submit reveals a Google Calendar booking step.
+// Owner hero + multi-step lead form. Flow:
+//   Step 1 = book a consultation (pick a day + time).
+//   Step 2 = your details (name, email + optional guests, phone + A2P consent,
+//            early-contact option). Submitting confirms the appointment.
+//   Step 3 = your property (address, amenities, "tell us more").
+// Submitting all three reveals the full confirmation with a text-us shortcut.
 // The #estimate anchor sits on the section so links land on the hero heading.
 ---
 
@@ -12,7 +13,7 @@
   <div class="hero__inner">
     <div class="hero__copy">
       <h1 class="hero__title">Luxury Vacation Rental Management</h1>
-      <p class="hero__lede">Submit your home for a free estimate by a personal account manager.</p>
+      <p class="hero__lede">Book a free consultation with a personal account manager and get your earning estimate.</p>
       <div class="hero__trust">
         <span class="stars">★★★★★</span>
         <span>4.9 average · 2,000+ five-star reviews</span>
@@ -20,16 +21,27 @@
     </div>
 
     <div class="lead__panel hero__form" data-lead>
-      <!-- STEP 1 — listing + contact -->
-      <form class="lead__form leadstep" data-lead-step="1" novalidate>
-        <div class="leadstep__meta"><span class="leadstep__count">Step 1 of 2</span><span class="leadstep__name">Your details</span></div>
-        <div class="leadprog"><i style="width:50%"></i></div>
+      <!-- Workflow step bar -->
+      <ol class="leadbar" data-leadbar>
+        <li class="leadbar__step is-active" data-bar="1"><span class="leadbar__dot">1</span><span class="leadbar__lbl">Book</span></li>
+        <li class="leadbar__step" data-bar="2"><span class="leadbar__dot">2</span><span class="leadbar__lbl">Your details</span></li>
+        <li class="leadbar__step" data-bar="3"><span class="leadbar__dot">3</span><span class="leadbar__lbl">Your property</span></li>
+      </ol>
+      <div class="leadappt" data-appt hidden>
+        <span class="leadappt__ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span>Appointment confirmed — <b data-appt-label></b></span>
+      </div>
 
-        <div class="ifield addr" data-addr>
-          <span class="ifield__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
-          <input name="address" type="text" autocomplete="off" placeholder="Listing address" aria-label="Listing address" required />
-          <ul class="addr__list" data-addr-list hidden></ul>
-        </div>
+      <!-- STEP 1 — book the consultation -->
+      <div class="leadstep" data-lead-step="1">
+        <div class="leadstep__meta"><span class="leadstep__count">Step 1 of 3</span><span class="leadstep__name">Book a consultation</span></div>
+        <p class="leadstep__intro">Pick a time for a free call — a personal account manager will walk you through your earning estimate.</p>
+        <div class="leadcal" data-leadcal data-gcal="" aria-live="polite"></div>
+      </div>
+
+      <!-- STEP 2 — your details -->
+      <form class="lead__form leadstep" data-lead-step="2" hidden novalidate>
+        <div class="leadstep__meta"><button type="button" class="leadstep__back" data-lead-back="1">← Back</button><span class="leadstep__count">Step 2 of 3</span><span class="leadstep__name">Your details</span></div>
         <div class="ifield">
           <span class="ifield__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>
           <input name="firstName" type="text" autocomplete="given-name" placeholder="First name" aria-label="First name" required />
@@ -42,6 +54,15 @@
           <span class="ifield__ic ifield__at" aria-hidden="true">@</span>
           <input name="email" type="email" autocomplete="email" placeholder="Email" aria-label="Email" required />
         </div>
+
+        <button type="button" class="lead__addguests" data-addguests aria-expanded="false">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Add guests
+        </button>
+        <div class="lead__guests" data-guests hidden>
+          <textarea name="guests" rows="2" placeholder="guest@email.com, guest2@email.com" aria-label="Additional guest emails"></textarea>
+          <p class="lead__finehint">Notify up to 10 additional guests of the scheduled event.</p>
+        </div>
+
         <div class="ifield">
           <span class="ifield__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></span>
           <input name="phone" type="tel" autocomplete="tel" placeholder="Mobile phone" aria-label="Mobile phone" required />
@@ -51,14 +72,22 @@
           <label class="consent"><input type="checkbox" name="smsConsent" required /><span>I agree to receive text messages from Cardo Vacation Rentals at the number provided (estimate, account, and appointment reminders). Msg &amp; data rates may apply, msg frequency varies. Reply STOP to opt out, HELP for help.</span></label>
           <label class="consent"><input type="checkbox" name="terms" required /><span>I agree to Cardo's <a href="/terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
         </div>
-        <button type="submit" class="btn btn-block" style="margin-top:6px">Continue</button>
+        <label class="leadearly">
+          <input type="checkbox" name="earlyContact" />
+          <span>Have a representative contact me earlier if available</span>
+        </label>
+        <button type="submit" class="btn btn-block" style="margin-top:16px">Confirm appointment</button>
         <div class="lead__secure"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg> Secure &amp; private — verified by a real account manager.</div>
       </form>
 
-      <!-- STEP 2 — property details (shown directly) -->
-      <form class="lead__form leadstep" data-lead-step="2" hidden novalidate>
-        <div class="leadstep__meta"><button type="button" class="leadstep__back" data-lead-back>← Back</button><span class="leadstep__count">Step 2 of 2</span><span class="leadstep__name">Your property</span></div>
-        <div class="leadprog"><i style="width:100%"></i></div>
+      <!-- STEP 3 — your property -->
+      <form class="lead__form leadstep" data-lead-step="3" hidden novalidate>
+        <div class="leadstep__meta"><button type="button" class="leadstep__back" data-lead-back="2">← Back</button><span class="leadstep__count">Step 3 of 3</span><span class="leadstep__name">Your property</span></div>
+        <div class="ifield addr" data-addr>
+          <span class="ifield__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg></span>
+          <input name="address" type="text" autocomplete="off" placeholder="Property address" aria-label="Property address" required />
+          <ul class="addr__list" data-addr-list hidden></ul>
+        </div>
         <div class="field">
           <label>Top amenities</label>
           <div class="amenpills" data-amenities>
@@ -74,23 +103,23 @@
           <textarea name="details" rows="4" placeholder="Tell us more about your home or include a link to your listing" aria-label="Tell us more about your home or include a link to your listing"></textarea>
         </div>
         <button type="submit" class="btn btn-block" style="margin-top:6px">Get my free estimate</button>
-        <p class="lead__finehint">We'll text a confirmation code to verify your number and create your secure owner account.</p>
       </form>
 
-      <!-- STEP 3 — book the review call (revealed after submit) -->
-      <div class="leadbook" data-lead-book hidden>
+      <!-- Final confirmation (revealed after all three steps) -->
+      <div class="leadbook" data-lead-done hidden>
         <div class="leadbook__head">
           <div class="lead__check">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg>
           </div>
-          <h3>Your estimate is on the way.</h3>
-          <p class="muted">Finish up by booking a quick call — your account rep will walk you through your earning estimate in detail and answer every question.</p>
+          <h3 data-done-title>You're all set.</h3>
+          <p class="muted" data-done-sub>Your consultation is booked and your details are in. Your account manager will review your property and call you at the scheduled time.</p>
         </div>
-        <div class="leadcal" data-leadcal data-gcal="" aria-live="polite"></div>
-        <label class="leadearly">
-          <input type="checkbox" name="earlyContact" />
-          <span>Have a representative contact me earlier if available</span>
-        </label>
+        <div class="leaddone__appt" data-done-appt></div>
+        <a class="btn btn-block leadcal__gcal" data-done-gcal href="#" target="_blank" rel="noopener">Add to Google Calendar</a>
+        <div class="leaddone__text">
+          <p>Want to talk sooner?</p>
+          <a class="btn btn-block btn-outline" href="sms:+16197595014">Text us for a faster response</a>
+        </div>
       </div>
 
       <p class="lead__callus">Call or text us at <a href="tel:+16197595014">(619) 759-5014</a></p>

@@ -127,19 +127,23 @@
   var openItem = list && list.querySelector('[data-faq-item].is-open .faq__panel');
   if (openItem) openItem.style.maxHeight = openItem.scrollHeight + 'px';
 
-  /* ----- Multi-step lead form + booking ----- */
+  /* ----- Multi-step lead form: 1) book → 2) your details → 3) your property ----- */
   (function(){
     var panel = document.querySelector('[data-lead]');
     if (!panel) return;
-    var step1 = panel.querySelector('[data-lead-step="1"]');
-    var step2 = panel.querySelector('[data-lead-step="2"]');
-    var book = panel.querySelector('[data-lead-book]');
-    var back = panel.querySelector('[data-lead-back]');
+    var steps = {
+      '1': panel.querySelector('[data-lead-step="1"]'),
+      '2': panel.querySelector('[data-lead-step="2"]'),
+      '3': panel.querySelector('[data-lead-step="3"]')
+    };
+    var done = panel.querySelector('[data-lead-done]');
     var calMount = panel.querySelector('[data-leadcal]');
+    var barSteps = [].slice.call(panel.querySelectorAll('.leadbar__step'));
+    var apptBanner = panel.querySelector('[data-appt]');
+    var apptLabelEl = panel.querySelector('[data-appt-label]');
 
     // Mock lead "record" — one row that each step updates. Swap saveLead's body
-    // for a real POST/PATCH to your CRM or Firestore endpoint; it already runs
-    // on step 1, step 2, and when the appointment/early-contact box changes.
+    // for a real POST/PATCH to your CRM or Firestore endpoint.
     var lead = { id: 'lead_' + Math.random().toString(36).slice(2, 10) };
     function saveLead(patch){
       Object.assign(lead, patch || {});
@@ -148,36 +152,81 @@
       try { window.sessionStorage.setItem('cardoLead', JSON.stringify(lead)); } catch(e) {}
       return lead;
     }
-    function values(f){ var o = {}; [].slice.call(f.elements).forEach(function(el){ if (el.name) o[el.name] = el.value; }); return o; }
+    function values(f){ var o = {}; [].slice.call(f.elements).forEach(function(el){ if (el.name) o[el.name] = el.type === 'checkbox' ? el.checked : el.value; }); return o; }
+    function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;' }[c]; }); }
 
-    function show(which){
-      [step1, step2, book].forEach(function(el){ if (el) el.hidden = el !== which; });
+    function setBar(active){ // active: '1' | '2' | '3' | 'done'
+      barSteps.forEach(function(li){
+        var n = parseInt(li.getAttribute('data-bar'), 10);
+        li.classList.remove('is-active', 'is-done');
+        if (active === 'done' || n < parseInt(active, 10)) li.classList.add('is-done');
+        else if (String(n) === active) li.classList.add('is-active');
+      });
     }
-
-    step1 && step1.addEventListener('submit', function(e){
-      e.preventDefault();
-      if (!step1.reportValidity()) return;
-      saveLead(values(step1));
-      show(step2);
-    });
-    back && back.addEventListener('click', function(){ show(step1); });
-
-    step2 && step2.addEventListener('submit', function(e){
-      e.preventDefault();
-      if (!step2.reportValidity()) return;
-      saveLead(values(step2));
-      show(book);
-      buildScheduler();
+    function show(which){ // which: '1' | '2' | '3' | 'done'
+      [steps['1'], steps['2'], steps['3'], done].forEach(function(el){ if (el) el.hidden = true; });
+      if (which === 'done') { if (done) done.hidden = false; setBar('done'); }
+      else { steps[which].hidden = false; setBar(which); }
       var hero = document.getElementById('estimate');
       if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // "Add guests" disclosure
+    var addBtn = panel.querySelector('[data-addguests]');
+    var guests = panel.querySelector('[data-guests]');
+    addBtn && addBtn.addEventListener('click', function(){
+      var open = guests.hidden;
+      guests.hidden = !open;
+      addBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      addBtn.classList.toggle('is-open', open);
+      if (open) { var t = guests.querySelector('textarea'); t && t.focus(); }
+    });
+
+    // Back buttons
+    panel.querySelectorAll('[data-lead-back]').forEach(function(b){
+      b.addEventListener('click', function(){ show(b.getAttribute('data-lead-back')); });
+    });
+
+    // Step 2 (details) → confirm appointment, advance to step 3
+    steps['2'] && steps['2'].addEventListener('submit', function(e){
+      e.preventDefault();
+      if (!steps['2'].reportValidity()) return;
+      saveLead(values(steps['2']));
+      if (lead.appointment && apptLabelEl) { apptLabelEl.textContent = lead.appointment; if (apptBanner) apptBanner.hidden = false; }
+      show('3');
+    });
+
+    // Step 3 (property) → full confirmation
+    steps['3'] && steps['3'].addEventListener('submit', function(e){
+      e.preventDefault();
+      if (!steps['3'].reportValidity()) return;
+      saveLead(values(steps['3']));
+      renderConfirmation();
+      show('done');
     });
 
     // Early-contact preference updates the record live.
     var early = panel.querySelector('input[name="earlyContact"]');
     early && early.addEventListener('change', function(){ saveLead({ earlyContact: early.checked }); });
 
+    function renderConfirmation(){
+      var titleEl = panel.querySelector('[data-done-title]');
+      var apptEl = panel.querySelector('[data-done-appt]');
+      var gcalBtn = panel.querySelector('[data-done-gcal]');
+      if (titleEl && lead.firstName) titleEl.textContent = "You're all set, " + lead.firstName + '.';
+      if (apptEl && lead.appointment) {
+        apptEl.innerHTML = '<span class="leadappt__ic" aria-hidden="true">✓</span>'
+          + '<div><b>' + esc(lead.appointment) + '</b><br><span class="muted">Consultation with your Cardo account manager</span></div>';
+      }
+      if (gcalBtn) { if (lead.gcalUrl) gcalBtn.href = lead.gcalUrl; else gcalBtn.style.display = 'none'; }
+    }
+
+    // Booking is the first step — build the scheduler on load.
+    buildScheduler();
+
     /* ---- Booking calendar: real Google Calendar embed if provided, else a
-            lightweight scheduling placeholder that captures a day + time. ---- */
+            lightweight scheduling placeholder that captures a day + time. On
+            confirm it stores the appointment and advances to step 2. ---- */
     var built = false;
     function buildScheduler(){
       if (built || !calMount) return;
@@ -186,7 +235,7 @@
       if (gcal) {
         var f = document.createElement('iframe');
         f.src = gcal; f.width = '100%'; f.height = '600'; f.frameBorder = '0';
-        f.style.border = '0'; f.title = 'Book your estimate review call';
+        f.style.border = '0'; f.title = 'Book your consultation';
         calMount.appendChild(f);
         return;
       }
@@ -203,18 +252,16 @@
         '<div class="leadcal__days"></div>' +
         '<div class="leadcal__label">Available times</div>' +
         '<div class="leadcal__times"></div>' +
-        '<button type="button" class="btn btn-block leadcal__confirm" disabled>Select a day &amp; time</button>' +
-        '<div class="leadcal__done" hidden></div>';
+        '<button type="button" class="btn btn-block leadcal__confirm" disabled>Select a day &amp; time</button>';
       calMount.appendChild(wrap);
       var daysEl = wrap.querySelector('.leadcal__days');
       var timesEl = wrap.querySelector('.leadcal__times');
       var confirm = wrap.querySelector('.leadcal__confirm');
-      var done = wrap.querySelector('.leadcal__done');
 
       function refreshConfirm(){
         var ok = sel.day && sel.time;
         confirm.disabled = !ok;
-        confirm.textContent = ok ? ('Confirm ' + dn[sel.day.getDay()] + ' ' + sel.time) : 'Select a day & time';
+        confirm.textContent = ok ? ('Continue · ' + dn[sel.day.getDay()] + ' ' + sel.time) : 'Select a day & time';
       }
       days.forEach(function(day){
         var b = document.createElement('button');
@@ -248,21 +295,15 @@
         if (!sel.day || !sel.time) return;
         var label = dn[sel.day.getDay()] + ', ' + mn[sel.day.getMonth()] + ' ' + sel.day.getDate() + ' at ' + sel.time;
         var start = toStart(sel.day, sel.time), end = new Date(start.getTime() + 30*60000);
-        // Link the booking to Google Calendar (prefilled event, keeps our UI).
-        var gcal = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+        // Prefilled Google Calendar event for the final confirmation step.
+        var gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
           + '&text=' + encodeURIComponent('Cardo — Earning Estimate Review')
           + '&dates=' + stamp(start) + '/' + stamp(end)
           + '&details=' + encodeURIComponent('Your Cardo account manager will walk you through your San Diego earning estimate.' + (lead.address ? '\nProperty: ' + lead.address : ''))
           + '&location=' + encodeURIComponent('Phone call')
           + '&ctz=America/Los_Angeles';
-        saveLead({ appointment: label, appointmentStart: start.toISOString(), gcalUrl: gcal });
-        wrap.querySelector('.leadcal__days').style.display = 'none';
-        wrap.querySelector('.leadcal__times').style.display = 'none';
-        [].slice.call(wrap.querySelectorAll('.leadcal__label')).forEach(function(l){ l.style.display = 'none'; });
-        confirm.style.display = 'none';
-        done.hidden = false;
-        done.innerHTML = '<div class="leadcal__donerow"><div class="leadcal__doneic">✓</div><div><b>You’re booked for ' + label + '.</b><br>Add it to your calendar below.</div></div>'
-          + '<a class="btn btn-block leadcal__gcal" href="' + gcal + '" target="_blank" rel="noopener">Add to Google Calendar</a>';
+        saveLead({ appointment: label, appointmentStart: start.toISOString(), gcalUrl: gcalUrl });
+        show('2');
       });
       refreshConfirm();
     }
