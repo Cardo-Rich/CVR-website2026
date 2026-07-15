@@ -194,9 +194,7 @@
     .perf__legend { display: flex; gap: 22px; margin: 18px 0 8px; flex-wrap: wrap; }
     .perf__leg { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--ink-soft); font-weight: 500; }
     .perf__swatch { width: 22px; height: 3px; border-radius: 2px; }
-    .perf__stat { display: flex; align-items: baseline; gap: 12px; margin-top: 22px; }
-    .perf__statnum { font-family: var(--font-display); font-weight: 500; font-size: 2.6rem; color: var(--rose); line-height: 1; }
-    .perf__statlabel { color: var(--ink-soft); font-size: 1rem; }
+    .perf__fact { margin: 20px 0 0; font-family: var(--font-display); font-weight: 500; font-style: italic; font-size: 1.3rem; color: var(--ink); }
     .perf__card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 26px 28px; }
     .perf__card h3 { font-size: 1.05rem; margin: 0 0 2px; }
     .perf__card .perf__sub { color: var(--muted); font-size: .85rem; margin: 0 0 14px; }
