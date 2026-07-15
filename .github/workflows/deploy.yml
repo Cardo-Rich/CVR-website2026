@@ -46,6 +46,27 @@ jobs:
         working-directory: functions
       - run: npm run build
         working-directory: functions
+      # Mirror function secrets from GitHub secrets into Google Secret Manager
+      # so they can be managed entirely from the GitHub UI. Each runs only
+      # when the GitHub secret is set.
+      - name: Sync function secrets
+        env:
+          GHL_API_TOKEN: ${{ secrets.GHL_API_TOKEN }}
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}' > "$RUNNER_TEMP/sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          for NAME in GHL_API_TOKEN GOOGLE_PLACES_API_KEY; do
+            VALUE="${!NAME}"
+            if [ -n "$VALUE" ]; then
+              printf '%s' "$VALUE" | npx firebase-tools@13 functions:secrets:set "$NAME" --project cardo-website-2026 --data-file=- --force || exit 1
+            elif ! npx firebase-tools@13 functions:secrets:access "$NAME" --project cardo-website-2026 >/dev/null 2>&1; then
+              # Seed a placeholder so deploy can bind the secret; the functions
+              # treat the value "unset" as not configured.
+              printf 'unset' | npx firebase-tools@13 functions:secrets:set "$NAME" --project cardo-website-2026 --data-file=- --force || exit 1
+              echo "::warning::$NAME not set in GitHub secrets — placeholder created; the matching feature stays disabled until you add it."
+            fi
+          done
       - name: Deploy functions
         run: |
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}' > "$RUNNER_TEMP/sa.json"

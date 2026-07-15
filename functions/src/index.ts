@@ -21,7 +21,8 @@ const GHL_CALENDAR_ID = defineString('GHL_CALENDAR_ID', { default: '' });
 const GHL_LOCATION_ID = defineString('GHL_LOCATION_ID', { default: '' });
 const GHL_TIMEZONE = defineString('GHL_TIMEZONE', { default: 'America/Los_Angeles' });
 const ghlCfg: GhlConfig = {
-  token: () => GHL_API_TOKEN.value(),
+  // "unset" is the CI-seeded placeholder for a not-yet-provided secret.
+  token: () => { const t = GHL_API_TOKEN.value(); return t === 'unset' ? '' : t; },
   calendarId: () => GHL_CALENDAR_ID.value(),
   locationId: () => GHL_LOCATION_ID.value(),
   timezone: () => GHL_TIMEZONE.value() || 'America/Los_Angeles',
@@ -138,8 +139,9 @@ export const adminContentSet = onCall(async (req) => {
 });
 export const adminSyncGoogleReviews = onCall({ secrets: [GOOGLE_PLACES_API_KEY] }, async (req) => {
   requireAdmin(req.auth);
+  const key = GOOGLE_PLACES_API_KEY.value();
   try {
-    return await syncGoogleReviews(getDb(), GOOGLE_PLACES_API_KEY.value(), req.data?.placeId);
+    return await syncGoogleReviews(getDb(), key === 'unset' ? '' : key, req.data?.placeId);
   } catch (e) {
     throw new HttpsError('failed-precondition', (e as Error).message);
   }
