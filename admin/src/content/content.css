@@ -20,4 +20,6 @@
 .ct-preview .ct-hidden { color: #9aa0a6; text-decoration: line-through; }
 .ct-preview .ct-hidden em { text-decoration: none; font-style: italic; }
 .ct-grid select { font: inherit; padding: 9px 11px; border: 1px solid var(--line, #d9d5cc); border-radius: 8px; background: #fff; }
+.ct-check { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+.ct-check input { width: 17px; height: 17px; accent-color: #0e111b; cursor: pointer; }
 @media (max-width: 760px) { .ct-grid { grid-template-columns: 1fr; } }

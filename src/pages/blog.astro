@@ -83,9 +83,20 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
         <div class="cta__inner" style="padding:0;text-align:center">
           <p class="eyebrow" style="justify-content:center">Design case studies</p>
           <h2 style="margin:8px 0 14px">See the homes we designed beat their market.</h2>
-          <p class="lede muted" style="margin:0 auto 24px;max-width:560px">Six San Diego homes furnished and styled end to end by Cardo — each with the full story, the scope of work, and what it returned.</p>
+          <p class="lede muted" style="margin:0 auto 24px;max-width:560px">San Diego homes furnished and styled end to end by Cardo — each with the full story, the scope of work, and what it returned.</p>
           <a href="/home-designs#case-studies" class="btn btn-lg">Explore the design case studies</a>
         </div>
+      </div>
+    </section>
+
+    <!-- CASE-STUDY LIBRARY (CMS-driven; stays hidden until content loads) -->
+    <section class="caselib" id="case-library" data-caselib hidden data-screen-label="Case-study library">
+      <div class="section-wrap">
+        <div class="section-head" style="max-width:680px">
+          <p class="eyebrow">The case-study library</p>
+          <h2>Every home, every result.</h2>
+        </div>
+        <div class="caselib__grid" data-caselib-grid></div>
       </div>
     </section>
 
@@ -119,8 +130,67 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
     });
   })();
 
+  // Case-study library — the full CMS list (featured or not). Hidden until
+  // /api/content responds, so the page is unchanged pre-deploy/offline.
+  (function () {
+    var section = document.querySelector('[data-caselib]');
+    var grid = document.querySelector('[data-caselib-grid]');
+    if (!section || !grid) return;
+    var PAGES = ['falcon', 'nute', 'twain', 'sixth', 'kane', 'mt-ainsworth']; // have static detail pages
+    fetch('/api/content', { headers: { Accept: 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        var items = (d && d.caseStudies) || [];
+        if (!items.length) return;
+        items.forEach(function (cs) {
+          if (!cs || !cs.id) return;
+          var hasPage = PAGES.indexOf(cs.id) !== -1;
+          var el = document.createElement(hasPage ? 'a' : 'div');
+          el.className = 'caselib__card';
+          if (hasPage) el.setAttribute('href', '/case-studies/' + cs.id);
+          var img = document.createElement('img');
+          img.src = cs.img || '/assets/photos/designs-' + (hasPage ? { falcon: 'living-craftsman', nute: 'living-bright', twain: 'dining', sixth: 'bedroom-floral', kane: 'gameroom', 'mt-ainsworth': 'pool' }[cs.id] : 'pool') + '.jpg';
+          img.alt = cs.name; img.loading = 'lazy';
+          el.appendChild(img);
+          var body = document.createElement('div'); body.className = 'caselib__body';
+          function add(tag, cls, text) { var n = document.createElement(tag); n.className = cls; n.textContent = text || ''; body.appendChild(n); }
+          add('div', 'caselib__hood', cs.hood + (cs.beds ? ' · ' + cs.beds : ''));
+          add('h3', 'caselib__name', cs.name);
+          add('p', 'caselib__hook', cs.hook);
+          var stats = document.createElement('div'); stats.className = 'caselib__stats';
+          stats.innerHTML = '<b></b><span class="lift"></span>';
+          stats.querySelector('b').textContent = cs.revenue || '';
+          stats.querySelector('.lift').textContent = cs.lift || '';
+          body.appendChild(stats);
+          el.appendChild(body);
+          grid.appendChild(el);
+        });
+        section.hidden = false;
+      })
+      .catch(function () { /* endpoint unavailable — section stays hidden */ });
+  })();
+
   import '../scripts/reveal.js';
 </script>
+
+<style is:global>
+  /* Global (not scoped): these cards are created by client-side JS, which
+     never receives Astro's scoping attribute. */
+  .caselib { padding: clamp(48px, 7vw, 88px) 0; background: var(--paper); }
+  .caselib__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 36px; }
+  .caselib__card { display: block; border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; background: var(--paper); box-shadow: var(--shadow-sm); color: inherit; transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }
+  .caselib__card[href]:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .caselib__card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+  .caselib__body { padding: 18px 20px 20px; }
+  .caselib__hood { font-size: .74rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .caselib__name { font-size: 1.3rem; margin: 6px 0 8px; }
+  .caselib__hook { font-size: .92rem; color: var(--muted); line-height: 1.5; margin: 0 0 12px; }
+  .caselib__stats { display: flex; align-items: baseline; gap: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .caselib__stats b { font-family: var(--font-display); font-weight: 500; font-size: 1.3rem; }
+  .caselib__stats .lift { color: var(--success); font-weight: 600; font-size: .9rem; }
+  @media (max-width: 900px) { .caselib__grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .caselib__grid { grid-template-columns: 1fr; } }
+</style>
 
 <style>
   .blog-top { padding: 128px 0 0; }

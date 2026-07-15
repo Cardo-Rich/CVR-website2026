@@ -4,6 +4,7 @@ import { functions } from '../firebase';
 export interface CaseStudyItem {
   id: string; name: string; hood: string; beds: string; hook: string;
   revenue: string; nightly: string; lift: string; img?: string;
+  featured?: boolean; blurb?: string;
 }
 export interface ReviewCard { name: string; meta: string; stars: number; text: string; }
 export interface ReviewsDoc {

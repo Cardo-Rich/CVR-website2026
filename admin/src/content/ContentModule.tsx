@@ -6,12 +6,12 @@ import './content.css';
 // Defaults mirror the static owners page, so the CMS starts pre-filled and
 // the site looks identical before the first edit.
 const DEFAULT_CASES: CaseStudyItem[] = [
-  { id: 'falcon', name: 'Falcon', hood: 'La Jolla', beds: '4 BR', hook: 'An inherited bluff home, fully reimagined and launched in five weeks.', revenue: '$214,800', nightly: '$589 / night', lift: '+57% over market' },
-  { id: 'nute', name: 'Nute', hood: 'Pacific Beach', beds: '3 BR', hook: 'A tired walk-street rental turned light, bright, and fully booked.', revenue: '$158,300', nightly: '$412 / night', lift: '+44% over market' },
-  { id: 'twain', name: 'Twain', hood: 'Del Mar', beds: '4 BR', hook: "A craftsman classic styled to own Del Mar's racing season.", revenue: '$192,500', nightly: '$512 / night', lift: '+48% over market' },
-  { id: 'sixth', name: 'Sixth', hood: 'Mission Beach', beds: '2 BR', hook: 'A compact two-bedroom that punches well above its size.', revenue: '$128,400', nightly: '$356 / night', lift: '+39% over market' },
-  { id: 'kane', name: 'Kane', hood: 'Encinitas', beds: '3 BR', hook: 'A surf-town home with a game room guests book it for.', revenue: '$168,300', nightly: '$447 / night', lift: '+41% over market' },
-  { id: 'mt-ainsworth', name: 'Mt Ainsworth', hood: 'Coronado', beds: '5 BR', hook: 'A five-bedroom estate with a resort backyard, top of its market.', revenue: '$268,900', nightly: '$694 / night', lift: '+61% over market' },
+  { id: 'falcon', name: 'Falcon', hood: 'La Jolla', beds: '4 BR', hook: 'An inherited bluff home, fully reimagined and launched in five weeks.', revenue: '$214,800', nightly: '$589 / night', lift: '+57% over market', featured: true, blurb: 'An inherited bluff home, frozen in time, fully reimagined and launched in five weeks. Our team cleared, repainted, and furnished every room to make the most of the light and the view — sourced, shipped, installed, and photo-ready — and it settled into the top tier of its La Jolla market.' },
+  { id: 'nute', name: 'Nute', hood: 'Pacific Beach', beds: '3 BR', hook: 'A tired walk-street rental turned light, bright, and fully booked.', revenue: '$158,300', nightly: '$412 / night', lift: '+44% over market', featured: true, blurb: 'A tired walk-street rental taken from drab to coastal-bright — a lighter palette, smarter furniture for the layout, and styling that made the small footprint feel generous. It photographed beautifully and booked solid in its first month.' },
+  { id: 'twain', name: 'Twain', hood: 'Del Mar', beds: '4 BR', hook: "A craftsman classic styled to own Del Mar's racing season.", revenue: '$192,500', nightly: '$512 / night', lift: '+48% over market', featured: true, blurb: "A true craftsman styled around its architecture, not over it — warm, layered furnishings that read editorial in photos and live comfortably for a full house. Twain now commands Del Mar's racing-season premium and holds strong year-round." },
+  { id: 'sixth', name: 'Sixth', hood: 'Mission Beach', beds: '2 BR', hook: 'A compact two-bedroom that punches well above its size.', revenue: '$128,400', nightly: '$356 / night', lift: '+39% over market', featured: true, blurb: 'A compact two-bedroom a block from the sand, designed so every inch works twice as hard — dual-purpose furniture, a bright cohesive palette, and styling that photographs larger than the footprint. Guests book it for the location and rate it for the comfort.' },
+  { id: 'kane', name: 'Kane', hood: 'Encinitas', beds: '3 BR', hook: 'A surf-town home with a game room guests book it for.', revenue: '$168,300', nightly: '$447 / night', lift: '+41% over market', featured: true, blurb: 'A surf-town home with an underused bonus room, turned into a moody navy game room that anchors the whole listing. We styled the rest of the home to match the energy — and it became the feature guests search for.' },
+  { id: 'mt-ainsworth', name: 'Mt Ainsworth', hood: 'Coronado', beds: '5 BR', hook: 'A five-bedroom estate with a resort backyard, top of its market.', revenue: '$268,900', nightly: '$694 / night', lift: '+61% over market', featured: true, blurb: 'The largest home in the group — five bedrooms, a pool, and a backyard built for entertaining. We furnished it as a true estate that photographs like a luxury hotel, with a backyard styled into a destination of its own. It launched at the top of its comp set.' },
 ];
 const DEFAULT_REVIEWS: ReviewsDoc = {
   google: { placeId: '', rating: 4.9, count: 100, minStars: 5, reviews: [] },
@@ -56,7 +56,9 @@ export default function ContentModule() {
   async function save() {
     setSaving(true); setError(''); setSaved(false);
     try {
-      await saveContent({ caseStudies: cases, reviews });
+      const withIds = cases.map((c) => ({ ...c, id: c.id || slugify(c.name) }));
+      setCases(withIds);
+      await saveContent({ caseStudies: withIds, reviews });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch (e) { setError((e as Error).message); }
@@ -74,8 +76,18 @@ export default function ContentModule() {
     finally { setSyncing(false); }
   }
 
-  function setCase(i: number, key: keyof CaseStudyItem, v: string) {
+  function setCase(i: number, key: keyof CaseStudyItem, v: string | boolean) {
     setCases((prev) => prev.map((c, k) => (k === i ? { ...c, [key]: v } : c)));
+  }
+  function slugify(s: string) {
+    return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48) || 'case-' + (cases.length + 1);
+  }
+  function addCase() {
+    setCases((prev) => [...prev, { id: '', name: '', hood: '', beds: '', hook: '', revenue: '', nightly: '', lift: '', img: '', featured: false, blurb: '' }]);
+  }
+  function removeCase(i: number) {
+    if (!window.confirm('Remove this case study? This deletes it from the library (and the site) on save.')) return;
+    setCases((prev) => prev.filter((_, k) => k !== i));
   }
   function setAirbnbCard(i: number, key: keyof ReviewCard, v: string | number) {
     setReviews((prev) => ({
@@ -99,10 +111,20 @@ export default function ContentModule() {
 
       {tab === 'cases' && (
         <div className="ct-cases">
-          <p className="ct-muted">These drive the six cards in “Home design and project management” on the owners page. Changes go live within ~10 minutes of saving (CDN cache).</p>
+          <p className="ct-muted">The full case library. <b>“Show on owners page”</b> puts a case in the owners-page grid; every case (shown or not) appears in the blog’s case-study library. Changes go live within ~10 minutes of saving (CDN cache).</p>
           {cases.map((c, i) => (
-            <fieldset className="ct-case" key={c.id || i}>
-              <legend>{c.name || `Case ${i + 1}`} <span className="ct-id">({c.id})</span></legend>
+            <fieldset className="ct-case" key={i}>
+              <legend>
+                {c.name || `Case ${i + 1}`} <span className="ct-id">({c.id || 'id auto-set on save'})</span>
+              </legend>
+              <div className="ct-row" style={{ marginTop: 0, marginBottom: 12 }}>
+                <label className="ct-check">
+                  <input type="checkbox" checked={c.featured !== false} onChange={(e) => setCase(i, 'featured', e.target.checked)} />
+                  <span>Show on owners page</span>
+                </label>
+                <span className="spacer" />
+                <button className="btn-ghost ct-remove" onClick={() => removeCase(i)}>Remove</button>
+              </div>
               <div className="ct-grid">
                 {CASE_FIELDS.map((f) => (
                   <label className={f.wide ? 'wide' : ''} key={f.key}>
@@ -110,9 +132,14 @@ export default function ContentModule() {
                     <input value={(c[f.key] as string) || ''} onChange={(e) => setCase(i, f.key, e.target.value)} />
                   </label>
                 ))}
+                <label className="wide">
+                  <span>Preview-modal story (optional — falls back to the hook)</span>
+                  <input value={c.blurb || ''} onChange={(e) => setCase(i, 'blurb', e.target.value)} />
+                </label>
               </div>
             </fieldset>
           ))}
+          <button className="btn-ghost" onClick={addCase}>+ Add case study</button>
         </div>
       )}
 

@@ -412,25 +412,52 @@
       });
     }
 
+    // Rebuild the owners-page grid from the CMS library: cases can be added,
+    // removed, and toggled ("featured") entirely from the CMS. The static six
+    // remain the fallback when the endpoint is unavailable.
     function hydrateCases(items){
-      items.forEach(function(cs){
-        if (!cs || !cs.id) return;
-        var card = document.querySelector('.gcase[data-case="' + cs.id + '"]');
-        if (!card) return;
-        var hood = card.querySelector('.gcase__hood'); if (hood && cs.hood) hood.textContent = cs.hood;
-        var name = card.querySelector('.gcase__home'); if (name && cs.name) name.textContent = cs.name;
-        var hook = card.querySelector('.gcase__hook'); if (hook && cs.hook) hook.textContent = cs.hook;
-        var beds = card.querySelector('.gcase__beds'); if (beds && cs.beds) beds.textContent = cs.beds;
-        var rev = card.querySelector('.gcase__rev');
-        if (rev && cs.revenue && rev.childNodes.length) rev.childNodes[0].nodeValue = cs.revenue + ' ';
-        var sub = card.querySelector('.gcase__sub');
-        if (sub && cs.nightly && cs.lift) {
-          sub.innerHTML = '';
-          sub.appendChild(document.createTextNode(cs.nightly + ' · '));
-          var lift = document.createElement('span'); lift.className = 'lift'; lift.textContent = cs.lift;
-          sub.appendChild(lift);
-        }
-        var img = card.querySelector('.gcase__media img'); if (img && cs.img) img.src = cs.img;
+      var grid = document.querySelector('[data-cases]');
+      if (!grid || !Array.isArray(items) || !items.length) return;
+      // Keep the original images for known ids (CMS img field overrides).
+      var knownImgs = {};
+      grid.querySelectorAll('.gcase[data-case]').forEach(function(card){
+        var img = card.querySelector('.gcase__media img');
+        if (img) knownImgs[card.getAttribute('data-case')] = img.getAttribute('src');
+      });
+      var featured = items.filter(function(cs){ return cs && cs.id && cs.featured !== false; });
+      if (!featured.length) return; // never blank the section
+      var arrow = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+      grid.innerHTML = '';
+      featured.forEach(function(cs){
+        var card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'gcase reveal is-in';
+        card.setAttribute('data-case', cs.id);
+        if (cs.blurb) card.setAttribute('data-blurb', cs.blurb);
+        var media = document.createElement('div'); media.className = 'gcase__media';
+        var img = document.createElement('img');
+        img.src = cs.img || knownImgs[cs.id] || '/assets/photos/designs-pool.jpg';
+        img.alt = cs.name; img.loading = 'lazy';
+        media.appendChild(img);
+        if (cs.beds) { var beds = document.createElement('span'); beds.className = 'gcase__beds'; beds.textContent = cs.beds; media.appendChild(beds); }
+        var body = document.createElement('div'); body.className = 'gcase__body';
+        function div(cls, text, tag){ var el = document.createElement(tag || 'div'); el.className = cls; el.textContent = text || ''; return el; }
+        body.appendChild(div('gcase__hood', cs.hood));
+        body.appendChild(div('gcase__home', cs.name, 'h3'));
+        body.appendChild(div('gcase__hook', cs.hook, 'p'));
+        var rev = document.createElement('div'); rev.className = 'gcase__rev';
+        rev.appendChild(document.createTextNode((cs.revenue || '') + ' '));
+        var small = document.createElement('small'); small.textContent = 'annual revenue'; rev.appendChild(small);
+        body.appendChild(rev);
+        var sub = document.createElement('div'); sub.className = 'gcase__sub';
+        sub.appendChild(document.createTextNode((cs.nightly || '') + (cs.lift ? ' · ' : '')));
+        if (cs.lift) { var lift = document.createElement('span'); lift.className = 'lift'; lift.textContent = cs.lift; sub.appendChild(lift); }
+        body.appendChild(sub);
+        var cta = document.createElement('span'); cta.className = 'gcase__cta';
+        cta.innerHTML = 'Preview project ' + arrow;
+        body.appendChild(cta);
+        card.appendChild(media); card.appendChild(body);
+        grid.appendChild(card);
       });
     }
   })();

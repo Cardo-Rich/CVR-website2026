@@ -107,18 +107,36 @@
     };
     var lastFocus = null;
 
-    function open(key, home) {
-      var d = DATA[key]; if (!d) return;
-      heroImg.src = d.imgs[0];
+    // CMS-added cases have no static DATA entry or detail page — fall back to
+    // the card's own content (data-blurb, stats, image) and hide the
+    // "full case study" link.
+    function fromCard(card) {
+      function txt(sel) { var el = card.querySelector(sel); return el ? el.textContent.trim() : ''; }
+      var img = card.querySelector('.gcase__media img');
+      var rev = card.querySelector('.gcase__rev');
+      return {
+        hood: txt('.gcase__hood'), beds: txt('.gcase__beds'),
+        rev: rev && rev.childNodes.length ? rev.childNodes[0].nodeValue.trim() : '',
+        rate: (txt('.gcase__sub').split('·')[0] || '').trim(),
+        lift: txt('.lift'),
+        blurb: card.getAttribute('data-blurb') || txt('.gcase__hook'),
+        imgs: img && img.src ? [img.src] : []
+      };
+    }
+    function open(key, home, card) {
+      var d = DATA[key] || (card ? fromCard(card) : null);
+      if (!d) return;
+      if (d.imgs[0]) heroImg.src = d.imgs[0];
       heroImg.alt = home;
-      els.eyebrow.textContent = d.hood + ' · ' + d.beds;
+      els.eyebrow.textContent = d.hood + (d.beds ? ' · ' + d.beds : '');
       els.title.textContent = home;
       els.rev.textContent = d.rev; els.rate.textContent = d.rate; els.lift.textContent = d.lift;
       els.blurb.textContent = d.blurb;
       els.thumbs.innerHTML = d.imgs.map(function (f, i) {
         return '<img src="' + f + '" alt="' + home + ' interior ' + (i + 1) + '" loading="lazy" />';
       }).join('');
-      els.full.href = '/case-studies/' + key;
+      if (DATA[key]) { els.full.href = '/case-studies/' + key; els.full.style.display = ''; }
+      else { els.full.style.display = 'none'; }
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
@@ -129,11 +147,12 @@
       document.body.style.overflow = '';
       if (lastFocus) lastFocus.focus();
     }
-    [].slice.call(document.querySelectorAll('[data-case]')).forEach(function (card) {
-      card.addEventListener('click', function () {
-        lastFocus = card;
-        open(card.getAttribute('data-case'), card.querySelector('.gcase__home').textContent);
-      });
+    // Event delegation so CMS-hydrated (dynamically rebuilt) cards work too.
+    document.addEventListener('click', function (e) {
+      var card = e.target.closest && e.target.closest('.gcase[data-case]');
+      if (!card) return;
+      lastFocus = card;
+      open(card.getAttribute('data-case'), card.querySelector('.gcase__home').textContent, card);
     });
     [].slice.call(modal.querySelectorAll('[data-cmodal-close]')).forEach(function (b) {
       b.addEventListener('click', close);

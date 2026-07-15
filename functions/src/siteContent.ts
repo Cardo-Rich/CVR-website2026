@@ -14,6 +14,8 @@ export interface CaseStudyItem {
   nightly: string;   // e.g. "$589 / night"
   lift: string;      // e.g. "+57% over market"
   img?: string;      // optional image URL override
+  featured?: boolean; // true → shown on the owners page; all cases appear in the blog library
+  blurb?: string;     // longer story for the preview modal (falls back to hook)
 }
 
 export interface ReviewCard { name: string; meta: string; stars: number; text: string; }
@@ -46,7 +48,7 @@ export async function getContent(db: Firestore, forPublic = false): Promise<{ ca
 
 export async function setCaseStudies(db: Firestore, items: CaseStudyItem[]): Promise<void> {
   if (!Array.isArray(items)) throw new Error('items must be an array');
-  const clean = items.slice(0, 24).map((it) => ({
+  const clean = items.slice(0, 60).map((it) => ({
     id: String(it.id || '').slice(0, 64),
     name: String(it.name || '').slice(0, 120),
     hood: String(it.hood || '').slice(0, 120),
@@ -56,6 +58,8 @@ export async function setCaseStudies(db: Firestore, items: CaseStudyItem[]): Pro
     nightly: String(it.nightly || '').slice(0, 60),
     lift: String(it.lift || '').slice(0, 60),
     img: String(it.img || '').slice(0, 500),
+    featured: it.featured !== false,
+    blurb: String(it.blurb || '').slice(0, 1500),
   }));
   await db.doc(CASES_REF).set({ items: clean }, { merge: false });
 }
