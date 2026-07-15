@@ -1,0 +1,111 @@
+---
+// TEMPORARY — side-by-side preview of three Marketing & Sales list
+// treatments (A: Manifest, B: Word Wall, C: Checklist). Not linked from any
+// nav; delete after a winner is chosen.
+import Base from '../layouts/Base.astro';
+
+const items = [
+  'Exclusive travel-agency partnerships',
+  'Airbnb Superhost & VRBO Premier status',
+  'Insurance agency partnerships',
+  'Decor-first content',
+  'Editorial photography & video',
+  'Always-on social media',
+  'Travel-influencer campaigns',
+  'Paid ads & retargeting',
+  'Airbnb listing SEO',
+  'Direct-booking website',
+  'Realtor referral network',
+  'Past-guest email funnel',
+];
+const pad = (n: number) => String(n + 1).padStart(2, '0');
+---
+
+<Base title="Marketing list options — internal preview" description="Internal design preview">
+  <main class="mo">
+    <div class="mo__note">Internal preview — three treatments of the same 12-item list. Pick your favorite.</div>
+
+    <!-- ============ OPTION A — THE MANIFEST ============ -->
+    <div class="mo__tag">Option A — The Manifest</div>
+    <section class="section-pad" style="background:var(--paper)">
+      <div class="section-wrap">
+        <div class="mo__head">
+          <p class="eyebrow">Marketing &amp; sales strategy</p>
+          <h2>How we beat the market.</h2>
+          <p class="lede muted">True marketing that reaches your guest before they book — targeted ads, sales pros who close, and direct bookings that earn you more.</p>
+        </div>
+        <ol class="manifest">
+          {items.map((it, i) => (
+            <li class="manifest__item"><span class="manifest__num">{pad(i)}</span><span class="manifest__label">{it}</span></li>
+          ))}
+        </ol>
+        <p class="manifest__kicker">— …and that's just the marketing.</p>
+      </div>
+    </section>
+
+    <!-- ============ OPTION B — THE WORD WALL ============ -->
+    <div class="mo__tag">Option B — The Word Wall</div>
+    <section class="section-pad" style="background:var(--paper)">
+      <div class="section-wrap">
+        <div class="mo__head">
+          <p class="eyebrow">Marketing &amp; sales strategy</p>
+          <h2>How we beat the market.</h2>
+          <p class="lede muted">True marketing that reaches your guest before they book — targeted ads, sales pros who close, and direct bookings that earn you more.</p>
+        </div>
+        <p class="wordwall">
+          {items.map((it, i) => (
+            <><span class="wordwall__item">{it}</span>{i < items.length - 1 && <span class="wordwall__dot" aria-hidden="true"> · </span>}</>
+          ))}
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ OPTION C — THE CHECKLIST ============ -->
+    <div class="mo__tag">Option C — The Checklist</div>
+    <section class="section-pad" style="background:var(--paper)">
+      <div class="section-wrap">
+        <div class="mo__head">
+          <p class="eyebrow">Marketing &amp; sales strategy</p>
+          <h2>How we beat the market.</h2>
+          <p class="lede muted">True marketing that reaches your guest before they book — targeted ads, sales pros who close, and direct bookings that earn you more.</p>
+        </div>
+        <p class="chk__kicker">Twelve fronts. One team.</p>
+        <ul class="chk">
+          {items.map((it) => (
+            <li class="chk__item"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>{it}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .mo__note { background: var(--ink); color: #fff; text-align: center; padding: 14px 20px; font-size: .9rem; }
+  .mo__tag { background: var(--gold); color: var(--ink); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; font-size: .8rem; text-align: center; padding: 10px; }
+  .mo__head { max-width: 720px; margin-bottom: 44px; }
+  .mo__head h2 { margin: 8px 0 14px; }
+  .mo__head .lede { margin: 0; }
+
+  /* ---- A: Manifest ---- */
+  .manifest { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: 64px; }
+  .manifest__item { display: flex; align-items: baseline; gap: 18px; padding: 15px 2px; border-top: 1px solid var(--line); break-inside: avoid; }
+  .manifest__num { font-family: var(--font-display); font-size: .95rem; color: var(--gold); letter-spacing: .04em; flex: none; }
+  .manifest__label { font-family: var(--font-display); font-weight: 500; font-size: 1.22rem; color: var(--ink); line-height: 1.25; }
+  .manifest__kicker { margin: 26px 0 0; font-family: var(--font-display); font-style: italic; font-size: 1.15rem; color: var(--muted); }
+  @media (max-width: 720px) { .manifest { columns: 1; } }
+
+  /* ---- B: Word Wall ---- */
+  .wordwall { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(1.5rem, 3.6vw, 2.7rem); line-height: 1.5; color: var(--ink); text-wrap: balance; }
+  .wordwall__item { transition: color .18s var(--ease); }
+  .wordwall__item:hover { color: var(--rose); }
+  .wordwall__dot { color: var(--gold); }
+
+  /* ---- C: Checklist ---- */
+  .chk__kicker { font-family: var(--font-display); font-weight: 500; font-size: 1.5rem; color: var(--ink); margin: 0 0 22px; }
+  .chk { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 36px; }
+  .chk__item { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: .98rem; color: var(--ink-soft); }
+  .chk__item svg { width: 18px; height: 18px; flex: none; }
+  @media (max-width: 860px) { .chk { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px) { .chk { grid-template-columns: 1fr; } }
+</style>
