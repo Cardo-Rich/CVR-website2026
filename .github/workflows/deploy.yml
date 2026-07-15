@@ -28,3 +28,26 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}
           projectId: cardo-website-2026
           channelId: live
+
+  # Deploys Cloud Functions (booking proxy, CMS content API, reviews sync).
+  # Requires these Firebase secrets to EXIST first (create once via
+  # `firebase functions:secrets:set <NAME>`): RESEND_API_KEY, GHL_API_TOKEN,
+  # GOOGLE_PLACES_API_KEY. Non-secret GHL params live in
+  # functions/.env.cardo-website-2026 (committed).
+  deploy_functions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+        working-directory: functions
+      - run: npm run build
+        working-directory: functions
+      - name: Deploy functions
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}' > "$RUNNER_TEMP/sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          npx firebase-tools@13 deploy --only functions --project cardo-website-2026 --non-interactive --force

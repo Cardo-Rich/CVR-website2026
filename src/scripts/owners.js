@@ -360,6 +360,81 @@
     }
   })();
 
+  /* ----- CMS hydration: case studies + review counts/cards from /api/content.
+          The baked-in static markup is the fallback when the endpoint is
+          missing (e.g. preview channels, functions not yet deployed). ----- */
+  (function(){
+    fetch('/api/content', { headers: { 'Accept': 'application/json' } })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if (!d) return;
+        try { hydrateReviews(d.reviews || {}); } catch (e) {}
+        try { hydrateCases(d.caseStudies || []); } catch (e) {}
+      })
+      .catch(function(){ /* offline or unconfigured — static fallback stands */ });
+
+    function num(n){ return (typeof n === 'number' && isFinite(n) && n > 0) ? n : null; }
+    function fmtCount(n){ return n.toLocaleString('en-US') + '+'; }
+    function setText(sel, text){ document.querySelectorAll(sel).forEach(function(el){ el.textContent = text; }); }
+
+    function hydrateReviews(rv){
+      var g = rv.google || {}, a = rv.airbnb || {};
+      if (num(g.rating)) setText('[data-ct="g-rating"]', String(g.rating));
+      if (num(g.count)) setText('[data-ct="g-count"]', fmtCount(num(g.count)) + ' reviews');
+      if (num(a.rating)) setText('[data-ct="a-rating"]', String(a.rating));
+      if (num(a.count)) {
+        setText('[data-ct="a-count"]', 'Guest-favorite · ' + fmtCount(num(a.count)) + ' reviews');
+        setText('[data-ct="a-chip"]', fmtCount(num(a.count)) + ' five-star reviews on Airbnb alone');
+        // By the Numbers "5-star reviews" cell
+        document.querySelectorAll('.bnum__cell').forEach(function(cell){
+          var k = cell.querySelector('.bnum__k');
+          if (k && /5-star reviews/i.test(k.textContent)) {
+            var v = cell.querySelector('.bnum__val'); if (v) v.textContent = fmtCount(num(a.count));
+          }
+        });
+      }
+      // Review cards — rewrite the visible cards' name/meta/text in place.
+      (g.reviews || []).slice(0, 8).forEach(function(card, i){
+        var el = document.querySelectorAll('.greview')[i];
+        if (!el || !card.text) return;
+        var name = el.querySelector('.greview__name'); if (name) name.childNodes[0].nodeValue = card.name + ' ';
+        var time = el.querySelector('.greview__time'); if (time) time.textContent = card.meta || 'Guest';
+        var text = el.querySelector('.greview__text'); if (text) text.textContent = card.text;
+        var stars = el.querySelector('.greview__stars'); if (stars) stars.textContent = '★★★★★'.slice(0, card.stars || 5);
+      });
+      (a.reviews || []).slice(0, 8).forEach(function(card, i){
+        var el = document.querySelectorAll('.abnb__card')[i];
+        if (!el || !card.text) return;
+        var name = el.querySelector('.abnb__name'); if (name) name.textContent = card.name;
+        var meta = el.querySelector('.abnb__meta'); if (meta) meta.textContent = card.meta || '';
+        var text = el.querySelector('.abnb__text'); if (text) text.textContent = card.text;
+        var stars = el.querySelector('.abnb__stars'); if (stars) stars.textContent = '★★★★★'.slice(0, card.stars || 5);
+      });
+    }
+
+    function hydrateCases(items){
+      items.forEach(function(cs){
+        if (!cs || !cs.id) return;
+        var card = document.querySelector('.gcase[data-case="' + cs.id + '"]');
+        if (!card) return;
+        var hood = card.querySelector('.gcase__hood'); if (hood && cs.hood) hood.textContent = cs.hood;
+        var name = card.querySelector('.gcase__home'); if (name && cs.name) name.textContent = cs.name;
+        var hook = card.querySelector('.gcase__hook'); if (hook && cs.hook) hook.textContent = cs.hook;
+        var beds = card.querySelector('.gcase__beds'); if (beds && cs.beds) beds.textContent = cs.beds;
+        var rev = card.querySelector('.gcase__rev');
+        if (rev && cs.revenue && rev.childNodes.length) rev.childNodes[0].nodeValue = cs.revenue + ' ';
+        var sub = card.querySelector('.gcase__sub');
+        if (sub && cs.nightly && cs.lift) {
+          sub.innerHTML = '';
+          sub.appendChild(document.createTextNode(cs.nightly + ' · '));
+          var lift = document.createElement('span'); lift.className = 'lift'; lift.textContent = cs.lift;
+          sub.appendChild(lift);
+        }
+        var img = card.querySelector('.gcase__media img'); if (img && cs.img) img.src = cs.img;
+      });
+    }
+  })();
+
   if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches && ('IntersectionObserver' in window)) {
     var io = new IntersectionObserver(function(entries){ entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('is-in'); io.unobserve(en.target); } }); }, { threshold: .12 });
     document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });

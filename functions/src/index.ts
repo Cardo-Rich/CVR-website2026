@@ -10,6 +10,7 @@ import {
 } from './actions.js';
 import { resolveAdmin } from './claims.js';
 import { getSlots, book as ghlBook, addNote as ghlAddNote, type GhlConfig } from './ghl.js';
+import { getContent, setCaseStudies, setReviews, syncGoogleReviews } from './siteContent.js';
 import type { AgreementDoc } from './types.js';
 
 const RESEND_API_KEY = defineSecret('RESEND_API_KEY');
@@ -104,6 +105,43 @@ export const ghl = onRequest({ secrets: [GHL_API_TOKEN], cors: false }, async (r
   } catch (e) {
     console.error('ghl error', e);
     res.status(502).json({ error: (e as Error).message || 'GHL request failed' });
+  }
+});
+
+// ---- Site content: public read + admin CMS write + Google reviews sync ----
+const GOOGLE_PLACES_API_KEY = defineSecret('GOOGLE_PLACES_API_KEY');
+
+// GET /api/content → { caseStudies, reviews }. CDN-cached; the static site
+// hydrates from this and falls back to its baked-in copy when unavailable.
+export const content = onRequest({ cors: false }, async (req, res) => {
+  Object.entries(CORS).forEach(([k, v]) => res.set(k, v));
+  if (req.method === 'OPTIONS') { res.status(204).send(''); return; }
+  try {
+    const data = await getContent(getDb());
+    res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
+    res.json(data);
+  } catch (e) {
+    console.error('content error', e);
+    res.status(500).json({ error: 'content unavailable' });
+  }
+});
+
+export const adminContentGet = onCall(async (req) => {
+  requireAdmin(req.auth);
+  return getContent(getDb());
+});
+export const adminContentSet = onCall(async (req) => {
+  requireAdmin(req.auth);
+  if (req.data?.caseStudies) await setCaseStudies(getDb(), req.data.caseStudies);
+  if (req.data?.reviews) await setReviews(getDb(), req.data.reviews);
+  return { ok: true };
+});
+export const adminSyncGoogleReviews = onCall({ secrets: [GOOGLE_PLACES_API_KEY] }, async (req) => {
+  requireAdmin(req.auth);
+  try {
+    return await syncGoogleReviews(getDb(), GOOGLE_PLACES_API_KEY.value(), req.data?.placeId);
+  } catch (e) {
+    throw new HttpsError('failed-precondition', (e as Error).message);
   }
 });
 
