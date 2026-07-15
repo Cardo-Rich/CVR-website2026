@@ -1,21 +1,24 @@
 ---
 // ===================== MARKETING & SALES STRATEGY =====================
+// Headline + subtext, then the "Manifest": a numbered two-column ledger of
+// everything marketing covers — the length of the list is the message.
 import { homePhotos } from '../../data/home';
 
-const topics = [
-  { h: 'Exclusive travel-agency partnerships', p: "Direct relationships with top travel agencies and OTAs put your home in front of high-intent, high-value travelers other managers can't reach." },
-  { h: 'Airbnb Superhost & VRBO Premier status', p: 'Top-tier host status on both platforms boosts your ranking, badges, and guest trust — so your listing wins the click and the booking.' },
-  { h: 'Insurance agency partnerships', p: 'Relationships with specialist short-term-rental insurers mean the right coverage for your home and your guests, arranged and kept current for you.' },
-  { h: 'Decor-first content', p: 'Our in-house design team styles the home before the shoot, so every room photographs like an editorial spread — and books at a premium.' },
-  { h: 'Editorial photography & video', p: 'A dedicated content shoot builds a full library of images and lifestyle video — fuel for your listing, website, ads, and socials.' },
-  { h: 'Always-on social media', p: 'Managed Instagram and Pinterest: keyword-optimized reels, carousels, and pins that keep your home in front of future guests every month.' },
-  { h: 'Travel-influencer campaigns', p: 'Paid and trade collaborations with vetted travel creators who stay and film — reels that put your home in front of thousands of new travelers.' },
-  { h: 'Paid ads & retargeting', p: 'We turn the strongest content into targeted PPC campaigns aimed at high-intent traveler personas and drive them straight to your booking page.' },
-  { h: 'Airbnb listing SEO', p: 'Keyword research and monthly listing optimization — with direct access to an Airbnb Senior Market Manager — to rank where your highest-paying guests search.' },
-  { h: 'Direct-booking website', p: 'A branded site wired to your live calendar: instant credibility on a name search and a dedicated landing page for every ad we run.' },
-  { h: 'Realtor referral network', p: 'A referral network of San Diego agents feeding high-value owner leads and warm introductions to new doors across the county.' },
-  { h: 'Past-guest email funnel', p: 'Targeted email campaigns to our list of past guests, bringing repeat direct bookings on demand — the audience that already loves a Cardo stay.' },
+const items = [
+  'Exclusive travel-agency partnerships',
+  'Airbnb Superhost & VRBO Premier status',
+  'Insurance agency partnerships',
+  'Decor-first content',
+  'Editorial photography & video',
+  'Always-on social media',
+  'Travel-influencer campaigns',
+  'Paid ads & retargeting',
+  'Airbnb listing SEO',
+  'Direct-booking website',
+  'Realtor referral network',
+  'Past-guest email funnel',
 ];
+const pad = (n: number) => String(n + 1).padStart(2, '0');
 ---
 
 <section class="section-pad mktg" id="marketing" data-screen-label="Marketing experts">
@@ -27,33 +30,11 @@ const topics = [
       <p class="lede muted">True marketing that reaches your guest before they book — targeted ads, sales pros who close, and direct bookings that earn you more.</p>
     </div>
 
-    <div class="mktg__explore reveal">
-      <div class="mktg__topics" data-mtopics>
-        {topics.map((t, i) => (
-          <button type="button" class={'mtopic' + (i === 0 ? ' is-on' : '')} data-detail={t.p}>{t.h}</button>
-        ))}
-      </div>
-      <div class="mktg__detail" data-mdetail>
-        <h3 data-mdetail-h>{topics[0].h}</h3>
-        <p data-mdetail-p>{topics[0].p}</p>
-      </div>
-    </div>
+    <ol class="manifest reveal">
+      {items.map((it, i) => (
+        <li class="manifest__item"><span class="manifest__num">{pad(i)}</span><span class="manifest__label">{it}</span></li>
+      ))}
+    </ol>
+    <p class="manifest__kicker reveal">— …and that's just the marketing.</p>
   </div>
 </section>
-
-<script>
-  (function () {
-    var wrap = document.querySelector('[data-mtopics]');
-    if (!wrap) return;
-    var btns = Array.prototype.slice.call(wrap.querySelectorAll('.mtopic'));
-    var hEl = document.querySelector('[data-mdetail-h]');
-    var pEl = document.querySelector('[data-mdetail-p]');
-    btns.forEach(function (b) {
-      b.addEventListener('click', function () {
-        btns.forEach(function (x) { x.classList.toggle('is-on', x === b); });
-        if (hEl) hEl.textContent = b.textContent;
-        if (pEl) pEl.textContent = b.getAttribute('data-detail') || '';
-      });
-    });
-  })();
-</script>
