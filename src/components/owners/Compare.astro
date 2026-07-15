@@ -52,11 +52,11 @@ const info  = '<svg class="vs__hint-ic" width="13" height="13" viewBox="0 0 24 2
           </tr>
         </thead>
         <tbody>
-          {rows.map((r) => (
+          {rows.map((r, i) => (
             <tr class={r.emph ? 'vs__row--emph' : ''}>
               <td class="vs__rowhead">
                 {r.tip ? (
-                  <span class="vs__hint" tabindex="0">{r.label}<span set:html={info} /><span class="vs__tip" role="tooltip">{r.tip}</span></span>
+                  <span class={'vs__hint' + (i >= rows.length - 4 ? ' vs__hint--up' : '')} tabindex="0">{r.label}<span set:html={info} /><span class="vs__tip" role="tooltip">{r.tip}</span></span>
                 ) : r.label}
               </td>
               {r.cells.map((cell, i) => (
@@ -120,8 +120,29 @@ const info  = '<svg class="vs__hint-ic" width="13" height="13" viewBox="0 0 24 2
   .vs__tip { position: absolute; left: 0; top: calc(100% + 10px); width: 260px; max-width: 74vw; z-index: 6; background: var(--ink); color: #fff; font-family: var(--font-body); font-weight: 400; font-size: .82rem; line-height: 1.5; letter-spacing: 0; text-transform: none; text-align: left; padding: 12px 14px; border-radius: var(--radius); box-shadow: var(--shadow-md); opacity: 0; visibility: hidden; transform: translateY(-5px); transition: opacity .18s var(--ease), transform .18s var(--ease); pointer-events: none; }
   .vs__tip::before { content: ""; position: absolute; bottom: 100%; left: 20px; border: 6px solid transparent; border-bottom-color: var(--ink); }
   .vs__hint:hover .vs__tip, .vs__hint:focus .vs__tip { opacity: 1; visibility: visible; transform: translateY(0); }
+  /* Bottom rows open their tip upward so it never hangs below the table
+     (hidden tips overflowing the scroll wrapper caused a phantom vertical
+     scrollbar on mobile). */
+  .vs__hint--up .vs__tip { top: auto; bottom: calc(100% + 10px); }
+  .vs__hint--up .vs__tip::before { bottom: auto; top: 100%; border-bottom-color: transparent; border-top-color: var(--ink); }
 
   .compare__note { font-size: .82rem; color: var(--muted); margin-top: 14px; }
-  @media (max-width: 940px) { .vs__wrap { overflow-x: auto; } .vs thead th { position: static; } }
-  @media (max-width: 680px) { .vs th, .vs td { padding: 12px 12px; font-size: .86rem; } }
+  @media (max-width: 940px) {
+    /* Horizontal pan only — overflow-y hidden kills the phantom vertical bar */
+    .vs__wrap { overflow-x: auto; overflow-y: hidden; padding: 0; -webkit-overflow-scrolling: touch; }
+    .vs thead th { position: static; }
+    .vs { min-width: 0; }
+    .vs th, .vs td { padding: 12px 10px; font-size: .86rem; }
+    /* Freeze the feature + Cardo columns; competitors pan behind them.
+       Widths are tuned so exactly one competitor column (~3 columns total)
+       is visible at a time. */
+    .vs th:first-child, .vs td:first-child { position: sticky; left: 0; z-index: 4; width: 38vw; min-width: 38vw; max-width: 38vw; background: var(--paper); }
+    .vs th:nth-child(2), .vs td:nth-child(2) { position: sticky; left: 38vw; z-index: 4; width: 21vw; min-width: 21vw; max-width: 21vw; box-shadow: 6px 0 10px -6px rgba(14,17,27,.3); }
+    /* The static-header rule above outranks th:first-child under Astro's
+       scoped-attribute specificity — re-pin the two frozen header cells. */
+    .vs thead th:first-child { position: sticky; left: 0; top: auto; z-index: 5; }
+    .vs thead th:nth-child(2) { position: sticky; left: 38vw; top: auto; z-index: 5; }
+    .vs th:nth-child(n+3), .vs td:nth-child(n+3) { min-width: calc(41vw - 48px); }
+    .vs__badge { padding: 3px 7px; font-size: .58rem; }
+  }
 </style>
