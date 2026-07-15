@@ -7,7 +7,7 @@ export interface CaseStudyItem {
 }
 export interface ReviewCard { name: string; meta: string; stars: number; text: string; }
 export interface ReviewsDoc {
-  google: { placeId?: string; rating?: number | null; count?: number | null; reviews?: ReviewCard[]; syncedAt?: string | null };
+  google: { placeId?: string; rating?: number | null; count?: number | null; minStars?: number; reviews?: ReviewCard[]; syncedAt?: string | null };
   airbnb: { rating?: number | null; count?: number | null; reviews?: ReviewCard[] };
 }
 export interface SiteContent { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; }

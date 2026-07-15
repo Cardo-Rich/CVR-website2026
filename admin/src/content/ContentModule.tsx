@@ -14,7 +14,7 @@ const DEFAULT_CASES: CaseStudyItem[] = [
   { id: 'mt-ainsworth', name: 'Mt Ainsworth', hood: 'Coronado', beds: '5 BR', hook: 'A five-bedroom estate with a resort backyard, top of its market.', revenue: '$268,900', nightly: '$694 / night', lift: '+61% over market' },
 ];
 const DEFAULT_REVIEWS: ReviewsDoc = {
-  google: { placeId: '', rating: 4.9, count: 100, reviews: [] },
+  google: { placeId: '', rating: 4.9, count: 100, minStars: 5, reviews: [] },
   airbnb: { rating: 4.95, count: 2500, reviews: [] },
 };
 
@@ -127,6 +127,12 @@ export default function ContentModule() {
               </label>
               <label><span>Rating</span><input value={reviews.google.rating ?? ''} readOnly /></label>
               <label><span>Review count</span><input value={reviews.google.count ?? ''} readOnly /></label>
+              <label>
+                <span>Minimum stars to show on site</span>
+                <select value={reviews.google.minStars ?? 5} onChange={(e) => setReviews((p) => ({ ...p, google: { ...p.google, minStars: Number(e.target.value) } }))}>
+                  {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n === 1 ? 'Show all reviews' : `${n} stars and up`}</option>)}
+                </select>
+              </label>
             </div>
             <div className="ct-row">
               <button className="btn" onClick={doSync} disabled={syncing}>{syncing ? 'Syncing…' : 'Sync from Google now'}</button>
@@ -134,9 +140,15 @@ export default function ContentModule() {
             </div>
             {(reviews.google.reviews || []).length > 0 && (
               <ul className="ct-preview">
-                {(reviews.google.reviews || []).slice(0, 4).map((r, i) => (
-                  <li key={i}><b>{r.name}</b> · {'★'.repeat(r.stars)} — {r.text.slice(0, 140)}{r.text.length > 140 ? '…' : ''}</li>
-                ))}
+                {(reviews.google.reviews || []).slice(0, 8).map((r, i) => {
+                  const hidden = r.stars < (reviews.google.minStars ?? 5);
+                  return (
+                    <li key={i} className={hidden ? 'ct-hidden' : ''}>
+                      <b>{r.name}</b> · {'★'.repeat(r.stars)} — {r.text.slice(0, 140)}{r.text.length > 140 ? '…' : ''}
+                      {hidden && <em> (hidden by star filter)</em>}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </fieldset>

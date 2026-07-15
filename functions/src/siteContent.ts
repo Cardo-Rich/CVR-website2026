@@ -19,18 +19,28 @@ export interface CaseStudyItem {
 export interface ReviewCard { name: string; meta: string; stars: number; text: string; }
 
 export interface ReviewsDoc {
-  google: { placeId?: string; rating?: number; count?: number; reviews?: ReviewCard[]; syncedAt?: string };
+  google: { placeId?: string; rating?: number; count?: number; minStars?: number; reviews?: ReviewCard[]; syncedAt?: string };
   airbnb: { rating?: number; count?: number; reviews?: ReviewCard[] };
 }
 
 const CASES_REF = 'siteContent/caseStudies';
 const REVIEWS_REF = 'siteContent/reviews';
 
-export async function getContent(db: Firestore): Promise<{ caseStudies: CaseStudyItem[]; reviews: ReviewsDoc }> {
+// forPublic: apply display rules (e.g. Google minimum-star filter) so the
+// site only ever receives what should be shown. The admin CMS reads the raw
+// doc so editors can see everything the sync pulled.
+export async function getContent(db: Firestore, forPublic = false): Promise<{ caseStudies: CaseStudyItem[]; reviews: ReviewsDoc }> {
   const [cs, rv] = await Promise.all([db.doc(CASES_REF).get(), db.doc(REVIEWS_REF).get()]);
+  const reviews = ((rv.data() as ReviewsDoc) || { google: {}, airbnb: {} });
+  if (forPublic && reviews.google) {
+    const min = Number(reviews.google.minStars) || 0;
+    if (min > 1 && Array.isArray(reviews.google.reviews)) {
+      reviews.google = { ...reviews.google, reviews: reviews.google.reviews.filter((r) => (r.stars || 0) >= min) };
+    }
+  }
   return {
     caseStudies: ((cs.data()?.items as CaseStudyItem[]) || []),
-    reviews: (rv.data() as ReviewsDoc) || { google: {}, airbnb: {} },
+    reviews,
   };
 }
 
@@ -70,6 +80,7 @@ export async function setReviews(db: Firestore, patch: Partial<ReviewsDoc>): Pro
       placeId: String(patch.google.placeId || '').slice(0, 120),
       rating: Number(patch.google.rating) || null,
       count: Number(patch.google.count) || null,
+      minStars: Math.min(5, Math.max(1, Number(patch.google.minStars) || 5)),
       reviews: cleanCards(patch.google.reviews),
       syncedAt: patch.google.syncedAt || null,
     };

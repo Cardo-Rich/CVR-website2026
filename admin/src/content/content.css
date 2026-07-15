@@ -17,4 +17,7 @@
 .ct-card { border-top: 1px dashed var(--line, #d9d5cc); padding-top: 12px; margin-top: 12px; position: relative; }
 .ct-remove { justify-self: start; align-self: end; }
 .ct-preview { margin: 14px 0 0; padding: 0 0 0 18px; font-size: 0.88rem; color: #374151; display: flex; flex-direction: column; gap: 6px; }
+.ct-preview .ct-hidden { color: #9aa0a6; text-decoration: line-through; }
+.ct-preview .ct-hidden em { text-decoration: none; font-style: italic; }
+.ct-grid select { font: inherit; padding: 9px 11px; border: 1px solid var(--line, #d9d5cc); border-radius: 8px; background: #fff; }
 @media (max-width: 760px) { .ct-grid { grid-template-columns: 1fr; } }

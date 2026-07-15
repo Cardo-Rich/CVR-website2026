@@ -117,7 +117,7 @@ export const content = onRequest({ cors: false }, async (req, res) => {
   Object.entries(CORS).forEach(([k, v]) => res.set(k, v));
   if (req.method === 'OPTIONS') { res.status(204).send(''); return; }
   try {
-    const data = await getContent(getDb());
+    const data = await getContent(getDb(), true);
     res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
     res.json(data);
   } catch (e) {
