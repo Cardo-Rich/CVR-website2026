@@ -21,9 +21,54 @@ jobs:
       - run: npm run build:all
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}
+          PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.PUBLIC_GOOGLE_MAPS_API_KEY }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}
           projectId: cardo-website-2026
           channelId: live
+
+  # Deploys Cloud Functions (booking proxy, CMS content API, reviews sync).
+  # Requires these Firebase secrets to EXIST first (create once via
+  # `firebase functions:secrets:set <NAME>`): RESEND_API_KEY, GHL_API_TOKEN,
+  # GOOGLE_PLACES_API_KEY. Non-secret GHL params live in
+  # functions/.env.cardo-website-2026 (committed).
+  deploy_functions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+        working-directory: functions
+      - run: npm run build
+        working-directory: functions
+      # Mirror function secrets from GitHub secrets into Google Secret Manager
+      # so they can be managed entirely from the GitHub UI. Each runs only
+      # when the GitHub secret is set.
+      - name: Sync function secrets
+        env:
+          GHL_API_TOKEN: ${{ secrets.GHL_API_TOKEN }}
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}' > "$RUNNER_TEMP/sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          for NAME in GHL_API_TOKEN GOOGLE_PLACES_API_KEY; do
+            VALUE="${!NAME}"
+            if [ -n "$VALUE" ]; then
+              printf '%s' "$VALUE" | npx firebase-tools@13 functions:secrets:set "$NAME" --project cardo-website-2026 --data-file=- --force || exit 1
+            elif ! npx firebase-tools@13 functions:secrets:access "$NAME" --project cardo-website-2026 >/dev/null 2>&1; then
+              # Seed a placeholder so deploy can bind the secret; the functions
+              # treat the value "unset" as not configured.
+              printf 'unset' | npx firebase-tools@13 functions:secrets:set "$NAME" --project cardo-website-2026 --data-file=- --force || exit 1
+              echo "::warning::$NAME not set in GitHub secrets — placeholder created; the matching feature stays disabled until you add it."
+            fi
+          done
+      - name: Deploy functions
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}' > "$RUNNER_TEMP/sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          npx firebase-tools@13 deploy --only functions --project cardo-website-2026 --non-interactive --force

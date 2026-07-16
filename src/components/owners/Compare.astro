@@ -1,28 +1,148 @@
-<!-- ===================== ROI COMPARISON ===================== -->
+---
+// ===================== MANAGEMENT OPTIONS (Cardo vs Alternatives) =====================
+// Data mirrors Cardo-vs-Alternatives.xlsx. Cell values: true = included,
+// false = not offered, string = qualified note. `emph` rows (owner time,
+// cost) get a highlighted band; `tip` adds a sleek hover-for-detail popover.
+const cols = ['Cardo', 'Standard STR Manager', 'Airbnb Cohost', 'Self-Managing'];
+
+const rows = [
+  { label: 'Owner time required', cells: ['Near zero', 'Low', 'High', 'Very High'], emph: true },
+  { label: 'Gross revenue', cells: ['Highest', 'Above average', 'Market average', 'Market average'] },
+  { label: 'Zero-hassle damage insurance', cells: [true, false, false, false], tip: "The Cardo HomeSafe protection ensures you're covered on ANY platform. $0 deductible, high coverage amounts, and immediate payouts." },
+  { label: 'Real-time owner portal', cells: [true, 'Sometimes', false, false] },
+  { label: 'AI-driven operations management', cells: [true, false, false, false], tip: "Our in-house ops software is designed for speed and transparency from the ground up. You'll know what's going on in your home at all times." },
+  { label: '5-star cleanliness guarantee', cells: [true, false, false, false], tip: 'We guarantee a quality clean for every guest, or else Cardo covers their cleaning fee.' },
+  { label: 'Dedicated property manager', cells: [true, 'Sometimes', true, false], tip: 'You have one person who knows your property inside and out — literally.' },
+  { label: 'In-depth revenue management', cells: [true, true, false, false], tip: 'We combine data from 10,000 STRs with AI, a real dedicated human, and a weekly team call to make sure your home is priced perfectly.' },
+  { label: 'Listing on 10+ distribution channels', cells: [true, 'Sometimes', false, false], tip: "Professional managers get exclusive access to the highest-ROI channels, so you get more views and don't need to rely on Airbnb alone." },
+  { label: 'Social media & ads marketing', cells: [true, false, false, false], tip: 'Get seen on Instagram and TikTok. Your home could be the next viral sensation.' },
+  { label: 'Direct-booking website', cells: [true, true, false, false] },
+  { label: 'Permits/TOT guidance & reporting', cells: [true, true, false, false], tip: 'Although the permit must be in your name, Cardo will walk you through every step of the way.' },
+  { label: '24/7 guest support', cells: [true, 'Sometimes', false, false] },
+  { label: 'Interior design & staging', cells: [true, 'Sometimes', false, false] },
+  { label: 'In-house cleaning & white-linen', cells: [true, 'Subcontracted', 'You arrange', 'You'], tip: 'We own the entire cleaning and laundry process — hotel-grade linens supplied and laundered in-house, never subcontracted.' },
+  { label: 'Luxury amenity restocking', cells: [true, false, false, 'You'], tip: 'Hotel-grade toiletries, coffee, and guest essentials curated and restocked for every stay.' },
+  { label: 'Rapid maintenance response', cells: [true, 'Sometimes', false, 'You'], tip: 'Vetted local vendors and fast response — small problems get fixed before the next guest ever arrives.' },
+  { label: 'Management cost', cells: ['20%', '18–35%', '10–20%', '—'], emph: true },
+];
+
+const check = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
+const cross = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const info  = '<svg class="vs__hint-ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>';
+---
+
 <section class="section-pad" id="compare" data-screen-label="Comparison">
   <div class="section-wrap">
     <div class="section-head reveal" style="max-width:680px">
-      <p class="eyebrow">Cardo vs. the alternatives</p>
-      <h2>The same home, run three different ways.</h2>
-      <p class="lede muted">Most owners are weighing self-managing or a national manager. Here's what changes when it's Cardo.</p>
+      <p class="eyebrow">Management options</p>
+      <h2>Premier management, for less.</h2>
+      <p class="lede muted">Cardo provides a premier level of management, for less than other full service companies. We can do this because we earn more top revenue than the other companies, so we share from a bigger pie.</p>
     </div>
-    <div class="compare__wrap reveal">
-      <table class="compare">
+    <div class="vs__wrap reveal">
+      <table class="vs">
         <thead>
-          <tr><th>&nbsp;</th><th>Self-managing</th><th>National manager</th><th class="col-cardo">Cardo</th></tr>
+          <tr>
+            <th class="vs__rowhead">&nbsp;</th>
+            {cols.map((c, i) => (
+              <th class={i === 0 ? 'vs__cardo' : ''}>
+                {i === 0 && <span class="vs__badge">Best value</span>}
+                <span class="vs__colname">{c}</span>
+              </th>
+            ))}
+          </tr>
         </thead>
         <tbody>
-          <tr><td>In-house interior design</td><td class="x"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M6 6l12 12M18 6L6 18"/></svg></td><td class="x"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M6 6l12 12M18 6L6 18"/></svg></td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>In-house cleaning &amp; white-linen</td><td class="x"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M6 6l12 12M18 6L6 18"/></svg></td><td class="x">Subcontracted</td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>Dynamic pricing &amp; multi-channel</td><td class="x">Manual</td><td class="ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>Local team, sub-hour response</td><td class="x">You</td><td class="x">Call center</td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>Permits, TOT &amp; compliance</td><td class="x">You</td><td class="ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>Damage protection on every stay</td><td class="x"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M6 6l12 12M18 6L6 18"/></svg></td><td class="ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>Transparent, itemized accounting</td><td class="x">DIY</td><td class="x">Often opaque</td><td class="col-cardo ck"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M5 13l4 4L19 7"/></svg></td></tr>
-          <tr><td>Owner time required</td><td>High</td><td>Medium</td><td class="col-cardo"><b style="color:var(--rose)">Near zero</b></td></tr>
+          {rows.map((r, i) => (
+            <tr class={r.emph ? 'vs__row--emph' : ''}>
+              <td class="vs__rowhead">
+                {r.tip ? (
+                  <span class={'vs__hint' + (i >= rows.length - 4 ? ' vs__hint--up' : '')} tabindex="0">{r.label}<span set:html={info} /><span class="vs__tip" role="tooltip">{r.tip}</span></span>
+                ) : r.label}
+              </td>
+              {r.cells.map((cell, i) => (
+                <td class={i === 0 ? 'vs__cardo' : ''}>
+                  {cell === true ? (
+                    <span class="vs__yes" set:html={check} />
+                  ) : cell === false ? (
+                    <span class="vs__no" set:html={cross} />
+                  ) : (
+                    <span class="vs__txt">{cell}</span>
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
     <p class="compare__note">Comparison reflects typical service models. Your exact scope is confirmed in your free property analysis.</p>
   </div>
 </section>
+
+<style>
+  /* Wrapper scrolls horizontally only on narrow screens; on wide screens it
+     stays overflow-visible so the sticky header and hover tips can escape. */
+  .vs__wrap { margin-top: 40px; padding: 4px; }
+  .vs { width: 100%; min-width: 760px; border-collapse: separate; border-spacing: 0; }
+  .vs th, .vs td { padding: 15px 18px; text-align: center; border-bottom: 1px solid var(--line); font-size: .95rem; vertical-align: middle; }
+  /* Column headers stay visible below the sticky site header while scrolling. */
+  .vs thead th { position: sticky; top: 84px; z-index: 2; background: var(--paper); box-shadow: inset 0 -1px 0 var(--line); font-size: .82rem; letter-spacing: .02em; color: var(--muted); font-weight: 600; text-transform: none; vertical-align: bottom; padding-top: 8px; }
+  .vs thead th .vs__colname { display: block; font-family: var(--font-display); font-weight: 500; font-size: 1.02rem; color: var(--ink); line-height: 1.25; }
+  .vs__rowhead { text-align: left !important; font-weight: 600; color: var(--ink); }
+  td.vs__rowhead { font-size: .92rem; position: relative; }
+
+  /* Cardo highlight column — ink + gold, deliberately not pink */
+  .vs th.vs__cardo, .vs td.vs__cardo { background: var(--ink); border-bottom-color: rgba(255,255,255,.08); position: relative; }
+  .vs thead th.vs__cardo { background: var(--ink); box-shadow: inset 0 -1px 0 rgba(255,255,255,.08); }
+  .vs thead th.vs__cardo .vs__colname { color: #fff; }
+  .vs td.vs__cardo .vs__txt { color: #fff; font-weight: 600; }
+  .vs td.vs__cardo .vs__yes { color: var(--gold); }
+  .vs thead th.vs__cardo { padding-top: 14px; border-top-left-radius: var(--radius-lg); border-top-right-radius: var(--radius-lg); }
+  .vs tbody tr:last-child td.vs__cardo { border-bottom-left-radius: var(--radius-lg); border-bottom-right-radius: var(--radius-lg); }
+  .vs__badge { display: inline-block; margin-bottom: 8px; padding: 3px 11px; border-radius: var(--radius-pill); background: var(--gold); color: var(--ink); font-family: var(--font-body); font-size: .66rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+
+  .vs__yes, .vs__no { display: inline-flex; }
+  .vs__yes { color: var(--success); }
+  .vs__no { color: var(--muted); opacity: .45; }
+  .vs__txt { color: var(--ink-soft); }
+
+  /* Emphasis rows (owner time + cost) — highlighted band, distinct from features */
+  .vs__row--emph td { background: var(--paper); box-shadow: inset 0 1px 0 var(--line), inset 0 -1px 0 var(--line); }
+  .vs__row--emph td.vs__cardo { background: var(--ink); }
+  .vs__row--emph td.vs__rowhead { font-weight: 700; color: var(--ink); }
+  .vs__row--emph .vs__txt { font-weight: 700; font-size: 1.06rem; color: var(--ink); }
+  .vs__row--emph td.vs__cardo .vs__txt { color: #fff; }
+
+  /* Sleek "hover for detail" call-out — annotation underline + info dot, not a link */
+  .vs__hint { position: relative; cursor: help; border-bottom: 1px dashed var(--gold); outline: none; }
+  .vs__hint-ic { margin-left: 5px; color: var(--gold); vertical-align: middle; }
+  .vs__hint:focus-visible { border-bottom-style: solid; }
+  .vs__tip { position: absolute; left: 0; top: calc(100% + 10px); width: 260px; max-width: 74vw; z-index: 6; background: var(--ink); color: #fff; font-family: var(--font-body); font-weight: 400; font-size: .82rem; line-height: 1.5; letter-spacing: 0; text-transform: none; text-align: left; padding: 12px 14px; border-radius: var(--radius); box-shadow: var(--shadow-md); opacity: 0; visibility: hidden; transform: translateY(-5px); transition: opacity .18s var(--ease), transform .18s var(--ease); pointer-events: none; }
+  .vs__tip::before { content: ""; position: absolute; bottom: 100%; left: 20px; border: 6px solid transparent; border-bottom-color: var(--ink); }
+  .vs__hint:hover .vs__tip, .vs__hint:focus .vs__tip { opacity: 1; visibility: visible; transform: translateY(0); }
+  /* Bottom rows open their tip upward so it never hangs below the table
+     (hidden tips overflowing the scroll wrapper caused a phantom vertical
+     scrollbar on mobile). */
+  .vs__hint--up .vs__tip { top: auto; bottom: calc(100% + 10px); }
+  .vs__hint--up .vs__tip::before { bottom: auto; top: 100%; border-bottom-color: transparent; border-top-color: var(--ink); }
+
+  .compare__note { font-size: .82rem; color: var(--muted); margin-top: 14px; }
+  @media (max-width: 940px) {
+    /* Horizontal pan only — overflow-y hidden kills the phantom vertical bar */
+    .vs__wrap { overflow-x: auto; overflow-y: hidden; padding: 0; -webkit-overflow-scrolling: touch; }
+    .vs thead th { position: static; }
+    .vs { min-width: 0; }
+    .vs th, .vs td { padding: 12px 10px; font-size: .86rem; }
+    /* Freeze the feature + Cardo columns; competitors pan behind them.
+       Widths are tuned so exactly one competitor column (~3 columns total)
+       is visible at a time. */
+    .vs th:first-child, .vs td:first-child { position: sticky; left: 0; z-index: 4; width: 38vw; min-width: 38vw; max-width: 38vw; background: var(--paper); }
+    .vs th:nth-child(2), .vs td:nth-child(2) { position: sticky; left: 38vw; z-index: 4; width: 21vw; min-width: 21vw; max-width: 21vw; box-shadow: 6px 0 10px -6px rgba(14,17,27,.3); }
+    /* The static-header rule above outranks th:first-child under Astro's
+       scoped-attribute specificity — re-pin the two frozen header cells. */
+    .vs thead th:first-child { position: sticky; left: 0; top: auto; z-index: 5; }
+    .vs thead th:nth-child(2) { position: sticky; left: 38vw; top: auto; z-index: 5; }
+    .vs th:nth-child(n+3), .vs td:nth-child(n+3) { min-width: calc(41vw - 48px); }
+    .vs__badge { padding: 3px 7px; font-size: .58rem; }
+  }
+</style>

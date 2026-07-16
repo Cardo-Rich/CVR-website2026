@@ -28,10 +28,7 @@
 .site-header.is-scrolled { background: rgba(241,233,220,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); box-shadow: 0 1px 0 rgba(14,17,27,.03), 0 8px 24px rgba(14,17,27,.05); }
 .site-header__inner { max-width: var(--container); margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
 .site-header__logo img { height: 53px; width: auto; }
-.site-header__nav { display: flex; align-items: center; gap: 30px; }
-.site-header__nav > a { font-size: .95rem; font-weight: 500; color: var(--ink-soft); transition: color var(--dur-fast) var(--ease); }
-.site-header__nav > a:hover, .site-header__nav > a.is-active { color: var(--rose); }
-@media (max-width: 860px) { .site-header__nav > a { display: none; } }
+.site-header__nav { display: flex; align-items: center; gap: 16px; }
 
 /* ---------- Black, 15px-rounded button (pairs with .btn / .btn-ink) ---------- */
 .btn-round { border-radius: 15px !important; }

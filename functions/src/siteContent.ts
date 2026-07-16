@@ -1,0 +1,141 @@
+// Site content CMS backend: case studies + reviews, edited in the admin app
+// and served to the public site via GET /api/content. Google review data can
+// be synced live from the Places API (New); Airbnb has no public API, so its
+// reviews are managed in the CMS.
+import type { Firestore } from 'firebase-admin/firestore';
+
+export interface CaseStudyItem {
+  id: string;        // matches data-case on the owners page (falcon, nute, ...)
+  name: string;
+  hood: string;
+  beds: string;      // e.g. "4 BR"
+  hook: string;
+  revenue: string;   // e.g. "$214,800"
+  nightly: string;   // e.g. "$589 / night"
+  lift: string;      // e.g. "+57% over market"
+  img?: string;      // optional image URL override
+  featured?: boolean; // true → shown on the owners page; all cases appear in the blog library
+  blurb?: string;     // longer story for the preview modal (falls back to hook)
+}
+
+export interface ReviewCard { name: string; meta: string; stars: number; text: string; }
+
+export interface ReviewsDoc {
+  google: { placeId?: string; rating?: number; count?: number; minStars?: number; reviews?: ReviewCard[]; syncedAt?: string };
+  airbnb: { rating?: number; count?: number; reviews?: ReviewCard[] };
+}
+
+const CASES_REF = 'siteContent/caseStudies';
+const REVIEWS_REF = 'siteContent/reviews';
+
+// forPublic: apply display rules (e.g. Google minimum-star filter) so the
+// site only ever receives what should be shown. The admin CMS reads the raw
+// doc so editors can see everything the sync pulled.
+export async function getContent(db: Firestore, forPublic = false): Promise<{ caseStudies: CaseStudyItem[]; reviews: ReviewsDoc }> {
+  const [cs, rv] = await Promise.all([db.doc(CASES_REF).get(), db.doc(REVIEWS_REF).get()]);
+  const reviews = ((rv.data() as ReviewsDoc) || { google: {}, airbnb: {} });
+  if (forPublic && reviews.google) {
+    const min = Number(reviews.google.minStars) || 0;
+    if (min > 1 && Array.isArray(reviews.google.reviews)) {
+      reviews.google = { ...reviews.google, reviews: reviews.google.reviews.filter((r) => (r.stars || 0) >= min) };
+    }
+  }
+  return {
+    caseStudies: ((cs.data()?.items as CaseStudyItem[]) || []),
+    reviews,
+  };
+}
+
+export async function setCaseStudies(db: Firestore, items: CaseStudyItem[]): Promise<void> {
+  if (!Array.isArray(items)) throw new Error('items must be an array');
+  const clean = items.slice(0, 60).map((it) => ({
+    id: String(it.id || '').slice(0, 64),
+    name: String(it.name || '').slice(0, 120),
+    hood: String(it.hood || '').slice(0, 120),
+    beds: String(it.beds || '').slice(0, 24),
+    hook: String(it.hook || '').slice(0, 300),
+    revenue: String(it.revenue || '').slice(0, 40),
+    nightly: String(it.nightly || '').slice(0, 60),
+    lift: String(it.lift || '').slice(0, 60),
+    img: String(it.img || '').slice(0, 500),
+    featured: it.featured !== false,
+    blurb: String(it.blurb || '').slice(0, 1500),
+  }));
+  await db.doc(CASES_REF).set({ items: clean }, { merge: false });
+}
+
+function cleanCards(cards: unknown): ReviewCard[] {
+  if (!Array.isArray(cards)) return [];
+  return cards.slice(0, 12).map((c) => {
+    const card = c as Partial<ReviewCard>;
+    return {
+      name: String(card.name || '').slice(0, 80),
+      meta: String(card.meta || '').slice(0, 120),
+      stars: Math.min(5, Math.max(1, Number(card.stars) || 5)),
+      text: String(card.text || '').slice(0, 1200),
+    };
+  });
+}
+
+export async function setReviews(db: Firestore, patch: Partial<ReviewsDoc>): Promise<void> {
+  const update: Record<string, unknown> = {};
+  if (patch.google) {
+    update.google = {
+      placeId: String(patch.google.placeId || '').slice(0, 120),
+      rating: Number(patch.google.rating) || null,
+      count: Number(patch.google.count) || null,
+      minStars: Math.min(5, Math.max(1, Number(patch.google.minStars) || 5)),
+      reviews: cleanCards(patch.google.reviews),
+      syncedAt: patch.google.syncedAt || null,
+    };
+  }
+  if (patch.airbnb) {
+    update.airbnb = {
+      rating: Number(patch.airbnb.rating) || null,
+      count: Number(patch.airbnb.count) || null,
+      reviews: cleanCards(patch.airbnb.reviews),
+    };
+  }
+  await db.doc(REVIEWS_REF).set(update, { merge: true });
+}
+
+// Pull rating, review count, and the latest review cards from the Places API
+// (New) and store them on the reviews doc. Requires a SERVER key (no referrer
+// restriction) and the business's place ID.
+export async function syncGoogleReviews(db: Firestore, apiKey: string, placeIdOverride?: string): Promise<{ rating: number; count: number; reviews: number }> {
+  const doc = await db.doc(REVIEWS_REF).get();
+  const placeId = placeIdOverride || (doc.data()?.google?.placeId as string | undefined);
+  if (!apiKey) throw new Error('GOOGLE_PLACES_API_KEY secret is not set');
+  if (!placeId) throw new Error('No Google place ID configured — set it in the CMS Reviews tab first');
+
+  const url = `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}`;
+  const r = await fetch(url, {
+    headers: {
+      'X-Goog-Api-Key': apiKey,
+      'X-Goog-FieldMask': 'rating,userRatingCount,reviews',
+      Accept: 'application/json',
+    },
+  });
+  if (!r.ok) throw new Error(`Places details ${r.status}: ${await r.text()}`);
+  const data = (await r.json()) as {
+    rating?: number; userRatingCount?: number;
+    reviews?: { authorAttribution?: { displayName?: string }; relativePublishTimeDescription?: string; rating?: number; text?: { text?: string } }[];
+  };
+  const reviews: ReviewCard[] = (data.reviews || []).slice(0, 8).map((rv) => ({
+    name: rv.authorAttribution?.displayName || 'Google guest',
+    meta: `Guest · ${rv.relativePublishTimeDescription || 'recently'}`,
+    stars: Math.min(5, Math.max(1, rv.rating || 5)),
+    text: rv.text?.text?.slice(0, 1200) || '',
+  })).filter((rv) => rv.text);
+
+  await db.doc(REVIEWS_REF).set({
+    google: {
+      placeId,
+      rating: data.rating ?? null,
+      count: data.userRatingCount ?? null,
+      reviews,
+      syncedAt: new Date().toISOString(),
+    },
+  }, { merge: true });
+  return { rating: data.rating ?? 0, count: data.userRatingCount ?? 0, reviews: reviews.length };
+}

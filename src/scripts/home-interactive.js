@@ -107,18 +107,36 @@
     };
     var lastFocus = null;
 
-    function open(key, home) {
-      var d = DATA[key]; if (!d) return;
-      heroImg.src = d.imgs[0];
+    // CMS-added cases have no static DATA entry or detail page — fall back to
+    // the card's own content (data-blurb, stats, image) and hide the
+    // "full case study" link.
+    function fromCard(card) {
+      function txt(sel) { var el = card.querySelector(sel); return el ? el.textContent.trim() : ''; }
+      var img = card.querySelector('.gcase__media img');
+      var rev = card.querySelector('.gcase__rev');
+      return {
+        hood: txt('.gcase__hood'), beds: txt('.gcase__beds'),
+        rev: rev && rev.childNodes.length ? rev.childNodes[0].nodeValue.trim() : '',
+        rate: (txt('.gcase__sub').split('·')[0] || '').trim(),
+        lift: txt('.lift'),
+        blurb: card.getAttribute('data-blurb') || txt('.gcase__hook'),
+        imgs: img && img.src ? [img.src] : []
+      };
+    }
+    function open(key, home, card) {
+      var d = DATA[key] || (card ? fromCard(card) : null);
+      if (!d) return;
+      if (d.imgs[0]) heroImg.src = d.imgs[0];
       heroImg.alt = home;
-      els.eyebrow.textContent = d.hood + ' · ' + d.beds;
+      els.eyebrow.textContent = d.hood + (d.beds ? ' · ' + d.beds : '');
       els.title.textContent = home;
       els.rev.textContent = d.rev; els.rate.textContent = d.rate; els.lift.textContent = d.lift;
       els.blurb.textContent = d.blurb;
       els.thumbs.innerHTML = d.imgs.map(function (f, i) {
         return '<img src="' + f + '" alt="' + home + ' interior ' + (i + 1) + '" loading="lazy" />';
       }).join('');
-      els.full.href = '/case-studies/' + key;
+      if (DATA[key]) { els.full.href = '/case-studies/' + key; els.full.style.display = ''; }
+      else { els.full.style.display = 'none'; }
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
@@ -129,11 +147,12 @@
       document.body.style.overflow = '';
       if (lastFocus) lastFocus.focus();
     }
-    [].slice.call(document.querySelectorAll('[data-case]')).forEach(function (card) {
-      card.addEventListener('click', function () {
-        lastFocus = card;
-        open(card.getAttribute('data-case'), card.querySelector('.gcase__home').textContent);
-      });
+    // Event delegation so CMS-hydrated (dynamically rebuilt) cards work too.
+    document.addEventListener('click', function (e) {
+      var card = e.target.closest && e.target.closest('.gcase[data-case]');
+      if (!card) return;
+      lastFocus = card;
+      open(card.getAttribute('data-case'), card.querySelector('.gcase__home').textContent, card);
     });
     [].slice.call(modal.querySelectorAll('[data-cmodal-close]')).forEach(function (b) {
       b.addEventListener('click', close);
@@ -178,43 +197,105 @@
     });
   })();
 
-  /* ---------------- Address autocomplete (mock San Diego suggestions) ---------------- */
+  /* ---------------- Address autocomplete (live, US-wide) ----------------
+     Primary: Google Places Autocomplete (New) — near-complete US address
+     coverage. Enabled when a build-time key is present:
+       PUBLIC_GOOGLE_MAPS_API_KEY  (Astro env var — exposed to the client, so
+       restrict it by HTTP referrer + to the Places API in Google Cloud).
+     Fallback: Photon (photon.komoot.io), a keyless OpenStreetMap geocoder
+     biased toward San Diego — used when no key is set or Google fails. */
   (function () {
     var root = document.querySelector('[data-addr]');
     if (!root) return;
     var input = root.querySelector('input');
     var list = root.querySelector('[data-addr-list]');
-    var streets = ['Camino De La Costa', 'Neptune Ave', 'Ocean Blvd', 'Coast Blvd', 'Mission Blvd', 'Bayside Walk', 'Sunset Cliffs Blvd', 'La Jolla Blvd', 'Cliffridge Ave', 'Pacific Beach Dr'];
-    var cities = ['La Jolla', 'Pacific Beach', 'Mission Beach', 'Del Mar', 'Coronado', 'Encinitas', 'Carlsbad'];
     var pin = '<svg viewBox="0 0 24 24"><path d="M12 21s7-5.7 7-11a7 7 0 10-14 0c0 5.3 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>';
-    var active = -1, items = [];
+    var active = -1, timer = null, ctrl = null;
 
-    function build(q) {
-      var num = (q.match(/\d+/) || ['1' + (Math.floor(Math.random() * 9) + 1) + '2' + (Math.floor(Math.random() * 9))])[0];
-      var out = [];
-      for (var i = 0; i < 4; i++) {
-        var st = streets[(q.length + i) % streets.length];
-        var ct = cities[(q.length + i) % cities.length];
-        out.push(num + ' ' + st + ', ' + ct + ', CA');
-      }
-      return out;
+    /* ---- Photon fallback (keyless OSM, biased to San Diego) ---- */
+    function photonLabel(p) {
+      var line1 = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
+      var line2 = [p.city || p.town || p.village || p.county, p.state, p.postcode].filter(Boolean).join(', ');
+      return [line1, line2].filter(Boolean).join(', ');
     }
-    function render(q) {
-      if (!q || q.trim().length < 3) { list.hidden = true; return; }
-      items = build(q.trim());
+    function fetchPhoton(q) {
+      if (window.AbortController) { if (ctrl) ctrl.abort(); ctrl = new AbortController(); }
+      // lat/lon bias floats nearby (San Diego) matches to the top; still US-wide.
+      var url = 'https://photon.komoot.io/api/?limit=8&lang=en&lat=32.7157&lon=-117.1611&q=' + encodeURIComponent(q);
+      return fetch(url, ctrl ? { signal: ctrl.signal } : undefined)
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          return (d.features || [])
+            .map(function (f) { return f.properties || {}; })
+            .filter(function (p) { return (p.countrycode === 'US' || !p.countrycode) && (p.street || p.name); })
+            .map(photonLabel)
+            .filter(function (v, i, a) { return v && a.indexOf(v) === i; })
+            .slice(0, 6);
+        });
+    }
+
+    /* ---- Google Places (New) — primary when a key is configured ---- */
+    var GKEY = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
+    var gReady = null;   // Promise -> places library, once loaded
+    var gToken = null;   // per-session token (Places session billing)
+    function loadGoogle() {
+      if (!GKEY) return Promise.reject();
+      if (gReady) return gReady;
+      gReady = new Promise(function (resolve, reject) {
+        if (window.google && window.google.maps && window.google.maps.importLibrary) return resolve();
+        var s = document.createElement('script');
+        s.src = 'https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(GKEY) + '&libraries=places&loading=async&v=weekly';
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      }).then(function () { return window.google.maps.importLibrary('places'); });
+      return gReady;
+    }
+    function fetchGoogle(q) {
+      return loadGoogle().then(function (places) {
+        if (!gToken) gToken = new places.AutocompleteSessionToken();
+        return places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+          input: q,
+          includedRegionCodes: ['us'],
+          sessionToken: gToken
+        }).then(function (res) {
+          return (res.suggestions || [])
+            .map(function (s) { return s.placePrediction; })
+            .filter(Boolean)
+            .map(function (p) { return (p.text && p.text.text) || ''; })
+            .filter(function (v, i, a) { return v && a.indexOf(v) === i; });
+        });
+      });
+    }
+
+    // Google when a key exists (Photon rescue on a failed keystroke); else Photon.
+    function fetchSuggestions(q) {
+      if (GKEY) return fetchGoogle(q).catch(function () { return fetchPhoton(q); });
+      return fetchPhoton(q);
+    }
+    function draw(items) {
+      if (!items.length) { list.hidden = true; return; }
       list.innerHTML = items.map(function (a, i) {
-        return '<li data-i="' + i + '">' + pin + '<span>' + a + '</span></li>';
+        return '<li data-i="' + i + '">' + pin + '<span>' + a.replace(/</g, '&lt;') + '</span></li>';
       }).join('');
-      active = -1;
-      list.hidden = false;
+      active = -1; list.hidden = false;
       [].slice.call(list.children).forEach(function (li) {
         li.addEventListener('mousedown', function (e) { e.preventDefault(); choose(li); });
       });
     }
-    function choose(li) { input.value = li.querySelector('span').textContent; list.hidden = true; }
+    function render(q) {
+      if (!q || q.trim().length < 3) { list.hidden = true; return; }
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        fetchSuggestions(q.trim()).then(draw).catch(function () { /* offline / aborted — leave list as-is */ });
+      }, 220);
+    }
+    function choose(li) { input.value = li.querySelector('span').textContent; list.hidden = true; gToken = null; /* selection ends the Places session */ }
+    input.setAttribute('autocomplete', 'off');
     input.addEventListener('input', function () { render(input.value); });
     input.addEventListener('focus', function () { if (input.value.trim().length >= 3) render(input.value); });
-    input.addEventListener('blur', function () { setTimeout(function () { list.hidden = true; }, 120); });
+    input.addEventListener('blur', function () { setTimeout(function () { list.hidden = true; }, 150); });
     input.addEventListener('keydown', function (e) {
       if (list.hidden) return;
       var lis = [].slice.call(list.children);

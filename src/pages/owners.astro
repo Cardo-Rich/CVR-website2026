@@ -3,16 +3,14 @@ import Base from '../layouts/Base.astro';
 import MarketingHeader from '../components/sections/MarketingHeader.astro';
 import Footer from '../components/sections/Footer.astro';
 import OwnerHero from '../components/owners/OwnerHero.astro';
-import Testimonials from '../components/owners/Testimonials.astro';
-import Pillars from '../components/owners/Pillars.astro';
+import ByTheNumbers from '../components/owners/ByTheNumbers.astro';
 import Partners from '../components/owners/Partners.astro';
-import AirbnbShowcase from '../components/owners/AirbnbShowcase.astro';
-import GoogleReviews from '../components/owners/GoogleReviews.astro';
-import AirbnbReviews from '../components/owners/AirbnbReviews.astro';
+import AirbnbProof from '../components/owners/AirbnbProof.astro';
+import Reviews from '../components/home/Reviews.astro';
 import Performance from '../components/owners/Performance.astro';
 import CaseStudies from '../components/owners/CaseStudies.astro';
 import Marketing from '../components/owners/Marketing.astro';
-import Care from '../components/owners/Care.astro';
+import Assurance from '../components/owners/Assurance.astro';
 import Investors from '../components/owners/Investors.astro';
 import Compare from '../components/owners/Compare.astro';
 import Team from '../components/owners/Team.astro';
@@ -23,35 +21,32 @@ import TeamModal from '../components/owners/TeamModal.astro';
 import CaseModal from '../components/owners/CaseModal.astro';
 import '../styles/home.css';
 import '../styles/owners.css';
-
-const nav = [
-  { label: 'Interior Decorating', href: '/home-designs' },
-  { label: 'Case studies', href: '/home-designs#case-studies' },
-];
-const cta = { label: 'Free estimate', href: '/owners#estimate', floating: true };
 ---
 
-<Base title="Get your home's revenue estimate | Cardo Vacation Rentals" description="Submit your San Diego home for an instant earning estimate, verified by a personal account manager. Premium care, above-market performance, and full-service marketing since 2013.">
-  <MarketingHeader {nav} {cta} />
+<Base title="Luxury Vacation Rental Management | Cardo Vacation Rentals" description="Luxury San Diego vacation rental management — a free earning estimate verified by a personal account manager, above-market revenue, and full-service marketing. 5-star Superhost since 2013.">
+  <MarketingHeader />
   <main>
     <OwnerHero />
-    <Testimonials />
-    <Pillars />
-    <Partners />
-    <AirbnbShowcase />
-    <GoogleReviews />
-    <AirbnbReviews />
     <Performance />
+    <Assurance />
     <CaseStudies />
-    <Marketing />
-    <Care />
-    <Investors />
     <Compare />
+    <Marketing />
+    <ByTheNumbers />
+    <Partners />
+    <Reviews><AirbnbProof /></Reviews>
     <Team />
     <Founder />
+    <Investors />
     <Process />
     <Faq />
   </main>
+  <a class="btn estimate-fab" data-estimate-fab href="#estimate">Schedule a consultation</a>
+  <aside class="estimate-card" data-estimate-fab>
+    <h3>Surpass the competition today</h3>
+    <p class="estimate-card__sub">Cardo-designed homes outperform their market by up to 61%</p>
+    <a href="#estimate" class="btn estimate-card__btn">Schedule a consultation</a>
+  </aside>
   <TeamModal />
   <CaseModal />
   <Footer />
@@ -61,4 +56,5 @@ const cta = { label: 'Free estimate', href: '/owners#estimate', floating: true }
   import '../scripts/owners.js';
   import '../scripts/home-interactive.js';
   import '../scripts/team-modal.js';
+  import '../scripts/guest.js';
 </script>

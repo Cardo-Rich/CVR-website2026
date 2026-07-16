@@ -4,23 +4,24 @@
   var onScroll = function(){ header && header.classList.toggle('is-scrolled', window.scrollY > 12); };
   onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
 
-  /* ----- Center "Free estimate" CTA: appears after scrolling past the hero form ----- */
+  /* ----- Floating "Get my free earning estimate" button: appears after scrolling past the hero form ----- */
   (function(){
-    var cta = document.querySelector('[data-header-cta]');
+    var ctas = [].slice.call(document.querySelectorAll('[data-estimate-fab]'));
     var form = document.getElementById('estimate');
-    if (!cta || !form) return;
+    if (!ctas.length || !form) return;
+    function toggle(on) { ctas.forEach(function(el){ el.classList.toggle('is-visible', on); }); }
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function(entries){
         entries.forEach(function(en){
           // show once the form has scrolled up out of view
           var pastForm = !en.isIntersecting && en.boundingClientRect.top < 0;
-          cta.classList.toggle('is-visible', pastForm);
+          toggle(pastForm);
         });
       }, { threshold: 0 });
       io.observe(form);
     } else {
       window.addEventListener('scroll', function(){
-        cta.classList.toggle('is-visible', form.getBoundingClientRect().bottom < 60);
+        toggle(form.getBoundingClientRect().bottom < 60);
       }, { passive: true });
     }
   })();
@@ -58,7 +59,7 @@
     var svg = document.querySelector('[data-perf-chart]');
     if(!svg) return;
     var months = ['Mar','Apr','May','Jun','Jul','Aug'];
-    var cardo  = [238,174,167,269,377,304];
+    var cardo  = [182,169,145,220,307,222];
     var market = [158,147,126,191,267,194];
     var W = 960, H = 400, pl = 56, pr = 28, pt = 24, pb = 44;
     var plotW = W - pl - pr, plotH = H - pt - pb, maxY = 400;
@@ -126,19 +127,23 @@
   var openItem = list && list.querySelector('[data-faq-item].is-open .faq__panel');
   if (openItem) openItem.style.maxHeight = openItem.scrollHeight + 'px';
 
-  /* ----- Multi-step lead form + booking ----- */
+  /* ----- Multi-step lead form: 1) book → 2) your details → 3) your property ----- */
   (function(){
     var panel = document.querySelector('[data-lead]');
     if (!panel) return;
-    var step1 = panel.querySelector('[data-lead-step="1"]');
-    var step2 = panel.querySelector('[data-lead-step="2"]');
-    var book = panel.querySelector('[data-lead-book]');
-    var back = panel.querySelector('[data-lead-back]');
+    var steps = {
+      '1': panel.querySelector('[data-lead-step="1"]'),
+      '2': panel.querySelector('[data-lead-step="2"]'),
+      '3': panel.querySelector('[data-lead-step="3"]')
+    };
+    var done = panel.querySelector('[data-lead-done]');
     var calMount = panel.querySelector('[data-leadcal]');
+    var barSteps = [].slice.call(panel.querySelectorAll('.leadbar__step'));
+    var apptBanner = panel.querySelector('[data-appt]');
+    var apptLabelEl = panel.querySelector('[data-appt-label]');
 
     // Mock lead "record" — one row that each step updates. Swap saveLead's body
-    // for a real POST/PATCH to your CRM or Firestore endpoint; it already runs
-    // on step 1, step 2, and when the appointment/early-contact box changes.
+    // for a real POST/PATCH to your CRM or Firestore endpoint.
     var lead = { id: 'lead_' + Math.random().toString(36).slice(2, 10) };
     function saveLead(patch){
       Object.assign(lead, patch || {});
@@ -147,115 +152,313 @@
       try { window.sessionStorage.setItem('cardoLead', JSON.stringify(lead)); } catch(e) {}
       return lead;
     }
-    function values(f){ var o = {}; [].slice.call(f.elements).forEach(function(el){ if (el.name) o[el.name] = el.value; }); return o; }
+    function values(f){ var o = {}; [].slice.call(f.elements).forEach(function(el){ if (el.name) o[el.name] = el.type === 'checkbox' ? el.checked : el.value; }); return o; }
+    function esc(s){ return String(s).replace(/[&<>]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;' }[c]; }); }
 
-    function show(which){
-      [step1, step2, book].forEach(function(el){ if (el) el.hidden = el !== which; });
+    function setBar(active){ // active: '1' | '2' | '3' | 'done'
+      barSteps.forEach(function(li){
+        var n = parseInt(li.getAttribute('data-bar'), 10);
+        li.classList.remove('is-active', 'is-done');
+        if (active === 'done' || n < parseInt(active, 10)) li.classList.add('is-done');
+        else if (String(n) === active) li.classList.add('is-active');
+      });
+    }
+    function show(which){ // which: '1' | '2' | '3' | 'done'
+      [steps['1'], steps['2'], steps['3'], done].forEach(function(el){ if (el) el.hidden = true; });
+      if (which === 'done') { if (done) done.hidden = false; setBar('done'); }
+      else { steps[which].hidden = false; setBar(which); }
+      // Jump to the top of the form panel (not the whole hero section), leaving
+      // room for the sticky site header.
+      var top = panel.getBoundingClientRect().top + window.scrollY - 90;
+      window.scrollTo({ top: top, behavior: 'smooth' });
     }
 
-    step1 && step1.addEventListener('submit', function(e){
-      e.preventDefault();
-      if (!step1.reportValidity()) return;
-      saveLead(values(step1));
-      show(step2);
-    });
-    back && back.addEventListener('click', function(){ show(step1); });
-
-    step2 && step2.addEventListener('submit', function(e){
-      e.preventDefault();
-      if (!step2.reportValidity()) return;
-      saveLead(values(step2));
-      show(book);
-      buildScheduler();
-      var hero = document.getElementById('estimate');
-      if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // "Add guests" disclosure
+    var addBtn = panel.querySelector('[data-addguests]');
+    var guests = panel.querySelector('[data-guests]');
+    addBtn && addBtn.addEventListener('click', function(){
+      var open = guests.hidden;
+      guests.hidden = !open;
+      addBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      addBtn.classList.toggle('is-open', open);
+      if (open) { var t = guests.querySelector('textarea'); t && t.focus(); }
     });
 
-    // OAuth: treat a click as "signed in" and jump straight to the property step.
-    [].slice.call(panel.querySelectorAll('[data-oauth]')).forEach(function(btn){
-      btn.addEventListener('click', function(){
-        saveLead({ provider: btn.getAttribute('data-oauth'), signedIn: true });
-        show(step2);
+    // "I don't have a property yet" — hide the address + amenities, keep "tell us more"
+    var noprop = panel.querySelector('[data-noprop]');
+    if (noprop) {
+      var propFields = [].slice.call(panel.querySelectorAll('[data-prop-field]'));
+      var addrInput = panel.querySelector('input[name="address"]');
+      noprop.addEventListener('change', function(){
+        var on = noprop.checked;
+        propFields.forEach(function(el){ el.style.display = on ? 'none' : ''; });
+        if (addrInput) { addrInput.required = !on; if (on) addrInput.value = ''; }
+        saveLead({ noProperty: on });
       });
+    }
+
+    // Back buttons
+    panel.querySelectorAll('[data-lead-back]').forEach(function(b){
+      b.addEventListener('click', function(){ show(b.getAttribute('data-lead-back')); });
+    });
+
+    // Step 2 (details) → confirm appointment, advance to step 3
+    steps['2'] && steps['2'].addEventListener('submit', function(e){
+      e.preventDefault();
+      if (!steps['2'].reportValidity()) return;
+      saveLead(values(steps['2']));
+      ghlBookLead(); // upsert contact + create the appointment in GHL (no-op if unconfigured)
+      if (lead.appointment && apptLabelEl) { apptLabelEl.textContent = lead.appointment; if (apptBanner) apptBanner.hidden = false; }
+      show('3');
+    });
+
+    // Step 3 (property) → full confirmation
+    steps['3'] && steps['3'].addEventListener('submit', function(e){
+      e.preventDefault();
+      if (!steps['3'].reportValidity()) return;
+      saveLead(values(steps['3']));
+      ghlNoteLead(); // attach property details to the GHL contact as a note
+      renderConfirmation();
+      show('done');
     });
 
     // Early-contact preference updates the record live.
     var early = panel.querySelector('input[name="earlyContact"]');
     early && early.addEventListener('change', function(){ saveLead({ earlyContact: early.checked }); });
 
-    /* ---- Booking calendar: real Google Calendar embed if provided, else a
-            lightweight scheduling placeholder that captures a day + time. ---- */
+    function renderConfirmation(){
+      var titleEl = panel.querySelector('[data-done-title]');
+      var apptEl = panel.querySelector('[data-done-appt]');
+      var gcalBtn = panel.querySelector('[data-done-gcal]');
+      if (titleEl && lead.firstName) titleEl.textContent = "You're all set, " + lead.firstName + '.';
+      if (apptEl && lead.appointment) {
+        apptEl.innerHTML = '<span class="leadappt__ic" aria-hidden="true">✓</span>'
+          + '<div><b>' + esc(lead.appointment) + '</b><br><span class="muted">Consultation with your Cardo account manager</span></div>';
+      }
+      if (gcalBtn) { if (lead.gcalUrl) gcalBtn.href = lead.gcalUrl; else gcalBtn.style.display = 'none'; }
+    }
+
+    // Booking is the first step — load real slots (GHL) or fall back, then render.
     var built = false;
     function buildScheduler(){
       if (built || !calMount) return;
       built = true;
-      var gcal = calMount.getAttribute('data-gcal');
-      if (gcal) {
-        var f = document.createElement('iframe');
-        f.src = gcal; f.width = '100%'; f.height = '600'; f.frameBorder = '0';
-        f.style.border = '0'; f.title = 'Book your estimate review call';
-        calMount.appendChild(f);
-        return;
-      }
-      // Placeholder scheduler — next 8 weekdays + a few time slots.
-      var days = [], d = new Date(); d.setHours(0,0,0,0);
-      while (days.length < 8) { d.setDate(d.getDate() + 1); if (d.getDay() !== 0 && d.getDay() !== 6) days.push(new Date(d)); }
+      calMount.innerHTML = '<div class="leadcal__loading muted">Loading available times…</div>';
+      loadSlots().then(renderScheduler).catch(function(){ renderScheduler(placeholderModel()); });
+    }
+    buildScheduler();
+
+    // Pull real free slots from the GHL round-robin calendar via our function.
+    function loadSlots(){
+      return fetch('/api/ghl?action=slots&days=21', { headers: { 'Accept': 'application/json' } })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (!d || !d.configured || !d.days || !d.days.length) throw new Error('ghl unavailable');
+          return { tz: d.timezone || 'America/Los_Angeles', days: d.days.map(function(day){
+            return { key: day.date, date: new Date(day.date + 'T12:00:00'), label: day.label, slots: day.slots };
+          }) };
+        });
+    }
+
+    // Offline fallback — next 8 weekdays + fixed slots (keeps the form usable).
+    function placeholderModel(){
       var times = ['9:00 AM','10:30 AM','1:00 PM','2:30 PM','4:00 PM'];
       var dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      var sel = { day: null, time: null };
+      var out = [], d = new Date(); d.setHours(0,0,0,0);
+      function toIso(day, t){ var m=t.match(/(\d+):(\d+)\s*(AM|PM)/i); var h=(parseInt(m[1],10)%12)+(/pm/i.test(m[3])?12:0); var dd=new Date(day); dd.setHours(h,parseInt(m[2],10),0,0); return dd.toISOString(); }
+      while (out.length < 8) { d.setDate(d.getDate()+1); if (d.getDay()!==0 && d.getDay()!==6) { var day=new Date(d);
+        out.push({ key: day.toDateString(), date: day, label: dn[day.getDay()]+', '+mn[day.getMonth()]+' '+day.getDate(),
+          slots: times.map(function(t){ return { iso: toIso(day, t), label: t }; }) }); } }
+      return { tz: 'America/Los_Angeles', days: out };
+    }
 
+    function renderScheduler(model){
+      var dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var sel = { day: null, slot: null };
+      calMount.innerHTML = '';
       var wrap = document.createElement('div'); wrap.className = 'leadcal__inner';
       wrap.innerHTML =
         '<div class="leadcal__label">Pick a day</div>' +
         '<div class="leadcal__days"></div>' +
         '<div class="leadcal__label">Available times</div>' +
         '<div class="leadcal__times"></div>' +
-        '<button type="button" class="btn btn-block leadcal__confirm" disabled>Select a day &amp; time</button>' +
-        '<div class="leadcal__done" hidden></div>';
+        '<button type="button" class="btn btn-block leadcal__confirm" disabled>Select a day &amp; time</button>';
       calMount.appendChild(wrap);
       var daysEl = wrap.querySelector('.leadcal__days');
       var timesEl = wrap.querySelector('.leadcal__times');
       var confirm = wrap.querySelector('.leadcal__confirm');
-      var done = wrap.querySelector('.leadcal__done');
 
       function refreshConfirm(){
-        var ok = sel.day && sel.time;
+        var ok = sel.day && sel.slot;
         confirm.disabled = !ok;
-        confirm.textContent = ok ? ('Confirm ' + dn[sel.day.getDay()] + ' ' + sel.time) : 'Select a day & time';
+        confirm.textContent = ok ? ('Continue · ' + dn[sel.day.date.getDay()] + ' ' + sel.slot.label) : 'Select a day & time';
       }
-      days.forEach(function(day){
+      function renderTimes(){
+        timesEl.innerHTML = ''; sel.slot = null;
+        if (!sel.day) return;
+        sel.day.slots.forEach(function(slot){
+          var b = document.createElement('button');
+          b.type = 'button'; b.className = 'leadcal__time'; b.textContent = slot.label;
+          b.addEventListener('click', function(){
+            sel.slot = slot;
+            [].slice.call(timesEl.children).forEach(function(x){ x.classList.toggle('is-on', x === b); });
+            refreshConfirm();
+          });
+          timesEl.appendChild(b);
+        });
+      }
+      model.days.forEach(function(day){
         var b = document.createElement('button');
         b.type = 'button'; b.className = 'leadcal__day';
-        b.innerHTML = '<span class="leadcal__dow">' + dn[day.getDay()] + '</span><span class="leadcal__num">' + day.getDate() + '</span><span class="leadcal__mon">' + mn[day.getMonth()] + '</span>';
+        b.innerHTML = '<span class="leadcal__dow">' + dn[day.date.getDay()] + '</span><span class="leadcal__num">' + day.date.getDate() + '</span><span class="leadcal__mon">' + mn[day.date.getMonth()] + '</span>';
         b.addEventListener('click', function(){
           sel.day = day;
           [].slice.call(daysEl.children).forEach(function(x){ x.classList.toggle('is-on', x === b); });
-          refreshConfirm();
+          renderTimes(); refreshConfirm();
         });
         daysEl.appendChild(b);
       });
-      times.forEach(function(t){
-        var b = document.createElement('button');
-        b.type = 'button'; b.className = 'leadcal__time'; b.textContent = t;
-        b.addEventListener('click', function(){
-          sel.time = t;
-          [].slice.call(timesEl.children).forEach(function(x){ x.classList.toggle('is-on', x === b); });
-          refreshConfirm();
-        });
-        timesEl.appendChild(b);
-      });
       confirm.addEventListener('click', function(){
-        if (!sel.day || !sel.time) return;
-        var label = dn[sel.day.getDay()] + ', ' + mn[sel.day.getMonth()] + ' ' + sel.day.getDate() + ' at ' + sel.time;
-        saveLead({ appointment: label });
-        wrap.querySelector('.leadcal__days').style.display = 'none';
-        wrap.querySelector('.leadcal__times').style.display = 'none';
-        [].slice.call(wrap.querySelectorAll('.leadcal__label')).forEach(function(l){ l.style.display = 'none'; });
-        confirm.style.display = 'none';
-        done.hidden = false;
-        done.innerHTML = '<div class="leadcal__doneic">✓</div><div><b>You’re booked for ' + label + '.</b><br>A calendar invite is on its way. See you then!</div>';
+        if (!sel.day || !sel.slot) return;
+        var label = dn[sel.day.date.getDay()] + ', ' + mn[sel.day.date.getMonth()] + ' ' + sel.day.date.getDate() + ' at ' + sel.slot.label;
+        saveLead({ appointment: label, appointmentStart: sel.slot.iso, gcalUrl: gcalFromIso(sel.slot.iso) });
+        show('2');
       });
       refreshConfirm();
+    }
+
+    function gcalFromIso(iso){
+      function pad(n){ return (n<10?'0':'')+n; }
+      var start = new Date(iso), end = new Date(start.getTime()+30*60000);
+      function stamp(dt){ return dt.getUTCFullYear()+pad(dt.getUTCMonth()+1)+pad(dt.getUTCDate())+'T'+pad(dt.getUTCHours())+pad(dt.getUTCMinutes())+'00Z'; }
+      return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+        + '&text=' + encodeURIComponent('Cardo — Earning Estimate Review')
+        + '&dates=' + stamp(start) + '/' + stamp(end)
+        + '&details=' + encodeURIComponent('Your Cardo account manager will walk you through your San Diego earning estimate.')
+        + '&location=' + encodeURIComponent('Phone call');
+    }
+
+    // ---- GHL writes (all graceful no-ops when the endpoint is unconfigured) ----
+    function ghlBookLead(){
+      try {
+        fetch('/api/ghl', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
+          action:'book', firstName: lead.firstName, lastName: lead.lastName, email: lead.email, phone: lead.phone,
+          startIso: lead.appointmentStart, guests: lead.guests, earlyContact: !!lead.earlyContact
+        })}).then(function(r){ return r.json(); }).then(function(d){
+          if (d && d.configured && d.contactId) saveLead({ contactId: d.contactId, appointmentId: d.appointmentId });
+        }).catch(function(){});
+      } catch (e) {}
+    }
+    function ghlNoteLead(){
+      if (!lead.contactId) return;
+      var text = [ lead.noProperty ? 'No property yet.' : ('Property: ' + (lead.address || '')),
+        lead.amenities ? ('Amenities: ' + lead.amenities) : '',
+        lead.details ? ('Notes: ' + lead.details) : '' ].filter(Boolean).join('\n');
+      try {
+        fetch('/api/ghl', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'note', contactId: lead.contactId, text: text }) }).catch(function(){});
+      } catch (e) {}
+    }
+  })();
+
+  /* ----- CMS hydration: case studies + review counts/cards from /api/content.
+          The baked-in static markup is the fallback when the endpoint is
+          missing (e.g. preview channels, functions not yet deployed). ----- */
+  (function(){
+    fetch('/api/content', { headers: { 'Accept': 'application/json' } })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if (!d) return;
+        try { hydrateReviews(d.reviews || {}); } catch (e) {}
+        try { hydrateCases(d.caseStudies || []); } catch (e) {}
+      })
+      .catch(function(){ /* offline or unconfigured — static fallback stands */ });
+
+    function num(n){ return (typeof n === 'number' && isFinite(n) && n > 0) ? n : null; }
+    function fmtCount(n){ return n.toLocaleString('en-US') + '+'; }
+    function setText(sel, text){ document.querySelectorAll(sel).forEach(function(el){ el.textContent = text; }); }
+
+    function hydrateReviews(rv){
+      var g = rv.google || {}, a = rv.airbnb || {};
+      if (num(g.rating)) setText('[data-ct="g-rating"]', String(g.rating));
+      if (num(g.count)) setText('[data-ct="g-count"]', fmtCount(num(g.count)) + ' reviews');
+      if (num(a.rating)) setText('[data-ct="a-rating"]', String(a.rating));
+      if (num(a.count)) {
+        setText('[data-ct="a-count"]', 'Guest-favorite · ' + fmtCount(num(a.count)) + ' reviews');
+        setText('[data-ct="a-chip"]', fmtCount(num(a.count)) + ' five-star reviews on Airbnb alone');
+        // By the Numbers "5-star reviews" cell
+        document.querySelectorAll('.bnum__cell').forEach(function(cell){
+          var k = cell.querySelector('.bnum__k');
+          if (k && /5-star reviews/i.test(k.textContent)) {
+            var v = cell.querySelector('.bnum__val'); if (v) v.textContent = fmtCount(num(a.count));
+          }
+        });
+      }
+      // Review cards — rewrite the visible cards' name/meta/text in place.
+      (g.reviews || []).slice(0, 8).forEach(function(card, i){
+        var el = document.querySelectorAll('.greview')[i];
+        if (!el || !card.text) return;
+        var name = el.querySelector('.greview__name'); if (name) name.childNodes[0].nodeValue = card.name + ' ';
+        var time = el.querySelector('.greview__time'); if (time) time.textContent = card.meta || 'Guest';
+        var text = el.querySelector('.greview__text'); if (text) text.textContent = card.text;
+        var stars = el.querySelector('.greview__stars'); if (stars) stars.textContent = '★★★★★'.slice(0, card.stars || 5);
+      });
+      (a.reviews || []).slice(0, 8).forEach(function(card, i){
+        var el = document.querySelectorAll('.abnb__card')[i];
+        if (!el || !card.text) return;
+        var name = el.querySelector('.abnb__name'); if (name) name.textContent = card.name;
+        var meta = el.querySelector('.abnb__meta'); if (meta) meta.textContent = card.meta || '';
+        var text = el.querySelector('.abnb__text'); if (text) text.textContent = card.text;
+        var stars = el.querySelector('.abnb__stars'); if (stars) stars.textContent = '★★★★★'.slice(0, card.stars || 5);
+      });
+    }
+
+    // Rebuild the owners-page grid from the CMS library: cases can be added,
+    // removed, and toggled ("featured") entirely from the CMS. The static six
+    // remain the fallback when the endpoint is unavailable.
+    function hydrateCases(items){
+      var grid = document.querySelector('[data-cases]');
+      if (!grid || !Array.isArray(items) || !items.length) return;
+      // Keep the original images for known ids (CMS img field overrides).
+      var knownImgs = {};
+      grid.querySelectorAll('.gcase[data-case]').forEach(function(card){
+        var img = card.querySelector('.gcase__media img');
+        if (img) knownImgs[card.getAttribute('data-case')] = img.getAttribute('src');
+      });
+      var featured = items.filter(function(cs){ return cs && cs.id && cs.featured !== false; });
+      if (!featured.length) return; // never blank the section
+      var arrow = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+      grid.innerHTML = '';
+      featured.forEach(function(cs){
+        var card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'gcase reveal is-in';
+        card.setAttribute('data-case', cs.id);
+        if (cs.blurb) card.setAttribute('data-blurb', cs.blurb);
+        var media = document.createElement('div'); media.className = 'gcase__media';
+        var img = document.createElement('img');
+        img.src = cs.img || knownImgs[cs.id] || '/assets/photos/designs-pool.jpg';
+        img.alt = cs.name; img.loading = 'lazy';
+        media.appendChild(img);
+        if (cs.beds) { var beds = document.createElement('span'); beds.className = 'gcase__beds'; beds.textContent = cs.beds; media.appendChild(beds); }
+        var body = document.createElement('div'); body.className = 'gcase__body';
+        function div(cls, text, tag){ var el = document.createElement(tag || 'div'); el.className = cls; el.textContent = text || ''; return el; }
+        body.appendChild(div('gcase__hood', cs.hood));
+        body.appendChild(div('gcase__home', cs.name, 'h3'));
+        body.appendChild(div('gcase__hook', cs.hook, 'p'));
+        var rev = document.createElement('div'); rev.className = 'gcase__rev';
+        rev.appendChild(document.createTextNode((cs.revenue || '') + ' '));
+        var small = document.createElement('small'); small.textContent = 'annual revenue'; rev.appendChild(small);
+        body.appendChild(rev);
+        var sub = document.createElement('div'); sub.className = 'gcase__sub';
+        sub.appendChild(document.createTextNode((cs.nightly || '') + (cs.lift ? ' · ' : '')));
+        if (cs.lift) { var lift = document.createElement('span'); lift.className = 'lift'; lift.textContent = cs.lift; sub.appendChild(lift); }
+        body.appendChild(sub);
+        var cta = document.createElement('span'); cta.className = 'gcase__cta';
+        cta.innerHTML = 'Preview project ' + arrow;
+        body.appendChild(cta);
+        card.appendChild(media); card.appendChild(body);
+        grid.appendChild(card);
+      });
     }
   })();
 

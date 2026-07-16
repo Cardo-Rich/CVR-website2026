@@ -736,12 +736,15 @@ video.ghero__bg { pointer-events: none; }
 .partners__inner { max-width: var(--container); margin: 0 auto; padding: 28px 24px; display: flex; align-items: center; justify-content: center; gap: 22px 48px; flex-wrap: wrap; }
 .partners__label { font-size: .74rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .pmark { display: inline-flex; align-items: center; }
-.pmark img { height: 52px; width: auto; max-width: 160px; object-fit: contain; display: block; }
-.pmark--logo img { height: 30px; }
-.pmark--word { font-weight: 800; font-size: 1.7rem; letter-spacing: -.02em; }
+.pmark img { height: 88px; width: auto; max-width: 272px; object-fit: contain; display: block; }
+.pmark--logo img { height: 51px; }
+.pmark--word { font-weight: 800; font-size: 2.9rem; letter-spacing: -.02em; }
 .pmark--zillow { color: #1277E1; }
 .pmark--hopper { color: #FA4D5E; }
-@media (max-width: 620px) { .partners__inner { gap: 18px 32px; } .pmark img { height: 42px; } .pmark--logo img { height: 24px; } .pmark--word { font-size: 1.4rem; } }
+.pmark--rev { gap: 8px; font-weight: 600; font-size: 1rem; color: var(--ink-soft); }
+.pmark--rev svg { flex: none; display: block; }
+.pmark--rev b { font-weight: 700; color: var(--ink); }
+@media (max-width: 620px) { .partners__inner { gap: 18px 32px; } .pmark img { height: 66px; } .pmark--logo img { height: 40px; } .pmark--word { font-size: 2.2rem; } }
 
 /* ====================================================================
    OWNER — "What comes standard" — dark, squared, confident (no pink)
