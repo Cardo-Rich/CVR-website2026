@@ -38,6 +38,7 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Attrs = {}, ki
   return n;
 }
 const PENCIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+const DOTS = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>';
 const PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
 const TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>';
 
@@ -114,24 +115,51 @@ let barStatus: HTMLElement;
 function buildToolbar() {
   if (document.querySelector('.cadm-bar')) return;
   document.body.classList.add('cadm-has-bar');
-  barStatus = el('span', { class: 'cadm-bar__pill' });
+  barStatus = el('span', { class: 'cadm-bar__status' });
   const bar = el('div', { class: 'cadm-bar' }, [
-    el('span', { class: 'cadm-bar__logo' }, [el('span', { class: 'cadm-bar__dot' }), 'Cardo admin']),
+    el('span', { class: 'cadm-bar__dot', title: 'Cardo admin' }),
     barStatus,
-    el('span', { class: 'cadm-bar__spacer' }),
-    el('button', { class: 'cadm-btn cadm-btn--ghost', onclick: onDiscard }, ['Discard']),
     el('button', { class: 'cadm-btn cadm-btn--solid', id: 'cadm-publish', onclick: onPublish }, ['Publish']),
-    el('button', { class: 'cadm-btn', onclick: async () => { try { localStorage.removeItem(ADMIN_FLAG); } catch { /* */ } await logout(); location.href = location.pathname; } }, ['Sign out']),
+    buildOverflowMenu(),
   ]);
   document.body.append(bar);
   requestAnimationFrame(() => bar.classList.add('is-in'));
+  // Push the page down by the bar's real height so it never covers the header,
+  // and keep it correct across rotation / resize / font reflow.
+  const sync = () => { document.body.style.paddingTop = bar.offsetHeight + 'px'; };
+  sync();
+  requestAnimationFrame(sync);
+  window.addEventListener('resize', sync);
+  if ('ResizeObserver' in window) new ResizeObserver(sync).observe(bar);
   refreshStatus();
 }
+
+// ⋮ menu for the less-frequent actions, keeping the bar uncluttered on mobile.
+function buildOverflowMenu(): HTMLElement {
+  const wrap = el('div', { class: 'cadm-menu' });
+  const close = () => wrap.classList.remove('is-open');
+  const btn = el('button', {
+    class: 'cadm-btn cadm-menu__btn', 'aria-label': 'More actions', 'aria-haspopup': 'true', html: DOTS,
+    onclick: (e: Event) => { e.stopPropagation(); wrap.classList.toggle('is-open'); },
+  });
+  const list = el('div', { class: 'cadm-menu__list' }, [
+    el('button', { class: 'cadm-menu__item', onclick: () => { close(); onDiscard(); } }, ['Discard changes']),
+    el('button', { class: 'cadm-menu__item cadm-menu__item--danger', onclick: async () => {
+      close();
+      try { localStorage.removeItem(ADMIN_FLAG); } catch { /* */ }
+      await logout(); location.href = location.pathname;
+    } }, ['Sign out']),
+  ]);
+  document.addEventListener('click', close);
+  wrap.append(btn, list);
+  return wrap;
+}
+
 function setDirty(v: boolean) { dirty = v; refreshStatus(); }
 function refreshStatus() {
   if (!barStatus) return;
   barStatus.textContent = dirty ? 'Draft changes pending' : 'All changes published';
-  barStatus.className = 'cadm-bar__pill ' + (dirty ? 'is-draft' : 'is-clean');
+  barStatus.classList.toggle('is-draft', dirty);
   const pub = document.getElementById('cadm-publish') as HTMLButtonElement | null;
   if (pub) pub.disabled = !dirty;
 }
