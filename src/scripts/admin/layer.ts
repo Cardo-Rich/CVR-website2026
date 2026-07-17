@@ -11,13 +11,17 @@
 
    Layout is never editable — only content. */
 import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle } from './cms';
-import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard } from './cms';
+import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem } from './cms';
 import '../../styles/admin.css';
-// Shared owners-page renderers (published path uses the same module).
+// Shared renderers (the published path uses the same module).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 import * as Hydrate from '../content-hydrate.js';
 
-const H = Hydrate as { hydrateReviews: (r: unknown) => void; hydrateCases: (i: unknown[]) => void };
+const H = Hydrate as {
+  hydrateReviews: (r: unknown) => void;
+  hydrateCases: (i: unknown[]) => void;
+  hydrateFeaturedHomes: (i: unknown[]) => void;
+};
 
 // ---------- tiny DOM helper ----------
 type Attrs = Record<string, string | number | boolean | ((e: Event) => void)>;
@@ -99,8 +103,10 @@ function applyDraftToPage() {
   if (!content) return;
   try { H.hydrateReviews(content.reviews || {}); } catch { /* not on this page */ }
   try { H.hydrateCases(content.caseStudies || []); } catch { /* not on this page */ }
-  // re-attach per-card controls after the grid is rebuilt
+  try { H.hydrateFeaturedHomes(content.featuredHomes || []); } catch { /* not on this page */ }
+  // re-attach per-card controls after grids are rebuilt
   decorateCaseCards();
+  decorateFeaturedCards();
 }
 
 // ============================================================ toolbar
@@ -148,7 +154,7 @@ async function onDiscard() {
 }
 
 // persist current `content` as a draft patch
-async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean> }) {
+async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[] }) {
   await saveContent(patch);
   setDirty(true);
 }
@@ -205,7 +211,13 @@ function buildEditors() {
     const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'case-studies');
     bar.append(editChip('Add case', () => openCaseModal(null)));
   });
+  // Featured homes carousel → Add chip + Edit/Delete on each card
+  document.querySelectorAll<HTMLElement>('[data-cms="featured-homes"]').forEach((sec) => {
+    const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'featured-homes');
+    bar.append(editChip('Add home', () => openFeaturedModal(null)));
+  });
   decorateCaseCards();
+  decorateFeaturedCards();
 }
 function editChip(label: string, onClick: () => void): HTMLElement {
   return el('button', { class: 'cadm-chip', onclick: onClick, html: PENCIL + '<span>' + label + '</span>' });
@@ -231,6 +243,66 @@ async function deleteCase(id: string) {
   content.caseStudies = content.caseStudies.filter((c) => c.id !== id);
   try { await persist({ caseStudies: content.caseStudies }); applyDraftToPage(); toast('Case deleted (draft).'); }
   catch (e) { toast((e as Error).message, true); }
+}
+
+// ---------- featured homes ----------
+function decorateFeaturedCards() {
+  const track = document.querySelector('[data-fh-track]');
+  if (!track || !content) return;
+  track.querySelectorAll<HTMLElement>('.scard[data-fh-id]').forEach((card) => {
+    if (card.querySelector('.cadm-edit-fab')) return;
+    card.classList.add('cadm-hoverable');
+    const id = card.getAttribute('data-fh-id')!;
+    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this home', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openFeaturedModal(id); } });
+    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:56px', title: 'Delete this home', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteFeatured(id); } });
+    card.append(delBtn, editBtn);
+  });
+}
+
+async function deleteFeatured(id: string) {
+  if (!content) return;
+  const h = content.featuredHomes.find((x) => x.id === id);
+  if (!confirm(`Remove “${h?.name || id}” from Homes we love? Applies on publish.`)) return;
+  content.featuredHomes = content.featuredHomes.filter((x) => x.id !== id);
+  try { await persist({ featuredHomes: content.featuredHomes }); applyDraftToPage(); toast('Home removed (draft).'); }
+  catch (e) { toast((e as Error).message, true); }
+}
+
+function openFeaturedModal(id: string | null) {
+  if (!content) return;
+  const existing = id ? content.featuredHomes.find((x) => x.id === id) : null;
+  const h: FeaturedHomeItem = existing ? { ...existing } : { id: '', name: '', neighborhood: '', beds: '', baths: '', guests: '', photo: '', bookingUrl: '', premier: false, featured: true };
+  const f = {
+    name: field('Name', h.name), hood: field('Neighborhood', h.neighborhood),
+    beds: field('Beds (e.g. 4 bedrooms)', h.beds), baths: field('Baths (e.g. 3 bathrooms)', h.baths), guests: field('Guests (e.g. 8 guests)', h.guests),
+    photo: field('Photo URL', h.photo, { wide: true }),
+    booking: field('Booking page URL (where the card links)', h.bookingUrl, { wide: true }),
+  };
+  const prem = el('input', { type: 'checkbox' }) as HTMLInputElement; prem.checked = h.premier === true;
+  const premWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['“Premier” ribbon']), prem]);
+  const feat = el('input', { type: 'checkbox' }) as HTMLInputElement; feat.checked = h.featured !== false;
+  const featWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['Show on home page']), feat]);
+  const preview = el('img', { style: 'max-width:100%;border-radius:10px;margin-top:6px;display:' + (h.photo ? 'block' : 'none') }) as HTMLImageElement;
+  if (h.photo) preview.src = h.photo;
+  f.photo.wrap.querySelector('input')!.addEventListener('input', (e) => {
+    const v = (e.target as HTMLInputElement).value; preview.src = v; preview.style.display = v ? 'block' : 'none';
+  });
+  modal(existing ? `Edit home — ${h.name}` : 'New featured home', [
+    el('div', { class: 'cadm-grid2' }, [f.name.wrap, f.hood.wrap, f.beds.wrap, f.baths.wrap, f.guests.wrap]),
+    f.photo.wrap, preview, f.booking.wrap,
+    el('div', { class: 'cadm-grid2' }, [premWrap, featWrap]),
+  ], async () => {
+    h.name = f.name.get(); h.neighborhood = f.hood.get(); h.beds = f.beds.get(); h.baths = f.baths.get(); h.guests = f.guests.get();
+    h.photo = f.photo.get(); h.bookingUrl = f.booking.get(); h.premier = prem.checked; h.featured = feat.checked;
+    if (!h.name.trim()) throw new Error('Name is required.');
+    if (!h.id) h.id = slugify(h.name);
+    const list = content!.featuredHomes.slice();
+    const idx = list.findIndex((x) => x.id === h.id);
+    if (idx >= 0) list[idx] = h; else list.push(h);
+    content!.featuredHomes = list;
+    await persist({ featuredHomes: list });
+    applyDraftToPage();
+  });
 }
 
 // ---------- modal framework ----------

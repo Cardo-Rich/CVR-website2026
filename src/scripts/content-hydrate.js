@@ -39,6 +39,45 @@ export function hydrateReviews(rv) {
   });
 }
 
+// Rebuild the home-page "Homes we love" carousel from CMS featured homes.
+// Each card links to its booking-site URL. Static seed cards remain the
+// fallback when the endpoint is unavailable or empty.
+const PREMIER_SVG = 'M12 1.6l2.1 6.4 6.7.2-5.3 4.1 1.9 6.5L12 15.6l-5.4 3.8 1.9-6.5-5.3-4.1 6.7-.2z';
+export function hydrateFeaturedHomes(items) {
+  var track = document.querySelector('[data-fh-track]');
+  if (!track || !Array.isArray(items)) return;
+  var shown = items.filter(function (h) { return h && h.name && h.featured !== false; });
+  if (!shown.length) return;
+  track.innerHTML = '';
+  shown.forEach(function (h) {
+    var a = document.createElement('a');
+    a.className = 'scard';
+    a.href = h.bookingUrl || '#';
+    a.setAttribute('data-fh-id', h.id || '');
+    if (/^https?:/i.test(h.bookingUrl || '')) { a.target = '_blank'; a.rel = 'noopener'; }
+    var img = document.createElement('img');
+    img.src = h.photo || ''; img.alt = h.name + (h.neighborhood ? ' in ' + h.neighborhood : ''); img.loading = 'lazy';
+    a.appendChild(img);
+    if (h.premier) {
+      var pr = document.createElement('span'); pr.className = 'scard__premier';
+      pr.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + PREMIER_SVG + '"/></svg>Premier';
+      a.appendChild(pr);
+    }
+    var scrim = document.createElement('div'); scrim.className = 'scard__scrim'; a.appendChild(scrim);
+    var body = document.createElement('div'); body.className = 'scard__body';
+    var nm = document.createElement('h3'); nm.className = 'scard__name'; nm.textContent = h.name; body.appendChild(nm);
+    var loc = document.createElement('p'); loc.className = 'scard__loc'; loc.textContent = h.neighborhood || ''; body.appendChild(loc);
+    var specs = document.createElement('div'); specs.className = 'scard__specs';
+    [h.beds, h.baths, h.guests].filter(Boolean).forEach(function (s, i) {
+      if (i) specs.appendChild(document.createElement('i'));
+      var sp = document.createElement('span'); sp.textContent = s; specs.appendChild(sp);
+    });
+    body.appendChild(specs);
+    a.appendChild(body);
+    track.appendChild(a);
+  });
+}
+
 // Rebuild the owners-page grid from the CMS library (featured cases only). The
 // static six remain the fallback when the endpoint is unavailable.
 export function hydrateCases(items) {

@@ -26,13 +26,17 @@ export interface CaseStudyItem {
   revenue: string; nightly: string; lift: string; img?: string;
   featured?: boolean; blurb?: string;
 }
+export interface FeaturedHomeItem {
+  id: string; name: string; neighborhood: string; beds: string; baths: string;
+  guests: string; photo: string; bookingUrl: string; premier?: boolean; featured?: boolean;
+}
 export interface ReviewCard { name: string; meta: string; stars: number; text: string }
 export interface ReviewsDoc {
   google: { placeId?: string; rating?: number | null; count?: number | null; minStars?: number; reviews?: ReviewCard[]; syncedAt?: string | null };
   airbnb: { rating?: number | null; count?: number | null; reviews?: ReviewCard[] };
 }
 export type SectionsMap = Record<string, boolean>;
-export interface SiteContent { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap; hasDraft?: boolean; draftDocs?: string[] }
+export interface SiteContent { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap; featuredHomes: FeaturedHomeItem[]; hasDraft?: boolean; draftDocs?: string[] }
 
 export function watchAdmin(cb: (isAdmin: boolean, user: User | null) => void): void {
   onAuthStateChanged(auth, async (user) => {
@@ -48,7 +52,7 @@ export async function login(): Promise<void> { await signInWithPopup(auth, provi
 export async function logout(): Promise<void> { await signOut(auth); }
 
 export const getContent = () => httpsCallable<unknown, SiteContent>(functions, 'adminContentGet')().then((r) => r.data);
-export const saveContent = (patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: SectionsMap }) =>
+export const saveContent = (patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: SectionsMap; featuredHomes?: FeaturedHomeItem[] }) =>
   httpsCallable<typeof patch, { ok: true }>(functions, 'adminContentSet')(patch).then((r) => r.data);
 export const publishDrafts = () => httpsCallable<unknown, { published: string[]; rebuild: string }>(functions, 'adminPublish')().then((r) => r.data);
 export const discardDrafts = () => httpsCallable<unknown, { discarded: string[] }>(functions, 'adminDiscardDraft')().then((r) => r.data);
