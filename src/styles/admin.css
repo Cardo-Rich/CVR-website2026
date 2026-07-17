@@ -1,0 +1,140 @@
+/* Inline admin layer — only ever rendered for signed-in admins. Purple is the
+   "this is an admin control" signal throughout. Everything is prefixed .cadm-
+   and injected at the end of <body>, so it never collides with site styles. */
+:root {
+  --cadm-purple: #7c3aed;
+  --cadm-purple-dark: #6d28d9;
+  --cadm-purple-soft: #ede9fe;
+  --cadm-ink: #1e1b2e;
+  --cadm-line: #e5e0f5;
+}
+
+/* ---- top toolbar ---- */
+.cadm-bar {
+  position: fixed; inset: 0 0 auto 0; z-index: 2147483000;
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 14px; font: 500 14px/1.3 system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #fff; background: linear-gradient(90deg, var(--cadm-purple-dark), var(--cadm-purple));
+  box-shadow: 0 2px 10px rgba(76, 29, 149, .35);
+  transform: translateY(-100%); transition: transform .25s ease;
+}
+.cadm-bar.is-in { transform: translateY(0); }
+body.cadm-has-bar { --cadm-bar-h: 46px; }
+body.cadm-has-bar { scroll-padding-top: calc(var(--cadm-bar-h, 46px) + 8px); }
+.cadm-bar__logo { font-weight: 700; letter-spacing: .02em; display: inline-flex; align-items: center; gap: 7px; }
+.cadm-bar__dot { width: 9px; height: 9px; border-radius: 50%; background: #c4b5fd; box-shadow: 0 0 0 3px rgba(196,181,253,.25); }
+.cadm-bar__status { opacity: .95; }
+.cadm-bar__status b { font-weight: 700; }
+.cadm-bar__spacer { flex: 1; }
+.cadm-bar__pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700;
+  background: rgba(255,255,255,.16);
+}
+.cadm-bar__pill.is-draft { background: #fde68a; color: #78350f; }
+.cadm-bar__pill.is-clean { background: rgba(255,255,255,.16); color: #fff; }
+.cadm-btn {
+  appearance: none; border: 0; cursor: pointer; border-radius: 8px;
+  padding: 7px 13px; font: inherit; font-weight: 600; color: #fff;
+  background: rgba(255,255,255,.16); transition: background .15s ease, opacity .15s ease;
+}
+.cadm-btn:hover { background: rgba(255,255,255,.28); }
+.cadm-btn--solid { background: #fff; color: var(--cadm-purple-dark); }
+.cadm-btn--solid:hover { background: #f5f3ff; }
+.cadm-btn--solid:disabled { opacity: .5; cursor: default; }
+.cadm-btn--ghost { background: transparent; box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); }
+
+/* push the page down so the fixed bar doesn't cover the header */
+body.cadm-has-bar { padding-top: var(--cadm-bar-h, 46px); }
+
+/* ---- per-section controls ---- */
+[data-section].cadm-editable, [data-cms].cadm-editable { position: relative; outline: 1.5px dashed var(--cadm-line); outline-offset: 4px; }
+[data-section].cadm-editable:hover, [data-cms].cadm-editable:hover { outline-color: var(--cadm-purple); }
+.cadm-secbar {
+  position: absolute; top: 8px; right: 8px; z-index: 40;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 7px; border-radius: 10px;
+  background: var(--cadm-purple); color: #fff;
+  box-shadow: 0 4px 14px rgba(76,29,149,.35);
+  font: 600 12.5px/1 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.cadm-secbar__label { padding: 0 4px; opacity: .9; text-transform: uppercase; letter-spacing: .05em; font-size: 10.5px; }
+.cadm-chip {
+  appearance: none; border: 0; cursor: pointer; color: #fff; background: rgba(255,255,255,.18);
+  border-radius: 7px; padding: 5px 9px; font: inherit; display: inline-flex; align-items: center; gap: 5px;
+}
+.cadm-chip:hover { background: rgba(255,255,255,.32); }
+.cadm-chip svg { width: 13px; height: 13px; }
+
+/* section switched OFF: dim + label, admins only (public never renders it) */
+[data-section].cadm-off { position: relative; }
+[data-section].cadm-off > *:not(.cadm-secbar):not(.cadm-off-flag) { opacity: .4; filter: grayscale(.4); }
+.cadm-off-flag {
+  position: absolute; top: 8px; left: 8px; z-index: 40;
+  background: #b91c1c; color: #fff; border-radius: 999px;
+  padding: 4px 11px; font: 700 11.5px/1 system-ui, sans-serif; letter-spacing: .04em; text-transform: uppercase;
+}
+
+/* toggle switch */
+.cadm-switch { position: relative; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+.cadm-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.cadm-switch__track { width: 34px; height: 19px; border-radius: 999px; background: rgba(255,255,255,.3); transition: background .15s ease; position: relative; }
+.cadm-switch__track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 15px; height: 15px; border-radius: 50%; background: #fff; transition: transform .15s ease; }
+.cadm-switch input:checked + .cadm-switch__track { background: #34d399; }
+.cadm-switch input:checked + .cadm-switch__track::after { transform: translateX(15px); }
+
+/* edit pencil floating on an editable item (e.g. a card / photo) */
+.cadm-edit-fab {
+  position: absolute; z-index: 30; top: 10px; right: 10px;
+  display: inline-flex; align-items: center; gap: 5px;
+  appearance: none; border: 0; cursor: pointer;
+  background: var(--cadm-purple); color: #fff; border-radius: 9px; padding: 6px 9px;
+  font: 600 12px/1 system-ui, sans-serif; box-shadow: 0 4px 12px rgba(76,29,149,.4);
+  opacity: 0; transform: translateY(-4px); transition: opacity .15s ease, transform .15s ease;
+}
+.cadm-hoverable { position: relative; }
+.cadm-hoverable:hover .cadm-edit-fab, .cadm-edit-fab:focus-visible { opacity: 1; transform: translateY(0); }
+.cadm-edit-fab svg { width: 13px; height: 13px; }
+.cadm-edit-fab--del { background: #b91c1c; }
+
+/* ---- modal ---- */
+.cadm-modal-scrim { position: fixed; inset: 0; z-index: 2147483001; background: rgba(30,27,46,.55); display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow: auto; }
+.cadm-modal {
+  width: min(640px, 100%); background: #fff; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 24px 70px rgba(30,27,46,.4); font: 400 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--cadm-ink);
+}
+.cadm-modal__head { display: flex; align-items: center; gap: 10px; padding: 16px 20px; background: var(--cadm-purple-soft); border-bottom: 1px solid var(--cadm-line); }
+.cadm-modal__head h3 { margin: 0; font-size: 16px; font-weight: 700; color: var(--cadm-purple-dark); }
+.cadm-modal__body { padding: 18px 20px; max-height: 62vh; overflow: auto; }
+.cadm-modal__foot { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-top: 1px solid var(--cadm-line); background: #faf9ff; }
+.cadm-modal__foot .cadm-spacer { flex: 1; }
+.cadm-field { display: block; margin-bottom: 13px; }
+.cadm-field > span { display: block; font-weight: 600; font-size: 12.5px; margin-bottom: 4px; color: #4b4563; }
+.cadm-field input, .cadm-field textarea, .cadm-field select {
+  width: 100%; box-sizing: border-box; border: 1px solid var(--cadm-line); border-radius: 9px;
+  padding: 9px 11px; font: inherit; color: var(--cadm-ink); background: #fff;
+}
+.cadm-field input:focus, .cadm-field textarea:focus, .cadm-field select:focus { outline: 2px solid var(--cadm-purple); border-color: transparent; }
+.cadm-field textarea { min-height: 78px; resize: vertical; }
+.cadm-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+@media (max-width: 520px) { .cadm-grid2 { grid-template-columns: 1fr; } }
+.cadm-mbtn { appearance: none; border: 0; cursor: pointer; border-radius: 9px; padding: 9px 16px; font: 600 14px/1 system-ui, sans-serif; }
+.cadm-mbtn--primary { background: var(--cadm-purple); color: #fff; }
+.cadm-mbtn--primary:hover { background: var(--cadm-purple-dark); }
+.cadm-mbtn--ghost { background: #fff; color: #4b4563; box-shadow: inset 0 0 0 1px var(--cadm-line); }
+.cadm-mbtn:disabled { opacity: .5; cursor: default; }
+.cadm-note { font-size: 12.5px; color: #6b6483; }
+.cadm-err { color: #b91c1c; font-size: 13px; margin: 4px 0 0; }
+.cadm-subhead { font-weight: 700; font-size: 13px; margin: 18px 0 8px; color: var(--cadm-purple-dark); border-top: 1px solid var(--cadm-line); padding-top: 14px; }
+.cadm-card-row { border: 1px solid var(--cadm-line); border-radius: 11px; padding: 12px; margin-bottom: 10px; position: relative; }
+
+/* toast */
+.cadm-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px); z-index: 2147483002; background: var(--cadm-ink); color: #fff; padding: 11px 18px; border-radius: 11px; font: 500 13.5px/1.4 system-ui, sans-serif; box-shadow: 0 12px 40px rgba(0,0,0,.3); opacity: 0; transition: opacity .2s ease, transform .2s ease; max-width: 90vw; }
+.cadm-toast.is-in { opacity: 1; transform: translateX(-50%) translateY(0); }
+.cadm-toast.is-err { background: #b91c1c; }
+
+/* login affordance for first sign-in from a public page (#admin) */
+.cadm-login-scrim { position: fixed; inset: 0; z-index: 2147483001; background: rgba(30,27,46,.5); display: flex; align-items: center; justify-content: center; }
+.cadm-login { background: #fff; border-radius: 16px; padding: 26px 26px 22px; width: min(360px, 92vw); text-align: center; box-shadow: 0 24px 70px rgba(30,27,46,.4); font-family: system-ui, sans-serif; }
+.cadm-login h3 { margin: 0 0 6px; color: var(--cadm-purple-dark); }
+.cadm-login p { margin: 0 0 18px; color: #6b6483; font-size: 14px; }

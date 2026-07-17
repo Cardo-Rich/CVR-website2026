@@ -23,3 +23,4 @@
 .ct-check { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; }
 .ct-check input { width: 17px; height: 17px; accent-color: #0e111b; cursor: pointer; }
 @media (max-width: 760px) { .ct-grid { grid-template-columns: 1fr; } }
+.ct-draft-badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; background: #fde68a; color: #78350f; font-weight: 700; font-size: 0.78rem; }

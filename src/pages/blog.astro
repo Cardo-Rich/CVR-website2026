@@ -140,6 +140,8 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
     fetch('/api/content', { headers: { Accept: 'application/json' } })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) {
+        // CMS section switch: case studies hidden site-wide → keep the library hidden too.
+        if (d && d.sections && d.sections['case-studies'] === false) return;
         var items = (d && d.caseStudies) || [];
         if (!items.length) return;
         items.forEach(function (cs) {

@@ -10,7 +10,7 @@ import {
 } from './actions.js';
 import { resolveAdmin } from './claims.js';
 import { getSlots, book as ghlBook, addNote as ghlAddNote, type GhlConfig } from './ghl.js';
-import { getContent, setCaseStudies, setReviews, syncGoogleReviews } from './siteContent.js';
+import { getContent, getContentForAdmin, setCaseStudies, setReviews, setSections, publishDrafts, discardDrafts, syncGoogleReviews } from './siteContent.js';
 import type { AgreementDoc } from './types.js';
 
 const RESEND_API_KEY = defineSecret('RESEND_API_KEY');
@@ -111,6 +111,11 @@ export const ghl = onRequest({ secrets: [GHL_API_TOKEN], cors: false }, async (r
 
 // ---- Site content: public read + admin CMS write + Google reviews sync ----
 const GOOGLE_PLACES_API_KEY = defineSecret('GOOGLE_PLACES_API_KEY');
+// Optional: a fine-grained GitHub PAT (actions:write) so "Publish" can trigger
+// a site rebuild. Left as the "unset" placeholder → publish still works, it
+// just doesn't kick a rebuild (hydrated sections update live regardless).
+const GITHUB_DISPATCH_TOKEN = defineSecret('GITHUB_DISPATCH_TOKEN');
+const GITHUB_REPO = defineString('GITHUB_REPO', { default: 'Cardo-Rich/CVR-website2026' });
 
 // GET /api/content → { caseStudies, reviews }. CDN-cached; the static site
 // hydrates from this and falls back to its baked-in copy when unavailable.
@@ -127,15 +132,50 @@ export const content = onRequest({ cors: false }, async (req, res) => {
   }
 });
 
+// Admin reads draft-over-published so inline editing previews unpublished work.
 export const adminContentGet = onCall(async (req) => {
   requireAdmin(req.auth);
-  return getContent(getDb());
+  return getContentForAdmin(getDb());
 });
+// Inline edits are saved as DRAFT; nothing reaches the public site until publish.
 export const adminContentSet = onCall(async (req) => {
   requireAdmin(req.auth);
   if (req.data?.caseStudies) await setCaseStudies(getDb(), req.data.caseStudies);
   if (req.data?.reviews) await setReviews(getDb(), req.data.reviews);
+  if (req.data?.sections) await setSections(getDb(), req.data.sections);
   return { ok: true };
+});
+// Promote all pending drafts to published, then (optionally) kick a site
+// rebuild so the static HTML re-bakes the new content for SEO. The rebuild is
+// best-effort: publishing to the live /api/content already makes hydrated
+// sections update immediately, with or without a rebuild.
+export const adminPublish = onCall({ secrets: [GITHUB_DISPATCH_TOKEN] }, async (req) => {
+  requireAdmin(req.auth);
+  const result = await publishDrafts(getDb());
+  let rebuild: 'triggered' | 'skipped' | 'failed' = 'skipped';
+  const token = GITHUB_DISPATCH_TOKEN.value();
+  const repo = GITHUB_REPO.value();
+  if (token && token !== 'unset' && repo) {
+    try {
+      const r = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/deploy.yml/dispatches`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ref: 'main' }),
+      });
+      rebuild = r.ok ? 'triggered' : 'failed';
+      if (!r.ok) console.error('rebuild dispatch failed', r.status, await r.text());
+    } catch (e) { rebuild = 'failed'; console.error('rebuild dispatch error', e); }
+  }
+  return { ok: true, ...result, rebuild };
+});
+export const adminDiscardDraft = onCall(async (req) => {
+  requireAdmin(req.auth);
+  return { ok: true, ...(await discardDrafts(getDb())) };
 });
 export const adminSyncGoogleReviews = onCall({ secrets: [GOOGLE_PLACES_API_KEY] }, async (req) => {
   requireAdmin(req.auth);

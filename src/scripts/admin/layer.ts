@@ -1,0 +1,365 @@
+/* Inline admin layer for the public marketing site. Activates ONLY for a
+   signed-in admin (verified by the `admin` custom claim). For everyone else it
+   costs a single idle-time auth check and then does nothing.
+
+   What it does for an admin:
+   - shows a purple top toolbar with draft status + Publish / Discard / Sign out
+   - puts a purple on/off switch on every [data-section] (OFF = hidden to the
+     public, shown-but-marked to admins)
+   - puts Edit / Add / Delete controls on database-backed content ([data-cms])
+   - edits save as DRAFT; Publish promotes drafts and (optionally) rebuilds
+
+   Layout is never editable — only content. */
+import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle } from './cms';
+import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard } from './cms';
+import '../../styles/admin.css';
+// Shared owners-page renderers (published path uses the same module).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+import * as Hydrate from '../content-hydrate.js';
+
+const H = Hydrate as { hydrateReviews: (r: unknown) => void; hydrateCases: (i: unknown[]) => void };
+
+// ---------- tiny DOM helper ----------
+type Attrs = Record<string, string | number | boolean | ((e: Event) => void)>;
+function el<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Attrs = {}, kids: (Node | string)[] = []): HTMLElementTagNameMap[K] {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') n.className = String(v);
+    else if (k === 'html') n.innerHTML = String(v);
+    else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v as EventListener);
+    else if (v === true) n.setAttribute(k, '');
+    else if (v !== false) n.setAttribute(k, String(v));
+  }
+  for (const c of kids) n.append(c);
+  return n;
+}
+const PENCIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+const PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+const TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>';
+
+// ---------- state ----------
+let content: SiteContent | null = null;
+let dirty = false;
+
+function toast(msg: string, isErr = false) {
+  const t = el('div', { class: 'cadm-toast' + (isErr ? ' is-err' : '') }, [msg]);
+  document.body.append(t);
+  requestAnimationFrame(() => t.classList.add('is-in'));
+  setTimeout(() => { t.classList.remove('is-in'); setTimeout(() => t.remove(), 300); }, isErr ? 5000 : 2600);
+}
+
+// ============================================================ bootstrap
+function boot() {
+  const start = () => watchAdmin((isAdmin) => {
+    if (isAdmin) activate();
+    // Signed out or not an admin: clear the boot flag so future public visits
+    // don't reload Firebase (they can always re-enter via #admin).
+    else if (!activated) { try { localStorage.removeItem(ADMIN_FLAG); } catch { /* */ } }
+  });
+  if ('requestIdleCallback' in window) (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(start);
+  else setTimeout(start, 1200);
+  // First-time sign-in from a public page: visit ...#admin
+  if (location.hash === '#admin') promptLogin();
+}
+
+function promptLogin() {
+  if (document.querySelector('.cadm-login-scrim')) return;
+  const scrim = el('div', { class: 'cadm-login-scrim' }, [
+    el('div', { class: 'cadm-login' }, [
+      el('h3', {}, ['Cardo admin']),
+      el('p', {}, ['Sign in with your Cardo Google account to edit this page.']),
+      el('button', { class: 'cadm-mbtn cadm-mbtn--primary', onclick: async () => {
+        try { await login(); scrim.remove(); } catch (e) { toast((e as Error).message, true); }
+      } }, ['Sign in with Google']),
+      el('div', {}, [el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', style: 'margin-top:10px', onclick: () => scrim.remove() }, ['Cancel'])]),
+    ]),
+  ]);
+  document.body.append(scrim);
+}
+
+export const ADMIN_FLAG = 'cardoAdmin';
+
+let activated = false;
+async function activate() {
+  if (activated) return; activated = true;
+  try { localStorage.setItem(ADMIN_FLAG, '1'); } catch { /* private mode */ }
+  document.documentElement.classList.add('cadm-admin');
+  try {
+    content = await getContent();
+  } catch (e) { toast('Could not load admin content: ' + (e as Error).message, true); }
+  dirty = !!content?.hasDraft;
+  buildToolbar();
+  applyDraftToPage();
+  buildSectionControls();
+  buildEditors();
+}
+
+// re-render owners content from the (draft) state we hold
+function applyDraftToPage() {
+  if (!content) return;
+  try { H.hydrateReviews(content.reviews || {}); } catch { /* not on this page */ }
+  try { H.hydrateCases(content.caseStudies || []); } catch { /* not on this page */ }
+  // re-attach per-card controls after the grid is rebuilt
+  decorateCaseCards();
+}
+
+// ============================================================ toolbar
+let barStatus: HTMLElement;
+function buildToolbar() {
+  if (document.querySelector('.cadm-bar')) return;
+  document.body.classList.add('cadm-has-bar');
+  barStatus = el('span', { class: 'cadm-bar__pill' });
+  const bar = el('div', { class: 'cadm-bar' }, [
+    el('span', { class: 'cadm-bar__logo' }, [el('span', { class: 'cadm-bar__dot' }), 'Cardo admin']),
+    barStatus,
+    el('span', { class: 'cadm-bar__spacer' }),
+    el('button', { class: 'cadm-btn cadm-btn--ghost', onclick: onDiscard }, ['Discard']),
+    el('button', { class: 'cadm-btn cadm-btn--solid', id: 'cadm-publish', onclick: onPublish }, ['Publish']),
+    el('button', { class: 'cadm-btn', onclick: async () => { try { localStorage.removeItem(ADMIN_FLAG); } catch { /* */ } await logout(); location.href = location.pathname; } }, ['Sign out']),
+  ]);
+  document.body.append(bar);
+  requestAnimationFrame(() => bar.classList.add('is-in'));
+  refreshStatus();
+}
+function setDirty(v: boolean) { dirty = v; refreshStatus(); }
+function refreshStatus() {
+  if (!barStatus) return;
+  barStatus.textContent = dirty ? 'Draft changes pending' : 'All changes published';
+  barStatus.className = 'cadm-bar__pill ' + (dirty ? 'is-draft' : 'is-clean');
+  const pub = document.getElementById('cadm-publish') as HTMLButtonElement | null;
+  if (pub) pub.disabled = !dirty;
+}
+
+async function onPublish() {
+  const pub = document.getElementById('cadm-publish') as HTMLButtonElement | null;
+  if (pub) { pub.disabled = true; pub.textContent = 'Publishing…'; }
+  try {
+    const r = await publishDrafts();
+    toast(r.rebuild === 'triggered' ? 'Published — site is rebuilding.' : 'Published live.');
+    setDirty(false);
+  } catch (e) { toast((e as Error).message, true); }
+  finally { if (pub) pub.textContent = 'Publish'; refreshStatus(); }
+}
+async function onDiscard() {
+  if (!dirty) return toast('Nothing to discard.');
+  if (!confirm('Discard all unpublished changes and revert to the live version?')) return;
+  try { await discardDrafts(); toast('Draft discarded — reloading.'); setTimeout(() => location.reload(), 700); }
+  catch (e) { toast((e as Error).message, true); }
+}
+
+// persist current `content` as a draft patch
+async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean> }) {
+  await saveContent(patch);
+  setDirty(true);
+}
+
+// ============================================================ section on/off
+function buildSectionControls() {
+  const sections = (content?.sections) || {};
+  document.querySelectorAll<HTMLElement>('[data-section]').forEach((sec) => {
+    const key = sec.getAttribute('data-section')!;
+    sec.classList.add('cadm-editable');
+    const on = sections[key] !== false;
+    const secbar = sec.querySelector('.cadm-secbar') || makeSecbar(sec, key);
+    // toggle
+    const input = el('input', { type: 'checkbox' }) as HTMLInputElement;
+    input.checked = on;
+    input.addEventListener('change', () => setSectionOn(sec, key, input.checked));
+    secbar.prepend(el('label', { class: 'cadm-switch', title: 'Show this section to the public' }, [
+      input, el('span', { class: 'cadm-switch__track' }),
+    ]));
+    applySectionVisual(sec, on);
+  });
+}
+function makeSecbar(sec: HTMLElement, key: string): HTMLElement {
+  if (getComputedStyle(sec).position === 'static') sec.style.position = 'relative';
+  const bar = el('div', { class: 'cadm-secbar' }, [el('span', { class: 'cadm-secbar__label' }, [key.replace(/-/g, ' ')])]);
+  sec.prepend(bar);
+  return bar;
+}
+function applySectionVisual(sec: HTMLElement, on: boolean) {
+  sec.style.display = ''; // admins always see it
+  sec.classList.toggle('cadm-off', !on);
+  let flag = sec.querySelector('.cadm-off-flag') as HTMLElement | null;
+  if (!on && !flag) { flag = el('span', { class: 'cadm-off-flag' }, ['Hidden']); sec.prepend(flag); }
+  if (on && flag) flag.remove();
+}
+async function setSectionOn(sec: HTMLElement, key: string, on: boolean) {
+  const map = { ...(content!.sections || {}) };
+  map[key] = on;
+  content!.sections = map;
+  applySectionVisual(sec, on);
+  try { await persist({ sections: map }); } catch (e) { toast((e as Error).message, true); }
+}
+
+// ============================================================ editors
+function buildEditors() {
+  // Reviews section → Edit chip
+  document.querySelectorAll<HTMLElement>('[data-cms="reviews"]').forEach((sec) => {
+    sec.classList.add('cadm-editable');
+    const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'reviews');
+    bar.append(editChip('Edit reviews', openReviewsModal));
+  });
+  // Case-studies grid → Add chip on the section, Edit/Delete on each card
+  document.querySelectorAll<HTMLElement>('[data-section="case-studies"]').forEach((sec) => {
+    const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'case-studies');
+    bar.append(editChip('Add case', () => openCaseModal(null)));
+  });
+  decorateCaseCards();
+}
+function editChip(label: string, onClick: () => void): HTMLElement {
+  return el('button', { class: 'cadm-chip', onclick: onClick, html: PENCIL + '<span>' + label + '</span>' });
+}
+
+function decorateCaseCards() {
+  const grid = document.querySelector('[data-cases]');
+  if (!grid || !content) return;
+  grid.querySelectorAll<HTMLElement>('.gcase[data-case]').forEach((card) => {
+    if (card.querySelector('.cadm-edit-fab')) return;
+    card.classList.add('cadm-hoverable');
+    const id = card.getAttribute('data-case')!;
+    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this case', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openCaseModal(id); } });
+    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:56px', title: 'Delete this case', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteCase(id); } });
+    card.append(delBtn, editBtn);
+  });
+}
+
+async function deleteCase(id: string) {
+  if (!content) return;
+  const cs = content.caseStudies.find((c) => c.id === id);
+  if (!confirm(`Delete “${cs?.name || id}”? It's removed from the site on publish.`)) return;
+  content.caseStudies = content.caseStudies.filter((c) => c.id !== id);
+  try { await persist({ caseStudies: content.caseStudies }); applyDraftToPage(); toast('Case deleted (draft).'); }
+  catch (e) { toast((e as Error).message, true); }
+}
+
+// ---------- modal framework ----------
+function modal(title: string, bodyKids: (Node | string)[], onSave: () => Promise<void> | void): void {
+  const err = el('p', { class: 'cadm-err', style: 'display:none' });
+  const saveBtn = el('button', { class: 'cadm-mbtn cadm-mbtn--primary' }, ['Save draft']) as HTMLButtonElement;
+  const scrim = el('div', { class: 'cadm-modal-scrim' });
+  const close = () => scrim.remove();
+  saveBtn.addEventListener('click', async () => {
+    saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; err.style.display = 'none';
+    try { await onSave(); close(); toast('Saved to draft.'); }
+    catch (e) { err.textContent = (e as Error).message; err.style.display = 'block'; saveBtn.disabled = false; saveBtn.textContent = 'Save draft'; }
+  });
+  scrim.append(el('div', { class: 'cadm-modal' }, [
+    el('div', { class: 'cadm-modal__head' }, [el('h3', {}, [title])]),
+    el('div', { class: 'cadm-modal__body' }, [...bodyKids, err]),
+    el('div', { class: 'cadm-modal__foot' }, [
+      el('span', { class: 'cadm-note' }, ['Saved as a draft — nothing goes live until you Publish.']),
+      el('span', { class: 'cadm-spacer' }),
+      el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', onclick: close }, ['Cancel']),
+      saveBtn,
+    ]),
+  ]));
+  scrim.addEventListener('click', (e) => { if (e.target === scrim) close(); });
+  document.body.append(scrim);
+}
+function field(label: string, value: string, opts: { wide?: boolean; textarea?: boolean } = {}): { wrap: HTMLElement; get: () => string } {
+  const input = opts.textarea ? el('textarea', {}, [value]) : el('input', { value });
+  const wrap = el('label', { class: 'cadm-field' + (opts.wide ? ' cadm-wide' : '') }, [el('span', {}, [label]), input]);
+  return { wrap, get: () => (input as HTMLInputElement | HTMLTextAreaElement).value };
+}
+
+// ---------- case study modal ----------
+function openCaseModal(id: string | null) {
+  if (!content) return;
+  const existing = id ? content.caseStudies.find((c) => c.id === id) : null;
+  const c: CaseStudyItem = existing ? { ...existing } : { id: '', name: '', hood: '', beds: '', hook: '', revenue: '', nightly: '', lift: '', img: '', featured: true, blurb: '' };
+  const f = {
+    name: field('Name', c.name), hood: field('Neighborhood', c.hood), beds: field('Beds (e.g. 4 BR)', c.beds),
+    revenue: field('Annual revenue', c.revenue), nightly: field('Nightly', c.nightly), lift: field('Lift vs market', c.lift),
+    hook: field('Hook (card subtitle)', c.hook, { wide: true, textarea: true }),
+    blurb: field('Preview-modal story (optional)', c.blurb || '', { wide: true, textarea: true }),
+    img: field('Image URL (optional)', c.img || '', { wide: true }),
+  };
+  const feat = el('input', { type: 'checkbox' }) as HTMLInputElement; feat.checked = c.featured !== false;
+  const featWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['Show on owners page']), feat]);
+  modal(existing ? `Edit case — ${c.name}` : 'New case study', [
+    el('div', { class: 'cadm-grid2' }, [f.name.wrap, f.hood.wrap, f.beds.wrap, f.revenue.wrap, f.nightly.wrap, f.lift.wrap]),
+    f.hook.wrap, f.blurb.wrap, f.img.wrap, featWrap,
+  ], async () => {
+    c.name = f.name.get(); c.hood = f.hood.get(); c.beds = f.beds.get();
+    c.revenue = f.revenue.get(); c.nightly = f.nightly.get(); c.lift = f.lift.get();
+    c.hook = f.hook.get(); c.blurb = f.blurb.get(); c.img = f.img.get(); c.featured = feat.checked;
+    if (!c.name.trim()) throw new Error('Name is required.');
+    if (!c.id) c.id = slugify(c.name);
+    const list = content!.caseStudies.slice();
+    const idx = list.findIndex((x) => x.id === c.id);
+    if (idx >= 0) list[idx] = c; else list.push(c);
+    content!.caseStudies = list;
+    await persist({ caseStudies: list });
+    applyDraftToPage();
+  });
+}
+function slugify(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48) || 'case-' + Date.now();
+}
+
+// ---------- reviews modal ----------
+function openReviewsModal() {
+  if (!content) return;
+  const rv: ReviewsDoc = JSON.parse(JSON.stringify(content.reviews || { google: {}, airbnb: {} }));
+  rv.google = rv.google || {}; rv.airbnb = rv.airbnb || {};
+  const placeId = field('Google Place ID', rv.google.placeId || '', { wide: true });
+  const minSel = el('select', {}, [5, 4, 3, 2, 1].map((n) => el('option', { value: n }, [n === 1 ? 'Show all reviews' : `${n} stars and up`]))) as HTMLSelectElement;
+  minSel.value = String(rv.google.minStars ?? 5);
+  const gRating = el('span', { class: 'cadm-note' }, [`Current: ${rv.google.rating ?? '—'} ★ · ${rv.google.count ?? '—'} reviews`]);
+  const syncBtn = el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', type: 'button' }, ['Sync from Google now']) as HTMLButtonElement;
+  syncBtn.addEventListener('click', async () => {
+    syncBtn.disabled = true; syncBtn.textContent = 'Syncing…';
+    try {
+      const r = await syncGoogle(placeId.get() || undefined);
+      gRating.textContent = `Synced: ${r.rating} ★ · ${r.count} reviews · ${r.reviews} cards`;
+      setDirty(true);
+      content = await getContent(); // pull the freshly-synced draft
+    } catch (e) { toast((e as Error).message, true); }
+    finally { syncBtn.disabled = false; syncBtn.textContent = 'Sync from Google now'; }
+  });
+  const aRating = field('Airbnb rating', String(rv.airbnb.rating ?? ''));
+  const aCount = field('Airbnb review count', String(rv.airbnb.count ?? ''));
+
+  // Airbnb cards editor
+  const cardsWrap = el('div', {});
+  const cards: ReviewCard[] = (rv.airbnb.reviews || []).map((c) => ({ ...c }));
+  function renderCards() {
+    cardsWrap.innerHTML = '';
+    cards.forEach((card, i) => {
+      const nm = field('Name', card.name); const mt = field('Meta', card.meta);
+      const st = field('Stars (1–5)', String(card.stars || 5)); const tx = field('Text', card.text, { wide: true, textarea: true });
+      nm.wrap.querySelector('input')!.addEventListener('input', (e) => card.name = (e.target as HTMLInputElement).value);
+      mt.wrap.querySelector('input')!.addEventListener('input', (e) => card.meta = (e.target as HTMLInputElement).value);
+      st.wrap.querySelector('input')!.addEventListener('input', (e) => card.stars = Math.min(5, Math.max(1, Number((e.target as HTMLInputElement).value) || 5)));
+      tx.wrap.querySelector('textarea')!.addEventListener('input', (e) => card.text = (e.target as HTMLTextAreaElement).value);
+      const row = el('div', { class: 'cadm-card-row' }, [
+        el('div', { class: 'cadm-grid2' }, [nm.wrap, mt.wrap, st.wrap]), tx.wrap,
+        el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', onclick: () => { cards.splice(i, 1); renderCards(); } }, ['Remove']),
+      ]);
+      cardsWrap.append(row);
+    });
+  }
+  renderCards();
+
+  modal('Edit reviews', [
+    el('div', { class: 'cadm-subhead' }, ['Google (live sync)']),
+    placeId.wrap,
+    el('label', { class: 'cadm-field' }, [el('span', {}, ['Minimum stars shown on site']), minSel]),
+    el('div', { class: 'cadm-card-row' }, [gRating, el('div', { style: 'margin-top:8px' }, [syncBtn])]),
+    el('div', { class: 'cadm-subhead' }, ['Airbnb (managed here)']),
+    el('div', { class: 'cadm-grid2' }, [aRating.wrap, aCount.wrap]),
+    cardsWrap,
+    el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', html: PLUS + ' Add Airbnb review', onclick: () => { cards.push({ name: '', meta: '', stars: 5, text: '' }); renderCards(); } }),
+  ], async () => {
+    const patch: Partial<ReviewsDoc> = {
+      google: { ...rv.google, placeId: placeId.get(), minStars: Number(minSel.value) },
+      airbnb: { rating: Number(aRating.get()) || null, count: Number(aCount.get()) || null, reviews: cards },
+    };
+    content!.reviews = { google: { ...content!.reviews.google, ...patch.google }, airbnb: patch.airbnb! };
+    await persist({ reviews: patch });
+    applyDraftToPage();
+  });
+}
+
+boot();
