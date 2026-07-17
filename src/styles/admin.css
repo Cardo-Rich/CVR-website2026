@@ -93,19 +93,25 @@ body.cadm-has-bar { scroll-padding-top: 54px; }
 .cadm-switch input:checked + .cadm-switch__track { background: #34d399; }
 .cadm-switch input:checked + .cadm-switch__track::after { transform: translateX(15px); }
 
-/* edit pencil floating on an editable item (e.g. a card / photo) */
+/* Edit/Delete controls floating on an editable card. Always visible for
+   admins (card-level actions shouldn't be hidden behind hover — that breaks on
+   touch), with a subtle hover lift on pointer devices. */
 .cadm-edit-fab {
   position: absolute; z-index: 30; top: 10px; right: 10px;
   display: inline-flex; align-items: center; gap: 5px;
   appearance: none; border: 0; cursor: pointer;
-  background: var(--cadm-purple); color: #fff; border-radius: 9px; padding: 6px 9px;
-  font: 600 12px/1 system-ui, sans-serif; box-shadow: 0 4px 12px rgba(76,29,149,.4);
-  opacity: 0; transform: translateY(-4px); transition: opacity .15s ease, transform .15s ease;
+  background: var(--cadm-purple); color: #fff; border-radius: 9px; padding: 7px 10px;
+  font: 600 12px/1 system-ui, sans-serif; box-shadow: 0 4px 12px rgba(76,29,149,.45);
+  opacity: 1; transition: background .15s ease, box-shadow .15s ease;
 }
 .cadm-hoverable { position: relative; }
-.cadm-hoverable:hover .cadm-edit-fab, .cadm-edit-fab:focus-visible { opacity: 1; transform: translateY(0); }
-.cadm-edit-fab svg { width: 13px; height: 13px; }
+@media (hover: hover) {
+  .cadm-edit-fab { box-shadow: 0 3px 9px rgba(76,29,149,.35); }
+  .cadm-edit-fab:hover { box-shadow: 0 6px 16px rgba(76,29,149,.5); }
+}
+.cadm-edit-fab svg { width: 14px; height: 14px; }
 .cadm-edit-fab--del { background: #b91c1c; }
+.cadm-edit-fab--del:hover { background: #991b1b; }
 
 /* ---- modal ---- */
 .cadm-modal-scrim { position: fixed; inset: 0; z-index: 2147483001; background: rgba(30,27,46,.55); display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow: auto; }
