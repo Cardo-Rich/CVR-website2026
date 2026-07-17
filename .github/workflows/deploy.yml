@@ -53,10 +53,11 @@ jobs:
         env:
           GHL_API_TOKEN: ${{ secrets.GHL_API_TOKEN }}
           GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+          GITHUB_DISPATCH_TOKEN: ${{ secrets.GITHUB_DISPATCH_TOKEN }}
         run: |
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}' > "$RUNNER_TEMP/sa.json"
           export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
-          for NAME in GHL_API_TOKEN GOOGLE_PLACES_API_KEY; do
+          for NAME in GHL_API_TOKEN GOOGLE_PLACES_API_KEY GITHUB_DISPATCH_TOKEN; do
             VALUE="${!NAME}"
             if [ -n "$VALUE" ]; then
               printf '%s' "$VALUE" | npx firebase-tools@13 functions:secrets:set "$NAME" --project cardo-website-2026 --data-file=- --force || exit 1

@@ -25,14 +25,28 @@ export interface ReviewsDoc {
   airbnb: { rating?: number; count?: number; reviews?: ReviewCard[] };
 }
 
-const CASES_REF = 'siteContent/caseStudies';
-const REVIEWS_REF = 'siteContent/reviews';
+// Two parallel copies of every content doc: what the public site reads
+// (PUBLISHED) and what an admin is editing but hasn't shipped yet (DRAFT).
+// Inline edits write to DRAFT; "Publish" promotes DRAFT → PUBLISHED.
+const PUBLISHED = 'siteContent';
+const DRAFT = 'siteContentDraft';
+export type ContentRoot = typeof PUBLISHED | typeof DRAFT;
+const DOCS = ['caseStudies', 'reviews', 'sections'] as const;
+const casesRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/caseStudies`);
+const reviewsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/reviews`);
+const sectionsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/sections`);
+
+// Section visibility switches: key → shown? Missing keys default to shown,
+// so the static site is unaffected until an editor turns something off.
+export type SectionsMap = Record<string, boolean>;
+
+export interface SiteContentData { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap }
 
 // forPublic: apply display rules (e.g. Google minimum-star filter) so the
-// site only ever receives what should be shown. The admin CMS reads the raw
-// doc so editors can see everything the sync pulled.
-export async function getContent(db: Firestore, forPublic = false): Promise<{ caseStudies: CaseStudyItem[]; reviews: ReviewsDoc }> {
-  const [cs, rv] = await Promise.all([db.doc(CASES_REF).get(), db.doc(REVIEWS_REF).get()]);
+// site only ever receives what should be shown. root selects the published
+// copy (default, served at /api/content) or the draft copy (admin preview).
+export async function getContent(db: Firestore, forPublic = false, root: ContentRoot = PUBLISHED): Promise<SiteContentData> {
+  const [cs, rv, sec] = await Promise.all([casesRef(db, root).get(), reviewsRef(db, root).get(), sectionsRef(db, root).get()]);
   const reviews = ((rv.data() as ReviewsDoc) || { google: {}, airbnb: {} });
   if (forPublic && reviews.google) {
     const min = Number(reviews.google.minStars) || 0;
@@ -43,10 +57,60 @@ export async function getContent(db: Firestore, forPublic = false): Promise<{ ca
   return {
     caseStudies: ((cs.data()?.items as CaseStudyItem[]) || []),
     reviews,
+    sections: ((sec.data()?.map as SectionsMap) || {}),
   };
 }
 
-export async function setCaseStudies(db: Firestore, items: CaseStudyItem[]): Promise<void> {
+// Admin view: prefer the draft copy of each doc, falling back to published for
+// any doc that has no draft yet. hasDraft flags which docs carry unpublished
+// edits, so the toolbar can show "draft changes pending".
+export async function getContentForAdmin(db: Firestore): Promise<SiteContentData & { hasDraft: boolean; draftDocs: string[] }> {
+  const draftSnaps = await Promise.all(DOCS.map((d) => db.doc(`${DRAFT}/${d}`).get()));
+  const draftDocs = DOCS.filter((_, i) => draftSnaps[i].exists);
+  const pub = await getContent(db, false, PUBLISHED);
+  const draft = await getContent(db, false, DRAFT);
+  const merged: SiteContentData = {
+    caseStudies: draftSnaps[0].exists ? draft.caseStudies : pub.caseStudies,
+    reviews: draftSnaps[1].exists ? draft.reviews : pub.reviews,
+    sections: draftSnaps[2].exists ? draft.sections : pub.sections,
+  };
+  return { ...merged, hasDraft: draftDocs.length > 0, draftDocs };
+}
+
+// Copy every existing draft doc onto its published counterpart, then delete
+// the drafts. Returns the list of docs that were published.
+export async function publishDrafts(db: Firestore): Promise<{ published: string[] }> {
+  const published: string[] = [];
+  for (const d of DOCS) {
+    const snap = await db.doc(`${DRAFT}/${d}`).get();
+    if (!snap.exists) continue;
+    await db.doc(`${PUBLISHED}/${d}`).set(snap.data() as Record<string, unknown>, { merge: false });
+    await db.doc(`${DRAFT}/${d}`).delete();
+    published.push(d);
+  }
+  return { published };
+}
+
+// Throw away all pending draft edits.
+export async function discardDrafts(db: Firestore): Promise<{ discarded: string[] }> {
+  const discarded: string[] = [];
+  for (const d of DOCS) {
+    const ref = db.doc(`${DRAFT}/${d}`);
+    if ((await ref.get()).exists) { await ref.delete(); discarded.push(d); }
+  }
+  return { discarded };
+}
+
+export async function setSections(db: Firestore, map: unknown, root: ContentRoot = DRAFT): Promise<void> {
+  if (typeof map !== 'object' || map === null || Array.isArray(map)) throw new Error('sections must be an object');
+  const clean: SectionsMap = {};
+  for (const [k, v] of Object.entries(map as Record<string, unknown>).slice(0, 40)) {
+    if (/^[a-z0-9-]{1,40}$/.test(k)) clean[k] = v !== false;
+  }
+  await sectionsRef(db, root).set({ map: clean }, { merge: false });
+}
+
+export async function setCaseStudies(db: Firestore, items: CaseStudyItem[], root: ContentRoot = DRAFT): Promise<void> {
   if (!Array.isArray(items)) throw new Error('items must be an array');
   const clean = items.slice(0, 60).map((it) => ({
     id: String(it.id || '').slice(0, 64),
@@ -61,7 +125,7 @@ export async function setCaseStudies(db: Firestore, items: CaseStudyItem[]): Pro
     featured: it.featured !== false,
     blurb: String(it.blurb || '').slice(0, 1500),
   }));
-  await db.doc(CASES_REF).set({ items: clean }, { merge: false });
+  await casesRef(db, root).set({ items: clean }, { merge: false });
 }
 
 function cleanCards(cards: unknown): ReviewCard[] {
@@ -77,7 +141,7 @@ function cleanCards(cards: unknown): ReviewCard[] {
   });
 }
 
-export async function setReviews(db: Firestore, patch: Partial<ReviewsDoc>): Promise<void> {
+export async function setReviews(db: Firestore, patch: Partial<ReviewsDoc>, root: ContentRoot = DRAFT): Promise<void> {
   const update: Record<string, unknown> = {};
   if (patch.google) {
     update.google = {
@@ -96,15 +160,20 @@ export async function setReviews(db: Firestore, patch: Partial<ReviewsDoc>): Pro
       reviews: cleanCards(patch.airbnb.reviews),
     };
   }
-  await db.doc(REVIEWS_REF).set(update, { merge: true });
+  await reviewsRef(db, root).set(update, { merge: true });
 }
 
 // Pull rating, review count, and the latest review cards from the Places API
 // (New) and store them on the reviews doc. Requires a SERVER key (no referrer
 // restriction) and the business's place ID.
 export async function syncGoogleReviews(db: Firestore, apiKey: string, placeIdOverride?: string): Promise<{ rating: number; count: number; reviews: number }> {
-  const doc = await db.doc(REVIEWS_REF).get();
-  const placeId = placeIdOverride || (doc.data()?.google?.placeId as string | undefined);
+  // Read the place ID from the draft copy first (an admin may have just typed
+  // it), then fall back to the published copy. Sync results land in the draft.
+  const draftDoc = await reviewsRef(db, DRAFT).get();
+  const pubDoc = await reviewsRef(db, PUBLISHED).get();
+  const placeId = placeIdOverride
+    || (draftDoc.data()?.google?.placeId as string | undefined)
+    || (pubDoc.data()?.google?.placeId as string | undefined);
   if (!apiKey) throw new Error('GOOGLE_PLACES_API_KEY secret is not set');
   if (!placeId) throw new Error('No Google place ID configured — set it in the CMS Reviews tab first');
 
@@ -128,11 +197,14 @@ export async function syncGoogleReviews(db: Firestore, apiKey: string, placeIdOv
     text: rv.text?.text?.slice(0, 1200) || '',
   })).filter((rv) => rv.text);
 
-  await db.doc(REVIEWS_REF).set({
+  // Preserve the admin's chosen minStars from whichever copy already has it.
+  const existingMin = (draftDoc.data()?.google?.minStars ?? pubDoc.data()?.google?.minStars) as number | undefined;
+  await reviewsRef(db, DRAFT).set({
     google: {
       placeId,
       rating: data.rating ?? null,
       count: data.userRatingCount ?? null,
+      minStars: existingMin ?? 5,
       reviews,
       syncedAt: new Date().toISOString(),
     },

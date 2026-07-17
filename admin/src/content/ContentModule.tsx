@@ -1,7 +1,20 @@
 import { useEffect, useState } from 'react';
-import { getContent, saveContent, syncGoogle } from './api';
-import type { CaseStudyItem, ReviewCard, ReviewsDoc } from './api';
+import { getContent, saveContent, syncGoogle, publish, discardDraft } from './api';
+import type { CaseStudyItem, ReviewCard, ReviewsDoc, SectionsMap } from './api';
 import './content.css';
+
+// Site sections that can be switched off while their content is still being
+// finalized. Keys match the data-section attributes in the site markup.
+const SECTION_SWITCHES: { key: string; page: string; label: string; note?: string }[] = [
+  { key: 'featured-homes', page: 'Home', label: '“Homes that we love” carousel' },
+  { key: 'guest-photos', page: 'Home', label: 'Guest photos grid' },
+  { key: 'case-studies', page: 'Owners + Blog', label: 'Case studies', note: 'Hides the owners-page grid and the blog case-study library.' },
+  { key: 'airbnb-proof', page: 'Owners', label: 'Airbnb review phone mockups' },
+  { key: 'by-the-numbers', page: 'Owners', label: '“By the numbers” stats' },
+  { key: 'partners', page: 'Owners', label: 'Partner logo strip' },
+  { key: 'team', page: 'Owners', label: 'Meet the team' },
+  { key: 'founder', page: 'Owners', label: 'Founder note' },
+];
 
 // Defaults mirror the static owners page, so the CMS starts pre-filled and
 // the site looks identical before the first edit.
@@ -30,15 +43,19 @@ const CASE_FIELDS: { key: keyof CaseStudyItem; label: string; wide?: boolean }[]
 ];
 
 export default function ContentModule() {
-  const [tab, setTab] = useState<'cases' | 'reviews'>('cases');
+  const [tab, setTab] = useState<'cases' | 'reviews' | 'sections'>('cases');
   const [cases, setCases] = useState<CaseStudyItem[]>([]);
   const [reviews, setReviews] = useState<ReviewsDoc>(DEFAULT_REVIEWS);
+  const [sections, setSections] = useState<SectionsMap>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState('');
+  const [hasDraft, setHasDraft] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  const [publishMsg, setPublishMsg] = useState('');
 
   useEffect(() => {
     getContent()
@@ -48,6 +65,8 @@ export default function ContentModule() {
           google: { ...DEFAULT_REVIEWS.google, ...(c.reviews?.google || {}) },
           airbnb: { ...DEFAULT_REVIEWS.airbnb, ...(c.reviews?.airbnb || {}) },
         });
+        setSections(c.sections || {});
+        setHasDraft(!!c.hasDraft);
       })
       .catch((e) => setError((e as Error).message))
       .finally(() => setLoading(false));
@@ -58,11 +77,42 @@ export default function ContentModule() {
     try {
       const withIds = cases.map((c) => ({ ...c, id: c.id || slugify(c.name) }));
       setCases(withIds);
-      await saveContent({ caseStudies: withIds, reviews });
+      await saveContent({ caseStudies: withIds, reviews, sections });
       setSaved(true);
+      setHasDraft(true);
       setTimeout(() => setSaved(false), 2500);
     } catch (e) { setError((e as Error).message); }
     finally { setSaving(false); }
+  }
+
+  async function doPublish() {
+    setPublishing(true); setError(''); setPublishMsg('');
+    try {
+      const r = await publish();
+      setPublishMsg(r.rebuild === 'triggered' ? 'Published — site rebuilding.' : 'Published live.');
+      setHasDraft(false);
+      setTimeout(() => setPublishMsg(''), 4000);
+    } catch (e) { setError((e as Error).message); }
+    finally { setPublishing(false); }
+  }
+
+  async function doDiscard() {
+    if (!window.confirm('Discard all unpublished draft changes and revert to the live version?')) return;
+    setPublishing(true); setError(''); setPublishMsg('');
+    try {
+      await discardDraft();
+      const fresh = await getContent();
+      setCases(fresh.caseStudies.length ? fresh.caseStudies : DEFAULT_CASES);
+      setReviews({
+        google: { ...DEFAULT_REVIEWS.google, ...(fresh.reviews?.google || {}) },
+        airbnb: { ...DEFAULT_REVIEWS.airbnb, ...(fresh.reviews?.airbnb || {}) },
+      });
+      setSections(fresh.sections || {});
+      setHasDraft(false);
+      setPublishMsg('Draft discarded.');
+      setTimeout(() => setPublishMsg(''), 4000);
+    } catch (e) { setError((e as Error).message); }
+    finally { setPublishing(false); }
   }
 
   async function doSync() {
@@ -103,9 +153,14 @@ export default function ContentModule() {
       <div className="ct-tabs">
         <button className={tab === 'cases' ? 'is-on' : ''} onClick={() => setTab('cases')}>Case studies</button>
         <button className={tab === 'reviews' ? 'is-on' : ''} onClick={() => setTab('reviews')}>Reviews</button>
+        <button className={tab === 'sections' ? 'is-on' : ''} onClick={() => setTab('sections')}>Sections</button>
         <span className="spacer" />
-        {saved && <span className="ct-saved">Saved ✓</span>}
-        <button className="btn" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save & publish'}</button>
+        {publishMsg && <span className="ct-saved">{publishMsg}</span>}
+        {saved && <span className="ct-saved">Draft saved ✓</span>}
+        {hasDraft && <span className="ct-draft-badge">Draft changes pending</span>}
+        <button className="btn-ghost" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save draft'}</button>
+        {hasDraft && <button className="btn-ghost ct-remove" onClick={doDiscard} disabled={publishing}>Discard</button>}
+        <button className="btn" onClick={doPublish} disabled={publishing || !hasDraft}>{publishing ? 'Publishing…' : 'Publish'}</button>
       </div>
       {error && <p className="ct-error">{error}</p>}
 
@@ -140,6 +195,24 @@ export default function ContentModule() {
             </fieldset>
           ))}
           <button className="btn-ghost" onClick={addCase}>+ Add case study</button>
+        </div>
+      )}
+
+      {tab === 'sections' && (
+        <div className="ct-cases">
+          <p className="ct-muted">Switch a section <b>off</b> to hide it on the live site while its content is still being finalized — flip it back on when the real data is in. Changes go live within ~10 minutes of saving (CDN cache).</p>
+          {SECTION_SWITCHES.map((s) => (
+            <fieldset className="ct-case" key={s.key}>
+              <legend>{s.page}</legend>
+              <div className="ct-row" style={{ marginTop: 0 }}>
+                <label className="ct-check">
+                  <input type="checkbox" checked={sections[s.key] !== false} onChange={(e) => setSections((p) => ({ ...p, [s.key]: e.target.checked }))} />
+                  <span>{s.label}{sections[s.key] === false && <em style={{ color: '#b3261e', fontStyle: 'normal' }}> — hidden</em>}</span>
+                </label>
+              </div>
+              {s.note && <p className="ct-muted" style={{ margin: '6px 0 0' }}>{s.note}</p>}
+            </fieldset>
+          ))}
         </div>
       )}
 

@@ -29,6 +29,11 @@ const {
   </head>
   <body>
     <slot />
+    <!-- Inline admin layer: activates only for signed-in admins; a no-op for
+         every public visitor beyond one idle-time auth check. -->
+    <script>
+      import('../scripts/admin/inline.ts');
+    </script>
   </body>
 </html>
 
