@@ -4,6 +4,38 @@
   var onScroll = function(){ header && header.classList.toggle('is-scrolled', window.scrollY > 12); };
   onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
 
+  /* ----- "Back to the estimate form" links land on the top of the form panel,
+     not the top of the hero section. Any in-page a[href="#estimate"] (and the
+     #estimate hash on cross-page arrival, e.g. /owners#estimate) is intercepted
+     and smooth-scrolled to the form's own top, leaving room for the sticky
+     header. ----- */
+  (function(){
+    function formTop(){
+      var panel = document.querySelector('[data-lead]') || document.getElementById('estimate');
+      return panel ? panel.getBoundingClientRect().top + window.scrollY - 90 : null;
+    }
+    function scrollToForm(){
+      var top = formTop();
+      if (top != null) window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+    document.addEventListener('click', function(e){
+      var a = e.target.closest && e.target.closest('a[href="#estimate"], a[href="/owners#estimate"]');
+      if (!a) return;
+      // Same-page anchor, or cross-page link that has already landed on /owners.
+      var samePage = a.getAttribute('href').charAt(0) === '#' ||
+        (location.pathname.replace(/\/$/, '') === '/owners');
+      if (!samePage) return; // let the browser navigate; on-load handler finishes the job
+      e.preventDefault();
+      scrollToForm();
+      if (history.replaceState) history.replaceState(null, '', '#estimate');
+    });
+    // Arrived via /owners#estimate (or a manual hash): correct the landing spot
+    // once layout settles, since the raw anchor sits on the hero section.
+    if (location.hash === '#estimate') {
+      requestAnimationFrame(function(){ requestAnimationFrame(scrollToForm); });
+    }
+  })();
+
   /* ----- Floating "Get my free earning estimate" button: appears after scrolling past the hero form ----- */
   (function(){
     var ctas = [].slice.call(document.querySelectorAll('[data-estimate-fab]'));
@@ -373,7 +405,7 @@
       .then(function(d){
         if (!d) return;
         try { H.hydrateReviews(d.reviews || {}); } catch (e) {}
-        try { H.hydrateCases(d.caseStudies || []); } catch (e) {}
+        try { H.hydrateOwnerCases(d.blog || []); } catch (e) {}
         try { H.hydrateTeam(d.teamMembers || []); } catch (e) {}
         try { H.hydrateOwnerTestimonials(d.ownerTestimonials || []); } catch (e) {}
       })

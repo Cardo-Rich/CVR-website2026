@@ -19,7 +19,8 @@ import * as Hydrate from '../content-hydrate.js';
 
 const H = Hydrate as {
   hydrateReviews: (r: unknown) => void;
-  hydrateCases: (i: unknown[]) => void;
+  hydrateOwnerCases: (i: unknown[]) => void;
+  hydrateExplore: (i: unknown[]) => void;
   hydrateFeaturedHomes: (i: unknown[]) => void;
   hydrateGuestPhotos: (i: unknown[]) => void;
   hydrateTeam: (i: unknown[]) => void;
@@ -48,6 +49,8 @@ const PENCIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 const DOTS = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>';
 const PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
 const TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>';
+// Official Google "G" mark for the sign-in button.
+const GOOGLE_G = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
 
 // ---------- state ----------
 let content: SiteContent | null = null;
@@ -76,20 +79,43 @@ function boot() {
 
 function promptLogin() {
   if (document.querySelector('.cadm-login-scrim')) return;
+  const doLogin = async (silent = false) => {
+    try { await login(); scrim.remove(); }
+    // Auto-launch (silent) may be popup-blocked — leave the button for a retry.
+    catch (e) { if (!silent) toast((e as Error).message, true); }
+  };
+  const gbtn = el('button', { class: 'cadm-gbtn', onclick: () => doLogin(false) }, [
+    el('span', { class: 'cadm-gbtn__g', html: GOOGLE_G }),
+    el('span', {}, ['Sign in with Google']),
+  ]);
   const scrim = el('div', { class: 'cadm-login-scrim' }, [
     el('div', { class: 'cadm-login' }, [
       el('h3', {}, ['Cardo admin']),
-      el('p', {}, ['Sign in with your Cardo Google account to edit this page.']),
-      el('button', { class: 'cadm-mbtn cadm-mbtn--primary', onclick: async () => {
-        try { await login(); scrim.remove(); } catch (e) { toast((e as Error).message, true); }
-      } }, ['Sign in with Google']),
+      el('p', {}, ['Continue with your Cardo Google account to edit this page.']),
+      gbtn,
       el('div', {}, [el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', style: 'margin-top:10px', onclick: () => scrim.remove() }, ['Cancel'])]),
     ]),
   ]);
   document.body.append(scrim);
+  gbtn.focus();
+  // Opened by a user gesture (the triple-click): go straight to Google — no
+  // extra click. On a plain #admin page load there's no activation, so a popup
+  // would be blocked; there we just leave the button for the user to click.
+  const ua = (navigator as Navigator & { userActivation?: { isActive: boolean } }).userActivation;
+  if (!ua || ua.isActive) doLogin(true);
 }
 
 export const ADMIN_FLAG = 'cardoAdmin';
+
+// Public entry for the hidden "triple-click the nav bar" gesture. If a valid
+// admin session already exists the auth watcher activates on its own; otherwise
+// set the boot flag (so a refresh keeps admin loaded) and show the sign-in
+// prompt. Safe to call repeatedly.
+export function enterAdminMode(): void {
+  if (activated) { toast('Admin mode is already on.'); return; }
+  try { localStorage.setItem(ADMIN_FLAG, '1'); } catch { /* private mode */ }
+  promptLogin();
+}
 
 let activated = false;
 async function activate() {
@@ -110,7 +136,8 @@ async function activate() {
 function applyDraftToPage() {
   if (!content) return;
   try { H.hydrateReviews(content.reviews || {}); } catch { /* not on this page */ }
-  try { H.hydrateCases(content.caseStudies || []); } catch { /* not on this page */ }
+  try { H.hydrateOwnerCases(content.blog || []); } catch { /* not on this page */ }
+  try { H.hydrateExplore(content.blog || []); } catch { /* not on this page */ }
   try { H.hydrateFeaturedHomes(content.featuredHomes || []); } catch { /* not on this page */ }
   try { H.hydrateGuestPhotos(content.guestPhotos || []); } catch { /* not on this page */ }
   try { H.hydrateTeam(content.teamMembers || []); } catch { /* not on this page */ }
@@ -121,6 +148,7 @@ function applyDraftToPage() {
   try { H.hydrateBlogArticle(content.blog || []); } catch { /* not on this page */ }
   // re-attach per-card controls after grids are rebuilt
   decorateCaseCards();
+  decorateExploreCards();
   decorateFeaturedCards();
   decorateGuestCards();
   decorateTeamCards();
@@ -258,10 +286,17 @@ function buildEditors() {
     const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'reviews');
     bar.append(editChip('Edit reviews', openReviewsModal));
   });
-  // Case-studies grid → Add chip on the section, Edit/Delete on each card
-  document.querySelectorAll<HTMLElement>('[data-section="case-studies"]').forEach((sec) => {
+  // Owners case-studies grid → Add chip creates a "Case studies" blog post
+  // pre-flagged to show on the owners page; per-card Edit/Delete open that post.
+  document.querySelectorAll<HTMLElement>('[data-cms="owner-cases"]').forEach((sec) => {
     const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'case-studies');
-    bar.append(editChip('Add case', () => openCaseModal(null)));
+    bar.append(editChip('Add case study', () => openBlogModal(null, { category: 'Case studies', showOnOwners: true })));
+  });
+  // Home "Explore like a local" cards → Add chip creates a post flagged to show
+  // on the home page; per-card Edit/Delete open that post.
+  document.querySelectorAll<HTMLElement>('[data-cms="explore"]').forEach((sec) => {
+    const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'explore');
+    bar.append(editChip('Add explore card', () => openBlogModal(null, { category: 'Explore like a local', showOnHome: true })));
   });
   // Featured homes carousel → Add chip + Edit/Delete on each card
   document.querySelectorAll<HTMLElement>('[data-cms="featured-homes"]').forEach((sec) => {
@@ -304,6 +339,7 @@ function buildEditors() {
     bar.append(editChip('Edit this article', () => openBlogModal(sec.getAttribute('data-blog-detail'))));
   });
   decorateCaseCards();
+  decorateExploreCards();
   decorateFeaturedCards();
   decorateGuestCards();
   decorateTeamCards();
@@ -315,27 +351,32 @@ function editChip(label: string, onClick: () => void): HTMLElement {
   return el('button', { class: 'cadm-chip', onclick: onClick, html: PENCIL + '<span>' + label + '</span>' });
 }
 
+// Owners case cards + home explore cards are both blog posts now, so their
+// per-card controls open the blog editor for the card's slug (data-case /
+// data-explore-slug both hold the post slug).
 function decorateCaseCards() {
   const grid = document.querySelector('[data-cases]');
   if (!grid || !content) return;
   grid.querySelectorAll<HTMLElement>('.gcase[data-case]').forEach((card) => {
     if (card.querySelector('.cadm-edit-fab')) return;
     card.classList.add('cadm-hoverable');
-    const id = card.getAttribute('data-case')!;
-    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this case', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openCaseModal(id); } });
-    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:56px', title: 'Delete this case', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteCase(id); } });
+    const slug = card.getAttribute('data-case')!;
+    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this case study', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openBlogModal(slug); } });
+    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:56px', title: 'Delete this case study', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteBlog(slug); } });
     card.append(delBtn, editBtn);
   });
 }
 
-async function deleteCase(id: string) {
+function decorateExploreCards() {
   if (!content) return;
-  ensureCasesSeeded();
-  const cs = content.caseStudies.find((c) => c.id === id);
-  if (!confirm(`Delete “${cs?.name || id}”? It's removed from the site on publish.`)) return;
-  content.caseStudies = content.caseStudies.filter((c) => c.id !== id);
-  try { await persist({ caseStudies: content.caseStudies }); applyDraftToPage(); toast('Case deleted (draft).'); }
-  catch (e) { toast((e as Error).message, true); }
+  document.querySelectorAll<HTMLElement>('[data-explore] .todo__card[data-explore-slug]').forEach((card) => {
+    if (card.querySelector('.cadm-edit-fab')) return;
+    card.classList.add('cadm-hoverable');
+    const slug = card.getAttribute('data-explore-slug')!;
+    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this card', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openBlogModal(slug); } });
+    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:52px', title: 'Delete this card', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteBlog(slug); } });
+    card.append(delBtn, editBtn);
+  });
 }
 
 // ---------- featured homes ----------
@@ -766,17 +807,23 @@ async function deleteBlog(slug: string) {
   try { await persist({ blog: content.blog }); applyDraftToPage(); toast('Article removed (draft).'); }
   catch (e) { toast((e as Error).message, true); }
 }
-function openBlogModal(slug: string | null) {
+// Blog posts are the single source of truth: the same editor covers the blog
+// index/detail pages, the home "Explore like a local" cards (showOnHome +
+// localTip), and the owners "Case studies" grid + preview popup (showOnOwners +
+// the caseStudy block). `preset` pre-fills a new post opened from one of those
+// section "Add …" chips.
+function openBlogModal(slug: string | null, preset?: Partial<BlogArticleItem>) {
   if (!content) return;
   ensureBlogSeeded();
   const list = content.blog;
   const existing = slug ? list.find((x) => x.slug === slug) : null;
   const a: BlogArticleItem = existing ? JSON.parse(JSON.stringify(existing))
-    : { slug: '', title: '', category: '', excerpt: '', readTime: '', dateFull: '', dateShort: '', img: '', featured: false, seo: { title: '', description: '' }, author: { name: '', initials: '' }, heroCaption: '', bodyHtml: '' };
+    : { slug: '', title: '', category: '', excerpt: '', readTime: '', dateFull: '', dateShort: '', img: '', featured: false, seo: { title: '', description: '' }, author: { name: '', initials: '' }, heroCaption: '', bodyHtml: '', localTip: '', showOnHome: false, showOnOwners: false, ...(preset || {}) };
+  const cs = a.caseStudy || { name: '', hood: '', beds: '', revenue: '', nightly: '', lift: '', gallery: [] };
   const title = field('Title', a.title);
   const category = field('Category', a.category);
-  const excerpt = field('Excerpt (card + featured summary)', a.excerpt, { wide: true, textarea: true });
-  const img = photoField('Hero image', a.img);
+  const excerpt = field('Excerpt / blurb (card summary)', a.excerpt, { wide: true, textarea: true });
+  const img = photoField('Hero / card image', a.img);
   const heroCaption = field('Hero caption', a.heroCaption, { wide: true });
   const readTime = field('Read time (e.g. 8 min read)', a.readTime);
   const dateFull = field('Date (full, e.g. June 18, 2026)', a.dateFull);
@@ -789,12 +836,34 @@ function openBlogModal(slug: string | null) {
   (bodyHtml.wrap.querySelector('textarea') as HTMLTextAreaElement).style.minHeight = '260px';
   const seoT = field('SEO title', a.seo?.title || '', { wide: true });
   const seoD = field('SEO description', a.seo?.description || '', { wide: true, textarea: true });
-  modal(existing ? `Edit article — ${a.title}` : 'New article', [
+
+  // Placement toggles — surface the post as a card elsewhere.
+  const showHome = el('input', { type: 'checkbox' }) as HTMLInputElement; showHome.checked = a.showOnHome === true;
+  const showHomeWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['Show on home page (Explore like a local)']), showHome]);
+  const localTip = field('Local tip (home card)', a.localTip || '');
+  const showOwners = el('input', { type: 'checkbox' }) as HTMLInputElement; showOwners.checked = a.showOnOwners === true;
+  const showOwnersWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['Show on owners page (Case studies)']), showOwners]);
+
+  // Case-study details — feed the owners card + preview popup.
+  const csName = field('Home name (e.g. Falcon)', cs.name || '');
+  const csHood = field('Neighborhood', cs.hood || '');
+  const csBeds = field('Beds (e.g. 4 BR)', cs.beds || '');
+  const csRevenue = field('Annual revenue (e.g. $214,800)', cs.revenue || '');
+  const csNightly = field('Nightly (e.g. $589 / night)', cs.nightly || '');
+  const csLift = field('Lift vs market (e.g. +57% over market)', cs.lift || '');
+  const csGallery = field('Popup gallery image URLs (one per line)', (cs.gallery || []).join('\n'), { wide: true, textarea: true });
+
+  modal(existing ? `Edit post — ${a.title}` : 'New blog post', [
     el('div', { class: 'cadm-grid2' }, [title.wrap, category.wrap]),
     excerpt.wrap, img.wrap, heroCaption.wrap,
     el('div', { class: 'cadm-grid2' }, [readTime.wrap, dateFull.wrap, dateShort.wrap]),
     el('div', { class: 'cadm-grid2' }, [authorName.wrap, authorInit.wrap]),
     featWrap,
+    el('div', { class: 'cadm-subhead' }, ['Placement']),
+    showHomeWrap, localTip.wrap, showOwnersWrap,
+    el('div', { class: 'cadm-subhead' }, ['Case study details (owners card + popup)']),
+    el('div', { class: 'cadm-grid2' }, [csName.wrap, csHood.wrap, csBeds.wrap, csRevenue.wrap, csNightly.wrap, csLift.wrap]),
+    csGallery.wrap,
     el('div', { class: 'cadm-subhead' }, ['Article body']), bodyHtml.wrap,
     el('div', { class: 'cadm-subhead' }, ['SEO']), seoT.wrap, seoD.wrap,
   ], async () => {
@@ -803,6 +872,13 @@ function openBlogModal(slug: string | null) {
     a.author = { name: authorName.get(), initials: authorInit.get() };
     a.featured = featured.checked; a.bodyHtml = bodyHtml.get();
     a.seo = { title: seoT.get(), description: seoD.get() };
+    a.localTip = localTip.get(); a.showOnHome = showHome.checked; a.showOnOwners = showOwners.checked;
+    const gallery = csGallery.get().split('\n').map((s) => s.trim()).filter(Boolean);
+    if (showOwners.checked || csName.get().trim() || csRevenue.get().trim()) {
+      a.caseStudy = { name: csName.get(), hood: csHood.get(), beds: csBeds.get(), revenue: csRevenue.get(), nightly: csNightly.get(), lift: csLift.get(), gallery };
+    } else {
+      delete a.caseStudy;
+    }
     if (!a.title.trim()) throw new Error('Title is required.');
     if (!a.slug) a.slug = slugify(a.title);
     const next = list.slice();
@@ -869,69 +945,8 @@ function photoField(label: string, value: string): { wrap: HTMLElement; get: () 
   return { wrap, get: () => input.value };
 }
 
-// Read a statically-rendered case card from the DOM so editing a not-yet-in-CMS
-// card pre-fills what's on screen instead of opening a blank form.
-function caseFromCard(id: string): CaseStudyItem | null {
-  const card = document.querySelector(`.gcase[data-case="${cssSel(id)}"]`);
-  if (!card) return null;
-  const t = (sel: string) => (card.querySelector(sel)?.textContent || '').trim();
-  const subFirst = (card.querySelector('.gcase__sub')?.childNodes[0]?.nodeValue || '').replace(/·\s*$/, '').trim();
-  const revFirst = (card.querySelector('.gcase__rev')?.childNodes[0]?.nodeValue || '').trim();
-  return {
-    id, name: t('.gcase__home'), hood: t('.gcase__hood'), beds: t('.gcase__beds'),
-    hook: t('.gcase__hook'), revenue: revFirst, nightly: subFirst, lift: t('.gcase__sub .lift'),
-    img: card.querySelector('.gcase__media img')?.getAttribute('src') || '',
-    featured: true, blurb: card.getAttribute('data-blurb') || '',
-  };
-}
 function cssSel(s: string): string {
   return (typeof CSS !== 'undefined' && CSS.escape) ? CSS.escape(s) : s.replace(/["\\]/g, '\\$&');
-}
-
-// The first edit/add/delete on the still-static owners grid captures every
-// shown case into the CMS list, so mutating one never drops the others.
-function ensureCasesSeeded() {
-  if (!content) return;
-  const list = content.caseStudies || (content.caseStudies = []);
-  if (list.length) return;
-  const ids = Array.from(document.querySelectorAll('.gcase[data-case]')).map((c) => c.getAttribute('data-case') || '');
-  const seeded = ids.map((id) => caseFromCard(id)).filter(Boolean) as CaseStudyItem[];
-  if (seeded.length) content.caseStudies = seeded;
-}
-
-// ---------- case study modal ----------
-function openCaseModal(id: string | null) {
-  if (!content) return;
-  ensureCasesSeeded();
-  const list = content.caseStudies;
-  const existing = id ? list.find((c) => c.id === id) : null;
-  const c: CaseStudyItem = existing ? { ...existing }
-    : (id && caseFromCard(id)) || { id: id || '', name: '', hood: '', beds: '', hook: '', revenue: '', nightly: '', lift: '', img: '', featured: true, blurb: '' };
-  const f = {
-    name: field('Name', c.name), hood: field('Neighborhood', c.hood), beds: field('Beds (e.g. 4 BR)', c.beds),
-    revenue: field('Annual revenue', c.revenue), nightly: field('Nightly', c.nightly), lift: field('Lift vs market', c.lift),
-    hook: field('Hook (card subtitle)', c.hook, { wide: true, textarea: true }),
-    blurb: field('Preview-modal story (optional)', c.blurb || '', { wide: true, textarea: true }),
-    img: photoField('Photo (optional)', c.img || ''),
-  };
-  const feat = el('input', { type: 'checkbox' }) as HTMLInputElement; feat.checked = c.featured !== false;
-  const featWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['Show on owners page']), feat]);
-  modal(existing ? `Edit case — ${c.name}` : 'New case study', [
-    el('div', { class: 'cadm-grid2' }, [f.name.wrap, f.hood.wrap, f.beds.wrap, f.revenue.wrap, f.nightly.wrap, f.lift.wrap]),
-    f.hook.wrap, f.blurb.wrap, f.img.wrap, featWrap,
-  ], async () => {
-    c.name = f.name.get(); c.hood = f.hood.get(); c.beds = f.beds.get();
-    c.revenue = f.revenue.get(); c.nightly = f.nightly.get(); c.lift = f.lift.get();
-    c.hook = f.hook.get(); c.blurb = f.blurb.get(); c.img = f.img.get(); c.featured = feat.checked;
-    if (!c.name.trim()) throw new Error('Name is required.');
-    if (!c.id) c.id = slugify(c.name);
-    const list = content!.caseStudies.slice();
-    const idx = list.findIndex((x) => x.id === c.id);
-    if (idx >= 0) list[idx] = c; else list.push(c);
-    content!.caseStudies = list;
-    await persist({ caseStudies: list });
-    applyDraftToPage();
-  });
 }
 function slugify(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48) || 'case-' + Date.now();

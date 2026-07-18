@@ -288,37 +288,38 @@ export function hydrateBlogArticle(items) {
   var body = art.querySelector('[data-blog-body]'); if (body && typeof a.bodyHtml === 'string') body.innerHTML = a.bodyHtml;
 }
 
-// Rebuild the owners-page grid from the CMS library (featured cases only). The
-// static six remain the fallback when the endpoint is unavailable.
-export function hydrateCases(items) {
+// Rebuild the owners-page "Case studies" grid from blog posts flagged
+// showOnOwners (a post always carries a caseStudy block here). Each card holds
+// the data the preview modal reads: data-full → the full article at
+// /blog/[slug], data-gallery → the popup thumbnails, data-blurb → the story.
+export function hydrateOwnerCases(blog) {
   var grid = document.querySelector('[data-cases]');
-  if (!grid || !Array.isArray(items) || !items.length) return;
-  var knownImgs = {};
-  grid.querySelectorAll('.gcase[data-case]').forEach(function (card) {
-    var img = card.querySelector('.gcase__media img');
-    if (img) knownImgs[card.getAttribute('data-case')] = img.getAttribute('src');
-  });
-  var featured = items.filter(function (cs) { return cs && cs.id && cs.featured !== false; });
-  if (!featured.length) return;
+  if (!grid || !Array.isArray(blog)) return;
+  var cases = blog.filter(function (p) { return p && p.slug && p.showOnOwners && p.caseStudy; });
+  if (!cases.length) return;
   var arrow = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
   grid.innerHTML = '';
-  featured.forEach(function (cs) {
+  cases.forEach(function (p) {
+    var cs = p.caseStudy || {};
+    var gallery = (Array.isArray(cs.gallery) && cs.gallery.length) ? cs.gallery : (p.img ? [p.img] : []);
     var card = document.createElement('button');
     card.type = 'button';
     card.className = 'gcase reveal is-in';
-    card.setAttribute('data-case', cs.id);
-    if (cs.blurb) card.setAttribute('data-blurb', cs.blurb);
+    card.setAttribute('data-case', p.slug);
+    card.setAttribute('data-full', '/blog/' + p.slug);
+    if (p.excerpt) card.setAttribute('data-blurb', p.excerpt);
+    card.setAttribute('data-gallery', JSON.stringify(gallery));
     var media = document.createElement('div'); media.className = 'gcase__media';
     var img = document.createElement('img');
-    img.src = cs.img || knownImgs[cs.id] || '/assets/photos/designs-pool.jpg';
-    img.alt = cs.name; img.loading = 'lazy';
+    img.src = p.img || gallery[0] || '/assets/photos/designs-pool.jpg';
+    img.alt = cs.name || p.title; img.loading = 'lazy';
     media.appendChild(img);
     if (cs.beds) { var beds = document.createElement('span'); beds.className = 'gcase__beds'; beds.textContent = cs.beds; media.appendChild(beds); }
     var body = document.createElement('div'); body.className = 'gcase__body';
     function div(cls, text, tag) { var el = document.createElement(tag || 'div'); el.className = cls; el.textContent = text || ''; return el; }
     body.appendChild(div('gcase__hood', cs.hood));
-    body.appendChild(div('gcase__home', cs.name, 'h3'));
-    body.appendChild(div('gcase__hook', cs.hook, 'p'));
+    body.appendChild(div('gcase__home', cs.name || p.title, 'h3'));
+    body.appendChild(div('gcase__hook', p.excerpt, 'p'));
     var rev = document.createElement('div'); rev.className = 'gcase__rev';
     rev.appendChild(document.createTextNode((cs.revenue || '') + ' '));
     var small = document.createElement('small'); small.textContent = 'annual revenue'; rev.appendChild(small);
@@ -332,5 +333,33 @@ export function hydrateCases(items) {
     body.appendChild(cta);
     card.appendChild(media); card.appendChild(body);
     grid.appendChild(card);
+  });
+}
+
+// Rebuild the home "Explore like a local" cards from blog posts flagged
+// showOnHome. Each card links to the full article at /blog/[slug].
+export function hydrateExplore(blog) {
+  var wrap = document.querySelector('[data-explore]');
+  if (!wrap || !Array.isArray(blog)) return;
+  var cards = blog.filter(function (p) { return p && p.slug && p.showOnHome; });
+  if (!cards.length) return;
+  var tip = '<svg viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6-6.3 4.6L8 14 2 9.4h7.6z"/></svg>';
+  wrap.innerHTML = '';
+  cards.forEach(function (p) {
+    var a = document.createElement('a');
+    a.className = 'todo__card'; a.href = '/blog/' + p.slug; a.setAttribute('data-explore-slug', p.slug);
+    var img = document.createElement('img'); img.src = p.img || ''; img.alt = p.title; img.loading = 'lazy';
+    var body = document.createElement('div'); body.className = 'todo__body';
+    var kicker = document.createElement('div'); kicker.className = 'todo__kicker'; kicker.textContent = p.category || '';
+    var h3 = document.createElement('h3'); h3.textContent = p.title;
+    var pEl = document.createElement('p'); pEl.textContent = p.excerpt || '';
+    body.appendChild(kicker); body.appendChild(h3); body.appendChild(pEl);
+    if (p.localTip) {
+      var tipEl = document.createElement('span'); tipEl.className = 'todo__tip';
+      tipEl.innerHTML = tip; tipEl.appendChild(document.createTextNode('Local tip: ' + p.localTip));
+      body.appendChild(tipEl);
+    }
+    a.appendChild(img); a.appendChild(body);
+    wrap.appendChild(a);
   });
 }

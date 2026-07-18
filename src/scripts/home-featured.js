@@ -10,6 +10,7 @@ import('./content-hydrate.js').then(function (H) {
       if (!d) return;
       try { H.hydrateFeaturedHomes(d.featuredHomes || []); } catch (e) {}
       try { H.hydrateGuestPhotos(d.guestPhotos || []); } catch (e) {}
+      try { H.hydrateExplore(d.blog || []); } catch (e) {}
     })
     .catch(function () { /* offline or unconfigured — static fallback stands */ });
 });

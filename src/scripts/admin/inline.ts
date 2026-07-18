@@ -36,3 +36,25 @@ async function decide() {
   if (flagged() || (await hasFirebaseSession())) import('./layer');
 }
 decide();
+
+// Hidden admin entrance: triple-click an empty part of the top nav bar to load
+// the admin layer and sign in. Clicks on links/buttons/form controls (the logo,
+// the menu, the search widget) don't count, so normal use is unaffected. This is
+// the only extra code a normal visitor runs — a tiny click counter.
+(function wireTripleClick() {
+  let n = 0;
+  let last = 0;
+  document.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    if (!t || !t.closest) return;
+    if (!t.closest('.site-header, [data-header]')) { n = 0; return; }
+    if (t.closest('a, button, input, select, textarea, label')) { n = 0; return; }
+    const now = Date.now();
+    n = now - last < 600 ? n + 1 : 1;
+    last = now;
+    if (n >= 3) {
+      n = 0;
+      import('./layer').then((m) => (m as { enterAdminMode?: () => void }).enterAdminMode?.());
+    }
+  });
+})();

@@ -1,5 +1,6 @@
-/* guest.js — booking mock, rental filters, favorites, and reviews carousel
+/* guest.js — booking search, rental filters, favorites, and reviews carousel
    for the Cardo "Book a Stay" page. Plain vanilla. */
+import { bookingUrlFrom } from './booking.js';
 (function () {
   'use strict';
 
@@ -57,14 +58,13 @@
     });
   });
 
-  /* ---- Booking bar (mock) ---- */
+  /* ---- Booking bar → booking site ---- */
   (function () {
     var form = document.querySelector('[data-bookbar]');
     if (!form) return;
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var results = document.querySelector('#results');
-      if (results) results.scrollIntoView({ behavior: 'smooth' });
+      window.location.href = bookingUrlFrom(form);
     });
   })();
 
@@ -145,8 +145,7 @@
     }
     navsearch.addEventListener('submit', function (e) {
       e.preventDefault();
-      var r = document.getElementById('results');
-      if (r) window.scrollTo({ top: r.getBoundingClientRect().top + window.pageYOffset - 70, behavior: 'smooth' });
+      window.location.href = bookingUrlFrom(navsearch);
     });
   })();
 

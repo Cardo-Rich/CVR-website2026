@@ -57,7 +57,20 @@ export interface OwnerTestimonialItem {
   home: string;
 }
 
-// Blog articles (index cards + full /blog/[slug] article pages).
+// Blog articles are the single source of truth for the blog index/detail pages,
+// the home "Explore like a local" cards, and the owners "Case studies" grid.
+// A post always appears in its blog category; the show* toggles additionally
+// surface it as a home or owners card. `caseStudy` carries the extra numbers a
+// design case study needs to render its card + preview popup.
+export interface BlogCaseStudy {
+  name: string;     // short home name for the card/popup (e.g. "Falcon")
+  hood: string;     // neighborhood label (card + popup eyebrow)
+  beds: string;     // e.g. "4 BR"
+  revenue: string;  // e.g. "$214,800"
+  nightly: string;  // e.g. "$589 / night"
+  lift: string;     // e.g. "+57% over market"
+  gallery?: string[]; // extra thumbnails for the preview popup
+}
 export interface BlogArticleItem {
   slug: string;
   title: string;
@@ -72,6 +85,10 @@ export interface BlogArticleItem {
   author: { name: string; initials: string };
   heroCaption: string;
   bodyHtml: string;
+  localTip?: string;      // "Explore like a local" card tip line
+  showOnHome?: boolean;   // surface as an Explore-like-a-local card on the home page
+  showOnOwners?: boolean; // surface as a case-study card on the owners page
+  caseStudy?: BlogCaseStudy;
 }
 
 // Neighborhood market pages (index cards + full /neighborhoods/[slug] detail).
@@ -299,21 +316,41 @@ export async function setNeighborhoods(db: Firestore, items: NeighborhoodItem[],
 
 export async function setBlog(db: Firestore, items: BlogArticleItem[], root: ContentRoot = DRAFT): Promise<void> {
   if (!Array.isArray(items)) throw new Error('items must be an array');
-  const clean = items.slice(0, 100).map((it) => ({
-    slug: String(it.slug || '').slice(0, 100).replace(/[^a-z0-9-]/g, '') || 'post',
-    title: String(it.title || '').slice(0, 240),
-    category: String(it.category || '').slice(0, 60),
-    excerpt: String(it.excerpt || '').slice(0, 600),
-    readTime: String(it.readTime || '').slice(0, 40),
-    dateFull: String(it.dateFull || '').slice(0, 60),
-    dateShort: String(it.dateShort || '').slice(0, 40),
-    img: String(it.img || '').slice(0, 600),
-    featured: it.featured === true,
-    seo: { title: String(it.seo?.title || '').slice(0, 240), description: String(it.seo?.description || '').slice(0, 400) },
-    author: { name: String(it.author?.name || '').slice(0, 120), initials: String(it.author?.initials || '').slice(0, 6) },
-    heroCaption: String(it.heroCaption || '').slice(0, 400),
-    bodyHtml: String(it.bodyHtml || '').slice(0, 60000),
-  }));
+  const clean = items.slice(0, 100).map((it) => {
+    const out: Record<string, unknown> = {
+      slug: String(it.slug || '').slice(0, 100).replace(/[^a-z0-9-]/g, '') || 'post',
+      title: String(it.title || '').slice(0, 240),
+      category: String(it.category || '').slice(0, 60),
+      excerpt: String(it.excerpt || '').slice(0, 600),
+      readTime: String(it.readTime || '').slice(0, 40),
+      dateFull: String(it.dateFull || '').slice(0, 60),
+      dateShort: String(it.dateShort || '').slice(0, 40),
+      img: String(it.img || '').slice(0, 600),
+      featured: it.featured === true,
+      seo: { title: String(it.seo?.title || '').slice(0, 240), description: String(it.seo?.description || '').slice(0, 400) },
+      author: { name: String(it.author?.name || '').slice(0, 120), initials: String(it.author?.initials || '').slice(0, 6) },
+      heroCaption: String(it.heroCaption || '').slice(0, 400),
+      bodyHtml: String(it.bodyHtml || '').slice(0, 60000),
+      localTip: String(it.localTip || '').slice(0, 300),
+      showOnHome: it.showOnHome === true,
+      showOnOwners: it.showOnOwners === true,
+    };
+    // Only persist the case-study block when the post actually carries one
+    // (Firestore rejects undefined fields).
+    const cs = it.caseStudy;
+    if (cs && (cs.hood || cs.revenue || cs.nightly || cs.lift || cs.beds)) {
+      out.caseStudy = {
+        name: String(cs.name || '').slice(0, 120),
+        hood: String(cs.hood || '').slice(0, 120),
+        beds: String(cs.beds || '').slice(0, 24),
+        revenue: String(cs.revenue || '').slice(0, 40),
+        nightly: String(cs.nightly || '').slice(0, 60),
+        lift: String(cs.lift || '').slice(0, 60),
+        gallery: strArr(cs.gallery, 8, 600),
+      };
+    }
+    return out;
+  });
   await blogRef(db, root).set({ items: clean }, { merge: false });
 }
 
