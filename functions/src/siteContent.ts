@@ -33,6 +33,14 @@ export interface FeaturedHomeItem {
   featured?: boolean;  // shown on the home page
 }
 
+// Guest-photo gallery tiles on the home page.
+export interface GuestPhotoItem {
+  id: string;
+  photo: string;
+  location: string;
+  big?: boolean; // the large lead tile
+}
+
 export interface ReviewCard { name: string; meta: string; stars: number; text: string; }
 
 export interface ReviewsDoc {
@@ -46,23 +54,24 @@ export interface ReviewsDoc {
 const PUBLISHED = 'siteContent';
 const DRAFT = 'siteContentDraft';
 export type ContentRoot = typeof PUBLISHED | typeof DRAFT;
-const DOCS = ['caseStudies', 'reviews', 'sections', 'featuredHomes'] as const;
+const DOCS = ['caseStudies', 'reviews', 'sections', 'featuredHomes', 'guestPhotos'] as const;
 const casesRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/caseStudies`);
 const reviewsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/reviews`);
 const sectionsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/sections`);
 const featuredRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/featuredHomes`);
+const guestRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/guestPhotos`);
 
 // Section visibility switches: key → shown? Missing keys default to shown,
 // so the static site is unaffected until an editor turns something off.
 export type SectionsMap = Record<string, boolean>;
 
-export interface SiteContentData { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap; featuredHomes: FeaturedHomeItem[] }
+export interface SiteContentData { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap; featuredHomes: FeaturedHomeItem[]; guestPhotos: GuestPhotoItem[] }
 
 // forPublic: apply display rules (e.g. Google minimum-star filter) so the
 // site only ever receives what should be shown. root selects the published
 // copy (default, served at /api/content) or the draft copy (admin preview).
 export async function getContent(db: Firestore, forPublic = false, root: ContentRoot = PUBLISHED): Promise<SiteContentData> {
-  const [cs, rv, sec, fh] = await Promise.all([casesRef(db, root).get(), reviewsRef(db, root).get(), sectionsRef(db, root).get(), featuredRef(db, root).get()]);
+  const [cs, rv, sec, fh, gp] = await Promise.all([casesRef(db, root).get(), reviewsRef(db, root).get(), sectionsRef(db, root).get(), featuredRef(db, root).get(), guestRef(db, root).get()]);
   const reviews = ((rv.data() as ReviewsDoc) || { google: {}, airbnb: {} });
   if (forPublic && reviews.google) {
     const min = Number(reviews.google.minStars) || 0;
@@ -75,6 +84,7 @@ export async function getContent(db: Firestore, forPublic = false, root: Content
     reviews,
     sections: ((sec.data()?.map as SectionsMap) || {}),
     featuredHomes: ((fh.data()?.items as FeaturedHomeItem[]) || []),
+    guestPhotos: ((gp.data()?.items as GuestPhotoItem[]) || []),
   };
 }
 
@@ -86,12 +96,13 @@ export async function getContentForAdmin(db: Firestore): Promise<SiteContentData
   const draftDocs = DOCS.filter((_, i) => draftSnaps[i].exists);
   const pub = await getContent(db, false, PUBLISHED);
   const draft = await getContent(db, false, DRAFT);
-  // DOCS order: caseStudies, reviews, sections, featuredHomes
+  // DOCS order: caseStudies, reviews, sections, featuredHomes, guestPhotos
   const merged: SiteContentData = {
     caseStudies: draftSnaps[0].exists ? draft.caseStudies : pub.caseStudies,
     reviews: draftSnaps[1].exists ? draft.reviews : pub.reviews,
     sections: draftSnaps[2].exists ? draft.sections : pub.sections,
     featuredHomes: draftSnaps[3].exists ? draft.featuredHomes : pub.featuredHomes,
+    guestPhotos: draftSnaps[4].exists ? draft.guestPhotos : pub.guestPhotos,
   };
   return { ...merged, hasDraft: draftDocs.length > 0, draftDocs };
 }
@@ -162,6 +173,17 @@ export async function setFeaturedHomes(db: Firestore, items: FeaturedHomeItem[],
     featured: it.featured !== false,
   }));
   await featuredRef(db, root).set({ items: clean }, { merge: false });
+}
+
+export async function setGuestPhotos(db: Firestore, items: GuestPhotoItem[], root: ContentRoot = DRAFT): Promise<void> {
+  if (!Array.isArray(items)) throw new Error('items must be an array');
+  const clean = items.slice(0, 40).map((it) => ({
+    id: String(it.id || '').slice(0, 64),
+    photo: String(it.photo || '').slice(0, 600),
+    location: String(it.location || '').slice(0, 80),
+    big: it.big === true,
+  }));
+  await guestRef(db, root).set({ items: clean }, { merge: false });
 }
 
 function cleanCards(cards: unknown): ReviewCard[] {

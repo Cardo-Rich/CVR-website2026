@@ -78,6 +78,27 @@ export function hydrateFeaturedHomes(items) {
   });
 }
 
+// Rebuild the home-page guest-photo gallery from CMS items. Static seed tiles
+// remain the fallback when the endpoint is unavailable or empty.
+export function hydrateGuestPhotos(items) {
+  var grid = document.querySelector('[data-guest-grid]');
+  if (!grid || !Array.isArray(items)) return;
+  var shown = items.filter(function (g) { return g && g.photo; });
+  if (!shown.length) return;
+  grid.innerHTML = '';
+  shown.forEach(function (g) {
+    var a = document.createElement('a');
+    a.className = 'feed__item' + (g.big ? ' big' : '');
+    a.href = '#results';
+    a.setAttribute('data-gp-id', g.id || '');
+    var img = document.createElement('img');
+    img.src = g.photo; img.alt = g.location ? 'Guest stay in ' + g.location : 'Guest stay'; img.loading = 'lazy';
+    a.appendChild(img);
+    if (g.location) { var loc = document.createElement('span'); loc.className = 'feed__loc'; loc.textContent = g.location; a.appendChild(loc); }
+    grid.appendChild(a);
+  });
+}
+
 // Rebuild the owners-page grid from the CMS library (featured cases only). The
 // static six remain the fallback when the endpoint is unavailable.
 export function hydrateCases(items) {
