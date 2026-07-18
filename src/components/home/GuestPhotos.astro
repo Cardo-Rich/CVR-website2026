@@ -1,8 +1,22 @@
 ---
 import { homePhotos } from '../../data/home';
+
+// Seed grid; CMS-managed via the inline admin layer (hydrated from /api/content).
+const photos = [
+  { id: 'gp-1', photo: homePhotos['pool'], location: 'Coronado', big: true },
+  { id: 'gp-2', photo: homePhotos['living-bright'], location: 'Pacific Beach' },
+  { id: 'gp-3', photo: 'https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?auto=format&fit=crop&w=400&q=80', location: 'Mission Beach' },
+  { id: 'gp-4', photo: homePhotos['bedroom-floral'], location: 'Mission Beach' },
+  { id: 'gp-5', photo: homePhotos['dining'], location: 'Del Mar' },
+  { id: 'gp-6', photo: 'https://images.unsplash.com/photo-1473116763249-2faaef81ccda?auto=format&fit=crop&w=400&q=80', location: 'Sunset Cliffs' },
+  { id: 'gp-7', photo: homePhotos['living-craftsman'], location: 'La Jolla' },
+  { id: 'gp-8', photo: homePhotos['gameroom'], location: 'Encinitas' },
+  { id: 'gp-9', photo: 'https://images.unsplash.com/photo-1527004013197-933c4bb611b3?auto=format&fit=crop&w=400&q=80', location: 'La Jolla' },
+  { id: 'gp-10', photo: homePhotos['amenities'], location: 'Carlsbad' },
+];
 ---
 
-<section class="section-pad" id="photos" data-screen-label="Guest photos" data-section="guest-photos">
+<section class="section-pad" id="photos" data-screen-label="Guest photos" data-section="guest-photos" data-cms="guest-photos">
   <div class="section-wrap">
     <div class="feed__head reveal">
       <div class="feed__handle">
@@ -14,17 +28,13 @@ import { homePhotos } from '../../data/home';
       </div>
       <a href="#results" class="link-arrow">Book your stay →</a>
     </div>
-    <div class="feed__grid reveal">
-      <a class="feed__item big" href="#results"><img src={homePhotos['pool']} alt="Guest stay" loading="lazy" /><span class="feed__loc">Coronado</span></a>
-      <a class="feed__item" href="#results"><img src={homePhotos['living-bright']} alt="Guest stay" loading="lazy" /><span class="feed__loc">Pacific Beach</span></a>
-      <a class="feed__item" href="#results"><img src="https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?auto=format&fit=crop&w=400&q=80" alt="Beach day" loading="lazy" /><span class="feed__loc">Mission Beach</span></a>
-      <a class="feed__item" href="#results"><img src={homePhotos['bedroom-floral']} alt="Guest stay" loading="lazy" /><span class="feed__loc">Mission Beach</span></a>
-      <a class="feed__item" href="#results"><img src={homePhotos['dining']} alt="Guest stay" loading="lazy" /><span class="feed__loc">Del Mar</span></a>
-      <a class="feed__item" href="#results"><img src="https://images.unsplash.com/photo-1473116763249-2faaef81ccda?auto=format&fit=crop&w=400&q=80" alt="Sunset" loading="lazy" /><span class="feed__loc">Sunset Cliffs</span></a>
-      <a class="feed__item" href="#results"><img src={homePhotos['living-craftsman']} alt="Guest stay" loading="lazy" /><span class="feed__loc">La Jolla</span></a>
-      <a class="feed__item" href="#results"><img src={homePhotos['gameroom']} alt="Guest stay" loading="lazy" /><span class="feed__loc">Encinitas</span></a>
-      <a class="feed__item" href="#results"><img src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?auto=format&fit=crop&w=400&q=80" alt="Coastline" loading="lazy" /><span class="feed__loc">La Jolla</span></a>
-      <a class="feed__item" href="#results"><img src={homePhotos['amenities']} alt="Guest stay" loading="lazy" /><span class="feed__loc">Carlsbad</span></a>
+    <div class="feed__grid reveal" data-guest-grid>
+      {photos.map((p) => (
+        <a class={`feed__item${p.big ? ' big' : ''}`} href="#results" data-gp-id={p.id}>
+          <img src={p.photo} alt={p.location ? `Guest stay in ${p.location}` : 'Guest stay'} loading="lazy" />
+          {p.location && <span class="feed__loc">{p.location}</span>}
+        </a>
+      ))}
     </div>
   </div>
 </section>

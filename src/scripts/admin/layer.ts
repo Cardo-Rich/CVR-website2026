@@ -11,7 +11,7 @@
 
    Layout is never editable — only content. */
 import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle, uploadPhoto } from './cms';
-import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem } from './cms';
+import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem, GuestPhotoItem } from './cms';
 import '../../styles/admin.css';
 // Shared renderers (the published path uses the same module).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,6 +21,7 @@ const H = Hydrate as {
   hydrateReviews: (r: unknown) => void;
   hydrateCases: (i: unknown[]) => void;
   hydrateFeaturedHomes: (i: unknown[]) => void;
+  hydrateGuestPhotos: (i: unknown[]) => void;
 };
 
 // ---------- tiny DOM helper ----------
@@ -105,9 +106,11 @@ function applyDraftToPage() {
   try { H.hydrateReviews(content.reviews || {}); } catch { /* not on this page */ }
   try { H.hydrateCases(content.caseStudies || []); } catch { /* not on this page */ }
   try { H.hydrateFeaturedHomes(content.featuredHomes || []); } catch { /* not on this page */ }
+  try { H.hydrateGuestPhotos(content.guestPhotos || []); } catch { /* not on this page */ }
   // re-attach per-card controls after grids are rebuilt
   decorateCaseCards();
   decorateFeaturedCards();
+  decorateGuestCards();
 }
 
 // ============================================================ toolbar
@@ -187,7 +190,7 @@ async function onDiscard() {
 }
 
 // persist current `content` as a draft patch
-async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[] }) {
+async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[] }) {
   await saveContent(patch);
   setDirty(true);
 }
@@ -249,8 +252,14 @@ function buildEditors() {
     const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'featured-homes');
     bar.append(editChip('Add home', () => openFeaturedModal(null)));
   });
+  // Guest photos gallery → Add chip + Edit/Delete on each tile
+  document.querySelectorAll<HTMLElement>('[data-cms="guest-photos"]').forEach((sec) => {
+    const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'guest-photos');
+    bar.append(editChip('Add photo', () => openGuestModal(null)));
+  });
   decorateCaseCards();
   decorateFeaturedCards();
+  decorateGuestCards();
 }
 function editChip(label: string, onClick: () => void): HTMLElement {
   return el('button', { class: 'cadm-chip', onclick: onClick, html: PENCIL + '<span>' + label + '</span>' });
@@ -368,6 +377,71 @@ function openFeaturedModal(id: string | null) {
     if (idx >= 0) list[idx] = h; else list.push(h);
     content!.featuredHomes = list;
     await persist({ featuredHomes: list });
+    applyDraftToPage();
+  });
+}
+
+// ---------- guest photos ----------
+function decorateGuestCards() {
+  const grid = document.querySelector('[data-guest-grid]');
+  if (!grid || !content) return;
+  grid.querySelectorAll<HTMLElement>('.feed__item[data-gp-id]').forEach((card) => {
+    if (card.querySelector('.cadm-edit-fab')) return;
+    card.classList.add('cadm-hoverable');
+    const id = card.getAttribute('data-gp-id')!;
+    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this photo', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openGuestModal(id); } });
+    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:52px', title: 'Delete this photo', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteGuest(id); } });
+    card.append(delBtn, editBtn);
+  });
+}
+function guestFromCard(id: string): GuestPhotoItem | null {
+  const card = document.querySelector(`.feed__item[data-gp-id="${cssSel(id)}"]`);
+  if (!card) return null;
+  return {
+    id,
+    photo: card.querySelector('img')?.getAttribute('src') || '',
+    location: (card.querySelector('.feed__loc')?.textContent || '').trim(),
+    big: card.classList.contains('big'),
+  };
+}
+function ensureGuestSeeded() {
+  if (!content) return;
+  const list = content.guestPhotos || (content.guestPhotos = []);
+  if (list.length) return;
+  const ids = Array.from(document.querySelectorAll('.feed__item[data-gp-id]')).map((c) => c.getAttribute('data-gp-id') || '');
+  const seeded = ids.map((id) => guestFromCard(id)).filter(Boolean) as GuestPhotoItem[];
+  if (seeded.length) content.guestPhotos = seeded;
+}
+async function deleteGuest(id: string) {
+  if (!content) return;
+  ensureGuestSeeded();
+  if (!confirm('Remove this photo? Applies on publish.')) return;
+  content.guestPhotos = content.guestPhotos.filter((x) => x.id !== id);
+  try { await persist({ guestPhotos: content.guestPhotos }); applyDraftToPage(); toast('Photo removed (draft).'); }
+  catch (e) { toast((e as Error).message, true); }
+}
+function openGuestModal(id: string | null) {
+  if (!content) return;
+  ensureGuestSeeded();
+  const list = content.guestPhotos;
+  const existing = id ? list.find((x) => x.id === id) : null;
+  const g: GuestPhotoItem = existing ? { ...existing }
+    : (id && guestFromCard(id)) || { id: id || '', photo: '', location: '', big: false };
+  const photo = photoField('Photo', g.photo);
+  const loc = field('Location label (e.g. La Jolla)', g.location);
+  const big = el('input', { type: 'checkbox' }) as HTMLInputElement; big.checked = g.big === true;
+  const bigWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['Large lead tile']), big]);
+  modal(existing ? 'Edit guest photo' : 'New guest photo', [
+    photo.wrap, loc.wrap, bigWrap,
+  ], async () => {
+    g.photo = photo.get(); g.location = loc.get(); g.big = big.checked;
+    if (!g.photo.trim()) throw new Error('A photo is required.');
+    if (!g.id) g.id = 'gp-' + (list.length + 1) + '-' + slugify(g.location || 'photo');
+    const next = list.slice();
+    const idx = next.findIndex((x) => x.id === g.id);
+    if (idx >= 0) next[idx] = g; else next.push(g);
+    content!.guestPhotos = next;
+    await persist({ guestPhotos: next });
     applyDraftToPage();
   });
 }
