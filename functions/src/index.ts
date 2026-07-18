@@ -111,11 +111,6 @@ export const ghl = onRequest({ secrets: [GHL_API_TOKEN], cors: false }, async (r
 
 // ---- Site content: public read + admin CMS write + Google reviews sync ----
 const GOOGLE_PLACES_API_KEY = defineSecret('GOOGLE_PLACES_API_KEY');
-// Optional: a fine-grained GitHub PAT (actions:write) so "Publish" can trigger
-// a site rebuild. Left as the "unset" placeholder → publish still works, it
-// just doesn't kick a rebuild (hydrated sections update live regardless).
-const GITHUB_DISPATCH_TOKEN = defineSecret('GITHUB_DISPATCH_TOKEN');
-const GITHUB_REPO = defineString('GITHUB_REPO', { default: 'Cardo-Rich/CVR-website2026' });
 
 // GET /api/content → { caseStudies, reviews }. CDN-cached; the static site
 // hydrates from this and falls back to its baked-in copy when unavailable.
@@ -146,33 +141,13 @@ export const adminContentSet = onCall(async (req) => {
   if (req.data?.featuredHomes) await setFeaturedHomes(getDb(), req.data.featuredHomes);
   return { ok: true };
 });
-// Promote all pending drafts to published, then (optionally) kick a site
-// rebuild so the static HTML re-bakes the new content for SEO. The rebuild is
-// best-effort: publishing to the live /api/content already makes hydrated
-// sections update immediately, with or without a rebuild.
-export const adminPublish = onCall({ secrets: [GITHUB_DISPATCH_TOKEN] }, async (req) => {
+// Promote all pending drafts to published. The public /api/content immediately
+// serves the new content and the hydrated sections update live, so no rebuild
+// is required for changes to appear.
+export const adminPublish = onCall(async (req) => {
   requireAdmin(req.auth);
   const result = await publishDrafts(getDb());
-  let rebuild: 'triggered' | 'skipped' | 'failed' = 'skipped';
-  const token = GITHUB_DISPATCH_TOKEN.value();
-  const repo = GITHUB_REPO.value();
-  if (token && token !== 'unset' && repo) {
-    try {
-      const r = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/deploy.yml/dispatches`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ref: 'main' }),
-      });
-      rebuild = r.ok ? 'triggered' : 'failed';
-      if (!r.ok) console.error('rebuild dispatch failed', r.status, await r.text());
-    } catch (e) { rebuild = 'failed'; console.error('rebuild dispatch error', e); }
-  }
-  return { ok: true, ...result, rebuild };
+  return { ok: true, ...result, rebuild: 'skipped' as const };
 });
 export const adminDiscardDraft = onCall(async (req) => {
   requireAdmin(req.auth);
