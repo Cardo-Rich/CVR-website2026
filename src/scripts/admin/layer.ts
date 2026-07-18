@@ -11,7 +11,7 @@
 
    Layout is never editable — only content. */
 import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle, uploadPhoto } from './cms';
-import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem, GuestPhotoItem, TeamMemberItem, OwnerTestimonialItem, NeighborhoodItem } from './cms';
+import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem, GuestPhotoItem, TeamMemberItem, OwnerTestimonialItem, NeighborhoodItem, BlogArticleItem } from './cms';
 import '../../styles/admin.css';
 // Shared renderers (the published path uses the same module).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,6 +26,8 @@ const H = Hydrate as {
   hydrateOwnerTestimonials: (i: unknown[]) => void;
   hydrateNeighborhoodIndex: (i: unknown[]) => void;
   hydrateNeighborhoodDetail: (i: unknown[]) => void;
+  hydrateBlogIndex: (i: unknown[]) => void;
+  hydrateBlogArticle: (i: unknown[]) => void;
 };
 
 // ---------- tiny DOM helper ----------
@@ -115,6 +117,8 @@ function applyDraftToPage() {
   try { H.hydrateOwnerTestimonials(content.ownerTestimonials || []); } catch { /* not on this page */ }
   try { H.hydrateNeighborhoodIndex(content.neighborhoods || []); } catch { /* not on this page */ }
   try { H.hydrateNeighborhoodDetail(content.neighborhoods || []); } catch { /* not on this page */ }
+  try { H.hydrateBlogIndex(content.blog || []); } catch { /* not on this page */ }
+  try { H.hydrateBlogArticle(content.blog || []); } catch { /* not on this page */ }
   // re-attach per-card controls after grids are rebuilt
   decorateCaseCards();
   decorateFeaturedCards();
@@ -122,6 +126,7 @@ function applyDraftToPage() {
   decorateTeamCards();
   decorateOwnerTestCards();
   decorateHoodCards();
+  decorateBlogCards();
 }
 
 // ============================================================ toolbar
@@ -201,7 +206,7 @@ async function onDiscard() {
 }
 
 // persist current `content` as a draft patch
-async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[]; ownerTestimonials?: OwnerTestimonialItem[]; neighborhoods?: NeighborhoodItem[] }) {
+async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[]; ownerTestimonials?: OwnerTestimonialItem[]; neighborhoods?: NeighborhoodItem[]; blog?: BlogArticleItem[] }) {
   await saveContent(patch);
   setDirty(true);
 }
@@ -288,12 +293,23 @@ function buildEditors() {
     const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'neighborhood');
     bar.append(editChip('Edit this area', () => openHoodModal(sec.getAttribute('data-nh-detail'))));
   });
+  // Blog index → Add chip + Edit/Delete on each post card
+  document.querySelectorAll<HTMLElement>('[data-cms="blog"]').forEach((sec) => {
+    const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'blog');
+    bar.append(editChip('Add article', () => openBlogModal(null)));
+  });
+  // Blog article page → Edit-this-article chip
+  document.querySelectorAll<HTMLElement>('[data-cms="blog-article"]').forEach((sec) => {
+    const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'article');
+    bar.append(editChip('Edit this article', () => openBlogModal(sec.getAttribute('data-blog-detail'))));
+  });
   decorateCaseCards();
   decorateFeaturedCards();
   decorateGuestCards();
   decorateTeamCards();
   decorateOwnerTestCards();
   decorateHoodCards();
+  decorateBlogCards();
 }
 function editChip(label: string, onClick: () => void): HTMLElement {
   return el('button', { class: 'cadm-chip', onclick: onClick, html: PENCIL + '<span>' + label + '</span>' });
@@ -716,6 +732,84 @@ function openHoodModal(slug: string | null) {
     if (idx >= 0) next[idx] = n; else next.push(n);
     content!.neighborhoods = next;
     await persist({ neighborhoods: next });
+    applyDraftToPage();
+  });
+}
+
+// ---------- blog articles ----------
+function ensureBlogSeeded() {
+  if (!content) return;
+  const list = content.blog || (content.blog = []);
+  if (list.length) return;
+  const embed = document.querySelector('[data-blog-seed]');
+  if (embed) {
+    try { const seed = JSON.parse(embed.textContent || '[]'); if (Array.isArray(seed) && seed.length) content.blog = seed; } catch { /* ignore */ }
+  }
+}
+function decorateBlogCards() {
+  if (!content) return;
+  document.querySelectorAll<HTMLElement>('.feat[data-blog-slug], [data-blog-grid] .post[data-blog-slug]').forEach((card) => {
+    if (card.querySelector('.cadm-edit-fab')) return;
+    card.classList.add('cadm-hoverable');
+    const slug = card.getAttribute('data-blog-slug')!;
+    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this article', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openBlogModal(slug); } });
+    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:52px', title: 'Delete this article', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteBlog(slug); } });
+    card.append(delBtn, editBtn);
+  });
+}
+async function deleteBlog(slug: string) {
+  if (!content) return;
+  ensureBlogSeeded();
+  const a = content.blog.find((x) => x.slug === slug);
+  if (!confirm(`Delete “${a?.title || slug}”? Applies on publish (its page is removed at the next deploy).`)) return;
+  content.blog = content.blog.filter((x) => x.slug !== slug);
+  try { await persist({ blog: content.blog }); applyDraftToPage(); toast('Article removed (draft).'); }
+  catch (e) { toast((e as Error).message, true); }
+}
+function openBlogModal(slug: string | null) {
+  if (!content) return;
+  ensureBlogSeeded();
+  const list = content.blog;
+  const existing = slug ? list.find((x) => x.slug === slug) : null;
+  const a: BlogArticleItem = existing ? JSON.parse(JSON.stringify(existing))
+    : { slug: '', title: '', category: '', excerpt: '', readTime: '', dateFull: '', dateShort: '', img: '', featured: false, seo: { title: '', description: '' }, author: { name: '', initials: '' }, heroCaption: '', bodyHtml: '' };
+  const title = field('Title', a.title);
+  const category = field('Category', a.category);
+  const excerpt = field('Excerpt (card + featured summary)', a.excerpt, { wide: true, textarea: true });
+  const img = photoField('Hero image', a.img);
+  const heroCaption = field('Hero caption', a.heroCaption, { wide: true });
+  const readTime = field('Read time (e.g. 8 min read)', a.readTime);
+  const dateFull = field('Date (full, e.g. June 18, 2026)', a.dateFull);
+  const dateShort = field('Date (short, e.g. Jun 2026)', a.dateShort);
+  const authorName = field('Author name', a.author?.name || '');
+  const authorInit = field('Author initials', a.author?.initials || '');
+  const featured = el('input', { type: 'checkbox' }) as HTMLInputElement; featured.checked = a.featured === true;
+  const featWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['Featured (top of blog)']), featured]);
+  const bodyHtml = field('Body (HTML — use <p>, <h2>, <blockquote>, <ul><li>…)', a.bodyHtml, { wide: true, textarea: true });
+  (bodyHtml.wrap.querySelector('textarea') as HTMLTextAreaElement).style.minHeight = '260px';
+  const seoT = field('SEO title', a.seo?.title || '', { wide: true });
+  const seoD = field('SEO description', a.seo?.description || '', { wide: true, textarea: true });
+  modal(existing ? `Edit article — ${a.title}` : 'New article', [
+    el('div', { class: 'cadm-grid2' }, [title.wrap, category.wrap]),
+    excerpt.wrap, img.wrap, heroCaption.wrap,
+    el('div', { class: 'cadm-grid2' }, [readTime.wrap, dateFull.wrap, dateShort.wrap]),
+    el('div', { class: 'cadm-grid2' }, [authorName.wrap, authorInit.wrap]),
+    featWrap,
+    el('div', { class: 'cadm-subhead' }, ['Article body']), bodyHtml.wrap,
+    el('div', { class: 'cadm-subhead' }, ['SEO']), seoT.wrap, seoD.wrap,
+  ], async () => {
+    a.title = title.get(); a.category = category.get(); a.excerpt = excerpt.get(); a.img = img.get();
+    a.heroCaption = heroCaption.get(); a.readTime = readTime.get(); a.dateFull = dateFull.get(); a.dateShort = dateShort.get();
+    a.author = { name: authorName.get(), initials: authorInit.get() };
+    a.featured = featured.checked; a.bodyHtml = bodyHtml.get();
+    a.seo = { title: seoT.get(), description: seoD.get() };
+    if (!a.title.trim()) throw new Error('Title is required.');
+    if (!a.slug) a.slug = slugify(a.title);
+    const next = list.slice();
+    const idx = next.findIndex((x) => x.slug === a.slug);
+    if (idx >= 0) next[idx] = a; else next.push(a);
+    content!.blog = next;
+    await persist({ blog: next });
     applyDraftToPage();
   });
 }

@@ -57,6 +57,23 @@ export interface OwnerTestimonialItem {
   home: string;
 }
 
+// Blog articles (index cards + full /blog/[slug] article pages).
+export interface BlogArticleItem {
+  slug: string;
+  title: string;
+  category: string;
+  excerpt: string;
+  readTime: string;
+  dateFull: string;
+  dateShort: string;
+  img: string;
+  featured?: boolean;
+  seo: { title: string; description: string };
+  author: { name: string; initials: string };
+  heroCaption: string;
+  bodyHtml: string;
+}
+
 // Neighborhood market pages (index cards + full /neighborhoods/[slug] detail).
 export interface NeighborhoodItem {
   slug: string;
@@ -86,7 +103,7 @@ export interface ReviewsDoc {
 const PUBLISHED = 'siteContent';
 const DRAFT = 'siteContentDraft';
 export type ContentRoot = typeof PUBLISHED | typeof DRAFT;
-const DOCS = ['caseStudies', 'reviews', 'sections', 'featuredHomes', 'guestPhotos', 'teamMembers', 'ownerTestimonials', 'neighborhoods'] as const;
+const DOCS = ['caseStudies', 'reviews', 'sections', 'featuredHomes', 'guestPhotos', 'teamMembers', 'ownerTestimonials', 'neighborhoods', 'blog'] as const;
 const casesRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/caseStudies`);
 const reviewsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/reviews`);
 const sectionsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/sections`);
@@ -95,18 +112,19 @@ const guestRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/guestPhot
 const teamRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/teamMembers`);
 const ownerTestRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/ownerTestimonials`);
 const hoodsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/neighborhoods`);
+const blogRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/blog`);
 
 // Section visibility switches: key → shown? Missing keys default to shown,
 // so the static site is unaffected until an editor turns something off.
 export type SectionsMap = Record<string, boolean>;
 
-export interface SiteContentData { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap; featuredHomes: FeaturedHomeItem[]; guestPhotos: GuestPhotoItem[]; teamMembers: TeamMemberItem[]; ownerTestimonials: OwnerTestimonialItem[]; neighborhoods: NeighborhoodItem[] }
+export interface SiteContentData { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap; featuredHomes: FeaturedHomeItem[]; guestPhotos: GuestPhotoItem[]; teamMembers: TeamMemberItem[]; ownerTestimonials: OwnerTestimonialItem[]; neighborhoods: NeighborhoodItem[]; blog: BlogArticleItem[] }
 
 // forPublic: apply display rules (e.g. Google minimum-star filter) so the
 // site only ever receives what should be shown. root selects the published
 // copy (default, served at /api/content) or the draft copy (admin preview).
 export async function getContent(db: Firestore, forPublic = false, root: ContentRoot = PUBLISHED): Promise<SiteContentData> {
-  const [cs, rv, sec, fh, gp, tm, ot, nh] = await Promise.all([casesRef(db, root).get(), reviewsRef(db, root).get(), sectionsRef(db, root).get(), featuredRef(db, root).get(), guestRef(db, root).get(), teamRef(db, root).get(), ownerTestRef(db, root).get(), hoodsRef(db, root).get()]);
+  const [cs, rv, sec, fh, gp, tm, ot, nh, bl] = await Promise.all([casesRef(db, root).get(), reviewsRef(db, root).get(), sectionsRef(db, root).get(), featuredRef(db, root).get(), guestRef(db, root).get(), teamRef(db, root).get(), ownerTestRef(db, root).get(), hoodsRef(db, root).get(), blogRef(db, root).get()]);
   const reviews = ((rv.data() as ReviewsDoc) || { google: {}, airbnb: {} });
   if (forPublic && reviews.google) {
     const min = Number(reviews.google.minStars) || 0;
@@ -123,6 +141,7 @@ export async function getContent(db: Firestore, forPublic = false, root: Content
     teamMembers: ((tm.data()?.items as TeamMemberItem[]) || []),
     ownerTestimonials: ((ot.data()?.items as OwnerTestimonialItem[]) || []),
     neighborhoods: ((nh.data()?.items as NeighborhoodItem[]) || []),
+    blog: ((bl.data()?.items as BlogArticleItem[]) || []),
   };
 }
 
@@ -144,6 +163,7 @@ export async function getContentForAdmin(db: Firestore): Promise<SiteContentData
     teamMembers: draftSnaps[5].exists ? draft.teamMembers : pub.teamMembers,
     ownerTestimonials: draftSnaps[6].exists ? draft.ownerTestimonials : pub.ownerTestimonials,
     neighborhoods: draftSnaps[7].exists ? draft.neighborhoods : pub.neighborhoods,
+    blog: draftSnaps[8].exists ? draft.blog : pub.blog,
   };
   return { ...merged, hasDraft: draftDocs.length > 0, draftDocs };
 }
@@ -275,6 +295,26 @@ export async function setNeighborhoods(db: Firestore, items: NeighborhoodItem[],
     ctaText: String(it.ctaText || '').slice(0, 400),
   }));
   await hoodsRef(db, root).set({ items: clean }, { merge: false });
+}
+
+export async function setBlog(db: Firestore, items: BlogArticleItem[], root: ContentRoot = DRAFT): Promise<void> {
+  if (!Array.isArray(items)) throw new Error('items must be an array');
+  const clean = items.slice(0, 100).map((it) => ({
+    slug: String(it.slug || '').slice(0, 100).replace(/[^a-z0-9-]/g, '') || 'post',
+    title: String(it.title || '').slice(0, 240),
+    category: String(it.category || '').slice(0, 60),
+    excerpt: String(it.excerpt || '').slice(0, 600),
+    readTime: String(it.readTime || '').slice(0, 40),
+    dateFull: String(it.dateFull || '').slice(0, 60),
+    dateShort: String(it.dateShort || '').slice(0, 40),
+    img: String(it.img || '').slice(0, 600),
+    featured: it.featured === true,
+    seo: { title: String(it.seo?.title || '').slice(0, 240), description: String(it.seo?.description || '').slice(0, 400) },
+    author: { name: String(it.author?.name || '').slice(0, 120), initials: String(it.author?.initials || '').slice(0, 6) },
+    heroCaption: String(it.heroCaption || '').slice(0, 400),
+    bodyHtml: String(it.bodyHtml || '').slice(0, 60000),
+  }));
+  await blogRef(db, root).set({ items: clean }, { merge: false });
 }
 
 function cleanCards(cards: unknown): ReviewCard[] {
