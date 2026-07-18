@@ -69,35 +69,6 @@
   (function () {
     var modal = document.querySelector('[data-cmodal]');
     if (!modal) return;
-    var LIVING_CRAFTSMAN = '/assets/photos/designs-living-craftsman.jpg';
-    var LIVING_BRIGHT = '/assets/photos/designs-living-bright.jpg';
-    var DINING = '/assets/photos/designs-dining.jpg';
-    var BEDROOM_FLORAL = '/assets/photos/designs-bedroom-floral.jpg';
-    var GAMEROOM = '/assets/photos/designs-gameroom.jpg';
-    var POOL = '/assets/photos/designs-pool.jpg';
-    var AMENITIES = '/assets/photos/designs-amenities.jpg';
-    var LIVING_FIREPLACE = '/assets/photos/designs-living-fireplace.jpg';
-    var BEDROOM_FAN = BEDROOM_FLORAL; // no dedicated homePhotos entry; reuse bedroom-floral
-    var DATA = {
-      'falcon': { hood: 'La Jolla', beds: '4 BR', rev: '$214,800', rate: '$589', lift: '+57%',
-        blurb: 'An inherited bluff home, frozen in time, fully reimagined and launched in five weeks. Our team cleared, repainted, and furnished every room to make the most of the light and the view — sourced, shipped, installed, and photo-ready — and it settled into the top tier of its La Jolla market.',
-        imgs: [LIVING_CRAFTSMAN, LIVING_FIREPLACE, DINING] },
-      'nute': { hood: 'Pacific Beach', beds: '3 BR', rev: '$158,300', rate: '$412', lift: '+44%',
-        blurb: 'A tired walk-street rental taken from drab to coastal-bright — a lighter palette, smarter furniture for the layout, and styling that made the small footprint feel generous. It photographed beautifully and booked solid in its first month.',
-        imgs: [LIVING_BRIGHT, BEDROOM_FLORAL, AMENITIES] },
-      'twain': { hood: 'Del Mar', beds: '4 BR', rev: '$192,500', rate: '$512', lift: '+48%',
-        blurb: 'A true craftsman styled around its architecture, not over it — warm, layered furnishings that read editorial in photos and live comfortably for a full house. Twain now commands Del Mar’s racing-season premium and holds strong year-round.',
-        imgs: [DINING, LIVING_CRAFTSMAN, BEDROOM_FAN] },
-      'sixth': { hood: 'Mission Beach', beds: '2 BR', rev: '$128,400', rate: '$356', lift: '+39%',
-        blurb: 'A compact two-bedroom a block from the sand, designed so every inch works twice as hard — dual-purpose furniture, a bright cohesive palette, and styling that photographs larger than the footprint. Guests book it for the location and rate it for the comfort.',
-        imgs: [BEDROOM_FLORAL, LIVING_BRIGHT, BEDROOM_FAN] },
-      'kane': { hood: 'Encinitas', beds: '3 BR', rev: '$168,300', rate: '$447', lift: '+41%',
-        blurb: 'A surf-town home with an underused bonus room, turned into a moody navy game room that anchors the whole listing. We styled the rest of the home to match the energy — and it became the feature guests search for.',
-        imgs: [GAMEROOM, LIVING_FIREPLACE, AMENITIES] },
-      'mt-ainsworth': { hood: 'Coronado', beds: '5 BR', rev: '$268,900', rate: '$694', lift: '+61%',
-        blurb: 'The largest home in the group — five bedrooms, a pool, and a backyard built for entertaining. We furnished it as a true estate that photographs like a luxury hotel, with a backyard styled into a destination of its own. It launched at the top of its comp set.',
-        imgs: [POOL, LIVING_CRAFTSMAN, DINING] }
-    };
     var heroImg = modal.querySelector('[data-cm-hero]');
     var els = {
       eyebrow: modal.querySelector('[data-cm-eyebrow]'), title: modal.querySelector('[data-cm-title]'),
@@ -107,24 +78,29 @@
     };
     var lastFocus = null;
 
-    // CMS-added cases have no static DATA entry or detail page — fall back to
-    // the card's own content (data-blurb, stats, image) and hide the
-    // "full case study" link.
+    // Every case card is driven by a blog post (showOnOwners). All the modal
+    // needs is on the card itself: the visible stats, data-blurb (story),
+    // data-gallery (popup thumbnails), and data-full (the full article link).
     function fromCard(card) {
       function txt(sel) { var el = card.querySelector(sel); return el ? el.textContent.trim() : ''; }
       var img = card.querySelector('.gcase__media img');
       var rev = card.querySelector('.gcase__rev');
+      var imgs = [];
+      try { imgs = JSON.parse(card.getAttribute('data-gallery') || '[]'); } catch (e) { imgs = []; }
+      if ((!imgs || !imgs.length) && img && img.src) imgs = [img.src];
       return {
         hood: txt('.gcase__hood'), beds: txt('.gcase__beds'),
         rev: rev && rev.childNodes.length ? rev.childNodes[0].nodeValue.trim() : '',
-        rate: (txt('.gcase__sub').split('·')[0] || '').trim(),
+        // Drop a trailing "/ night" — the modal stat is already labelled "Avg / night".
+        rate: (txt('.gcase__sub').split('·')[0] || '').trim().replace(/\s*\/\s*night\s*$/i, ''),
         lift: txt('.lift'),
         blurb: card.getAttribute('data-blurb') || txt('.gcase__hook'),
-        imgs: img && img.src ? [img.src] : []
+        full: card.getAttribute('data-full') || '',
+        imgs: imgs
       };
     }
     function open(key, home, card) {
-      var d = DATA[key] || (card ? fromCard(card) : null);
+      var d = card ? fromCard(card) : null;
       if (!d) return;
       if (d.imgs[0]) heroImg.src = d.imgs[0];
       heroImg.alt = home;
@@ -135,7 +111,7 @@
       els.thumbs.innerHTML = d.imgs.map(function (f, i) {
         return '<img src="' + f + '" alt="' + home + ' interior ' + (i + 1) + '" loading="lazy" />';
       }).join('');
-      if (DATA[key]) { els.full.href = '/case-studies/' + key; els.full.style.display = ''; }
+      if (d.full) { els.full.href = d.full; els.full.style.display = ''; }
       else { els.full.style.display = 'none'; }
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');

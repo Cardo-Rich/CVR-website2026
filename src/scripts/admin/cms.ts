@@ -55,12 +55,16 @@ export interface NeighborhoodItem {
   intro: string; stats: { v: string; l: string }[]; body: string[]; highlights: string[];
   asideText: string; guide: { lede: string; items: { k: string; v: string; d: string }[] }; ctaText: string;
 }
+export interface BlogCaseStudy {
+  name: string; hood: string; beds: string; revenue: string; nightly: string; lift: string; gallery?: string[];
+}
 export interface BlogArticleItem {
   slug: string; title: string; category: string; excerpt: string; readTime: string;
   dateFull: string; dateShort: string; img: string; featured?: boolean;
   seo: { title: string; description: string };
   author: { name: string; initials: string };
   heroCaption: string; bodyHtml: string;
+  localTip?: string; showOnHome?: boolean; showOnOwners?: boolean; caseStudy?: BlogCaseStudy;
 }
 export interface ReviewCard { name: string; meta: string; stars: number; text: string }
 export interface ReviewsDoc {

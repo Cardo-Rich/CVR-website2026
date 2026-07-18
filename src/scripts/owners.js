@@ -405,7 +405,7 @@
       .then(function(d){
         if (!d) return;
         try { H.hydrateReviews(d.reviews || {}); } catch (e) {}
-        try { H.hydrateCases(d.caseStudies || []); } catch (e) {}
+        try { H.hydrateOwnerCases(d.blog || []); } catch (e) {}
         try { H.hydrateTeam(d.teamMembers || []); } catch (e) {}
         try { H.hydrateOwnerTestimonials(d.ownerTestimonials || []); } catch (e) {}
       })
