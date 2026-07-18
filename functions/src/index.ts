@@ -135,23 +135,29 @@ export const adminContentGet = onCall(async (req) => {
 // Inline edits are saved as DRAFT; nothing reaches the public site until publish.
 export const adminContentSet = onCall(async (req) => {
   requireAdmin(req.auth);
-  if (req.data?.caseStudies) await setCaseStudies(getDb(), req.data.caseStudies);
-  if (req.data?.reviews) await setReviews(getDb(), req.data.reviews);
-  if (req.data?.sections) await setSections(getDb(), req.data.sections);
-  if (req.data?.featuredHomes) await setFeaturedHomes(getDb(), req.data.featuredHomes);
-  return { ok: true };
+  try {
+    if (req.data?.caseStudies) await setCaseStudies(getDb(), req.data.caseStudies);
+    if (req.data?.reviews) await setReviews(getDb(), req.data.reviews);
+    if (req.data?.sections) await setSections(getDb(), req.data.sections);
+    if (req.data?.featuredHomes) await setFeaturedHomes(getDb(), req.data.featuredHomes);
+    return { ok: true };
+  } catch (e) { console.error('adminContentSet', e); throw new HttpsError('internal', (e as Error).message || 'Save failed'); }
 });
 // Promote all pending drafts to published. The public /api/content immediately
 // serves the new content and the hydrated sections update live, so no rebuild
 // is required for changes to appear.
 export const adminPublish = onCall(async (req) => {
   requireAdmin(req.auth);
-  const result = await publishDrafts(getDb());
-  return { ok: true, ...result, rebuild: 'skipped' as const };
+  try {
+    const result = await publishDrafts(getDb());
+    return { ok: true, ...result, rebuild: 'skipped' as const };
+  } catch (e) { console.error('adminPublish', e); throw new HttpsError('internal', (e as Error).message || 'Publish failed'); }
 });
 export const adminDiscardDraft = onCall(async (req) => {
   requireAdmin(req.auth);
-  return { ok: true, ...(await discardDrafts(getDb())) };
+  try {
+    return { ok: true, ...(await discardDrafts(getDb())) };
+  } catch (e) { console.error('adminDiscardDraft', e); throw new HttpsError('internal', (e as Error).message || 'Discard failed'); }
 });
 export const adminSyncGoogleReviews = onCall({ secrets: [GOOGLE_PLACES_API_KEY] }, async (req) => {
   requireAdmin(req.auth);

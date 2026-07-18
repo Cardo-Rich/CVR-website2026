@@ -6,6 +6,7 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, type User } from 'firebase/auth';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const config = {
   apiKey: 'AIzaSyDEvpX1WsRtgaLOSHWh6Pf6SP9pzk-g0UE',
@@ -19,7 +20,22 @@ const config = {
 const app = getApps()[0] || initializeApp(config);
 export const auth = getAuth(app);
 const functions = getFunctions(app, 'us-central1');
+const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
+
+// Upload an image to Storage (media/** is admin-writable, public-readable) and
+// return its permanent download URL, for use as a photo field value.
+export async function uploadPhoto(file: File): Promise<string> {
+  if (!/^image\//.test(file.type)) throw new Error('Please choose an image file.');
+  if (file.size > 10 * 1024 * 1024) throw new Error('Image is too large (max 10 MB).');
+  const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, '-').slice(-60);
+  // No Date.now() in this env is not a concern here (browser runtime), but keep
+  // the path collision-resistant with a random suffix.
+  const rand = Math.random().toString(36).slice(2, 8);
+  const path = `media/uploads/${rand}-${safe}`;
+  const snap = await uploadBytes(storageRef(storage, path), file, { contentType: file.type });
+  return getDownloadURL(snap.ref);
+}
 
 export interface CaseStudyItem {
   id: string; name: string; hood: string; beds: string; hook: string;

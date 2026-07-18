@@ -10,7 +10,7 @@
    - edits save as DRAFT; Publish promotes drafts and (optionally) rebuilds
 
    Layout is never editable — only content. */
-import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle } from './cms';
+import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle, uploadPhoto } from './cms';
 import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem } from './cms';
 import '../../styles/admin.css';
 // Shared renderers (the published path uses the same module).
@@ -347,21 +347,16 @@ function openFeaturedModal(id: string | null) {
   const f = {
     name: field('Name', h.name), hood: field('Neighborhood', h.neighborhood),
     beds: field('Beds (e.g. 4 bedrooms)', h.beds), baths: field('Baths (e.g. 3 bathrooms)', h.baths), guests: field('Guests (e.g. 8 guests)', h.guests),
-    photo: field('Photo URL', h.photo, { wide: true }),
+    photo: photoField('Photo', h.photo),
     booking: field('Booking page URL (where the card links)', h.bookingUrl, { wide: true }),
   };
   const prem = el('input', { type: 'checkbox' }) as HTMLInputElement; prem.checked = h.premier === true;
   const premWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['“Premier” ribbon']), prem]);
   const feat = el('input', { type: 'checkbox' }) as HTMLInputElement; feat.checked = h.featured !== false;
   const featWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['Show on home page']), feat]);
-  const preview = el('img', { style: 'max-width:100%;border-radius:10px;margin-top:6px;display:' + (h.photo ? 'block' : 'none') }) as HTMLImageElement;
-  if (h.photo) preview.src = h.photo;
-  f.photo.wrap.querySelector('input')!.addEventListener('input', (e) => {
-    const v = (e.target as HTMLInputElement).value; preview.src = v; preview.style.display = v ? 'block' : 'none';
-  });
   modal(existing ? `Edit home — ${h.name}` : 'New featured home', [
     el('div', { class: 'cadm-grid2' }, [f.name.wrap, f.hood.wrap, f.beds.wrap, f.baths.wrap, f.guests.wrap]),
-    f.photo.wrap, preview, f.booking.wrap,
+    f.photo.wrap, f.booking.wrap,
     el('div', { class: 'cadm-grid2' }, [premWrap, featWrap]),
   ], async () => {
     h.name = f.name.get(); h.neighborhood = f.hood.get(); h.beds = f.beds.get(); h.baths = f.baths.get(); h.guests = f.guests.get();
@@ -407,6 +402,31 @@ function field(label: string, value: string, opts: { wide?: boolean; textarea?: 
   return { wrap, get: () => (input as HTMLInputElement | HTMLTextAreaElement).value };
 }
 
+// A photo field: URL input + Upload button (Storage) + live preview. Editors
+// can paste a URL or upload a file — upload fills the URL with the hosted image.
+function photoField(label: string, value: string): { wrap: HTMLElement; get: () => string } {
+  const input = el('input', { value, placeholder: 'https://…  or upload →' }) as HTMLInputElement;
+  const preview = el('img', { class: 'cadm-photo-preview', style: value ? '' : 'display:none' }) as HTMLImageElement;
+  if (value) preview.src = value;
+  const set = (v: string) => { input.value = v; preview.src = v; preview.style.display = v ? '' : 'none'; };
+  input.addEventListener('input', () => set(input.value));
+  const file = el('input', { type: 'file', accept: 'image/*', style: 'display:none' }) as HTMLInputElement;
+  const up = el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', type: 'button', onclick: () => file.click() }, ['Upload']) as HTMLButtonElement;
+  file.addEventListener('change', async () => {
+    const f = file.files && file.files[0]; if (!f) return;
+    up.disabled = true; up.textContent = 'Uploading…';
+    try { set(await uploadPhoto(f)); toast('Photo uploaded.'); }
+    catch (e) { toast((e as Error).message, true); }
+    finally { up.disabled = false; up.textContent = 'Upload'; file.value = ''; }
+  });
+  const wrap = el('div', { class: 'cadm-field cadm-wide' }, [
+    el('span', {}, [label]),
+    el('div', { class: 'cadm-photo-row' }, [input, up, file]),
+    preview,
+  ]);
+  return { wrap, get: () => input.value };
+}
+
 // Read a statically-rendered case card from the DOM so editing a not-yet-in-CMS
 // card pre-fills what's on screen instead of opening a blank form.
 function caseFromCard(id: string): CaseStudyItem | null {
@@ -450,7 +470,7 @@ function openCaseModal(id: string | null) {
     revenue: field('Annual revenue', c.revenue), nightly: field('Nightly', c.nightly), lift: field('Lift vs market', c.lift),
     hook: field('Hook (card subtitle)', c.hook, { wide: true, textarea: true }),
     blurb: field('Preview-modal story (optional)', c.blurb || '', { wide: true, textarea: true }),
-    img: field('Image URL (optional)', c.img || '', { wide: true }),
+    img: photoField('Photo (optional)', c.img || ''),
   };
   const feat = el('input', { type: 'checkbox' }) as HTMLInputElement; feat.checked = c.featured !== false;
   const featWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['Show on owners page']), feat]);
