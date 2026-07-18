@@ -120,6 +120,29 @@ export function hydrateTeam(items) {
   });
 }
 
+// Rebuild the owners-page owner-testimonial quote cards from CMS items. Static
+// seed cards remain the fallback when the endpoint is unavailable or empty.
+export function hydrateOwnerTestimonials(items) {
+  var grid = document.querySelector('[data-otest-grid]');
+  if (!grid || !Array.isArray(items)) return;
+  var shown = items.filter(function (t) { return t && t.quote; });
+  if (!shown.length) return;
+  grid.innerHTML = '';
+  shown.forEach(function (t) {
+    var fig = document.createElement('figure');
+    fig.className = 'otest__card reveal is-in';
+    fig.setAttribute('data-ot-id', t.id || '');
+    var stars = document.createElement('div'); stars.className = 'otest__cardstars'; stars.textContent = '★★★★★';
+    var q = document.createElement('blockquote'); q.className = 'otest__quote'; q.textContent = '“' + t.quote + '”';
+    var cap = document.createElement('figcaption'); cap.className = 'otest__who';
+    var nm = document.createElement('span'); nm.className = 'otest__name'; nm.textContent = t.name || '';
+    var home = document.createElement('span'); home.className = 'otest__home'; home.textContent = t.home || '';
+    cap.appendChild(nm); cap.appendChild(home);
+    fig.appendChild(stars); fig.appendChild(q); fig.appendChild(cap);
+    grid.appendChild(fig);
+  });
+}
+
 // Rebuild the owners-page grid from the CMS library (featured cases only). The
 // static six remain the fallback when the endpoint is unavailable.
 export function hydrateCases(items) {
