@@ -135,6 +135,10 @@ html.cadm-admin .site-header { top: var(--cadm-bar-h, 46px); }
 }
 .cadm-field input:focus, .cadm-field textarea:focus, .cadm-field select:focus { outline: 2px solid var(--cadm-purple); border-color: transparent; }
 .cadm-field textarea { min-height: 78px; resize: vertical; }
+.cadm-photo-row { display: flex; gap: 8px; align-items: stretch; }
+.cadm-photo-row input { flex: 1 1 auto; min-width: 0; }
+.cadm-photo-row .cadm-mbtn { flex: none; padding: 9px 14px; }
+.cadm-photo-preview { display: block; max-width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; margin-top: 8px; border: 1px solid var(--cadm-line); }
 .cadm-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
 @media (max-width: 520px) { .cadm-grid2 { grid-template-columns: 1fr; } }
 .cadm-mbtn { appearance: none; border: 0; cursor: pointer; border-radius: 9px; padding: 9px 16px; font: 600 14px/1 system-ui, sans-serif; }
