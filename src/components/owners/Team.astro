@@ -1,26 +1,25 @@
-<!-- ===================== TEAM ===================== -->
-<section class="section-pad" id="team" data-screen-label="Team" data-section="team">
+---
+// TEAM — seed members; CMS-managed via the inline admin layer (hydrated from /api/content).
+const team = [
+  { id: 'rich', name: 'Rich Scherf', role: 'Chief Executive Officer', photo: 'https://www.cardorentals.com/i/width=600,height=750,fit=cover,format=jpeg?src=https%3A%2F%2Fwander-upload-assets.wander.com%2F631245212978513381%2Ffiles%2F26052fd3-e825-42db-ac99-7b80c45163ed.jpg' },
+  { id: 'krissy', name: 'Krissy Hunter', role: 'Owner Services Manager', photo: 'https://www.cardorentals.com/i/width=600,height=750,fit=cover,format=jpeg?src=https%3A%2F%2Fwander-upload-assets.wander.com%2F631245212978513381%2Ffiles%2F7d0fd2ea-255e-4a51-9b00-2a7babfa0278.jpg' },
+  { id: 'brandon', name: 'Brandon Rivera', role: 'Property Manager', photo: '/assets/photos/team-brandon-rivera.png' },
+];
+---
+<section class="section-pad" id="team" data-screen-label="Team" data-section="team" data-cms="team">
   <div class="section-wrap">
     <div class="section-head center reveal" style="margin-inline:auto;text-align:center">
       <p class="eyebrow" style="justify-content:center">Owned &amp; operated in San Diego</p>
       <h2>Meet the people that lead Cardo's success.</h2>
     </div>
-    <div class="team__grid reveal">
-      <div class="team__card" data-member="rich">
-        <img class="team__photo" src="https://www.cardorentals.com/i/width=600,height=750,fit=cover,format=jpeg?src=https%3A%2F%2Fwander-upload-assets.wander.com%2F631245212978513381%2Ffiles%2F26052fd3-e825-42db-ac99-7b80c45163ed.jpg" alt="Rich Scherf, Chief Executive Officer" loading="lazy" />
-        <h3>Rich Scherf</h3>
-        <div class="team__role">Chief Executive Officer</div>
-      </div>
-      <div class="team__card" data-member="krissy">
-        <img class="team__photo" src="https://www.cardorentals.com/i/width=600,height=750,fit=cover,format=jpeg?src=https%3A%2F%2Fwander-upload-assets.wander.com%2F631245212978513381%2Ffiles%2F7d0fd2ea-255e-4a51-9b00-2a7babfa0278.jpg" alt="Krissy Hunter, Owner Services Manager" loading="lazy" />
-        <h3>Krissy Hunter</h3>
-        <div class="team__role">Owner Services Manager</div>
-      </div>
-      <div class="team__card">
-        <img class="team__photo" src="/assets/photos/team-brandon-rivera.png" alt="Brandon Rivera, Property Manager" loading="lazy" />
-        <h3>Brandon Rivera</h3>
-        <div class="team__role">Property Manager</div>
-      </div>
+    <div class="team__grid reveal" data-team-grid>
+      {team.map((m) => (
+        <div class="team__card" data-team-id={m.id}>
+          <img class="team__photo" src={m.photo} alt={`${m.name}, ${m.role}`} loading="lazy" />
+          <h3>{m.name}</h3>
+          <div class="team__role">{m.role}</div>
+        </div>
+      ))}
     </div>
   </div>
 </section>
