@@ -1,8 +1,13 @@
 ---
-import { testimonials } from '../../data/site';
+// Owner testimonials — seed quotes; CMS-managed via the inline admin layer.
+const owners = [
+  { id: 'marcus-t', quote: 'Switched from a national manager and my net was up double digits in the first quarter. The statements are so clear I stopped second-guessing.', name: 'Marcus T.', home: 'Oceanfront condo, Pacific Beach' },
+  { id: 'priya-sam', quote: "Their design team restyled the whole house before launch and the photos are unreal. Booked 26 nights the first month at a rate I didn't think was possible.", name: 'Priya & Sam', home: 'Hillside home, La Jolla' },
+  { id: 'diane-r', quote: "A pipe let go at 11pm. Someone was there within the hour and I found out after it was fixed. That's why I sleep at night.", name: 'Diane R.', home: 'Beach cottage, Encinitas' },
+];
 ---
 
-<section class="otest section-pad-sm" id="owner-reviews" data-screen-label="Owner testimonials">
+<section class="otest section-pad-sm" id="owner-reviews" data-screen-label="Owner testimonials" data-section="owner-testimonials" data-cms="owner-testimonials">
   <div class="section-wrap">
     <div class="otest__head reveal">
       <div>
@@ -15,9 +20,9 @@ import { testimonials } from '../../data/site';
         <span class="otest__count">from San Diego homeowners</span>
       </div>
     </div>
-    <div class="otest__grid">
-      {testimonials.map((t) => (
-        <figure class="otest__card reveal">
+    <div class="otest__grid" data-otest-grid>
+      {owners.map((t) => (
+        <figure class="otest__card reveal" data-ot-id={t.id}>
           <div class="otest__cardstars">★★★★★</div>
           <blockquote class="otest__quote">“{t.quote}”</blockquote>
           <figcaption class="otest__who">

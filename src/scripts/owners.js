@@ -375,6 +375,7 @@
         try { H.hydrateReviews(d.reviews || {}); } catch (e) {}
         try { H.hydrateCases(d.caseStudies || []); } catch (e) {}
         try { H.hydrateTeam(d.teamMembers || []); } catch (e) {}
+        try { H.hydrateOwnerTestimonials(d.ownerTestimonials || []); } catch (e) {}
       })
       .catch(function(){ /* offline or unconfigured — static fallback stands */ });
   });

@@ -11,7 +11,7 @@
 
    Layout is never editable — only content. */
 import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle, uploadPhoto } from './cms';
-import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem, GuestPhotoItem, TeamMemberItem } from './cms';
+import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem, GuestPhotoItem, TeamMemberItem, OwnerTestimonialItem } from './cms';
 import '../../styles/admin.css';
 // Shared renderers (the published path uses the same module).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,6 +23,7 @@ const H = Hydrate as {
   hydrateFeaturedHomes: (i: unknown[]) => void;
   hydrateGuestPhotos: (i: unknown[]) => void;
   hydrateTeam: (i: unknown[]) => void;
+  hydrateOwnerTestimonials: (i: unknown[]) => void;
 };
 
 // ---------- tiny DOM helper ----------
@@ -109,11 +110,13 @@ function applyDraftToPage() {
   try { H.hydrateFeaturedHomes(content.featuredHomes || []); } catch { /* not on this page */ }
   try { H.hydrateGuestPhotos(content.guestPhotos || []); } catch { /* not on this page */ }
   try { H.hydrateTeam(content.teamMembers || []); } catch { /* not on this page */ }
+  try { H.hydrateOwnerTestimonials(content.ownerTestimonials || []); } catch { /* not on this page */ }
   // re-attach per-card controls after grids are rebuilt
   decorateCaseCards();
   decorateFeaturedCards();
   decorateGuestCards();
   decorateTeamCards();
+  decorateOwnerTestCards();
 }
 
 // ============================================================ toolbar
@@ -193,7 +196,7 @@ async function onDiscard() {
 }
 
 // persist current `content` as a draft patch
-async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[] }) {
+async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[]; ownerTestimonials?: OwnerTestimonialItem[] }) {
   await saveContent(patch);
   setDirty(true);
 }
@@ -265,10 +268,16 @@ function buildEditors() {
     const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'team');
     bar.append(editChip('Add member', () => openTeamModal(null)));
   });
+  // Owner testimonials → Add chip + Edit/Delete on each quote card
+  document.querySelectorAll<HTMLElement>('[data-cms="owner-testimonials"]').forEach((sec) => {
+    const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'owner-testimonials');
+    bar.append(editChip('Add quote', () => openOwnerTestModal(null)));
+  });
   decorateCaseCards();
   decorateFeaturedCards();
   decorateGuestCards();
   decorateTeamCards();
+  decorateOwnerTestCards();
 }
 function editChip(label: string, onClick: () => void): HTMLElement {
   return el('button', { class: 'cadm-chip', onclick: onClick, html: PENCIL + '<span>' + label + '</span>' });
@@ -517,6 +526,71 @@ function openTeamModal(id: string | null) {
     if (idx >= 0) next[idx] = m; else next.push(m);
     content!.teamMembers = next;
     await persist({ teamMembers: next });
+    applyDraftToPage();
+  });
+}
+
+// ---------- owner testimonials ----------
+function decorateOwnerTestCards() {
+  const grid = document.querySelector('[data-otest-grid]');
+  if (!grid || !content) return;
+  grid.querySelectorAll<HTMLElement>('.otest__card[data-ot-id]').forEach((card) => {
+    if (card.querySelector('.cadm-edit-fab')) return;
+    card.classList.add('cadm-hoverable');
+    const id = card.getAttribute('data-ot-id')!;
+    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this quote', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openOwnerTestModal(id); } });
+    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:52px', title: 'Remove this quote', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteOwnerTest(id); } });
+    card.append(delBtn, editBtn);
+  });
+}
+function ownerTestFromCard(id: string): OwnerTestimonialItem | null {
+  const card = document.querySelector(`.otest__card[data-ot-id="${cssSel(id)}"]`);
+  if (!card) return null;
+  return {
+    id,
+    quote: (card.querySelector('.otest__quote')?.textContent || '').replace(/^[“"]|[”"]$/g, '').trim(),
+    name: (card.querySelector('.otest__name')?.textContent || '').trim(),
+    home: (card.querySelector('.otest__home')?.textContent || '').trim(),
+  };
+}
+function ensureOwnerTestSeeded() {
+  if (!content) return;
+  const list = content.ownerTestimonials || (content.ownerTestimonials = []);
+  if (list.length) return;
+  const ids = Array.from(document.querySelectorAll('.otest__card[data-ot-id]')).map((c) => c.getAttribute('data-ot-id') || '');
+  const seeded = ids.map((id) => ownerTestFromCard(id)).filter(Boolean) as OwnerTestimonialItem[];
+  if (seeded.length) content.ownerTestimonials = seeded;
+}
+async function deleteOwnerTest(id: string) {
+  if (!content) return;
+  ensureOwnerTestSeeded();
+  if (!confirm('Remove this testimonial? Applies on publish.')) return;
+  content.ownerTestimonials = content.ownerTestimonials.filter((x) => x.id !== id);
+  try { await persist({ ownerTestimonials: content.ownerTestimonials }); applyDraftToPage(); toast('Testimonial removed (draft).'); }
+  catch (e) { toast((e as Error).message, true); }
+}
+function openOwnerTestModal(id: string | null) {
+  if (!content) return;
+  ensureOwnerTestSeeded();
+  const list = content.ownerTestimonials;
+  const existing = id ? list.find((x) => x.id === id) : null;
+  const t: OwnerTestimonialItem = existing ? { ...existing }
+    : (id && ownerTestFromCard(id)) || { id: id || '', quote: '', name: '', home: '' };
+  const quote = field('Quote', t.quote, { wide: true, textarea: true });
+  const name = field('Name', t.name);
+  const home = field('Home (e.g. Oceanfront condo, Pacific Beach)', t.home);
+  modal(existing ? `Edit testimonial — ${t.name}` : 'New owner testimonial', [
+    quote.wrap,
+    el('div', { class: 'cadm-grid2' }, [name.wrap, home.wrap]),
+  ], async () => {
+    t.quote = quote.get(); t.name = name.get(); t.home = home.get();
+    if (!t.quote.trim()) throw new Error('A quote is required.');
+    if (!t.id) t.id = slugify(t.name || 'owner');
+    const next = list.slice();
+    const idx = next.findIndex((x) => x.id === t.id);
+    if (idx >= 0) next[idx] = t; else next.push(t);
+    content!.ownerTestimonials = next;
+    await persist({ ownerTestimonials: next });
     applyDraftToPage();
   });
 }
