@@ -10,7 +10,7 @@ import {
 } from './actions.js';
 import { resolveAdmin } from './claims.js';
 import { getSlots, book as ghlBook, addNote as ghlAddNote, type GhlConfig } from './ghl.js';
-import { getContent, getContentForAdmin, setCaseStudies, setReviews, setSections, publishDrafts, discardDrafts, syncGoogleReviews } from './siteContent.js';
+import { getContent, getContentForAdmin, setCaseStudies, setReviews, setSections, setFeaturedHomes, publishDrafts, discardDrafts, syncGoogleReviews } from './siteContent.js';
 import type { AgreementDoc } from './types.js';
 
 const RESEND_API_KEY = defineSecret('RESEND_API_KEY');
@@ -143,6 +143,7 @@ export const adminContentSet = onCall(async (req) => {
   if (req.data?.caseStudies) await setCaseStudies(getDb(), req.data.caseStudies);
   if (req.data?.reviews) await setReviews(getDb(), req.data.reviews);
   if (req.data?.sections) await setSections(getDb(), req.data.sections);
+  if (req.data?.featuredHomes) await setFeaturedHomes(getDb(), req.data.featuredHomes);
   return { ok: true };
 });
 // Promote all pending drafts to published, then (optionally) kick a site

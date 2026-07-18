@@ -34,11 +34,37 @@ function fromSeed(): FeaturedCard[] {
   }));
 }
 
+// CMS-managed "Homes we love" cards (siteContent/featuredHomes), edited inline
+// on the site. Takes precedence over the Guesty-synced properties path below.
+interface CmsFeaturedItem {
+  id?: string; name?: string; neighborhood?: string; beds?: string; baths?: string;
+  guests?: string; photo?: string; bookingUrl?: string; premier?: boolean; featured?: boolean;
+}
+function cmsToCards(items: CmsFeaturedItem[]): FeaturedCard[] {
+  return items
+    .filter((it) => it && it.featured !== false && it.name)
+    .map((it) => ({
+      slug: it.id || (it.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
+      name: it.name || '',
+      neighborhood: it.neighborhood || '',
+      specs: [it.beds, it.baths, it.guests].filter(Boolean) as string[],
+      photo: it.photo || '',
+      premier: it.premier === true,
+      href: it.bookingUrl || '#',
+    }));
+}
+
 export async function getFeaturedProperties(): Promise<FeaturedCard[]> {
   const db = getDb();
   if (!db) return fromSeed();
 
   try {
+    const cmsDoc = await db.collection('siteContent').doc('featuredHomes').get();
+    if (cmsDoc.exists) {
+      const cards = cmsToCards((cmsDoc.data()?.items as CmsFeaturedItem[]) || []);
+      if (cards.length) return cards;
+    }
+
     const featuredDoc = await db.collection('homepage').doc('featured').get();
     if (!featuredDoc.exists) return fromSeed();
 

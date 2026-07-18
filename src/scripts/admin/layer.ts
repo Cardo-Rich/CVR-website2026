@@ -11,13 +11,17 @@
 
    Layout is never editable — only content. */
 import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle } from './cms';
-import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard } from './cms';
+import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem } from './cms';
 import '../../styles/admin.css';
-// Shared owners-page renderers (published path uses the same module).
+// Shared renderers (the published path uses the same module).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 import * as Hydrate from '../content-hydrate.js';
 
-const H = Hydrate as { hydrateReviews: (r: unknown) => void; hydrateCases: (i: unknown[]) => void };
+const H = Hydrate as {
+  hydrateReviews: (r: unknown) => void;
+  hydrateCases: (i: unknown[]) => void;
+  hydrateFeaturedHomes: (i: unknown[]) => void;
+};
 
 // ---------- tiny DOM helper ----------
 type Attrs = Record<string, string | number | boolean | ((e: Event) => void)>;
@@ -34,6 +38,7 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Attrs = {}, ki
   return n;
 }
 const PENCIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+const DOTS = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>';
 const PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
 const TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>';
 
@@ -99,8 +104,10 @@ function applyDraftToPage() {
   if (!content) return;
   try { H.hydrateReviews(content.reviews || {}); } catch { /* not on this page */ }
   try { H.hydrateCases(content.caseStudies || []); } catch { /* not on this page */ }
-  // re-attach per-card controls after the grid is rebuilt
+  try { H.hydrateFeaturedHomes(content.featuredHomes || []); } catch { /* not on this page */ }
+  // re-attach per-card controls after grids are rebuilt
   decorateCaseCards();
+  decorateFeaturedCards();
 }
 
 // ============================================================ toolbar
@@ -108,24 +115,56 @@ let barStatus: HTMLElement;
 function buildToolbar() {
   if (document.querySelector('.cadm-bar')) return;
   document.body.classList.add('cadm-has-bar');
-  barStatus = el('span', { class: 'cadm-bar__pill' });
+  barStatus = el('span', { class: 'cadm-bar__status' });
   const bar = el('div', { class: 'cadm-bar' }, [
-    el('span', { class: 'cadm-bar__logo' }, [el('span', { class: 'cadm-bar__dot' }), 'Cardo admin']),
+    el('span', { class: 'cadm-bar__dot', title: 'Cardo admin' }),
     barStatus,
-    el('span', { class: 'cadm-bar__spacer' }),
-    el('button', { class: 'cadm-btn cadm-btn--ghost', onclick: onDiscard }, ['Discard']),
     el('button', { class: 'cadm-btn cadm-btn--solid', id: 'cadm-publish', onclick: onPublish }, ['Publish']),
-    el('button', { class: 'cadm-btn', onclick: async () => { try { localStorage.removeItem(ADMIN_FLAG); } catch { /* */ } await logout(); location.href = location.pathname; } }, ['Sign out']),
+    buildOverflowMenu(),
   ]);
   document.body.append(bar);
   requestAnimationFrame(() => bar.classList.add('is-in'));
+  // Push the page down by the bar's real height so it never covers the header,
+  // and keep it correct across rotation / resize / font reflow.
+  const sync = () => {
+    const h = bar.offsetHeight;
+    document.body.style.paddingTop = h + 'px';
+    // expose height so the site's sticky header can stick BELOW the bar
+    document.documentElement.style.setProperty('--cadm-bar-h', h + 'px');
+  };
+  sync();
+  requestAnimationFrame(sync);
+  window.addEventListener('resize', sync);
+  if ('ResizeObserver' in window) new ResizeObserver(sync).observe(bar);
   refreshStatus();
 }
+
+// ⋮ menu for the less-frequent actions, keeping the bar uncluttered on mobile.
+function buildOverflowMenu(): HTMLElement {
+  const wrap = el('div', { class: 'cadm-menu' });
+  const close = () => wrap.classList.remove('is-open');
+  const btn = el('button', {
+    class: 'cadm-btn cadm-menu__btn', 'aria-label': 'More actions', 'aria-haspopup': 'true', html: DOTS,
+    onclick: (e: Event) => { e.stopPropagation(); wrap.classList.toggle('is-open'); },
+  });
+  const list = el('div', { class: 'cadm-menu__list' }, [
+    el('button', { class: 'cadm-menu__item', onclick: () => { close(); onDiscard(); } }, ['Discard changes']),
+    el('button', { class: 'cadm-menu__item cadm-menu__item--danger', onclick: async () => {
+      close();
+      try { localStorage.removeItem(ADMIN_FLAG); } catch { /* */ }
+      await logout(); location.href = location.pathname;
+    } }, ['Sign out']),
+  ]);
+  document.addEventListener('click', close);
+  wrap.append(btn, list);
+  return wrap;
+}
+
 function setDirty(v: boolean) { dirty = v; refreshStatus(); }
 function refreshStatus() {
   if (!barStatus) return;
   barStatus.textContent = dirty ? 'Draft changes pending' : 'All changes published';
-  barStatus.className = 'cadm-bar__pill ' + (dirty ? 'is-draft' : 'is-clean');
+  barStatus.classList.toggle('is-draft', dirty);
   const pub = document.getElementById('cadm-publish') as HTMLButtonElement | null;
   if (pub) pub.disabled = !dirty;
 }
@@ -148,7 +187,7 @@ async function onDiscard() {
 }
 
 // persist current `content` as a draft patch
-async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean> }) {
+async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[] }) {
   await saveContent(patch);
   setDirty(true);
 }
@@ -205,7 +244,13 @@ function buildEditors() {
     const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'case-studies');
     bar.append(editChip('Add case', () => openCaseModal(null)));
   });
+  // Featured homes carousel → Add chip + Edit/Delete on each card
+  document.querySelectorAll<HTMLElement>('[data-cms="featured-homes"]').forEach((sec) => {
+    const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'featured-homes');
+    bar.append(editChip('Add home', () => openFeaturedModal(null)));
+  });
   decorateCaseCards();
+  decorateFeaturedCards();
 }
 function editChip(label: string, onClick: () => void): HTMLElement {
   return el('button', { class: 'cadm-chip', onclick: onClick, html: PENCIL + '<span>' + label + '</span>' });
@@ -226,11 +271,110 @@ function decorateCaseCards() {
 
 async function deleteCase(id: string) {
   if (!content) return;
+  ensureCasesSeeded();
   const cs = content.caseStudies.find((c) => c.id === id);
   if (!confirm(`Delete “${cs?.name || id}”? It's removed from the site on publish.`)) return;
   content.caseStudies = content.caseStudies.filter((c) => c.id !== id);
   try { await persist({ caseStudies: content.caseStudies }); applyDraftToPage(); toast('Case deleted (draft).'); }
   catch (e) { toast((e as Error).message, true); }
+}
+
+// ---------- featured homes ----------
+function decorateFeaturedCards() {
+  const track = document.querySelector('[data-fh-track]');
+  if (!track || !content) return;
+  track.querySelectorAll<HTMLElement>('.scard[data-fh-id]').forEach((card) => {
+    if (card.querySelector('.cadm-edit-fab')) return;
+    card.classList.add('cadm-hoverable');
+    const id = card.getAttribute('data-fh-id')!;
+    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this home', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openFeaturedModal(id); } });
+    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:56px', title: 'Delete this home', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteFeatured(id); } });
+    card.append(delBtn, editBtn);
+  });
+}
+
+async function deleteFeatured(id: string) {
+  if (!content) return;
+  ensureFeaturedSeeded();
+  const h = content.featuredHomes.find((x) => x.id === id);
+  if (!confirm(`Remove “${h?.name || id}” from Homes we love? Applies on publish.`)) return;
+  content.featuredHomes = content.featuredHomes.filter((x) => x.id !== id);
+  try { await persist({ featuredHomes: content.featuredHomes }); applyDraftToPage(); toast('Home removed (draft).'); }
+  catch (e) { toast((e as Error).message, true); }
+}
+
+// The first edit/add/delete on the still-static carousel captures every shown
+// card into the CMS list, so mutating one never drops the others.
+function ensureFeaturedSeeded() {
+  if (!content) return;
+  const list = content.featuredHomes || (content.featuredHomes = []);
+  if (list.length) return;
+  seedFeaturedFromDom();
+}
+
+// Read a statically-rendered featured card from the DOM.
+function featuredFromCard(id: string): FeaturedHomeItem | null {
+  const card = document.querySelector(`.scard[data-fh-id="${cssSel(id)}"]`);
+  if (!card) return null;
+  const specs = Array.from(card.querySelectorAll('.scard__specs span')).map((s) => (s.textContent || '').trim());
+  return {
+    id,
+    name: (card.querySelector('.scard__name')?.textContent || '').trim(),
+    neighborhood: (card.querySelector('.scard__loc')?.textContent || '').trim(),
+    beds: specs[0] || '', baths: specs[1] || '', guests: specs[2] || '',
+    photo: card.querySelector('img')?.getAttribute('src') || '',
+    bookingUrl: card.getAttribute('href') || '',
+    premier: !!card.querySelector('.scard__premier'),
+    featured: true,
+  };
+}
+// Capture every currently-shown card into the CMS list (used before a delete so
+// the other seed cards survive the transition to CMS-managed).
+function seedFeaturedFromDom() {
+  if (!content) return;
+  const ids = Array.from(document.querySelectorAll('.scard[data-fh-id]')).map((c) => c.getAttribute('data-fh-id') || '');
+  const seeded = ids.map((id) => featuredFromCard(id)).filter(Boolean) as FeaturedHomeItem[];
+  if (seeded.length) content.featuredHomes = seeded;
+}
+
+function openFeaturedModal(id: string | null) {
+  if (!content) return;
+  ensureFeaturedSeeded();
+  const list = content.featuredHomes;
+  const existing = id ? list.find((x) => x.id === id) : null;
+  const h: FeaturedHomeItem = existing ? { ...existing }
+    : (id && featuredFromCard(id)) || { id: id || '', name: '', neighborhood: '', beds: '', baths: '', guests: '', photo: '', bookingUrl: '', premier: false, featured: true };
+  const f = {
+    name: field('Name', h.name), hood: field('Neighborhood', h.neighborhood),
+    beds: field('Beds (e.g. 4 bedrooms)', h.beds), baths: field('Baths (e.g. 3 bathrooms)', h.baths), guests: field('Guests (e.g. 8 guests)', h.guests),
+    photo: field('Photo URL', h.photo, { wide: true }),
+    booking: field('Booking page URL (where the card links)', h.bookingUrl, { wide: true }),
+  };
+  const prem = el('input', { type: 'checkbox' }) as HTMLInputElement; prem.checked = h.premier === true;
+  const premWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['“Premier” ribbon']), prem]);
+  const feat = el('input', { type: 'checkbox' }) as HTMLInputElement; feat.checked = h.featured !== false;
+  const featWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['Show on home page']), feat]);
+  const preview = el('img', { style: 'max-width:100%;border-radius:10px;margin-top:6px;display:' + (h.photo ? 'block' : 'none') }) as HTMLImageElement;
+  if (h.photo) preview.src = h.photo;
+  f.photo.wrap.querySelector('input')!.addEventListener('input', (e) => {
+    const v = (e.target as HTMLInputElement).value; preview.src = v; preview.style.display = v ? 'block' : 'none';
+  });
+  modal(existing ? `Edit home — ${h.name}` : 'New featured home', [
+    el('div', { class: 'cadm-grid2' }, [f.name.wrap, f.hood.wrap, f.beds.wrap, f.baths.wrap, f.guests.wrap]),
+    f.photo.wrap, preview, f.booking.wrap,
+    el('div', { class: 'cadm-grid2' }, [premWrap, featWrap]),
+  ], async () => {
+    h.name = f.name.get(); h.neighborhood = f.hood.get(); h.beds = f.beds.get(); h.baths = f.baths.get(); h.guests = f.guests.get();
+    h.photo = f.photo.get(); h.bookingUrl = f.booking.get(); h.premier = prem.checked; h.featured = feat.checked;
+    if (!h.name.trim()) throw new Error('Name is required.');
+    if (!h.id) h.id = slugify(h.name);
+    const list = content!.featuredHomes.slice();
+    const idx = list.findIndex((x) => x.id === h.id);
+    if (idx >= 0) list[idx] = h; else list.push(h);
+    content!.featuredHomes = list;
+    await persist({ featuredHomes: list });
+    applyDraftToPage();
+  });
 }
 
 // ---------- modal framework ----------
@@ -263,11 +407,44 @@ function field(label: string, value: string, opts: { wide?: boolean; textarea?: 
   return { wrap, get: () => (input as HTMLInputElement | HTMLTextAreaElement).value };
 }
 
+// Read a statically-rendered case card from the DOM so editing a not-yet-in-CMS
+// card pre-fills what's on screen instead of opening a blank form.
+function caseFromCard(id: string): CaseStudyItem | null {
+  const card = document.querySelector(`.gcase[data-case="${cssSel(id)}"]`);
+  if (!card) return null;
+  const t = (sel: string) => (card.querySelector(sel)?.textContent || '').trim();
+  const subFirst = (card.querySelector('.gcase__sub')?.childNodes[0]?.nodeValue || '').replace(/·\s*$/, '').trim();
+  const revFirst = (card.querySelector('.gcase__rev')?.childNodes[0]?.nodeValue || '').trim();
+  return {
+    id, name: t('.gcase__home'), hood: t('.gcase__hood'), beds: t('.gcase__beds'),
+    hook: t('.gcase__hook'), revenue: revFirst, nightly: subFirst, lift: t('.gcase__sub .lift'),
+    img: card.querySelector('.gcase__media img')?.getAttribute('src') || '',
+    featured: true, blurb: card.getAttribute('data-blurb') || '',
+  };
+}
+function cssSel(s: string): string {
+  return (typeof CSS !== 'undefined' && CSS.escape) ? CSS.escape(s) : s.replace(/["\\]/g, '\\$&');
+}
+
+// The first edit/add/delete on the still-static owners grid captures every
+// shown case into the CMS list, so mutating one never drops the others.
+function ensureCasesSeeded() {
+  if (!content) return;
+  const list = content.caseStudies || (content.caseStudies = []);
+  if (list.length) return;
+  const ids = Array.from(document.querySelectorAll('.gcase[data-case]')).map((c) => c.getAttribute('data-case') || '');
+  const seeded = ids.map((id) => caseFromCard(id)).filter(Boolean) as CaseStudyItem[];
+  if (seeded.length) content.caseStudies = seeded;
+}
+
 // ---------- case study modal ----------
 function openCaseModal(id: string | null) {
   if (!content) return;
-  const existing = id ? content.caseStudies.find((c) => c.id === id) : null;
-  const c: CaseStudyItem = existing ? { ...existing } : { id: '', name: '', hood: '', beds: '', hook: '', revenue: '', nightly: '', lift: '', img: '', featured: true, blurb: '' };
+  ensureCasesSeeded();
+  const list = content.caseStudies;
+  const existing = id ? list.find((c) => c.id === id) : null;
+  const c: CaseStudyItem = existing ? { ...existing }
+    : (id && caseFromCard(id)) || { id: id || '', name: '', hood: '', beds: '', hook: '', revenue: '', nightly: '', lift: '', img: '', featured: true, blurb: '' };
   const f = {
     name: field('Name', c.name), hood: field('Neighborhood', c.hood), beds: field('Beds (e.g. 4 BR)', c.beds),
     revenue: field('Annual revenue', c.revenue), nightly: field('Nightly', c.nightly), lift: field('Lift vs market', c.lift),
