@@ -10,7 +10,7 @@ import {
 } from './actions.js';
 import { resolveAdmin } from './claims.js';
 import { getSlots, book as ghlBook, addNote as ghlAddNote, type GhlConfig } from './ghl.js';
-import { getContent, getContentForAdmin, setCaseStudies, setReviews, setSections, setFeaturedHomes, setGuestPhotos, setTeamMembers, setOwnerTestimonials, publishDrafts, discardDrafts, syncGoogleReviews } from './siteContent.js';
+import { getContent, getContentForAdmin, setCaseStudies, setReviews, setSections, setFeaturedHomes, setGuestPhotos, setTeamMembers, setOwnerTestimonials, setNeighborhoods, publishDrafts, discardDrafts, syncGoogleReviews } from './siteContent.js';
 import type { AgreementDoc } from './types.js';
 
 const RESEND_API_KEY = defineSecret('RESEND_API_KEY');
@@ -143,6 +143,7 @@ export const adminContentSet = onCall(async (req) => {
     if (req.data?.guestPhotos) await setGuestPhotos(getDb(), req.data.guestPhotos);
     if (req.data?.teamMembers) await setTeamMembers(getDb(), req.data.teamMembers);
     if (req.data?.ownerTestimonials) await setOwnerTestimonials(getDb(), req.data.ownerTestimonials);
+    if (req.data?.neighborhoods) await setNeighborhoods(getDb(), req.data.neighborhoods);
     return { ok: true };
   } catch (e) { console.error('adminContentSet', e); throw new HttpsError('internal', (e as Error).message || 'Save failed'); }
 });

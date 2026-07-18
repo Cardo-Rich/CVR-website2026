@@ -57,6 +57,22 @@ export interface OwnerTestimonialItem {
   home: string;
 }
 
+// Neighborhood market pages (index cards + full /neighborhoods/[slug] detail).
+export interface NeighborhoodItem {
+  slug: string;
+  name: string;
+  note: string;
+  img: string;
+  seo: { title: string; description: string };
+  intro: string;
+  stats: { v: string; l: string }[];
+  body: string[];
+  highlights: string[];
+  asideText: string;
+  guide: { lede: string; items: { k: string; v: string; d: string }[] };
+  ctaText: string;
+}
+
 export interface ReviewCard { name: string; meta: string; stars: number; text: string; }
 
 export interface ReviewsDoc {
@@ -70,7 +86,7 @@ export interface ReviewsDoc {
 const PUBLISHED = 'siteContent';
 const DRAFT = 'siteContentDraft';
 export type ContentRoot = typeof PUBLISHED | typeof DRAFT;
-const DOCS = ['caseStudies', 'reviews', 'sections', 'featuredHomes', 'guestPhotos', 'teamMembers', 'ownerTestimonials'] as const;
+const DOCS = ['caseStudies', 'reviews', 'sections', 'featuredHomes', 'guestPhotos', 'teamMembers', 'ownerTestimonials', 'neighborhoods'] as const;
 const casesRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/caseStudies`);
 const reviewsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/reviews`);
 const sectionsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/sections`);
@@ -78,18 +94,19 @@ const featuredRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/featur
 const guestRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/guestPhotos`);
 const teamRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/teamMembers`);
 const ownerTestRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/ownerTestimonials`);
+const hoodsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/neighborhoods`);
 
 // Section visibility switches: key → shown? Missing keys default to shown,
 // so the static site is unaffected until an editor turns something off.
 export type SectionsMap = Record<string, boolean>;
 
-export interface SiteContentData { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap; featuredHomes: FeaturedHomeItem[]; guestPhotos: GuestPhotoItem[]; teamMembers: TeamMemberItem[]; ownerTestimonials: OwnerTestimonialItem[] }
+export interface SiteContentData { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap; featuredHomes: FeaturedHomeItem[]; guestPhotos: GuestPhotoItem[]; teamMembers: TeamMemberItem[]; ownerTestimonials: OwnerTestimonialItem[]; neighborhoods: NeighborhoodItem[] }
 
 // forPublic: apply display rules (e.g. Google minimum-star filter) so the
 // site only ever receives what should be shown. root selects the published
 // copy (default, served at /api/content) or the draft copy (admin preview).
 export async function getContent(db: Firestore, forPublic = false, root: ContentRoot = PUBLISHED): Promise<SiteContentData> {
-  const [cs, rv, sec, fh, gp, tm, ot] = await Promise.all([casesRef(db, root).get(), reviewsRef(db, root).get(), sectionsRef(db, root).get(), featuredRef(db, root).get(), guestRef(db, root).get(), teamRef(db, root).get(), ownerTestRef(db, root).get()]);
+  const [cs, rv, sec, fh, gp, tm, ot, nh] = await Promise.all([casesRef(db, root).get(), reviewsRef(db, root).get(), sectionsRef(db, root).get(), featuredRef(db, root).get(), guestRef(db, root).get(), teamRef(db, root).get(), ownerTestRef(db, root).get(), hoodsRef(db, root).get()]);
   const reviews = ((rv.data() as ReviewsDoc) || { google: {}, airbnb: {} });
   if (forPublic && reviews.google) {
     const min = Number(reviews.google.minStars) || 0;
@@ -105,6 +122,7 @@ export async function getContent(db: Firestore, forPublic = false, root: Content
     guestPhotos: ((gp.data()?.items as GuestPhotoItem[]) || []),
     teamMembers: ((tm.data()?.items as TeamMemberItem[]) || []),
     ownerTestimonials: ((ot.data()?.items as OwnerTestimonialItem[]) || []),
+    neighborhoods: ((nh.data()?.items as NeighborhoodItem[]) || []),
   };
 }
 
@@ -125,6 +143,7 @@ export async function getContentForAdmin(db: Firestore): Promise<SiteContentData
     guestPhotos: draftSnaps[4].exists ? draft.guestPhotos : pub.guestPhotos,
     teamMembers: draftSnaps[5].exists ? draft.teamMembers : pub.teamMembers,
     ownerTestimonials: draftSnaps[6].exists ? draft.ownerTestimonials : pub.ownerTestimonials,
+    neighborhoods: draftSnaps[7].exists ? draft.neighborhoods : pub.neighborhoods,
   };
   return { ...merged, hasDraft: draftDocs.length > 0, draftDocs };
 }
@@ -228,6 +247,34 @@ export async function setOwnerTestimonials(db: Firestore, items: OwnerTestimonia
     home: String(it.home || '').slice(0, 160),
   }));
   await ownerTestRef(db, root).set({ items: clean }, { merge: false });
+}
+
+function strArr(a: unknown, max: number, len: number): string[] {
+  return Array.isArray(a) ? a.slice(0, max).map((s) => String(s || '').slice(0, len)).filter(Boolean) : [];
+}
+export async function setNeighborhoods(db: Firestore, items: NeighborhoodItem[], root: ContentRoot = DRAFT): Promise<void> {
+  if (!Array.isArray(items)) throw new Error('items must be an array');
+  const clean = items.slice(0, 30).map((it) => ({
+    slug: String(it.slug || '').slice(0, 80).replace(/[^a-z0-9-]/g, '') || 'area',
+    name: String(it.name || '').slice(0, 120),
+    note: String(it.note || '').slice(0, 200),
+    img: String(it.img || '').slice(0, 600),
+    seo: {
+      title: String(it.seo?.title || '').slice(0, 200),
+      description: String(it.seo?.description || '').slice(0, 400),
+    },
+    intro: String(it.intro || '').slice(0, 1200),
+    stats: (Array.isArray(it.stats) ? it.stats.slice(0, 6) : []).map((s) => ({ v: String(s?.v || '').slice(0, 60), l: String(s?.l || '').slice(0, 120) })),
+    body: strArr(it.body, 12, 2000),
+    highlights: strArr(it.highlights, 12, 300),
+    asideText: String(it.asideText || '').slice(0, 600),
+    guide: {
+      lede: String(it.guide?.lede || '').slice(0, 600),
+      items: (Array.isArray(it.guide?.items) ? it.guide!.items.slice(0, 12) : []).map((g) => ({ k: String(g?.k || '').slice(0, 40), v: String(g?.v || '').slice(0, 120), d: String(g?.d || '').slice(0, 400) })),
+    },
+    ctaText: String(it.ctaText || '').slice(0, 400),
+  }));
+  await hoodsRef(db, root).set({ items: clean }, { merge: false });
 }
 
 function cleanCards(cards: unknown): ReviewCard[] {
