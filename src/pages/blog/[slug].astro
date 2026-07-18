@@ -8,10 +8,10 @@ export async function getStaticPaths() {
   const articles = await getPublishedArticles();
   return articles.map((a, i) => ({
     params: { slug: a.slug },
-    props: { a, related: [articles[(i+1)%articles.length], articles[(i+2)%articles.length], articles[(i+3)%articles.length]] },
+    props: { a, related: [articles[(i+1)%articles.length], articles[(i+2)%articles.length], articles[(i+3)%articles.length]], all: articles },
   }));
 }
-const { a, related } = Astro.props;
+const { a, related, all } = Astro.props;
 const nav = [
   { label: 'For Owners', href: '/owners' },
   { label: 'Design', href: '/home-designs' },
@@ -25,28 +25,28 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
   <MarketingHeader {nav} {cta} />
 
   <main>
-    <article data-screen-label="Article">
+    <article data-screen-label="Article" data-cms="blog-article" data-blog-detail={a.slug}>
       <div class="art-head">
         <a href="/blog" class="link-arrow" style="border:0;font-size:.9rem;color:var(--muted);margin-bottom:18px">← The Cardo Journal</a>
-        <div class="post-cat">{a.category}</div>
-        <h1>{a.title}</h1>
+        <div class="post-cat" data-blog-cat>{a.category}</div>
+        <h1 data-blog-title>{a.title}</h1>
         <div class="art-byline">
-          <div class="art-avatar">{a.author.initials}</div>
+          <div class="art-avatar" data-blog-initials>{a.author.initials}</div>
           <div>
-            <div class="who">{a.author.name}</div>
-            <div class="meta">{a.dateFull} · {a.readTime}</div>
+            <div class="who" data-blog-author>{a.author.name}</div>
+            <div class="meta" data-blog-meta>{a.dateFull} · {a.readTime}</div>
           </div>
         </div>
       </div>
 
       <div class="art-hero">
         <figure>
-          <img src={a.img} alt={a.title} />
-          <figcaption>{a.heroCaption}</figcaption>
+          <img src={a.img} alt={a.title} data-blog-img />
+          <figcaption data-blog-caption>{a.heroCaption}</figcaption>
         </figure>
       </div>
 
-      <div class="prose" set:html={a.bodyHtml} />
+      <div class="prose" set:html={a.bodyHtml} data-blog-body />
 
       <div class="art-cta">
         <div class="art-cta__box">
@@ -80,10 +80,13 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
   </main>
 
   <Footer />
+  <!-- Full seed data for the inline admin editor (admin-only, CMS-empty case). -->
+  <script type="application/json" data-blog-seed set:html={JSON.stringify(all)}></script>
 </Base>
 
 <script>
   import '../../scripts/reveal.js';
+  import '../../scripts/blog.js';
 </script>
 
 <style>

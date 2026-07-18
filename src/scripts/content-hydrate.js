@@ -230,6 +230,64 @@ export function hydrateNeighborhoodDetail(items) {
   }
 }
 
+// Rebuild the /blog index (featured card + posts grid) from CMS articles.
+export function hydrateBlogIndex(items) {
+  var grid = document.querySelector('[data-blog-grid]');
+  if (!grid || !Array.isArray(items) || !items.length) return;
+  var list = items.filter(function (a) { return a && a.slug && a.title; });
+  if (!list.length) return;
+  var featured = list.filter(function (a) { return a.featured; })[0] || list[0];
+  var rest = list.filter(function (a) { return a.slug !== featured.slug; });
+  var feat = document.querySelector('[data-blog-featured]');
+  if (feat && featured) {
+    feat.setAttribute('href', '/blog/' + featured.slug);
+    feat.setAttribute('data-blog-slug', featured.slug);
+    var fImg = feat.querySelector('img'); if (fImg) { fImg.src = featured.img || ''; fImg.alt = featured.title; }
+    var fMeta = feat.querySelectorAll('.post-meta span');
+    if (fMeta[0]) fMeta[0].textContent = featured.category || '';
+    if (fMeta[1]) fMeta[1].textContent = featured.readTime || '';
+    if (fMeta[2]) fMeta[2].textContent = featured.dateShort || '';
+    var fH = feat.querySelector('h2'); if (fH) fH.textContent = featured.title;
+    var fP = feat.querySelector('.feat__body > p'); if (fP) fP.textContent = featured.excerpt || '';
+  }
+  grid.innerHTML = '';
+  rest.forEach(function (p) {
+    var a = document.createElement('a');
+    a.className = 'post reveal is-in'; a.href = '/blog/' + p.slug; a.setAttribute('data-blog-slug', p.slug);
+    var media = document.createElement('div'); media.className = 'post__media';
+    var img = document.createElement('img'); img.src = p.img || ''; img.alt = p.title; img.loading = 'lazy'; media.appendChild(img);
+    var body = document.createElement('div'); body.className = 'post__body';
+    var meta = document.createElement('div'); meta.className = 'post-meta';
+    var cat = document.createElement('span'); cat.className = 'post-cat'; cat.textContent = p.category || '';
+    var rt = document.createElement('span'); rt.textContent = p.readTime || '';
+    meta.appendChild(cat); meta.appendChild(rt);
+    var h3 = document.createElement('h3'); h3.textContent = p.title;
+    var ex = document.createElement('p'); ex.textContent = p.excerpt || '';
+    var link = document.createElement('span'); link.className = 'link-arrow'; link.textContent = 'Read →';
+    body.appendChild(meta); body.appendChild(h3); body.appendChild(ex); body.appendChild(link);
+    a.appendChild(media); a.appendChild(body);
+    grid.appendChild(a);
+  });
+}
+
+// Rewrite the /blog/[slug] article page from the matching CMS article.
+export function hydrateBlogArticle(items) {
+  var art = document.querySelector('[data-blog-detail]');
+  if (!art || !Array.isArray(items)) return;
+  var slug = art.getAttribute('data-blog-detail');
+  var a = items.filter(Boolean).filter(function (x) { return x.slug === slug; })[0];
+  if (!a) return;
+  function set(sel, text) { var el = art.querySelector(sel); if (el) el.textContent = text || ''; }
+  set('[data-blog-cat]', a.category);
+  set('[data-blog-title]', a.title);
+  set('[data-blog-initials]', a.author && a.author.initials);
+  set('[data-blog-author]', a.author && a.author.name);
+  set('[data-blog-meta]', (a.dateFull || '') + ' · ' + (a.readTime || ''));
+  set('[data-blog-caption]', a.heroCaption);
+  var img = art.querySelector('[data-blog-img]'); if (img && a.img) { img.src = a.img; img.alt = a.title; }
+  var body = art.querySelector('[data-blog-body]'); if (body && typeof a.bodyHtml === 'string') body.innerHTML = a.bodyHtml;
+}
+
 // Rebuild the owners-page grid from the CMS library (featured cases only). The
 // static six remain the fallback when the endpoint is unavailable.
 export function hydrateCases(items) {
