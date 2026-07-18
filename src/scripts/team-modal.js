@@ -6,7 +6,7 @@
     rich: {
       name: 'Richard Scherf',
       role: 'Chief Executive Officer',
-      photo: 'https://www.cardorentals.com/i/width=600,height=750,fit=cover,format=jpeg?src=https%3A%2F%2Fwander-upload-assets.wander.com%2F631245212978513381%2Ffiles%2F26052fd3-e825-42db-ac99-7b80c45163ed.jpg',
+      photo: 'https://wander-upload-assets.wander.com/631245212978513381/files/26052fd3-e825-42db-ac99-7b80c45163ed.jpg',
       bio: [
         "Richard Scherf, CEO of Cardo Vacation Rentals, identified Airbnb's disruptive potential in hospitality to rival traditional hotels. With substantial vision and an appetite for risk, he financed several Airbnb rentals with credit and savings, and built the teams to operate them. A CMU graduate in marketing and communications, with a background in web development and design, Richard launched Cardo (2013) for full-service management and Happy Host (2016) for cleaning and maintenance.",
         "The COVID-19 pandemic prompted a strategic shift to commission management, prioritizing exceptional guest and homeowner experiences. This dedication has fueled Cardo's 100% year-over-year growth, positioning it as a rising force in Southern California's vacation rental market."
@@ -15,7 +15,7 @@
     krissy: {
       name: 'Krissy Hunter',
       role: 'Owner Services Manager',
-      photo: 'https://www.cardorentals.com/i/width=600,height=750,fit=cover,format=jpeg?src=https%3A%2F%2Fwander-upload-assets.wander.com%2F631245212978513381%2Ffiles%2F7d0fd2ea-255e-4a51-9b00-2a7babfa0278.jpg',
+      photo: 'https://wander-upload-assets.wander.com/631245212978513381/files/7d0fd2ea-255e-4a51-9b00-2a7babfa0278.jpg',
       bio: [
         "Krissy serves as our Owner Services Manager, overseeing account management, customer support, communication, and — most importantly — relationship building. She provides operational support, offers property enhancement ideas, manages onboarding of new properties, and more.",
         "With her positive energy and strong work ethic, Krissy excels at building lasting relationships, making her the perfect fit for this role at Cardo. Her solution-oriented mindset and approachable demeanor ensure that every experience exceeds expectations."
