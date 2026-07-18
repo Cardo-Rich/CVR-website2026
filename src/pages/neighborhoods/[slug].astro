@@ -2,15 +2,16 @@
 import Base from '../../layouts/Base.astro';
 import MarketingHeader from '../../components/sections/MarketingHeader.astro';
 import Footer from '../../components/sections/Footer.astro';
-import { neighborhoods } from '../../data/neighborhoods';
+import { getNeighborhoods } from '../../lib/content/neighborhoods';
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const neighborhoods = await getNeighborhoods();
   return neighborhoods.map((n, i) => ({
     params: { slug: n.slug },
-    props: { n, others: [neighborhoods[(i + 1) % neighborhoods.length], neighborhoods[(i + 2) % neighborhoods.length], neighborhoods[(i + 3) % neighborhoods.length]] },
+    props: { n, others: [neighborhoods[(i + 1) % neighborhoods.length], neighborhoods[(i + 2) % neighborhoods.length], neighborhoods[(i + 3) % neighborhoods.length]], all: neighborhoods },
   }));
 }
-const { n, others } = Astro.props;
+const { n, others, all } = Astro.props;
 const nav = [
   { label: 'For Owners', href: '/owners' },
   { label: 'Design', href: '/home-designs' },
@@ -30,15 +31,15 @@ const cheatIcons = [
 <Base title={n.seo.title} description={n.seo.description}>
   <MarketingHeader {nav} {cta} />
 
-  <main>
+  <main data-nh-detail={n.slug} data-cms="neighborhood-detail">
     <!-- HERO -->
     <section class="phero" data-screen-label="Hero">
-      <img class="phero__bg" src={n.img} alt={`${n.name}, San Diego`} />
+      <img class="phero__bg" src={n.img} alt={`${n.name}, San Diego`} data-nh-img />
       <div class="phero__overlay"></div>
       <div class="phero__inner narrow">
-        <p class="eyebrow">Vacation rental management · {n.name}</p>
-        <h1>{n.name} vacation rental management.</h1>
-        <p>{n.intro}</p>
+        <p class="eyebrow">Vacation rental management · <span data-nh-name>{n.name}</span></p>
+        <h1><span data-nh-name>{n.name}</span> vacation rental management.</h1>
+        <p data-nh-intro>{n.intro}</p>
         <div style="display:flex;gap:14px;flex-wrap:wrap">
           <a href="/owners#estimate" class="btn btn-lg">Schedule a consultation</a>
           <a href="tel:+16197195282" class="btn btn-ghost-light btn-lg">Call 619-719-5282</a>
@@ -50,29 +51,31 @@ const cheatIcons = [
     <section class="section-pad" data-screen-label="Market">
       <div class="section-wrap">
         <div class="section-head reveal" style="max-width:720px">
-          <p class="eyebrow">The {n.name} market</p>
-          <h2>What it takes to win in {n.name}.</h2>
+          <p class="eyebrow">The <span data-nh-name>{n.name}</span> market</p>
+          <h2>What it takes to win in <span data-nh-name>{n.name}</span>.</h2>
         </div>
-        <div class="nh-stats reveal" style="max-width:720px;margin-bottom:44px">
+        <div class="nh-stats reveal" style="max-width:720px;margin-bottom:44px" data-nh-stats>
           {n.stats.map((s) => (
             <div class="nh-stat"><div class="v">{s.v}</div><div class="l">{s.l}</div></div>
           ))}
         </div>
         <div class="nh-body">
           <div class="reveal">
-            {n.body.map((p) => (
-              <p>{p}</p>
-            ))}
-            <h2 style="font-size:1.4rem;margin:1.2em 0 .6em">Why owners choose Cardo in {n.name}</h2>
-            <ul class="nh-highlights">
+            <div data-nh-body>
+              {n.body.map((p) => (
+                <p>{p}</p>
+              ))}
+            </div>
+            <h2 style="font-size:1.4rem;margin:1.2em 0 .6em">Why owners choose Cardo in <span data-nh-name>{n.name}</span></h2>
+            <ul class="nh-highlights" data-nh-highlights>
               {n.highlights.map((h) => (
                 <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> {h}</li>
               ))}
             </ul>
           </div>
           <aside class="nh-aside reveal">
-            <h3>Own a home in {n.name}?</h3>
-            <p>{n.asideText}</p>
+            <h3>Own a home in <span data-nh-name>{n.name}</span>?</h3>
+            <p data-nh-aside>{n.asideText}</p>
             <a href="/owners#estimate" class="btn btn-block">Schedule a consultation</a>
           </aside>
         </div>
@@ -83,11 +86,11 @@ const cheatIcons = [
     <section class="section-pad" data-screen-label="Local guide">
       <div class="section-wrap">
         <div class="section-head reveal" style="max-width:680px">
-          <p class="eyebrow">A local’s {n.name}</p>
+          <p class="eyebrow">A local’s <span data-nh-name>{n.name}</span></p>
           <h2>Where we’d actually send you.</h2>
-          <p class="lede muted">{n.guide.lede}</p>
+          <p class="lede muted" data-nh-guide-lede>{n.guide.lede}</p>
         </div>
-        <div class="cheat">
+        <div class="cheat" data-nh-guide>
           {n.guide.items.map((it, i) => (
             <div class="cheat__item reveal">
               <div class="cheat__ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={cheatIcons[i]} /></div>
@@ -122,8 +125,8 @@ const cheatIcons = [
     <section class="cta" data-screen-label="CTA">
       <div class="cta__inner reveal">
         <p class="eyebrow">Local experts, since 2013</p>
-        <h2>See what your {n.name} home could earn.</h2>
-        <p>{n.ctaText}</p>
+        <h2>See what your <span data-nh-name>{n.name}</span> home could earn.</h2>
+        <p data-nh-cta>{n.ctaText}</p>
         <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
           <a href="/owners#estimate" class="btn btn-lg">Schedule a consultation</a>
           <a href="/home-designs#case-studies" class="btn btn-ghost-light btn-lg">See our design case studies</a>
@@ -133,10 +136,13 @@ const cheatIcons = [
   </main>
 
   <Footer />
+  <!-- Full seed data for the inline admin editor (admin-only, CMS-empty case). -->
+  <script type="application/json" data-nh-seed set:html={JSON.stringify(all)}></script>
 </Base>
 
 <script>
   import '../../scripts/reveal.js';
+  import '../../scripts/neighborhoods.js';
 </script>
 
 <style>

@@ -2,7 +2,9 @@
 import Base from '../layouts/Base.astro';
 import MarketingHeader from '../components/sections/MarketingHeader.astro';
 import Footer from '../components/sections/Footer.astro';
-import { neighborhoods } from '../data/neighborhoods';
+import { getNeighborhoods } from '../lib/content/neighborhoods';
+
+const neighborhoods = await getNeighborhoods();
 
 const nav = [
   { label: 'For Owners', href: '/owners' },
@@ -25,9 +27,9 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
           <h1 style="margin:8px 0 14px">Local experts across coastal San Diego.</h1>
           <p class="lede muted">Cardo manages luxury short-term rentals throughout San Diego's best coastal markets. Each neighborhood has its own demand curve — and we design, price, and run every home to its local opportunity.</p>
         </div>
-        <div class="nh-index">
+        <div class="nh-index" data-nh-grid data-cms="neighborhoods">
           {neighborhoods.map((n) => (
-            <a class="nh-card reveal" href={`/neighborhoods/${n.slug}`}>
+            <a class="nh-card reveal" href={`/neighborhoods/${n.slug}`} data-nh-id={n.slug}>
               <img src={n.img} alt={n.name} loading="lazy" />
               <div class="nh-card__scrim"></div>
               <div class="nh-card__label"><div class="nh-card__name">{n.name}</div><div class="nh-card__note">{n.note}</div></div>
@@ -49,10 +51,14 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
   </main>
 
   <Footer />
+  <!-- Full seed data for the inline admin editor (used only when signed in as
+       admin and the CMS is empty). Ignored by regular visitors. -->
+  <script type="application/json" data-nh-seed set:html={JSON.stringify(neighborhoods)}></script>
 </Base>
 
 <script>
   import '../scripts/reveal.js';
+  import '../scripts/neighborhoods.js';
 </script>
 
 <style>

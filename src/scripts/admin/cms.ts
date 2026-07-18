@@ -49,13 +49,19 @@ export interface FeaturedHomeItem {
 export interface GuestPhotoItem { id: string; photo: string; location: string; big?: boolean }
 export interface TeamMemberItem { id: string; name: string; role: string; photo: string }
 export interface OwnerTestimonialItem { id: string; quote: string; name: string; home: string }
+export interface NeighborhoodItem {
+  slug: string; name: string; note: string; img: string;
+  seo: { title: string; description: string };
+  intro: string; stats: { v: string; l: string }[]; body: string[]; highlights: string[];
+  asideText: string; guide: { lede: string; items: { k: string; v: string; d: string }[] }; ctaText: string;
+}
 export interface ReviewCard { name: string; meta: string; stars: number; text: string }
 export interface ReviewsDoc {
   google: { placeId?: string; rating?: number | null; count?: number | null; minStars?: number; reviews?: ReviewCard[]; syncedAt?: string | null };
   airbnb: { rating?: number | null; count?: number | null; reviews?: ReviewCard[] };
 }
 export type SectionsMap = Record<string, boolean>;
-export interface SiteContent { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap; featuredHomes: FeaturedHomeItem[]; guestPhotos: GuestPhotoItem[]; teamMembers: TeamMemberItem[]; ownerTestimonials: OwnerTestimonialItem[]; hasDraft?: boolean; draftDocs?: string[] }
+export interface SiteContent { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap; featuredHomes: FeaturedHomeItem[]; guestPhotos: GuestPhotoItem[]; teamMembers: TeamMemberItem[]; ownerTestimonials: OwnerTestimonialItem[]; neighborhoods: NeighborhoodItem[]; hasDraft?: boolean; draftDocs?: string[] }
 
 export function watchAdmin(cb: (isAdmin: boolean, user: User | null) => void): void {
   onAuthStateChanged(auth, async (user) => {
@@ -71,7 +77,7 @@ export async function login(): Promise<void> { await signInWithPopup(auth, provi
 export async function logout(): Promise<void> { await signOut(auth); }
 
 export const getContent = () => httpsCallable<unknown, SiteContent>(functions, 'adminContentGet')().then((r) => r.data);
-export const saveContent = (patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: SectionsMap; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[]; ownerTestimonials?: OwnerTestimonialItem[] }) =>
+export const saveContent = (patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: SectionsMap; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[]; ownerTestimonials?: OwnerTestimonialItem[]; neighborhoods?: NeighborhoodItem[] }) =>
   httpsCallable<typeof patch, { ok: true }>(functions, 'adminContentSet')(patch).then((r) => r.data);
 export const publishDrafts = () => httpsCallable<unknown, { published: string[]; rebuild: string }>(functions, 'adminPublish')().then((r) => r.data);
 export const discardDrafts = () => httpsCallable<unknown, { discarded: string[] }>(functions, 'adminDiscardDraft')().then((r) => r.data);

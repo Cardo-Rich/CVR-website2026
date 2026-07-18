@@ -143,6 +143,93 @@ export function hydrateOwnerTestimonials(items) {
   });
 }
 
+// Neighborhood cheat-sheet icons (mirror of [slug].astro cheatIcons).
+var NH_CHEAT_ICONS = [
+  '<path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4z"/><path d="M6 1v3M10 1v3M14 1v3"/>',
+  '<path d="M3 2v7a3 3 0 003 3v10M6 2v6M9 2v6M9 2v0"/><path d="M17 2c-1.5 0-3 2-3 6s1.5 4 3 4v8"/>',
+  '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+  '<path d="M17 18a5 5 0 00-10 0"/><path d="M12 2v7M4.2 10.2l1.4 1.4M1 18h2M21 18h2M18.4 11.6l1.4-1.4M23 22H1M16 5l-4 4-4-4"/>',
+];
+
+// Rebuild the /neighborhoods index cards from CMS items (seed fallback).
+export function hydrateNeighborhoodIndex(items) {
+  var grid = document.querySelector('[data-nh-grid]');
+  if (!grid || !Array.isArray(items)) return;
+  var shown = items.filter(function (n) { return n && n.slug && n.name; });
+  if (!shown.length) return;
+  grid.innerHTML = '';
+  shown.forEach(function (n) {
+    var a = document.createElement('a');
+    a.className = 'nh-card reveal is-in';
+    a.href = '/neighborhoods/' + n.slug;
+    a.setAttribute('data-nh-id', n.slug);
+    var img = document.createElement('img'); img.src = n.img || ''; img.alt = n.name; img.loading = 'lazy';
+    var scrim = document.createElement('div'); scrim.className = 'nh-card__scrim';
+    var label = document.createElement('div'); label.className = 'nh-card__label';
+    var nm = document.createElement('div'); nm.className = 'nh-card__name'; nm.textContent = n.name;
+    var note = document.createElement('div'); note.className = 'nh-card__note'; note.textContent = n.note || '';
+    label.appendChild(nm); label.appendChild(note);
+    a.appendChild(img); a.appendChild(scrim); a.appendChild(label);
+    grid.appendChild(a);
+  });
+}
+
+// Rewrite the /neighborhoods/[slug] detail page from the matching CMS item.
+export function hydrateNeighborhoodDetail(items) {
+  var main = document.querySelector('[data-nh-detail]');
+  if (!main || !Array.isArray(items)) return;
+  var slug = main.getAttribute('data-nh-detail');
+  var n = items.filter(Boolean).filter(function (x) { return x.slug === slug; })[0];
+  if (!n) return;
+  main.querySelectorAll('[data-nh-name]').forEach(function (el) { el.textContent = n.name || ''; });
+  var img = main.querySelector('[data-nh-img]'); if (img && n.img) img.src = n.img;
+  var intro = main.querySelector('[data-nh-intro]'); if (intro) intro.textContent = n.intro || '';
+  var aside = main.querySelector('[data-nh-aside]'); if (aside) aside.textContent = n.asideText || '';
+  var lede = main.querySelector('[data-nh-guide-lede]'); if (lede) lede.textContent = (n.guide && n.guide.lede) || '';
+  var cta = main.querySelector('[data-nh-cta]'); if (cta) cta.textContent = n.ctaText || '';
+  var stats = main.querySelector('[data-nh-stats]');
+  if (stats && Array.isArray(n.stats)) {
+    stats.innerHTML = '';
+    n.stats.forEach(function (s) {
+      var d = document.createElement('div'); d.className = 'nh-stat';
+      var v = document.createElement('div'); v.className = 'v'; v.textContent = s.v || '';
+      var l = document.createElement('div'); l.className = 'l'; l.textContent = s.l || '';
+      d.appendChild(v); d.appendChild(l); stats.appendChild(d);
+    });
+  }
+  var body = main.querySelector('[data-nh-body]');
+  if (body && Array.isArray(n.body)) {
+    body.innerHTML = '';
+    n.body.forEach(function (p) { var el = document.createElement('p'); el.textContent = p; body.appendChild(el); });
+  }
+  var hl = main.querySelector('[data-nh-highlights]');
+  if (hl && Array.isArray(n.highlights)) {
+    hl.innerHTML = '';
+    n.highlights.forEach(function (h) {
+      var li = document.createElement('li');
+      li.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg> ';
+      li.appendChild(document.createTextNode(h));
+      hl.appendChild(li);
+    });
+  }
+  var guide = main.querySelector('[data-nh-guide]');
+  if (guide && n.guide && Array.isArray(n.guide.items)) {
+    guide.innerHTML = '';
+    n.guide.items.forEach(function (it, i) {
+      var item = document.createElement('div'); item.className = 'cheat__item reveal is-in';
+      var ic = document.createElement('div'); ic.className = 'cheat__ic';
+      ic.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + NH_CHEAT_ICONS[i % NH_CHEAT_ICONS.length] + '</svg>';
+      var txt = document.createElement('div');
+      var k = document.createElement('div'); k.className = 'cheat__k'; k.textContent = it.k || '';
+      var v = document.createElement('div'); v.className = 'cheat__v'; v.textContent = it.v || '';
+      var d = document.createElement('div'); d.className = 'cheat__d'; d.textContent = it.d || '';
+      txt.appendChild(k); txt.appendChild(v); txt.appendChild(d);
+      item.appendChild(ic); item.appendChild(txt);
+      guide.appendChild(item);
+    });
+  }
+}
+
 // Rebuild the owners-page grid from the CMS library (featured cases only). The
 // static six remain the fallback when the endpoint is unavailable.
 export function hydrateCases(items) {

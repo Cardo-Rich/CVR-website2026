@@ -11,7 +11,7 @@
 
    Layout is never editable — only content. */
 import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle, uploadPhoto } from './cms';
-import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem, GuestPhotoItem, TeamMemberItem, OwnerTestimonialItem } from './cms';
+import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem, GuestPhotoItem, TeamMemberItem, OwnerTestimonialItem, NeighborhoodItem } from './cms';
 import '../../styles/admin.css';
 // Shared renderers (the published path uses the same module).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,6 +24,8 @@ const H = Hydrate as {
   hydrateGuestPhotos: (i: unknown[]) => void;
   hydrateTeam: (i: unknown[]) => void;
   hydrateOwnerTestimonials: (i: unknown[]) => void;
+  hydrateNeighborhoodIndex: (i: unknown[]) => void;
+  hydrateNeighborhoodDetail: (i: unknown[]) => void;
 };
 
 // ---------- tiny DOM helper ----------
@@ -111,12 +113,15 @@ function applyDraftToPage() {
   try { H.hydrateGuestPhotos(content.guestPhotos || []); } catch { /* not on this page */ }
   try { H.hydrateTeam(content.teamMembers || []); } catch { /* not on this page */ }
   try { H.hydrateOwnerTestimonials(content.ownerTestimonials || []); } catch { /* not on this page */ }
+  try { H.hydrateNeighborhoodIndex(content.neighborhoods || []); } catch { /* not on this page */ }
+  try { H.hydrateNeighborhoodDetail(content.neighborhoods || []); } catch { /* not on this page */ }
   // re-attach per-card controls after grids are rebuilt
   decorateCaseCards();
   decorateFeaturedCards();
   decorateGuestCards();
   decorateTeamCards();
   decorateOwnerTestCards();
+  decorateHoodCards();
 }
 
 // ============================================================ toolbar
@@ -196,7 +201,7 @@ async function onDiscard() {
 }
 
 // persist current `content` as a draft patch
-async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[]; ownerTestimonials?: OwnerTestimonialItem[] }) {
+async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[]; ownerTestimonials?: OwnerTestimonialItem[]; neighborhoods?: NeighborhoodItem[] }) {
   await saveContent(patch);
   setDirty(true);
 }
@@ -273,11 +278,22 @@ function buildEditors() {
     const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'owner-testimonials');
     bar.append(editChip('Add quote', () => openOwnerTestModal(null)));
   });
+  // Neighborhood index → Add chip + Edit/Delete on each card
+  document.querySelectorAll<HTMLElement>('[data-cms="neighborhoods"]').forEach((sec) => {
+    const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'neighborhoods');
+    bar.append(editChip('Add area', () => openHoodModal(null)));
+  });
+  // Neighborhood detail page → Edit-this-area chip
+  document.querySelectorAll<HTMLElement>('[data-cms="neighborhood-detail"]').forEach((sec) => {
+    const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'neighborhood');
+    bar.append(editChip('Edit this area', () => openHoodModal(sec.getAttribute('data-nh-detail'))));
+  });
   decorateCaseCards();
   decorateFeaturedCards();
   decorateGuestCards();
   decorateTeamCards();
   decorateOwnerTestCards();
+  decorateHoodCards();
 }
 function editChip(label: string, onClick: () => void): HTMLElement {
   return el('button', { class: 'cadm-chip', onclick: onClick, html: PENCIL + '<span>' + label + '</span>' });
@@ -591,6 +607,115 @@ function openOwnerTestModal(id: string | null) {
     if (idx >= 0) next[idx] = t; else next.push(t);
     content!.ownerTestimonials = next;
     await persist({ ownerTestimonials: next });
+    applyDraftToPage();
+  });
+}
+
+// ---------- neighborhoods ----------
+// A repeating list of rows, each with the given columns. Used for stats and
+// local-guide items in the neighborhood editor.
+function repeater(label: string, rows: Record<string, string>[], cols: { key: string; label: string; textarea?: boolean }[]): { wrap: HTMLElement; get: () => Record<string, string>[] } {
+  const list = rows.map((r) => ({ ...r }));
+  const body = el('div', {});
+  function render() {
+    body.innerHTML = '';
+    list.forEach((row, i) => {
+      const inputs = cols.map((c) => {
+        const f = field(c.label, row[c.key] || '', { textarea: c.textarea });
+        const input = f.wrap.querySelector('input, textarea') as HTMLInputElement | HTMLTextAreaElement;
+        input.addEventListener('input', () => { row[c.key] = input.value; });
+        return f.wrap;
+      });
+      body.append(el('div', { class: 'cadm-card-row' }, [
+        ...inputs,
+        el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', onclick: () => { list.splice(i, 1); render(); } }, ['Remove']),
+      ]));
+    });
+  }
+  render();
+  const wrap = el('div', { class: 'cadm-field cadm-wide' }, [
+    el('span', {}, [label]),
+    body,
+    el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', onclick: () => { const blank: Record<string, string> = {}; cols.forEach((c) => (blank[c.key] = '')); list.push(blank); render(); } }, ['+ Add row']),
+  ]);
+  return { wrap, get: () => list.filter((r) => cols.some((c) => (r[c.key] || '').trim())) };
+}
+
+// When the CMS is empty the page shows the baked seed; the full seed data is
+// embedded as JSON on the page so the editor can load and re-save all fields.
+function ensureNeighborhoodsSeeded() {
+  if (!content) return;
+  const list = content.neighborhoods || (content.neighborhoods = []);
+  if (list.length) return;
+  const embed = document.querySelector('[data-nh-seed]');
+  if (embed) {
+    try { const seed = JSON.parse(embed.textContent || '[]'); if (Array.isArray(seed) && seed.length) content.neighborhoods = seed; } catch { /* ignore */ }
+  }
+}
+function decorateHoodCards() {
+  const grid = document.querySelector('[data-nh-grid]');
+  if (!grid || !content) return;
+  grid.querySelectorAll<HTMLElement>('.nh-card[data-nh-id]').forEach((card) => {
+    if (card.querySelector('.cadm-edit-fab')) return;
+    card.classList.add('cadm-hoverable');
+    const slug = card.getAttribute('data-nh-id')!;
+    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this area', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openHoodModal(slug); } });
+    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:52px', title: 'Delete this area', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteHood(slug); } });
+    card.append(delBtn, editBtn);
+  });
+}
+async function deleteHood(slug: string) {
+  if (!content) return;
+  ensureNeighborhoodsSeeded();
+  const n = content.neighborhoods.find((x) => x.slug === slug);
+  if (!confirm(`Delete ${n?.name || 'this area'}? Applies on publish (its page is removed at the next deploy).`)) return;
+  content.neighborhoods = content.neighborhoods.filter((x) => x.slug !== slug);
+  try { await persist({ neighborhoods: content.neighborhoods }); applyDraftToPage(); toast('Area removed (draft).'); }
+  catch (e) { toast((e as Error).message, true); }
+}
+function openHoodModal(slug: string | null) {
+  if (!content) return;
+  ensureNeighborhoodsSeeded();
+  const list = content.neighborhoods;
+  const existing = slug ? list.find((x) => x.slug === slug) : null;
+  const n: NeighborhoodItem = existing ? JSON.parse(JSON.stringify(existing))
+    : { slug: '', name: '', note: '', img: '', seo: { title: '', description: '' }, intro: '', stats: [], body: [], highlights: [], asideText: '', guide: { lede: '', items: [] }, ctaText: '' };
+  const name = field('Name', n.name);
+  const note = field('Card subtitle', n.note);
+  const img = photoField('Hero image', n.img);
+  const intro = field('Intro (hero paragraph)', n.intro, { wide: true, textarea: true });
+  const stats = repeater('Market stats', (n.stats || []).map((s) => ({ v: s.v, l: s.l })), [{ key: 'v', label: 'Value' }, { key: 'l', label: 'Label' }]);
+  const body = field('Body paragraphs (leave a blank line between paragraphs)', (n.body || []).join('\n\n'), { wide: true, textarea: true });
+  const highlights = field('“Why owners choose Cardo” highlights (one per line)', (n.highlights || []).join('\n'), { wide: true, textarea: true });
+  const aside = field('Aside box text', n.asideText, { wide: true, textarea: true });
+  const guideLede = field('Local guide lede', n.guide?.lede || '', { wide: true, textarea: true });
+  const guide = repeater('Local guide items', (n.guide?.items || []).map((g) => ({ k: g.k, v: g.v, d: g.d })), [{ key: 'k', label: 'Kicker (e.g. Eat)' }, { key: 'v', label: 'Title' }, { key: 'd', label: 'Description', textarea: true }]);
+  const cta = field('Closing CTA text', n.ctaText, { wide: true, textarea: true });
+  const seoT = field('SEO title', n.seo?.title || '', { wide: true });
+  const seoD = field('SEO description', n.seo?.description || '', { wide: true, textarea: true });
+  modal(existing ? `Edit area — ${n.name}` : 'New neighborhood', [
+    el('div', { class: 'cadm-grid2' }, [name.wrap, note.wrap]),
+    img.wrap, intro.wrap,
+    el('div', { class: 'cadm-subhead' }, ['Market']), stats.wrap, body.wrap, highlights.wrap, aside.wrap,
+    el('div', { class: 'cadm-subhead' }, ['Local guide']), guideLede.wrap, guide.wrap,
+    el('div', { class: 'cadm-subhead' }, ['Closing & SEO']), cta.wrap, seoT.wrap, seoD.wrap,
+  ], async () => {
+    n.name = name.get(); n.note = note.get(); n.img = img.get();
+    n.intro = intro.get();
+    n.stats = stats.get().map((r) => ({ v: r.v, l: r.l }));
+    n.body = body.get().split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
+    n.highlights = highlights.get().split('\n').map((s) => s.trim()).filter(Boolean);
+    n.asideText = aside.get();
+    n.guide = { lede: guideLede.get(), items: guide.get().map((r) => ({ k: r.k, v: r.v, d: r.d })) };
+    n.ctaText = cta.get();
+    n.seo = { title: seoT.get(), description: seoD.get() };
+    if (!n.name.trim()) throw new Error('Name is required.');
+    if (!n.slug) n.slug = slugify(n.name);
+    const next = list.slice();
+    const idx = next.findIndex((x) => x.slug === n.slug);
+    if (idx >= 0) next[idx] = n; else next.push(n);
+    content!.neighborhoods = next;
+    await persist({ neighborhoods: next });
     applyDraftToPage();
   });
 }
