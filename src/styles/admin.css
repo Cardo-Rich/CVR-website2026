@@ -116,6 +116,12 @@ html.cadm-admin .site-header { top: var(--cadm-bar-h, 46px); }
 .cadm-edit-fab--del { background: #b91c1c; }
 .cadm-edit-fab--del:hover { background: #991b1b; }
 
+/* The blog posts grid sits flush at the top of its section (no heading above
+   it), so the section's "Add article" secbar would land on the first card and
+   cover its Edit/Delete controls. Reserve space above the grid in admin mode so
+   the secbar clears the cards. */
+html.cadm-admin [data-cms="blog"] { padding-top: 56px !important; }
+
 /* ---- modal ---- */
 .cadm-modal-scrim { position: fixed; inset: 0; z-index: 2147483001; background: rgba(30,27,46,.55); display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow: auto; }
 .cadm-modal {

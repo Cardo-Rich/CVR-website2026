@@ -92,6 +92,16 @@ function promptLogin() {
 
 export const ADMIN_FLAG = 'cardoAdmin';
 
+// Public entry for the hidden "triple-click the nav bar" gesture. If a valid
+// admin session already exists the auth watcher activates on its own; otherwise
+// set the boot flag (so a refresh keeps admin loaded) and show the sign-in
+// prompt. Safe to call repeatedly.
+export function enterAdminMode(): void {
+  if (activated) { toast('Admin mode is already on.'); return; }
+  try { localStorage.setItem(ADMIN_FLAG, '1'); } catch { /* private mode */ }
+  promptLogin();
+}
+
 let activated = false;
 async function activate() {
   if (activated) return; activated = true;
