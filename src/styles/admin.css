@@ -21,6 +21,9 @@
 .cadm-bar.is-in { transform: translateY(0); }
 /* body padding-top is set in JS to the bar's real height so nothing is covered */
 body.cadm-has-bar { scroll-padding-top: 54px; }
+/* The site's own sticky header must stick BELOW the admin bar, not slide under
+   it. --cadm-bar-h is set in JS to the bar's measured height. */
+html.cadm-admin .site-header { top: var(--cadm-bar-h, 46px); }
 .cadm-bar__dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: #c4b5fd; box-shadow: 0 0 0 3px rgba(196,181,253,.25); }
 /* status is plain text, not a chip; takes the middle space and truncates */
 .cadm-bar__status { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; opacity: .92; }

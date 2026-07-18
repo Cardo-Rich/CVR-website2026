@@ -126,7 +126,12 @@ function buildToolbar() {
   requestAnimationFrame(() => bar.classList.add('is-in'));
   // Push the page down by the bar's real height so it never covers the header,
   // and keep it correct across rotation / resize / font reflow.
-  const sync = () => { document.body.style.paddingTop = bar.offsetHeight + 'px'; };
+  const sync = () => {
+    const h = bar.offsetHeight;
+    document.body.style.paddingTop = h + 'px';
+    // expose height so the site's sticky header can stick BELOW the bar
+    document.documentElement.style.setProperty('--cadm-bar-h', h + 'px');
+  };
   sync();
   requestAnimationFrame(sync);
   window.addEventListener('resize', sync);
@@ -266,6 +271,7 @@ function decorateCaseCards() {
 
 async function deleteCase(id: string) {
   if (!content) return;
+  ensureCasesSeeded();
   const cs = content.caseStudies.find((c) => c.id === id);
   if (!confirm(`Delete “${cs?.name || id}”? It's removed from the site on publish.`)) return;
   content.caseStudies = content.caseStudies.filter((c) => c.id !== id);
@@ -289,6 +295,7 @@ function decorateFeaturedCards() {
 
 async function deleteFeatured(id: string) {
   if (!content) return;
+  ensureFeaturedSeeded();
   const h = content.featuredHomes.find((x) => x.id === id);
   if (!confirm(`Remove “${h?.name || id}” from Homes we love? Applies on publish.`)) return;
   content.featuredHomes = content.featuredHomes.filter((x) => x.id !== id);
@@ -296,10 +303,47 @@ async function deleteFeatured(id: string) {
   catch (e) { toast((e as Error).message, true); }
 }
 
+// The first edit/add/delete on the still-static carousel captures every shown
+// card into the CMS list, so mutating one never drops the others.
+function ensureFeaturedSeeded() {
+  if (!content) return;
+  const list = content.featuredHomes || (content.featuredHomes = []);
+  if (list.length) return;
+  seedFeaturedFromDom();
+}
+
+// Read a statically-rendered featured card from the DOM.
+function featuredFromCard(id: string): FeaturedHomeItem | null {
+  const card = document.querySelector(`.scard[data-fh-id="${cssSel(id)}"]`);
+  if (!card) return null;
+  const specs = Array.from(card.querySelectorAll('.scard__specs span')).map((s) => (s.textContent || '').trim());
+  return {
+    id,
+    name: (card.querySelector('.scard__name')?.textContent || '').trim(),
+    neighborhood: (card.querySelector('.scard__loc')?.textContent || '').trim(),
+    beds: specs[0] || '', baths: specs[1] || '', guests: specs[2] || '',
+    photo: card.querySelector('img')?.getAttribute('src') || '',
+    bookingUrl: card.getAttribute('href') || '',
+    premier: !!card.querySelector('.scard__premier'),
+    featured: true,
+  };
+}
+// Capture every currently-shown card into the CMS list (used before a delete so
+// the other seed cards survive the transition to CMS-managed).
+function seedFeaturedFromDom() {
+  if (!content) return;
+  const ids = Array.from(document.querySelectorAll('.scard[data-fh-id]')).map((c) => c.getAttribute('data-fh-id') || '');
+  const seeded = ids.map((id) => featuredFromCard(id)).filter(Boolean) as FeaturedHomeItem[];
+  if (seeded.length) content.featuredHomes = seeded;
+}
+
 function openFeaturedModal(id: string | null) {
   if (!content) return;
-  const existing = id ? content.featuredHomes.find((x) => x.id === id) : null;
-  const h: FeaturedHomeItem = existing ? { ...existing } : { id: '', name: '', neighborhood: '', beds: '', baths: '', guests: '', photo: '', bookingUrl: '', premier: false, featured: true };
+  ensureFeaturedSeeded();
+  const list = content.featuredHomes;
+  const existing = id ? list.find((x) => x.id === id) : null;
+  const h: FeaturedHomeItem = existing ? { ...existing }
+    : (id && featuredFromCard(id)) || { id: id || '', name: '', neighborhood: '', beds: '', baths: '', guests: '', photo: '', bookingUrl: '', premier: false, featured: true };
   const f = {
     name: field('Name', h.name), hood: field('Neighborhood', h.neighborhood),
     beds: field('Beds (e.g. 4 bedrooms)', h.beds), baths: field('Baths (e.g. 3 bathrooms)', h.baths), guests: field('Guests (e.g. 8 guests)', h.guests),
@@ -363,11 +407,44 @@ function field(label: string, value: string, opts: { wide?: boolean; textarea?: 
   return { wrap, get: () => (input as HTMLInputElement | HTMLTextAreaElement).value };
 }
 
+// Read a statically-rendered case card from the DOM so editing a not-yet-in-CMS
+// card pre-fills what's on screen instead of opening a blank form.
+function caseFromCard(id: string): CaseStudyItem | null {
+  const card = document.querySelector(`.gcase[data-case="${cssSel(id)}"]`);
+  if (!card) return null;
+  const t = (sel: string) => (card.querySelector(sel)?.textContent || '').trim();
+  const subFirst = (card.querySelector('.gcase__sub')?.childNodes[0]?.nodeValue || '').replace(/·\s*$/, '').trim();
+  const revFirst = (card.querySelector('.gcase__rev')?.childNodes[0]?.nodeValue || '').trim();
+  return {
+    id, name: t('.gcase__home'), hood: t('.gcase__hood'), beds: t('.gcase__beds'),
+    hook: t('.gcase__hook'), revenue: revFirst, nightly: subFirst, lift: t('.gcase__sub .lift'),
+    img: card.querySelector('.gcase__media img')?.getAttribute('src') || '',
+    featured: true, blurb: card.getAttribute('data-blurb') || '',
+  };
+}
+function cssSel(s: string): string {
+  return (typeof CSS !== 'undefined' && CSS.escape) ? CSS.escape(s) : s.replace(/["\\]/g, '\\$&');
+}
+
+// The first edit/add/delete on the still-static owners grid captures every
+// shown case into the CMS list, so mutating one never drops the others.
+function ensureCasesSeeded() {
+  if (!content) return;
+  const list = content.caseStudies || (content.caseStudies = []);
+  if (list.length) return;
+  const ids = Array.from(document.querySelectorAll('.gcase[data-case]')).map((c) => c.getAttribute('data-case') || '');
+  const seeded = ids.map((id) => caseFromCard(id)).filter(Boolean) as CaseStudyItem[];
+  if (seeded.length) content.caseStudies = seeded;
+}
+
 // ---------- case study modal ----------
 function openCaseModal(id: string | null) {
   if (!content) return;
-  const existing = id ? content.caseStudies.find((c) => c.id === id) : null;
-  const c: CaseStudyItem = existing ? { ...existing } : { id: '', name: '', hood: '', beds: '', hook: '', revenue: '', nightly: '', lift: '', img: '', featured: true, blurb: '' };
+  ensureCasesSeeded();
+  const list = content.caseStudies;
+  const existing = id ? list.find((c) => c.id === id) : null;
+  const c: CaseStudyItem = existing ? { ...existing }
+    : (id && caseFromCard(id)) || { id: id || '', name: '', hood: '', beds: '', hook: '', revenue: '', nightly: '', lift: '', img: '', featured: true, blurb: '' };
   const f = {
     name: field('Name', c.name), hood: field('Neighborhood', c.hood), beds: field('Beds (e.g. 4 BR)', c.beds),
     revenue: field('Annual revenue', c.revenue), nightly: field('Nightly', c.nightly), lift: field('Lift vs market', c.lift),
