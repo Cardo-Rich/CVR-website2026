@@ -99,6 +99,27 @@ export function hydrateGuestPhotos(items) {
   });
 }
 
+// Rebuild the owners-page team grid from CMS members. Static seed cards remain
+// the fallback when the endpoint is unavailable or empty.
+export function hydrateTeam(items) {
+  var grid = document.querySelector('[data-team-grid]');
+  if (!grid || !Array.isArray(items)) return;
+  var shown = items.filter(function (m) { return m && m.name; });
+  if (!shown.length) return;
+  grid.innerHTML = '';
+  shown.forEach(function (m) {
+    var card = document.createElement('div');
+    card.className = 'team__card';
+    card.setAttribute('data-team-id', m.id || '');
+    var img = document.createElement('img');
+    img.className = 'team__photo'; img.src = m.photo || ''; img.alt = m.name + (m.role ? ', ' + m.role : ''); img.loading = 'lazy';
+    var h3 = document.createElement('h3'); h3.textContent = m.name;
+    var role = document.createElement('div'); role.className = 'team__role'; role.textContent = m.role || '';
+    card.appendChild(img); card.appendChild(h3); card.appendChild(role);
+    grid.appendChild(card);
+  });
+}
+
 // Rebuild the owners-page grid from the CMS library (featured cases only). The
 // static six remain the fallback when the endpoint is unavailable.
 export function hydrateCases(items) {

@@ -374,6 +374,7 @@
         if (!d) return;
         try { H.hydrateReviews(d.reviews || {}); } catch (e) {}
         try { H.hydrateCases(d.caseStudies || []); } catch (e) {}
+        try { H.hydrateTeam(d.teamMembers || []); } catch (e) {}
       })
       .catch(function(){ /* offline or unconfigured — static fallback stands */ });
   });

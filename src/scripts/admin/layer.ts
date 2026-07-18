@@ -11,7 +11,7 @@
 
    Layout is never editable — only content. */
 import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle, uploadPhoto } from './cms';
-import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem, GuestPhotoItem } from './cms';
+import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem, GuestPhotoItem, TeamMemberItem } from './cms';
 import '../../styles/admin.css';
 // Shared renderers (the published path uses the same module).
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,6 +22,7 @@ const H = Hydrate as {
   hydrateCases: (i: unknown[]) => void;
   hydrateFeaturedHomes: (i: unknown[]) => void;
   hydrateGuestPhotos: (i: unknown[]) => void;
+  hydrateTeam: (i: unknown[]) => void;
 };
 
 // ---------- tiny DOM helper ----------
@@ -107,10 +108,12 @@ function applyDraftToPage() {
   try { H.hydrateCases(content.caseStudies || []); } catch { /* not on this page */ }
   try { H.hydrateFeaturedHomes(content.featuredHomes || []); } catch { /* not on this page */ }
   try { H.hydrateGuestPhotos(content.guestPhotos || []); } catch { /* not on this page */ }
+  try { H.hydrateTeam(content.teamMembers || []); } catch { /* not on this page */ }
   // re-attach per-card controls after grids are rebuilt
   decorateCaseCards();
   decorateFeaturedCards();
   decorateGuestCards();
+  decorateTeamCards();
 }
 
 // ============================================================ toolbar
@@ -190,7 +193,7 @@ async function onDiscard() {
 }
 
 // persist current `content` as a draft patch
-async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[] }) {
+async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[] }) {
   await saveContent(patch);
   setDirty(true);
 }
@@ -257,9 +260,15 @@ function buildEditors() {
     const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'guest-photos');
     bar.append(editChip('Add photo', () => openGuestModal(null)));
   });
+  // Team grid → Add chip + Edit/Delete on each card
+  document.querySelectorAll<HTMLElement>('[data-cms="team"]').forEach((sec) => {
+    const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'team');
+    bar.append(editChip('Add member', () => openTeamModal(null)));
+  });
   decorateCaseCards();
   decorateFeaturedCards();
   decorateGuestCards();
+  decorateTeamCards();
 }
 function editChip(label: string, onClick: () => void): HTMLElement {
   return el('button', { class: 'cadm-chip', onclick: onClick, html: PENCIL + '<span>' + label + '</span>' });
@@ -442,6 +451,72 @@ function openGuestModal(id: string | null) {
     if (idx >= 0) next[idx] = g; else next.push(g);
     content!.guestPhotos = next;
     await persist({ guestPhotos: next });
+    applyDraftToPage();
+  });
+}
+
+// ---------- team members ----------
+function decorateTeamCards() {
+  const grid = document.querySelector('[data-team-grid]');
+  if (!grid || !content) return;
+  grid.querySelectorAll<HTMLElement>('.team__card[data-team-id]').forEach((card) => {
+    if (card.querySelector('.cadm-edit-fab')) return;
+    card.classList.add('cadm-hoverable');
+    const id = card.getAttribute('data-team-id')!;
+    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this member', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openTeamModal(id); } });
+    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:52px', title: 'Remove this member', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteTeam(id); } });
+    card.append(delBtn, editBtn);
+  });
+}
+function teamFromCard(id: string): TeamMemberItem | null {
+  const card = document.querySelector(`.team__card[data-team-id="${cssSel(id)}"]`);
+  if (!card) return null;
+  return {
+    id,
+    name: (card.querySelector('h3')?.textContent || '').trim(),
+    role: (card.querySelector('.team__role')?.textContent || '').trim(),
+    photo: card.querySelector('img')?.getAttribute('src') || '',
+  };
+}
+function ensureTeamSeeded() {
+  if (!content) return;
+  const list = content.teamMembers || (content.teamMembers = []);
+  if (list.length) return;
+  const ids = Array.from(document.querySelectorAll('.team__card[data-team-id]')).map((c) => c.getAttribute('data-team-id') || '');
+  const seeded = ids.map((id) => teamFromCard(id)).filter(Boolean) as TeamMemberItem[];
+  if (seeded.length) content.teamMembers = seeded;
+}
+async function deleteTeam(id: string) {
+  if (!content) return;
+  ensureTeamSeeded();
+  const m = content.teamMembers.find((x) => x.id === id);
+  if (!confirm(`Remove ${m?.name || 'this member'} from the team? Applies on publish.`)) return;
+  content.teamMembers = content.teamMembers.filter((x) => x.id !== id);
+  try { await persist({ teamMembers: content.teamMembers }); applyDraftToPage(); toast('Member removed (draft).'); }
+  catch (e) { toast((e as Error).message, true); }
+}
+function openTeamModal(id: string | null) {
+  if (!content) return;
+  ensureTeamSeeded();
+  const list = content.teamMembers;
+  const existing = id ? list.find((x) => x.id === id) : null;
+  const m: TeamMemberItem = existing ? { ...existing }
+    : (id && teamFromCard(id)) || { id: id || '', name: '', role: '', photo: '' };
+  const name = field('Name', m.name);
+  const role = field('Role', m.role);
+  const photo = photoField('Photo', m.photo);
+  modal(existing ? `Edit member — ${m.name}` : 'New team member', [
+    el('div', { class: 'cadm-grid2' }, [name.wrap, role.wrap]),
+    photo.wrap,
+  ], async () => {
+    m.name = name.get(); m.role = role.get(); m.photo = photo.get();
+    if (!m.name.trim()) throw new Error('Name is required.');
+    if (!m.id) m.id = slugify(m.name);
+    const next = list.slice();
+    const idx = next.findIndex((x) => x.id === m.id);
+    if (idx >= 0) next[idx] = m; else next.push(m);
+    content!.teamMembers = next;
+    await persist({ teamMembers: next });
     applyDraftToPage();
   });
 }
