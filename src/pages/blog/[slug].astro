@@ -19,9 +19,28 @@ const nav = [
   { label: 'Blog', href: '/blog', active: true },
 ];
 const cta = { label: 'Free estimate', href: '/owners#estimate' };
+
+// Structured data (BlogPosting) so search engines and AI answer engines can
+// read the article cleanly. Built from the article's own fields.
+const isoDate = (() => { const d = new Date(a.dateFull); return isNaN(d.getTime()) ? undefined : d.toISOString(); })();
+const canonical = `https://cardorentals.com/blog/${a.slug}`;
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: a.title,
+  description: a.seo?.description || a.excerpt,
+  image: a.img ? [a.img] : undefined,
+  datePublished: isoDate,
+  dateModified: isoDate,
+  author: { '@type': 'Organization', name: a.author?.name || 'Cardo Vacation Rentals', url: 'https://cardorentals.com' },
+  publisher: { '@type': 'Organization', name: 'Cardo Vacation Rentals', logo: { '@type': 'ImageObject', url: 'https://cardorentals.com/assets/logo-horizontal-color.png' } },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+  articleSection: a.category,
+});
 ---
 
 <Base title={a.seo.title} description={a.seo.description}>
+  <script type="application/ld+json" is:inline set:html={jsonLd} />
   <MarketingHeader {nav} {cta} />
 
   <main>

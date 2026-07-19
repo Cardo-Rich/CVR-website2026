@@ -479,22 +479,68 @@ export const articles: Article[] = [
     slug: 'beyond-the-big-parks-san-diego-family',
     title: 'Beyond the big parks: family adventures in San Diego',
     category: 'Family adventures',
-    excerpt: 'Balboa Park museums, the Birch Aquarium, and tide pools the kids won\'t forget.',
-    readTime: '3 min',
+    excerpt: 'Balboa Park museums, the Birch Aquarium in La Jolla, and the best tide pools in town — a full family day, no theme-park lines.',
+    readTime: '6 min read',
     dateFull: 'May 28, 2026',
     dateShort: 'May 2026',
-    img: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?auto=format&fit=crop&w=1100&q=80',
+    img: 'https://images.unsplash.com/photo-1612301738481-cb439dcf3c05?auto=format&fit=crop&w=1600&q=80',
     localTip: 'Free museum Tuesdays in Balboa Park',
     showOnHome: true,
     seo: {
-      title: 'Family adventures in San Diego — The Cardo Journal',
-      description: 'Balboa Park museums, the Birch Aquarium, and tide pools — the best family days beyond the big parks.',
+      title: 'Family Things to Do in San Diego Beyond the Theme Parks — The Cardo Journal',
+      description: "A local's guide to family days in San Diego without the theme parks: Balboa Park museums, the Birch Aquarium at Scripps in La Jolla, and the best low-tide tide pools — with tips on timing, parking, and free days.",
     },
     author: { name: 'The Cardo Team', initials: 'CV' },
-    heroCaption: 'Tide pools at low tide — the kind of afternoon kids remember.',
-    bodyHtml: `<p class="lede">The big theme parks get the headlines, but San Diego's best family days are quieter, cheaper, and closer to the water.</p>
-        <p>Spend a morning in Balboa Park, where more than a dozen museums sit within walking distance of each other, then head up to the Birch Aquarium in La Jolla for hands-on tanks with a view. On a low tide, the tide pools at Cabrillo or along the La Jolla coast turn into an afternoon the kids won't forget.</p>
-        <div class="callout"><p class="eyebrow">Local tip</p><p>Free museum Tuesdays in Balboa Park rotate through the month — check which museums are free the day you're going and build around them.</p></div>
-        <p>Pack layers and reef shoes; the marine layer keeps mornings cool and the rocks are slippery when the tide's out.</p>`,
+    heroCaption: 'The Lily Pond and El Prado at Balboa Park — the cultural heart of family San Diego.',
+    bodyHtml: `<p class="lede">San Diego is famous for its theme parks — but ask a local where they take their own kids and you'll hear about Balboa Park, the tide pools, and the aquarium on the bluff in La Jolla. Here's how to build a full, low-stress family day out of the city's best — and often free — attractions.</p>
+
+        <h2>Why skip the big theme parks?</h2>
+        <p>Theme parks are a full day, a big spend, and a lot of lines. San Diego's cultural and coastal attractions are cheaper, closer together, and easier on younger kids — and they show off what actually makes the city special: its museums, its marine life, and 70 miles of coastline. You can pack two or three of the stops below into one day without anyone melting down.</p>
+
+        <h2>How do you spend a day in Balboa Park with kids?</h2>
+        <p>Balboa Park is a 1,200-acre park just north of downtown, and it packs roughly 17 museums, the San Diego Zoo, gardens, and Spanish Colonial architecture into an easy, walkable stretch called El Prado. For families, a few stops stand out:</p>
+        <ul>
+          <li><strong>Fleet Science Center</strong> — hands-on exhibits and a domed planetarium; the easiest win for curious kids.</li>
+          <li><strong>San Diego Natural History Museum ("theNAT")</strong> — dinosaurs, fossils, and a giant-screen theater.</li>
+          <li><strong>San Diego Model Railroad Museum</strong> — one of the largest in the world and a reliable toddler favorite.</li>
+          <li><strong>San Diego Air &amp; Space Museum</strong> — real aircraft and space capsules under a rotunda.</li>
+          <li><strong>The Botanical Building &amp; Lily Pond</strong> — free to visit, endlessly photogenic, and a good spot to let little legs run.</li>
+          <li><strong>The California Tower at the Museum of Us</strong> — climb it for one of the best views in the city.</li>
+        </ul>
+        <div class="callout"><p class="eyebrow">Local tip</p><p>San Diego residents get in free to many Balboa Park museums on a rotating <strong>Residents Free Tuesday</strong> schedule — a different set of museums each Tuesday of the month. The lineup changes, so check the current calendar and plan your day around whichever museums are free when you visit.</p></div>
+        <p>Parking in the park is free, but the lots fill fast on weekends — arrive before 10am, or hop the free park tram that loops the main lots and El Prado.</p>
+
+        <h2>Is the Birch Aquarium worth the trip to La Jolla?</h2>
+        <p>Yes — especially with kids. The <a href="/neighborhoods/la-jolla" class="inline">La Jolla</a> aquarium, officially the Birch Aquarium at Scripps, is run by the Scripps Institution of Oceanography, and it's built for hands-on learning: tide-pool touch tanks, a seahorse gallery, local kelp-forest species, and a bluff-top deck with one of the best ocean views in San Diego. It's smaller and calmer than a big-city aquarium, which is exactly why it works for younger kids. Pair it with lunch in the village or a walk down to the cove.</p>
+
+        <h2>Where are the best tide pools in San Diego?</h2>
+        <p>Tide pools are the cheapest, most memorable outing on this list — and San Diego has two standouts:</p>
+        <ul>
+          <li><strong>Cabrillo National Monument (Point Loma)</strong> — a protected rocky intertidal zone with anemones, crabs, and the occasional octopus, plus a historic lighthouse above it.</li>
+          <li><strong>La Jolla</strong> — the reefs and bluffs around the cove reveal pools at low water, a short walk from the aquarium.</li>
+        </ul>
+        <p>The catch: tide pools only appear at <strong>low tide</strong>. Check a San Diego tide chart the night before and aim for a low tide around one foot or lower — fall and winter mornings are often best. Wear closed-toe shoes with grip (the rocks are slick), keep an eye on the incoming tide, and look but don't take: everything in the pools is protected and alive.</p>
+
+        <h2>What else is easy with kids?</h2>
+        <ul>
+          <li><strong>La Jolla Cove</strong> — sea lions and harbor seals haul out on the rocks; watch from above (some beaches close seasonally for seal pupping).</li>
+          <li><strong>Sunset Cliffs &amp; Old Town</strong> — a dramatic clifftop stroll and a walkable slice of early California history.</li>
+          <li><strong>Mission Bay &amp; Belmont Park</strong> — calm-water beaches and a small beachfront amusement park with a classic wooden coaster.</li>
+          <li><strong>Coronado Beach</strong> — wide, gentle sand across the bridge, good for all ages.</li>
+        </ul>
+
+        <div class="callout"><p class="eyebrow">Plan the day</p><p>Check the tide chart first and build the beach or tide-pool stop around low tide; save Balboa Park or the aquarium for the higher-tide half of the day. Pack layers — San Diego's morning "marine layer" keeps the coast cool until midday — plus water and reef shoes.</p></div>
+
+        <h2>Family San Diego: quick answers</h2>
+        <h3>What's the best free thing to do with kids in San Diego?</h3>
+        <p>Balboa Park's gardens, the Botanical Building and Lily Pond, and the tide pools at Cabrillo or La Jolla are all free (Cabrillo charges a small per-vehicle entrance fee). Time a Balboa Park visit to a Residents Free Tuesday and the museums are free too.</p>
+        <h3>How many days do you need in San Diego with family?</h3>
+        <p>Three to four days lets you pair a Balboa Park day, a La Jolla-and-aquarium day, and a beach day without rushing — with a theme park added only if you want one.</p>
+        <h3>When is the best time to see the tide pools?</h3>
+        <p>At low tide, ideally a foot or lower. Fall and winter mornings tend to have the lowest daytime tides; always check a current San Diego tide chart before you go.</p>
+        <h3>Where should families stay in San Diego?</h3>
+        <p>La Jolla and the beach towns — Pacific Beach, Mission Beach, Coronado — put you closest to the coast and an easy drive from Balboa Park. A whole-home rental with a kitchen and laundry makes a multi-day family trip far easier than a hotel room.</p>
+
+        <p>Staying in one of our <a href="/" class="inline">San Diego homes</a>? Ask us at check-in for the current Free Tuesday lineup and the week's best low tides — we keep a running local list. Hungry after? Here's <a href="/blog/eat-your-way-down-the-coast-san-diego" class="inline">how to eat your way down the coast</a>.</p>`,
   },
 ];
