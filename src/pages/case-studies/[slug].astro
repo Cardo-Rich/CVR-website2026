@@ -21,7 +21,7 @@ const nav = [
 const cta = { label: 'Free estimate', href: '/owners#estimate' };
 ---
 
-<Base title={c.seo.title} description={c.seo.description}>
+<Base title={c.seo.title} description={c.seo.description} image={c.gallery?.[0]} imageAlt={c.name} type="article">
   <MarketingHeader {nav} {cta} />
 
   <main>

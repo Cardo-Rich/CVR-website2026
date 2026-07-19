@@ -43,8 +43,17 @@ const jsonLd = JSON.stringify({
 });
 ---
 
-<Base title={a.seo.title} description={a.seo.description}>
-  <script type="application/ld+json" is:inline set:html={jsonLd} />
+<Base
+  title={a.seo.title}
+  description={a.seo.description}
+  image={a.img}
+  imageAlt={a.heroCaption || a.title}
+  type="article"
+  canonical={canonical}
+  publishedTime={isoDate}
+  modifiedTime={isoDate}
+>
+  <script slot="head" type="application/ld+json" is:inline set:html={jsonLd} />
   <MarketingHeader {nav} {cta} />
 
   <main>
