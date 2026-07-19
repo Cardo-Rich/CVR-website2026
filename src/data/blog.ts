@@ -132,7 +132,7 @@ export const articles: Article[] = [
     readTime: '6 min read',
     dateFull: 'April 22, 2026',
     dateShort: 'Apr 2026',
-    img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
+    img: 'https://images.unsplash.com/photo-1630375604571-4e370942fa65?auto=format&fit=crop&w=1600&q=80',
     seo: {
       title: 'STRO Permits and TOT in San Diego — The Cardo Journal',
       description: 'A plain-English guide to San Diego short-term rental compliance: the STRO license tiers, Transient Occupancy Tax, the TMD assessment, renewals, and what happens if you miss a deadline.',
@@ -152,7 +152,7 @@ export const articles: Article[] = [
     readTime: '6 min read',
     dateFull: 'March 30, 2026',
     dateShort: 'Mar 2026',
-    img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
+    img: 'https://images.unsplash.com/photo-1617142584114-730e9bda61b2?auto=format&fit=crop&w=1600&q=80',
     seo: {
       title: 'La Jolla vs. Pacific Beach for Rentals — The Cardo Journal',
       description: 'La Jolla earns on nightly rate and longer quiet stays; Pacific Beach earns on turnover and a livelier crowd. Here\'s how to match a San Diego property to the right market.',
@@ -161,7 +161,7 @@ export const articles: Article[] = [
       name: 'The Cardo Team',
       initials: 'CV',
     },
-    heroCaption: "Coronado's shoreline — one of several San Diego micro-markets with its own demand curve.",
+    heroCaption: "La Jolla Cove — one of several San Diego micro-markets, each with its own demand curve.",
     bodyHtml: `<p class='lede'>Neither La Jolla nor Pacific Beach is the better short-term rental market in the abstract — they are two different demand curves, and the right answer depends entirely on the home you own. La Jolla tends to win on nightly rate and longer, quieter, finish-driven stays; Pacific Beach tends to win on volume, turnover, and a younger, livelier crowd that fills the calendar in a completely different pattern. Put the wrong home in the wrong market and you underperform in both. The skill is matching the property to the demand it was built to serve.</p><h2>Who is the guest in La Jolla?</h2><p>La Jolla draws a guest who is paying for calm and quality. Think couples on an anniversary, families who want a polished home near the coves, remote workers extending a trip, and visitors who book longer and plan further ahead. They are less price-sensitive and far more finish-sensitive — the bathroom, the linens, the kitchen, the view, and the quiet all get noticed.</p><p>What that means for the calendar:</p><ul><li>Higher average nightly rates, with guests who will pay for the right home.</li><li>Longer average stays, which lowers turnover cost and cleaning frequency.</li><li>More lead time, so the calendar fills earlier and rewards patience over discounting.</li></ul><p>If your home is genuinely well-finished and the setting is quiet, La Jolla lets that quality get paid for. See how the market reads in our <a class='inline' href='/neighborhoods/la-jolla'>La Jolla neighborhood guide</a>.</p><div class='callout'><p class='eyebrow'>The Cardo view</p><p>In La Jolla, the mistake is chasing occupancy. A home booked 300 nights at a soft rate can easily lose to the same home booked fewer nights at the rate the finish level actually commands. This is a rate market first, a volume market second.</p></div><h2>Who is the guest in Pacific Beach?</h2><p>Pacific Beach sells energy. The guest is younger on average, books shorter and closer in, travels in groups of friends, and comes for the boardwalk, the bars, and the beach being steps away. Demand is livelier and more spontaneous, which changes how the calendar behaves.</p><ul><li>Higher turnover — more, shorter bookings and more frequent cleans.</li><li>Shorter booking windows, so pricing has to react closer to the stay date.</li><li>Strong weekend and summer surges driven by the social scene, not just the season.</li></ul><p>A home that is fun, durable, sleeps a group, and sits close to the action can fill an enormous number of nights here. The trade is operational intensity: more check-ins, more wear, more turns. Our <a class='inline' href='/neighborhoods/pacific-beach'>Pacific Beach neighborhood guide</a> breaks down how that demand shows up.</p><h2>Which market fits my home?</h2><p>Start with the property, not the map. A quiet, high-finish home optimized for volume in La Jolla leaves rate on the table; a livelier group home priced like a serene retreat in Pacific Beach sits empty on the nights it should be busiest. Ask:</p><ul><li><strong>Finish level:</strong> Is this a home people pay a premium to stay in, or a home people pay to be near the action?</li><li><strong>Layout and capacity:</strong> Does it serve couples and families, or groups of friends?</li><li><strong>Setting:</strong> Is quiet a feature or a liability given what's around it?</li><li><strong>Your tolerance for turnover:</strong> Fewer long stays, or many short ones?</li></ul><p>The honest read is that the same physical house earns very differently depending on which of these it's built for — and the goal is to lean into its natural market rather than force it into the one with the flashier headline number.</p><div class='callout'><p class='eyebrow'>The Cardo view</p><p>Owners often ask which neighborhood is 'better' and expect a winner. The better question is which demand curve your home already fits — because the home decides that, not the ZIP code. Our job is to price and position it for the market it belongs to.</p></div><h2>How do I know what my property would actually earn?</h2><p>Averages for a neighborhood tell you almost nothing about a specific home, because the finish, capacity, and exact location move the number more than the ZIP code does. The only way to get a real answer is to model your actual property against the demand pattern it fits. That's what our <a class='inline' href='/owners#estimate'>earnings estimate</a> is for — it looks at your home, not a neighborhood average, and shows how it would perform in the market it's suited to.</p><h2>Quick answers</h2><h3>Does La Jolla or Pacific Beach earn more per night?</h3><p>La Jolla typically commands higher nightly rates from guests paying for quality and quiet, while Pacific Beach earns more through volume and turnover. Which nets more depends on the specific home.</p><h3>Which neighborhood has higher occupancy?</h3><p>Pacific Beach generally fills more nights through shorter, more frequent, closer-in bookings; La Jolla books fewer but longer stays further in advance. Neither pattern is automatically more profitable.</p><h3>What kind of home does well in La Jolla?</h3><p>High-finish homes in quiet settings that suit couples and families and reward longer stays. Quality and calm are the product.</p><h3>What kind of home does well in Pacific Beach?</h3><p>Durable, fun homes close to the boardwalk that sleep groups and can absorb frequent turnover. Energy and location are the product.</p>`,
   },
   {
@@ -212,7 +212,7 @@ export const articles: Article[] = [
     readTime: '6 min read',
     dateFull: 'February 14, 2026',
     dateShort: 'Feb 2026',
-    img: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80',
+    img: 'https://images.unsplash.com/photo-1509399316151-9b86c70fdd40?auto=format&fit=crop&w=1600&q=80',
     seo: {
       title: 'Del Mar Racing Season and Your Pricing — The Cardo Journal',
       description: 'Event-driven demand — Del Mar racing, fairs, conventions, holidays — compresses weeks of bookings into a few dates. Here\'s why pricing ahead of the calendar captures the spike.',
@@ -416,7 +416,7 @@ export const articles: Article[] = [
     readTime: '5 min read',
     dateFull: 'June 4, 2026',
     dateShort: 'Jun 2026',
-    img: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=1100&q=80',
+    img: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=1600&q=80',
     localTip: 'Go early — the lines are real',
     showOnHome: true,
     seo: {
