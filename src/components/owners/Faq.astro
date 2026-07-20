@@ -1,3 +1,41 @@
+---
+// Single source of truth for the owner FAQ: the visible accordion AND the
+// FAQPage structured data are both rendered from this list, so Google's
+// "content must match what the user sees" rule always holds.
+const faqs = [
+  {
+    q: 'What does Cardo charge?',
+    a: 'A straight 20% of booking revenue — no setup fees, no monthly minimums, and no charge until your home is earning. Other full-service managers run 18–35%. Your exact scope is confirmed in your free property analysis.',
+  },
+  {
+    q: 'How fast can my home go live?',
+    a: 'Most homes launch within a few weeks: onboarding and permitting, in-house design and photography, listing build-out, and pricing setup before your first guest.',
+  },
+  {
+    q: 'Will I still control my calendar?',
+    a: "Always. Block owner stays anytime from your dashboard. It's your home — we keep it performing when you're not using it.",
+  },
+  {
+    q: 'Do you handle San Diego STR permits and TOT?',
+    a: 'Yes — STRO licensing, compliance reporting, and transient occupancy tax filings so your home stays fully compliant.',
+  },
+  {
+    q: 'How do I see my numbers?',
+    a: 'A real-time owner dashboard plus itemized monthly statements. Every booking, payout, and expense, whenever you want it.',
+  },
+];
+
+const faqSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+});
+---
+
 <!-- ===================== FAQ ===================== -->
 <section class="section-pad surface-cream2" style="padding-top:0" data-screen-label="FAQ">
   <div class="section-wrap">
@@ -6,11 +44,21 @@
       <h2>The owner FAQ.</h2>
     </div>
     <div class="faq__list" data-faq>
-      <div class="faq__item is-open" data-faq-item><button class="faq__q" type="button" aria-expanded="true"><span>What does Cardo charge?</span><span class="faq__plus">+</span></button><div class="faq__panel"><p class="muted faq__a">A straight 20% of booking revenue — no setup fees, no monthly minimums, and no charge until your home is earning. Other full-service managers run 18–35%. Your exact scope is confirmed in your free property analysis.</p></div></div>
-      <div class="faq__item" data-faq-item><button class="faq__q" type="button" aria-expanded="false"><span>How fast can my home go live?</span><span class="faq__plus">+</span></button><div class="faq__panel"><p class="muted faq__a">Most homes launch within a few weeks: onboarding and permitting, in-house design and photography, listing build-out, and pricing setup before your first guest.</p></div></div>
-      <div class="faq__item" data-faq-item><button class="faq__q" type="button" aria-expanded="false"><span>Will I still control my calendar?</span><span class="faq__plus">+</span></button><div class="faq__panel"><p class="muted faq__a">Always. Block owner stays anytime from your dashboard. It's your home — we keep it performing when you're not using it.</p></div></div>
-      <div class="faq__item" data-faq-item><button class="faq__q" type="button" aria-expanded="false"><span>Do you handle San Diego STR permits and TOT?</span><span class="faq__plus">+</span></button><div class="faq__panel"><p class="muted faq__a">Yes — STRO licensing, compliance reporting, and transient occupancy tax filings so your home stays fully compliant.</p></div></div>
-      <div class="faq__item" data-faq-item><button class="faq__q" type="button" aria-expanded="false"><span>How do I see my numbers?</span><span class="faq__plus">+</span></button><div class="faq__panel"><p class="muted faq__a">A real-time owner dashboard plus itemized monthly statements. Every booking, payout, and expense, whenever you want it.</p></div></div>
+      {
+        faqs.map((f, i) => (
+          <div class:list={['faq__item', i === 0 ? 'is-open' : '']} data-faq-item>
+            <button class="faq__q" type="button" aria-expanded={i === 0 ? 'true' : 'false'}>
+              <span>{f.q}</span>
+              <span class="faq__plus">+</span>
+            </button>
+            <div class="faq__panel">
+              <p class="muted faq__a">{f.a}</p>
+            </div>
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>
+
+<script type="application/ld+json" is:inline set:html={faqSchema} />
