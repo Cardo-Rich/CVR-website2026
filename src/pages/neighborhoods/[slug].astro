@@ -20,6 +20,32 @@ const nav = [
 ];
 const cta = { label: 'Free estimate', href: '/owners#estimate' };
 
+const canonical = `https://cardorentals.com/neighborhoods/${n.slug}`;
+
+// Breadcrumb trail: Home › Neighborhoods › this market.
+const breadcrumbLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Neighborhoods', item: 'https://cardorentals.com/neighborhoods' },
+    { '@type': 'ListItem', position: 3, name: n.name, item: canonical },
+  ],
+});
+
+// Service schema — tells search/AI engines Cardo provides STR management
+// specifically in this market, reinforcing local-SEO intent per page.
+const serviceLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: 'Vacation rental management',
+  name: `Vacation rental management in ${n.name}, San Diego`,
+  description: n.seo.description,
+  areaServed: { '@type': 'Place', name: `${n.name}, San Diego, CA` },
+  provider: { '@type': 'LocalBusiness', name: 'Cardo Vacation Rentals', '@id': 'https://cardorentals.com/#organization' },
+  url: canonical,
+});
+
 const cheatIcons = [
   '<path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4z"/><path d="M6 1v3M10 1v3M14 1v3"/>',
   '<path d="M3 2v7a3 3 0 003 3v10M6 2v6M9 2v6M9 2v0"/><path d="M17 2c-1.5 0-3 2-3 6s1.5 4 3 4v8"/>',
@@ -28,7 +54,9 @@ const cheatIcons = [
 ];
 ---
 
-<Base title={n.seo.title} description={n.seo.description} image={n.img} imageAlt={`${n.name}, San Diego`}>
+<Base title={n.seo.title} description={n.seo.description} image={n.img} imageAlt={`${n.name}, San Diego`} canonical={canonical}>
+  <script slot="head" type="application/ld+json" is:inline set:html={breadcrumbLd} />
+  <script slot="head" type="application/ld+json" is:inline set:html={serviceLd} />
   <MarketingHeader {nav} {cta} />
 
   <main data-nh-detail={n.slug} data-cms="neighborhood-detail">

@@ -19,9 +19,23 @@ const nav = [
   { label: 'Blog', href: '/blog' },
 ];
 const cta = { label: 'Free estimate', href: '/owners#estimate' };
+
+const canonical = `https://cardorentals.com/case-studies/${c.slug}`;
+
+// Breadcrumb trail: Home › Case studies › this home.
+const breadcrumbLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Case studies', item: 'https://cardorentals.com/home-designs#case-studies' },
+    { '@type': 'ListItem', position: 3, name: c.name, item: canonical },
+  ],
+});
 ---
 
-<Base title={c.seo.title} description={c.seo.description} image={c.gallery?.[0]} imageAlt={c.name} type="article">
+<Base title={c.seo.title} description={c.seo.description} image={c.gallery?.[0]} imageAlt={c.name} type="article" canonical={canonical}>
+  <script slot="head" type="application/ld+json" is:inline set:html={breadcrumbLd} />
   <MarketingHeader {nav} {cta} />
 
   <main>

@@ -41,6 +41,18 @@ const jsonLd = JSON.stringify({
   mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
   articleSection: a.category,
 });
+
+// Breadcrumb trail (Home › The Cardo Journal › this article) so search results
+// can render the breadcrumb line instead of a bare URL.
+const breadcrumbLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
+    { '@type': 'ListItem', position: 2, name: 'The Cardo Journal', item: 'https://cardorentals.com/blog' },
+    { '@type': 'ListItem', position: 3, name: a.title, item: canonical },
+  ],
+});
 ---
 
 <Base
@@ -54,6 +66,7 @@ const jsonLd = JSON.stringify({
   modifiedTime={isoDate}
 >
   <script slot="head" type="application/ld+json" is:inline set:html={jsonLd} />
+  <script slot="head" type="application/ld+json" is:inline set:html={breadcrumbLd} />
   <MarketingHeader {nav} {cta} />
 
   <main>

@@ -62,7 +62,7 @@ export const articles: Article[] = [
     img: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1100&q=80',
     featured: true,
     seo: {
-      title: 'What your San Diego home could actually earn in 2026 — The Cardo Journal',
+      title: 'What your San Diego home earns in 2026 — The Cardo Journal',
       description:
         'Occupancy is only half the story. How nightly rate, seasonality, and design quality combine into what lands on your statement.',
     },
@@ -114,7 +114,7 @@ export const articles: Article[] = [
     dateShort: 'May 2026',
     img: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80',
     seo: {
-      title: 'Design choices that lift your nightly rate — The Cardo Journal',
+      title: 'Design choices that lift nightly rate — The Cardo Journal',
       description: 'Five durable, photogenic interior-design upgrades that raise a San Diego vacation rental\'s nightly rate and reviews — and why design is a pricing input, not decor.',
     },
     author: {
@@ -401,7 +401,7 @@ export const articles: Article[] = [
     localTip: 'Dawn patrol beats the crowds',
     showOnHome: true,
     seo: {
-      title: 'Surfing in San Diego: Where to Surf by Level — The Cardo Journal',
+      title: 'Where to Surf in San Diego by Level — The Cardo Journal',
       description: 'Where to surf around San Diego by skill level: beginner breaks like Tourmaline and Cardiff Reef, advanced spots like Black\'s, plus tide, timing and safety.',
     },
     author: { name: 'The Cardo Team', initials: 'CV' },
@@ -420,7 +420,7 @@ export const articles: Article[] = [
     localTip: 'Go early — the lines are real',
     showOnHome: true,
     seo: {
-      title: 'San Diego Food Guide: Eat Your Way Down the Coast — The Cardo Journal',
+      title: 'San Diego Food Guide: Down the Coast — The Cardo Journal',
       description: 'A San Diego food and drink guide: fish tacos in Ocean Beach, Little Italy pasta and the Saturday Mercato, North Park breweries, Baja-Med flavor and coffee.',
     },
     author: { name: 'The Cardo Team', initials: 'CV' },
@@ -439,7 +439,7 @@ export const articles: Article[] = [
     localTip: 'Free museum Tuesdays in Balboa Park',
     showOnHome: true,
     seo: {
-      title: 'Family Things to Do in San Diego Beyond the Theme Parks — The Cardo Journal',
+      title: 'San Diego Family Fun Beyond Theme Parks — The Cardo Journal',
       description: "A local's guide to family days in San Diego without the theme parks: Balboa Park museums, the Birch Aquarium at Scripps in La Jolla, and the best low-tide tide pools — with tips on timing, parking, and free days.",
     },
     author: { name: 'The Cardo Team', initials: 'CV' },
