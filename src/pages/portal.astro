@@ -1,0 +1,130 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Owner-login entry splash. Interim behavior: hold for ~4s with a progress bar
+// so the visitor understands they're being forwarded, then send them to the
+// owners page. An explicit "Continue now" link forwards immediately. Kept out
+// of search (noindex) and the sitemap (astro.config filter).
+const REDIRECT_TO = '/owners';
+const HOLD_MS = 4000;
+---
+
+<Base
+  title="Owner sign-in | Cardo Vacation Rentals"
+  description="Signing you in to your Cardo owner area."
+  noindex={true}
+>
+  <main class="portal">
+    <div class="portal__card">
+      <img class="portal__logo" src="/assets/logo-horizontal-white.png" alt="Cardo Vacation Rentals" width="200" height="73" />
+      <p class="portal__eyebrow">Owner area</p>
+      <h1 class="portal__title">Signing you in…</h1>
+      <p class="portal__sub">One moment while we take you to your Cardo owner area. You'll be redirected automatically.</p>
+
+      <div class="portal__bar" role="progressbar" aria-label="Redirecting to the owner area" aria-valuemin="0" aria-valuemax="100">
+        <span class="portal__fill"></span>
+      </div>
+
+      <a class="portal__link" href={REDIRECT_TO} data-portal-now>Continue now &rarr;</a>
+    </div>
+  </main>
+
+  <script is:inline define:vars={{ REDIRECT_TO, HOLD_MS }}>
+    // Forward after the hold. The visible link lets anyone skip the wait; if
+    // they click it, cancel the timer so we don't double-navigate.
+    const timer = window.setTimeout(() => {
+      window.location.replace(REDIRECT_TO);
+    }, HOLD_MS);
+    document.querySelector('[data-portal-now]')?.addEventListener('click', () => {
+      window.clearTimeout(timer);
+    });
+  </script>
+</Base>
+
+<style>
+  .portal {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background:
+      radial-gradient(120% 90% at 50% -10%, rgba(193, 154, 91, 0.14), transparent 60%),
+      var(--ink);
+  }
+  .portal__card {
+    width: 100%;
+    max-width: 460px;
+    text-align: center;
+    color: var(--cream);
+  }
+  .portal__logo {
+    height: 46px;
+    width: auto;
+    margin: 0 auto 40px;
+    display: block;
+  }
+  .portal__eyebrow {
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 12px;
+  }
+  .portal__title {
+    font-family: var(--font-display, 'Fraunces', serif);
+    font-weight: 500;
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    line-height: 1.1;
+    margin: 0 0 14px;
+    color: #fff;
+  }
+  .portal__sub {
+    font-size: 1.02rem;
+    line-height: 1.6;
+    color: rgba(248, 243, 236, 0.78);
+    margin: 0 auto 34px;
+    max-width: 380px;
+  }
+  .portal__bar {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(248, 243, 236, 0.16);
+    overflow: hidden;
+    margin: 0 0 28px;
+  }
+  .portal__fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--gold), var(--rose));
+    animation: portal-fill 4s linear forwards;
+  }
+  @keyframes portal-fill {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  .portal__link {
+    display: inline-block;
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-weight: 600;
+    font-size: 0.98rem;
+    letter-spacing: 0.01em;
+    color: var(--cream);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(193, 154, 91, 0.6);
+    padding-bottom: 2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .portal__link:hover {
+    color: #fff;
+    border-color: var(--rose);
+  }
+  /* Respect reduced-motion: show the bar filled rather than animating. */
+  @media (prefers-reduced-motion: reduce) {
+    .portal__fill { animation: none; width: 100%; }
+  }
+</style>

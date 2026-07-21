@@ -18,10 +18,8 @@ export default defineConfig({
         !page.includes('/portal'),
     }),
   ],
-  // /portal is the owner-login entry. Interim: send it to the owners page
-  // until the authenticated owner portal ships (owners currently sign via
-  // emailed tokenized links). Staff use /admin.
-  redirects: {
-    '/portal': '/owners',
-  },
+  // /portal is the owner-login entry. Interim: a branded splash
+  // (src/pages/portal.astro) holds for ~4s with a progress bar, then forwards
+  // to the owners page (owners currently sign via emailed tokenized links).
+  // Staff use /admin. (Was an instant redirect; now a real page.)
 });
