@@ -1,0 +1,10 @@
+# Cardo Vacation Rentals — https://cardorentals.com
+User-agent: *
+Allow: /
+
+# Keep private/utility routes out of search results
+Disallow: /admin
+Disallow: /agreement
+Disallow: /portal
+
+Sitemap: https://cardorentals.com/sitemap-index.xml
