@@ -137,28 +137,60 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
       <span class="pm-grev__stars" aria-label="4.9 out of 5">★★★★★</span>
       <span class="pm-grev__count">100+ reviews</span>
     </div>
+    <div class="navsplash__bar" aria-hidden="true"><i></i></div>
     <span class="navsplash__hint">Continue to owners →</span>
   </div>
 </div>
 
 <script>
-  // "Manage My Home" → reveal the brand splash on hover/focus; click navigates.
+  // "Manage My Home" → reveal the brand splash on hover/focus as a preview;
+  // on click, HOLD the splash (~4.2s, matches the .navsplash__bar animation) so
+  // visitors can read the "Premium Care…" verbiage before we forward to owners.
+  // Clicking the splash — or the CTA again — skips the wait immediately.
   (function () {
     var splash = document.querySelector('[data-navsplash]');
     var ctas = Array.prototype.slice.call(document.querySelectorAll('a.nav-cta'));
     if (!splash || !ctas.length) return;
+    // Reduced-motion users navigate normally (CSS hides the splash entirely).
     if (!window.matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+
+    var HOLD_MS = 4200; // keep in sync with @keyframes navsplash-fill duration
+    var locked = false; // once clicked, hold shown until we navigate
+    var navTimer = null;
+    var pendingHref = '/owners';
+
     function show() {
       splash.setAttribute('aria-hidden', 'false');
       requestAnimationFrame(function () { requestAnimationFrame(function () { splash.classList.add('is-shown'); }); });
     }
-    function hide() { splash.classList.remove('is-shown'); splash.setAttribute('aria-hidden', 'true'); }
+    function hide() {
+      if (locked) return; // don't hide a splash we've committed to navigating from
+      splash.classList.remove('is-shown');
+      splash.setAttribute('aria-hidden', 'true');
+    }
+    function go() {
+      if (navTimer) { window.clearTimeout(navTimer); navTimer = null; }
+      window.location.href = pendingHref;
+    }
+
     ctas.forEach(function (a) {
       a.addEventListener('mouseenter', show);
       a.addEventListener('mouseleave', hide);
       a.addEventListener('focus', show);
       a.addEventListener('blur', hide);
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        pendingHref = a.getAttribute('href') || '/owners';
+        if (locked) { go(); return; } // second click skips the wait
+        locked = true;
+        splash.classList.add('is-active'); // starts the progress bar
+        show();
+        navTimer = window.setTimeout(go, HOLD_MS);
+      });
     });
+
+    // Click anywhere on the held splash to continue immediately.
+    splash.addEventListener('click', function () { if (locked) go(); });
   })();
 </script>
 

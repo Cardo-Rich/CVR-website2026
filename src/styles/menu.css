@@ -178,4 +178,13 @@ html.menu-open { overflow: hidden; }
 .navsplash.is-shown .menu__splash-reviews { opacity: 1; transform: none; }
 .navsplash__hint { display: block; margin-top: 26px; font-size: .9rem; letter-spacing: .04em; color: var(--gold); opacity: 0; transition: opacity .6s var(--ease) .92s; }
 .navsplash.is-shown .navsplash__hint { opacity: 1; }
+/* Auto-continue progress bar — only when the splash is HELD after a click
+   (.is-active), not during the hover preview. Fill duration must match HOLD_MS
+   in Menu.astro (4200ms). */
+.navsplash__bar { width: min(280px, 60vw); height: 3px; margin: 30px auto 0; border-radius: 999px; background: rgba(248,243,236,.16); overflow: hidden; opacity: 0; transition: opacity .5s var(--ease) .92s; }
+.navsplash.is-shown .navsplash__bar { opacity: 1; }
+.navsplash__bar i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--gold), var(--rose)); }
+.navsplash.is-active .navsplash__bar i { animation: navsplash-fill 4200ms linear forwards; }
+.navsplash.is-active { cursor: pointer; }
+@keyframes navsplash-fill { from { width: 0; } to { width: 100%; } }
 @media (prefers-reduced-motion: reduce) { .navsplash { display: none; } }
