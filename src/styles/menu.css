@@ -176,8 +176,13 @@ html.menu-open { overflow: hidden; }
 .navsplash.is-shown .navsplash__sub { opacity: 1; }
 .navsplash .menu__splash-reviews { margin-top: 22px; }
 .navsplash.is-shown .menu__splash-reviews { opacity: 1; transform: none; }
-.navsplash__hint { display: block; margin-top: 26px; font-size: .9rem; letter-spacing: .04em; color: var(--gold); opacity: 0; transition: opacity .6s var(--ease) .92s; }
-.navsplash.is-shown .navsplash__hint { opacity: 1; }
+/* Desktop hover preview: keep the header (and its Manage My Home CTA) above
+   the splash so the button stays visible and clickable — a click then goes
+   straight to /owners. Touch devices keep the full-screen takeover. */
+@media (hover: hover) {
+  /* !important: home.css pins the header at z-index 140 !important; this must outrank it */
+  body:has(.navsplash.is-shown) .site-header { z-index: 400 !important; }
+}
 /* Auto-continue progress bar — only when the splash is HELD after a click
    (.is-active), not during the hover preview. Fill duration must match HOLD_MS
    in Menu.astro (4200ms). */
