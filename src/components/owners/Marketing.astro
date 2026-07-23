@@ -1,9 +1,8 @@
 ---
 // ===================== MARKETING & SALES STRATEGY =====================
-// Headline + subtext, then the "Manifest": a numbered two-column ledger of
-// everything marketing covers — the length of the list is the message.
-import { homePhotos } from '../../data/home';
-
+// Headline + subtext on a dark band, then the "Manifest": a numbered
+// two-column ledger of everything marketing covers, folded away behind a
+// reveal button — the length of the list is the message.
 const items = [
   'Exclusive travel-agency partnerships',
   'Airbnb Superhost & VRBO Premier status',
@@ -22,19 +21,25 @@ const pad = (n: number) => String(n + 1).padStart(2, '0');
 ---
 
 <section class="section-pad mktg" id="marketing" data-screen-label="Marketing experts">
-  <img class="mktg__bg" src={homePhotos['pool']} alt="" loading="lazy" decoding="async" />
   <div class="section-wrap">
     <div class="mktg__intro reveal">
       <p class="eyebrow">Marketing &amp; sales strategy</p>
       <h2>How we beat the market.</h2>
-      <p class="lede muted">True marketing that reaches your guest before they book — targeted ads, sales pros who close, and direct bookings that earn you more.</p>
+      <p class="lede">True marketing that reaches your guest before they book — targeted ads, sales pros who close, and direct bookings that earn you more.</p>
     </div>
 
-    <ol class="manifest reveal">
-      {items.map((it, i) => (
-        <li class="manifest__item"><span class="manifest__num">{pad(i)}</span><span class="manifest__label">{it}</span></li>
-      ))}
-    </ol>
-    <p class="manifest__kicker reveal">— …and that's just the marketing.</p>
+    <button class="mktg__toggle reveal" type="button" aria-expanded="false" aria-controls="mktg-steps" data-mktg-toggle>
+      <span data-mktg-toggle-label>Reveal the {items.length} steps</span>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <div class="mktg__fold" id="mktg-steps" data-mktg-fold>
+      <ol class="manifest">
+        {items.map((it, i) => (
+          <li class="manifest__item"><span class="manifest__num">{pad(i)}</span><span class="manifest__label">{it}</span></li>
+        ))}
+      </ol>
+      <p class="manifest__kicker">— …and that's just the marketing.</p>
+    </div>
   </div>
 </section>

@@ -141,6 +141,23 @@
     if(avgEl) avgEl.textContent = '+' + Math.round((sc/sm - 1) * 100) + '%';
   })();
 
+  /* ----- "How we beat the market": fold-out manifest ----- */
+  (function(){
+    var sec = document.getElementById('marketing');
+    var btn = sec && sec.querySelector('[data-mktg-toggle]');
+    var fold = sec && sec.querySelector('[data-mktg-fold]');
+    var label = btn && btn.querySelector('[data-mktg-toggle-label]');
+    if (!btn || !fold) return;
+    var openLabel = label ? label.textContent : '';
+    btn.addEventListener('click', function(){
+      var open = !sec.classList.contains('is-open');
+      sec.classList.toggle('is-open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      fold.style.maxHeight = open ? fold.scrollHeight + 'px' : null;
+      if (label) label.textContent = open ? 'Hide the steps' : openLabel;
+    });
+  })();
+
   /* ----- FAQ accordion (hairline) ----- */
   var list = document.querySelector('[data-faq]');
   list && list.querySelectorAll('[data-faq-item]').forEach(function(item){
