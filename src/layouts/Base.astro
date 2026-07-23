@@ -83,6 +83,19 @@ const orgSchemaJson = JSON.stringify(orgSchema);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Google Tag Manager — container GTM-TT9LPF7 (account "Cardo Furnished
+         Rentals"). GA4 (G-V5MWW8XE4X) is configured as a Google Tag INSIDE this
+         container, firing on Initialization - All Pages. Manage all analytics/
+         marketing tags in the GTM UI — do NOT also hardcode GA4 or the Meta
+         Pixel here, or events will be counted twice. -->
+    <script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TT9LPF7');</script>
+    <!-- End Google Tag Manager -->
+
     <link rel="icon" href="/assets/favicon.svg" />
     <link rel="alternate icon" href="/assets/favicon.png" />
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
@@ -125,6 +138,9 @@ const orgSchemaJson = JSON.stringify(orgSchema);
     <slot name="head" />
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TT9LPF7" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <slot />
     <!-- Inline admin layer: activates only for signed-in admins; a no-op for
          every public visitor beyond one idle-time auth check. -->
