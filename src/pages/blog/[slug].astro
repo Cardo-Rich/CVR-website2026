@@ -3,15 +3,23 @@ import Base from '../../layouts/Base.astro';
 import MarketingHeader from '../../components/sections/MarketingHeader.astro';
 import Footer from '../../components/sections/Footer.astro';
 import { getPublishedArticles } from '../../lib/content/articles';
+import { getNeighborhoods } from '../../lib/content/neighborhoods';
 
 export async function getStaticPaths() {
   const articles = await getPublishedArticles();
-  return articles.map((a, i) => ({
-    params: { slug: a.slug },
-    props: { a, related: [articles[(i+1)%articles.length], articles[(i+2)%articles.length], articles[(i+3)%articles.length]], all: articles },
-  }));
+  const neighborhoods = await getNeighborhoods();
+  return articles.map((a, i) => {
+    // Neighborhoods this article names (title/excerpt) → link through to those
+    // market pages. Precise by design: only areas the post is actually about.
+    const haystack = `${a.title} ${a.excerpt}`;
+    const areas = neighborhoods.filter((nh) => haystack.includes(nh.name)).slice(0, 3);
+    return {
+      params: { slug: a.slug },
+      props: { a, related: [articles[(i+1)%articles.length], articles[(i+2)%articles.length], articles[(i+3)%articles.length]], all: articles, areas },
+    };
+  });
 }
-const { a, related, all } = Astro.props;
+const { a, related, all, areas } = Astro.props;
 const nav = [
   { label: 'For Owners', href: '/owners' },
   { label: 'Design', href: '/home-designs' },
@@ -108,6 +116,16 @@ const breadcrumbLd = JSON.stringify({
           </div>
         )}
       </div>
+      {areas.length > 0 && (
+        <div class="art-areas">
+          <span class="art-areas__label">Areas in this guide</span>
+          <div class="art-areas__links">
+            {areas.map((nh) => (
+              <a href={`/neighborhoods/${nh.slug}`}>{nh.name} rentals →</a>
+            ))}
+          </div>
+        </div>
+      )}
     </article>
 
     <!-- RELATED -->
@@ -170,6 +188,12 @@ const breadcrumbLd = JSON.stringify({
   .callout { background: var(--cream-2); border-radius: var(--radius-lg); padding: 28px 30px; margin: 1.8em 0; }
   .callout .eyebrow { margin-bottom: 10px; }
   .callout p { margin: 0; font-size: 1.05rem; color: var(--ink-soft); }
+
+  .art-areas { max-width: 720px; margin: 0 auto; padding: 0 24px clamp(40px,6vw,64px); }
+  .art-areas__label { display: block; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-deep); font-weight: 600; margin-bottom: 12px; }
+  .art-areas__links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .art-areas__links a { font-size: .92rem; font-weight: 500; color: var(--ink); background: var(--cream-2); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; text-decoration: none; transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease); }
+  .art-areas__links a:hover { color: var(--rose); border-color: var(--rose); }
 
   .art-cta { max-width: 720px; margin: 0 auto 0; padding: 0 24px clamp(48px,7vw,80px); }
   .art-cta__box { background: var(--ink); border-radius: var(--radius-lg); padding: clamp(32px,5vw,48px); text-align: center; }

@@ -3,15 +3,34 @@ import Base from '../../layouts/Base.astro';
 import MarketingHeader from '../../components/sections/MarketingHeader.astro';
 import Footer from '../../components/sections/Footer.astro';
 import { getNeighborhoods } from '../../lib/content/neighborhoods';
+import { getPublishedCaseStudies } from '../../lib/content/case-studies';
+import { getPublishedArticles } from '../../lib/content/articles';
 
 export async function getStaticPaths() {
   const neighborhoods = await getNeighborhoods();
-  return neighborhoods.map((n, i) => ({
-    params: { slug: n.slug },
-    props: { n, others: [neighborhoods[(i + 1) % neighborhoods.length], neighborhoods[(i + 2) % neighborhoods.length], neighborhoods[(i + 3) % neighborhoods.length]], all: neighborhoods },
-  }));
+  const caseStudies = await getPublishedCaseStudies();
+  const articles = await getPublishedArticles();
+  return neighborhoods.map((n, i) => {
+    // Case study located in this market (real relationship via `neighborhood`).
+    const marketCase = caseStudies.find((cs) => cs.neighborhood === n.name) ?? null;
+    // Journal guides that name this market, padded with general owner guides so
+    // every market page has 2 relevant reads to link to.
+    const named = articles.filter((a) => `${a.title} ${a.excerpt}`.includes(n.name));
+    const general = articles.filter((a) => a.category !== 'Case studies' && !named.includes(a));
+    const guides = [...named, ...general].slice(0, 2);
+    return {
+      params: { slug: n.slug },
+      props: {
+        n,
+        others: [neighborhoods[(i + 1) % neighborhoods.length], neighborhoods[(i + 2) % neighborhoods.length], neighborhoods[(i + 3) % neighborhoods.length]],
+        all: neighborhoods,
+        marketCase,
+        guides,
+      },
+    };
+  });
 }
-const { n, others, all } = Astro.props;
+const { n, others, all, marketCase, guides } = Astro.props;
 const nav = [
   { label: 'For Owners', href: '/owners' },
   { label: 'Design', href: '/home-designs' },
@@ -133,6 +152,34 @@ const cheatIcons = [
       </div>
     </section>
 
+    <!-- RELATED: case study in this market + journal guides (internal linking) -->
+    <section class="section-pad" data-screen-label="Explore more">
+      <div class="section-wrap">
+        <div class="section-head reveal"><p class="eyebrow">Go deeper in <span data-nh-name>{n.name}</span></p><h2>See the work and the playbook.</h2></div>
+        <div class="nh-related">
+          {marketCase && (
+            <a class="nh-related__card is-feature reveal" href={`/case-studies/${marketCase.slug}`}>
+              <img src={marketCase.cardImg} alt={marketCase.name} loading="lazy" decoding="async" />
+              <div class="nh-related__b">
+                <span class="nh-related__cat">Case study · {n.name}</span>
+                <h4>{marketCase.name}</h4>
+                <p>{marketCase.hook}</p>
+              </div>
+            </a>
+          )}
+          {guides.map((g) => (
+            <a class="nh-related__card reveal" href={`/blog/${g.slug}`}>
+              <img src={g.img} alt={g.title} loading="lazy" decoding="async" />
+              <div class="nh-related__b">
+                <span class="nh-related__cat">{g.category}</span>
+                <h4>{g.title}</h4>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
     <!-- OTHER AREAS -->
     <section class="section-pad surface-cream2" data-screen-label="Other areas">
       <div class="section-wrap">
@@ -187,6 +234,16 @@ const cheatIcons = [
   .nh-aside h3 { font-size: 1.2rem; margin: 0 0 8px; }
   .nh-aside p { font-size: .96rem; color: var(--muted); line-height: 1.55; margin: 0 0 18px; }
   @media (max-width: 860px) { .nh-body { grid-template-columns: 1fr; gap: 30px; } .nh-aside { position: static; } }
+  .nh-related { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .nh-related__card { display: flex; flex-direction: column; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform .25s var(--ease), box-shadow .25s var(--ease); text-decoration: none; }
+  .nh-related__card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .nh-related__card img { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
+  .nh-related__b { padding: 18px 20px 22px; }
+  .nh-related__cat { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-deep); font-weight: 600; }
+  .nh-related__b h4 { font-family: var(--font-display); font-weight: 500; font-size: 1.18rem; color: var(--ink); margin: 8px 0 0; line-height: 1.25; }
+  .nh-related__b p { font-size: .95rem; color: var(--muted); line-height: 1.55; margin: 10px 0 0; }
+  .nh-related__card.is-feature { grid-row: span 1; }
+  @media (max-width: 860px) { .nh-related { grid-template-columns: 1fr; } }
   .nh-index { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .nh-card { position: relative; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 3/2; display: block; isolation: isolate; }
   .nh-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease); }

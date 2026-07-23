@@ -3,15 +3,24 @@ import Base from '../../layouts/Base.astro';
 import MarketingHeader from '../../components/sections/MarketingHeader.astro';
 import Footer from '../../components/sections/Footer.astro';
 import { getPublishedCaseStudies } from '../../lib/content/case-studies';
+import { getNeighborhoods } from '../../lib/content/neighborhoods';
 
 export async function getStaticPaths() {
   const caseStudies = await getPublishedCaseStudies();
+  const neighborhoods = await getNeighborhoods();
+  // Map a case study's market name → its neighborhood page slug, so the home's
+  // location links through to the market page it belongs to.
+  const nhSlugByName = new Map(neighborhoods.map((n) => [n.name, n.slug]));
   return caseStudies.map((c, i) => ({
     params: { slug: c.slug },
-    props: { c, related: [caseStudies[(i+1)%caseStudies.length], caseStudies[(i+2)%caseStudies.length], caseStudies[(i+3)%caseStudies.length]] },
+    props: {
+      c,
+      related: [caseStudies[(i+1)%caseStudies.length], caseStudies[(i+2)%caseStudies.length], caseStudies[(i+3)%caseStudies.length]],
+      nhSlug: nhSlugByName.get(c.neighborhood) ?? null,
+    },
   }));
 }
-const { c, related } = Astro.props;
+const { c, related, nhSlug } = Astro.props;
 const nav = [
   { label: 'For Owners', href: '/owners' },
   { label: 'Design', href: '/home-designs' },
@@ -45,7 +54,7 @@ const breadcrumbLd = JSON.stringify({
         <div class="post-cat">Design case study</div>
         <h1>{c.name}</h1>
         <p class="hook">{c.hook}</p>
-        <div class="cspost-meta"><span>{c.neighborhood}</span><span class="dot"></span><span>{c.beds}</span><span class="dot"></span><span>{c.date}</span></div>
+        <div class="cspost-meta">{nhSlug ? <a href={`/neighborhoods/${nhSlug}`}>{c.neighborhood}</a> : <span>{c.neighborhood}</span>}<span class="dot"></span><span>{c.beds}</span><span class="dot"></span><span>{c.date}</span></div>
       </div>
 
       <div class="cspost-gallery reveal">
