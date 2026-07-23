@@ -145,6 +145,24 @@ html.cadm-admin [data-cms="blog"] { padding-top: 56px !important; }
 .cadm-photo-row input { flex: 1 1 auto; min-width: 0; }
 .cadm-photo-row .cadm-mbtn { flex: none; padding: 9px 14px; }
 .cadm-photo-preview { display: block; max-width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; margin-top: 8px; border: 1px solid var(--cadm-line); }
+
+/* ---- photo library picker (sits above any open editor modal) ---- */
+.cadm-picker-scrim { position: fixed; inset: 0; z-index: 2147483002; background: rgba(30,27,46,.6); display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow: auto; }
+.cadm-picker { width: 100%; max-width: 880px; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 24px 64px rgba(30,27,46,.35); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--cadm-ink); }
+.cadm-picker .cadm-modal__head { gap: 10px; }
+.cadm-picker .cadm-modal__head .cadm-spacer { flex: 1; }
+.cadm-picker__body { padding: 16px 20px 22px; max-height: 68vh; overflow: auto; }
+.cadm-picker__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 8px; }
+.cadm-picker__tile { position: relative; display: block; width: 100%; aspect-ratio: 4/3; padding: 0; border: 1px solid var(--cadm-line); border-radius: 10px; overflow: hidden; cursor: pointer; background: #f4f2fb; }
+.cadm-picker__tile img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .15s ease; }
+.cadm-picker__tile:hover img { transform: scale(1.04); }
+.cadm-picker__tile:hover { border-color: var(--cadm-purple); }
+.cadm-picker__tile.is-current { outline: 3px solid var(--cadm-purple); outline-offset: -3px; }
+.cadm-picker__name { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 8px 6px; font-size: 11px; font-weight: 600; color: #fff; text-align: left; background: linear-gradient(transparent, rgba(0,0,0,.65)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+.cadm-picker__del { position: absolute; top: 6px; right: 6px; width: 28px; height: 28px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 8px; background: rgba(30,27,46,.65); color: #fff; cursor: pointer; opacity: 0; transition: opacity .15s ease, background .15s ease; }
+.cadm-picker__tile:hover .cadm-picker__del { opacity: 1; }
+.cadm-picker__del:hover { background: #dc2626; }
+.cadm-picker__del svg { width: 14px; height: 14px; }
 .cadm-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
 @media (max-width: 520px) { .cadm-grid2 { grid-template-columns: 1fr; } }
 .cadm-mbtn { appearance: none; border: 0; cursor: pointer; border-radius: 9px; padding: 9px 16px; font: 600 14px/1 system-ui, sans-serif; }

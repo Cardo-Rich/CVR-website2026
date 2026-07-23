@@ -10,7 +10,9 @@
    - edits save as DRAFT; Publish promotes drafts and (optionally) rebuilds
 
    Layout is never editable — only content. */
-import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle, uploadPhoto } from './cms';
+import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle, uploadPhoto, listPhotos, deletePhoto } from './cms';
+import type { LibraryPhoto } from './cms';
+import { photoLibrary } from '../../data/home';
 import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem, GuestPhotoItem, TeamMemberItem, OwnerTestimonialItem, NeighborhoodItem, BlogArticleItem } from './cms';
 import '../../styles/admin.css';
 // Shared renderers (the published path uses the same module).
@@ -920,14 +922,15 @@ function field(label: string, value: string, opts: { wide?: boolean; textarea?: 
   return { wrap, get: () => (input as HTMLInputElement | HTMLTextAreaElement).value };
 }
 
-// A photo field: URL input + Upload button (Storage) + live preview. Editors
-// can paste a URL or upload a file — upload fills the URL with the hosted image.
+// A photo field: URL input + Library picker + Upload button (Storage) + live
+// preview. Editors can browse the photo library, paste a URL, or upload a file.
 function photoField(label: string, value: string): { wrap: HTMLElement; get: () => string } {
-  const input = el('input', { value, placeholder: 'https://…  or upload →' }) as HTMLInputElement;
+  const input = el('input', { value, placeholder: 'https://…  or pick from Library →' }) as HTMLInputElement;
   const preview = el('img', { class: 'cadm-photo-preview', style: value ? '' : 'display:none' }) as HTMLImageElement;
   if (value) preview.src = value;
   const set = (v: string) => { input.value = v; preview.src = v; preview.style.display = v ? '' : 'none'; };
   input.addEventListener('input', () => set(input.value));
+  const lib = el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', type: 'button', onclick: () => openPhotoPicker(input.value, set) }, ['Library']) as HTMLButtonElement;
   const file = el('input', { type: 'file', accept: 'image/*', style: 'display:none' }) as HTMLInputElement;
   const up = el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', type: 'button', onclick: () => file.click() }, ['Upload']) as HTMLButtonElement;
   file.addEventListener('change', async () => {
@@ -939,10 +942,74 @@ function photoField(label: string, value: string): { wrap: HTMLElement; get: () 
   });
   const wrap = el('div', { class: 'cadm-field cadm-wide' }, [
     el('span', {}, [label]),
-    el('div', { class: 'cadm-photo-row' }, [input, up, file]),
+    el('div', { class: 'cadm-photo-row' }, [input, lib, up, file]),
     preview,
   ]);
   return { wrap, get: () => input.value };
+}
+
+// ---------- photo library picker ----------
+// Browse every photo available to the site: uploads (Storage media/uploads/**,
+// deletable) plus the built-in repo library (public/assets/photos, read-only).
+// Click a tile to use it; Upload adds a new photo and selects it immediately.
+function openPhotoPicker(current: string, onPick: (url: string) => void): void {
+  const scrim = el('div', { class: 'cadm-picker-scrim' });
+  const close = () => scrim.remove();
+  const body = el('div', { class: 'cadm-picker__body' }, [el('p', { class: 'cadm-note' }, ['Loading photo library…'])]);
+
+  const file = el('input', { type: 'file', accept: 'image/*', style: 'display:none' }) as HTMLInputElement;
+  const upBtn = el('button', { class: 'cadm-mbtn cadm-mbtn--primary', type: 'button', onclick: () => file.click() }, ['Upload new photo']) as HTMLButtonElement;
+  file.addEventListener('change', async () => {
+    const f = file.files && file.files[0]; if (!f) return;
+    upBtn.disabled = true; upBtn.textContent = 'Uploading…';
+    try { const url = await uploadPhoto(f); toast('Photo uploaded.'); onPick(url); close(); }
+    catch (e) { toast((e as Error).message, true); upBtn.disabled = false; upBtn.textContent = 'Upload new photo'; }
+  });
+
+  function tile(url: string, name: string, delPath?: string): HTMLElement {
+    const t = el('button', { class: 'cadm-picker__tile' + (current && url === current ? ' is-current' : ''), type: 'button', title: name, onclick: () => { onPick(url); close(); } }, [
+      el('img', { src: url, alt: name, loading: 'lazy' }),
+      el('span', { class: 'cadm-picker__name' }, [name]),
+    ]);
+    if (delPath) {
+      t.append(el('button', { class: 'cadm-picker__del', type: 'button', title: 'Delete this photo', html: TRASH, onclick: async (e: Event) => {
+        e.stopPropagation();
+        if (!confirm(`Delete “${name}” from the photo library permanently? Any page still using it will lose its image. This cannot be undone.`)) return;
+        try { await deletePhoto(delPath); t.remove(); toast('Photo deleted.'); }
+        catch (err) { toast((err as Error).message, true); }
+      } }));
+    }
+    return t;
+  }
+
+  function render(uploads: LibraryPhoto[]) {
+    body.innerHTML = '';
+    body.append(el('div', { class: 'cadm-subhead' }, ['Uploaded photos']));
+    if (uploads.length) {
+      body.append(el('div', { class: 'cadm-picker__grid' }, uploads.map((p) => tile(p.url, p.name, p.path))));
+    } else {
+      body.append(el('p', { class: 'cadm-note' }, ['Nothing uploaded yet — use “Upload new photo” above.']));
+    }
+    body.append(el('div', { class: 'cadm-subhead' }, ['Site photo library (built in)']));
+    body.append(el('div', { class: 'cadm-picker__grid' },
+      Object.entries(photoLibrary).map(([key, url]) => tile(url, key.replace(/-/g, ' ')))));
+  }
+
+  scrim.append(el('div', { class: 'cadm-picker' }, [
+    el('div', { class: 'cadm-modal__head' }, [
+      el('h3', {}, ['Photo library']),
+      el('span', { class: 'cadm-spacer' }),
+      upBtn, file,
+      el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', type: 'button', onclick: close }, ['Close']),
+    ]),
+    body,
+  ]));
+  scrim.addEventListener('click', (e) => { if (e.target === scrim) close(); });
+  document.body.append(scrim);
+  listPhotos().then(render).catch((e) => {
+    render([]);
+    body.prepend(el('p', { class: 'cadm-err' }, ['Could not load uploads: ' + (e as Error).message]));
+  });
 }
 
 function cssSel(s: string): string {

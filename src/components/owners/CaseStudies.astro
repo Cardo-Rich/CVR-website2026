@@ -20,11 +20,11 @@ const cases = all.filter((a) => a.showOnOwners && a.caseStudy);
       <p class="lede">Our in-house design team furnishes and styles your home end to end — sourced, shipped, installed, and photo-ready — so it commands a higher nightly rate from day one. Every home below was designed by Cardo, then went on to beat its market.</p>
     </div>
     <div class="cases__grid" data-cases>
-      {cases.map((p) => {
+      {cases.map((p, i) => {
         const cs = p.caseStudy!;
         const gallery = (cs.gallery && cs.gallery.length) ? cs.gallery : [p.img];
         return (
-          <button type="button" class="gcase reveal" data-case={p.slug} data-full={`/blog/${p.slug}`} data-blurb={p.excerpt} data-gallery={JSON.stringify(gallery)}>
+          <button type="button" class="gcase reveal" hidden={i >= 3} data-case={p.slug} data-full={`/blog/${p.slug}`} data-blurb={p.excerpt} data-gallery={JSON.stringify(gallery)}>
             <div class="gcase__media"><img src={p.img} alt={cs.name} loading="lazy" /><span class="gcase__beds">{cs.beds}</span></div>
             <div class="gcase__body">
               <div class="gcase__hood">{cs.hood}</div>
@@ -38,6 +38,7 @@ const cases = all.filter((a) => a.showOnOwners && a.caseStudy);
         );
       })}
     </div>
+    <div class="cases__more"><button type="button" class="cases__more-btn" data-cases-more hidden={cases.length <= 3}>Load more case studies</button></div>
     <p class="cases__note">Figures are illustrative of recent San Diego performance. Your projection is built from your home's location, size, and finish.</p>
   </div>
   <!-- Full blog seed for the inline admin editor (admin-only, CMS-empty case). -->

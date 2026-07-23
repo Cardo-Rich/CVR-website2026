@@ -141,6 +141,29 @@
     if(avgEl) avgEl.textContent = '+' + Math.round((sc/sm - 1) * 100) + '%';
   })();
 
+  /* ----- Case studies: show 3 at a time behind a "Load more" button.
+          Re-applies whenever the CMS layer re-renders the grid. ----- */
+  (function(){
+    var grid = document.querySelector('[data-cases]');
+    var moreBtn = document.querySelector('[data-cases-more]');
+    if (!grid || !moreBtn) return;
+    var PAGE = 3;
+    var shown = PAGE;
+    function apply(){
+      var cards = [].slice.call(grid.querySelectorAll('.gcase'));
+      cards.forEach(function(card, i){
+        var hide = i >= shown;
+        card.hidden = hide;
+        if (!hide) card.classList.add('is-in'); // .reveal cards unhidden after load won't re-observe
+      });
+      moreBtn.hidden = shown >= cards.length;
+    }
+    moreBtn.addEventListener('click', function(){ shown += PAGE; apply(); });
+    // CMS hydration / inline admin re-render replaces the cards — restart paging.
+    new MutationObserver(function(){ shown = PAGE; apply(); }).observe(grid, { childList: true });
+    apply();
+  })();
+
   /* ----- "How we beat the market": fold-out manifest ----- */
   (function(){
     var sec = document.getElementById('marketing');

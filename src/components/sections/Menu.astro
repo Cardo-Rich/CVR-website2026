@@ -182,6 +182,9 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
         e.preventDefault();
         pendingHref = a.getAttribute('href') || '/owners';
         if (locked) { go(); return; } // second click skips the wait
+        // Desktop (hover-capable): the splash already previewed on hover, so a
+        // click means "take me there" — skip the timed hold entirely.
+        if (window.matchMedia('(hover: hover)').matches) { go(); return; }
         locked = true;
         splash.classList.add('is-active'); // starts the progress bar
         show();

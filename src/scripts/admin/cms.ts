@@ -6,7 +6,7 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, type User } from 'firebase/auth';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, listAll, getMetadata, deleteObject } from 'firebase/storage';
 
 const config = {
   apiKey: 'AIzaSyDEvpX1WsRtgaLOSHWh6Pf6SP9pzk-g0UE',
@@ -35,6 +35,27 @@ export async function uploadPhoto(file: File): Promise<string> {
   const path = `media/uploads/${rand}-${safe}`;
   const snap = await uploadBytes(storageRef(storage, path), file, { contentType: file.type });
   return getDownloadURL(snap.ref);
+}
+
+// A photo in the uploaded-media library (Storage media/uploads/**).
+export interface LibraryPhoto { path: string; name: string; url: string; created: string }
+
+// List every uploaded photo, newest first. media/** is public-readable so this
+// needs no auth; delete below does (admin-only write rule).
+export async function listPhotos(): Promise<LibraryPhoto[]> {
+  const res = await listAll(storageRef(storage, 'media/uploads'));
+  const items = await Promise.all(res.items.map(async (item) => {
+    const [url, meta] = await Promise.all([getDownloadURL(item), getMetadata(item)]);
+    return { path: item.fullPath, name: item.name.replace(/^[a-z0-9]{6}-/, ''), url, created: meta.timeCreated || '' };
+  }));
+  return items.sort((a, b) => (a.created < b.created ? 1 : -1));
+}
+
+// Permanently remove an uploaded photo from Storage. Immediate (not draft) —
+// callers must confirm with the editor first.
+export async function deletePhoto(path: string): Promise<void> {
+  if (!path.startsWith('media/uploads/')) throw new Error('Only uploaded photos can be deleted.');
+  await deleteObject(storageRef(storage, path));
 }
 
 export interface CaseStudyItem {

@@ -182,6 +182,10 @@
     .case__more { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); font-size: .9rem; font-weight: 600; color: var(--rose); display: inline-flex; align-items: center; gap: 6px; transition: gap var(--dur-fast) var(--ease); }
     .case:hover .case__more { gap: 10px; }
     .cases__note { margin-top: 26px; font-size: .85rem; color: var(--muted); }
+    /* "Load more" — ghost pill centered under the grid (dark section) */
+    .cases__more { text-align: center; margin-top: 36px; }
+    .cases__more-btn { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-body); font-weight: 600; font-size: 1rem; color: #fff; background: transparent; border: 1px solid rgba(255,255,255,.35); border-radius: var(--radius-pill); padding: 14px 28px; cursor: pointer; transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease); }
+    .cases__more-btn:hover { border-color: #fff; background: rgba(255,255,255,.08); }
     @media (max-width: 900px) { .cases__grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 620px) { .cases__grid { grid-template-columns: 1fr; } }
 
@@ -367,17 +371,18 @@
     @media (max-width: 520px) { .estimate-fab { width: calc(100% - 32px); text-align: center; } }
 
     /* Floating "Surpass the competition" card — desktop only, replaces the FAB.
-       Pinned bottom-right, revealed after scrolling past the hero form. */
+       Pinned bottom-center, revealed after scrolling past the hero form. The
+       light ring + deep shadow keep it legible over same-color dark sections. */
     .estimate-card { display: none; }
     @media (min-width: 901px) {
       .estimate-fab { display: none; }
-      .estimate-card { display: block; position: fixed; right: 24px; bottom: 24px; z-index: 90; width: 272px; max-width: calc(100vw - 48px); background: var(--ink); color: #fff; border-radius: var(--radius-lg); padding: 18px 20px; box-shadow: 0 18px 44px rgba(14,17,27,.30); overflow: hidden; opacity: 0; pointer-events: none; transform: translateY(20px); transition: opacity .35s var(--ease), transform .35s var(--ease); }
-      .estimate-card.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+      .estimate-card { display: block; position: fixed; left: 50%; bottom: 24px; z-index: 90; width: 354px; max-width: calc(100vw - 48px); background: var(--ink); color: #fff; border-radius: var(--radius-lg); padding: 18px 20px; box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 10px 26px rgba(0,0,0,.35), 0 22px 54px rgba(0,0,0,.45); overflow: hidden; opacity: 0; pointer-events: none; transform: translate(-50%, 20px); transition: opacity .35s var(--ease), transform .35s var(--ease); }
+      .estimate-card.is-visible { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
       /* Gold gradient accent line across the top */
       .estimate-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--gold) 20%, #efe0bd 50%, var(--gold) 80%, transparent); }
       .estimate-card h3 { color: #fff; font-family: var(--font-display); font-weight: 500; font-size: 1.14rem; line-height: 1.25; margin: 0 0 12px; }
-      /* Subtext hidden until hover; re-hides 1s after the pointer leaves (delay on the resting state) */
-      .estimate-card__sub { overflow: hidden; max-height: 0; opacity: 0; margin: 0; color: rgba(248,243,236,.85); font-size: .9rem; line-height: 1.5; transition: max-height .35s var(--ease), opacity .3s var(--ease), margin .35s var(--ease); transition-delay: 1s; }
+      /* Subtext hidden until hover; re-hides .5s after the pointer leaves (delay on the resting state) */
+      .estimate-card__sub { overflow: hidden; max-height: 0; opacity: 0; margin: 0; color: rgba(248,243,236,.85); font-size: .9rem; line-height: 1.5; transition: max-height .35s var(--ease), opacity .3s var(--ease), margin .35s var(--ease); transition-delay: .5s; }
       .estimate-card:hover .estimate-card__sub, .estimate-card:focus-within .estimate-card__sub { max-height: 120px; opacity: 1; margin: 0 0 14px; transition-delay: 0s; }
       .estimate-card__btn { width: 100%; white-space: nowrap; border-radius: 20px; padding: 14px 16px; font-size: .92rem; background: #fff; color: var(--ink); border: 1px solid #fff; box-shadow: 0 6px 18px rgba(0,0,0,.18); transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }
       .estimate-card__btn:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 10px 26px rgba(193,154,91,.4); }
