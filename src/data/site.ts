@@ -16,7 +16,7 @@ export const company = {
 export const nav = ['For Owners', 'Design', 'Neighborhoods', 'Blog'];
 
 export const stats = [
-  { value: '2,000+', label: '5-star guest reviews' },
+  { value: '3,500+', label: 'Guest reviews' },
   { value: 'Since 2013', label: 'San Diego Superhost' },
   { value: '24/7', label: 'Guest support' },
   { value: 'In-house', label: 'Design & cleaning' },

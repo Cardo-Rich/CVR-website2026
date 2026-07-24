@@ -12,8 +12,8 @@ export function hydrateReviews(rv) {
   if (num(g.count)) setText('[data-ct="g-count"]', fmtCount(num(g.count)) + ' reviews');
   if (num(a.rating)) setText('[data-ct="a-rating"]', String(a.rating));
   if (num(a.count)) {
-    setText('[data-ct="a-count"]', 'Guest-favorite · ' + fmtCount(num(a.count)) + ' reviews');
-    setText('[data-ct="a-chip"]', fmtCount(num(a.count)) + ' five-star reviews on Airbnb alone');
+    setText('[data-ct="a-count"]', fmtCount(num(a.count)) + ' reviews');
+    setText('[data-ct="a-chip"]', fmtCount(num(a.count)) + ' reviews on Airbnb alone');
     document.querySelectorAll('.bnum__cell').forEach(function (cell) {
       var k = cell.querySelector('.bnum__k');
       if (k && /5-star reviews/i.test(k.textContent)) {

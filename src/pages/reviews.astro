@@ -2,10 +2,10 @@
 import Base from '../layouts/Base.astro';
 import MarketingHeader from '../components/sections/MarketingHeader.astro';
 import Footer from '../components/sections/Footer.astro';
-import { reviews } from '../data/reviews';
+import { reviews, initial, avatarColor } from '../data/reviews';
 
 // Seed the waterfall a few times over so the first paint is full; the client
-// script keeps appending as the visitor scrolls, toward our 2,000+ total.
+// script keeps appending as the visitor scrolls, toward our 3,500+ total.
 // Rotate each repeat so the waterfall columns don't start with the same card.
 const rotate = (arr: typeof reviews, n: number) => [...arr.slice(n), ...arr.slice(0, n)];
 const seed = [...reviews, ...rotate(reviews, 7), ...rotate(reviews, 13)];
@@ -21,16 +21,16 @@ const seed = [...reviews, ...rotate(reviews, 7), ...rotate(reviews, 13)];
     <section class="rw-hero" data-screen-label="Reviews hero">
       <div class="section-narrow" style="text-align:center">
         <p class="eyebrow" style="justify-content:center">Don’t take our word for it</p>
-        <h1>2,000+ reasons guests keep coming back.</h1>
+        <h1>3,500+ reasons guests keep coming back.</h1>
         <p class="lede muted" style="max-width:620px;margin:12px auto 0">Every review below is real and verified — pulled straight from Google and Airbnb. Keep scrolling; there are thousands more.</p>
         <div class="rw-badges">
           <span class="rw-badge">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            <b>Google</b><span class="rw-badge__num">4.9</span><span class="rw-badge__stars">★★★★★</span>
+            <b>Google</b><span class="rw-badge__num">4.8</span><span class="rw-badge__stars">★★★★★</span>
           </span>
           <span class="rw-badge">
             <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#FF385C" d="M16 3c-1.7 0-2.9 1.2-4.1 3.4-2.4 4.5-5 10.2-5.5 11.5-.9 2.3-1.1 3.4-1.1 4.1 0 2.4 1.9 4.3 4.3 4.3 1.5 0 2.7-.6 4.3-2 .9-.8 1.6-1.5 2.1-1.5s1.2.7 2.1 1.5c1.6 1.4 2.8 2 4.3 2 2.4 0 4.3-1.9 4.3-4.3 0-.7-.2-1.8-1.1-4.1-.5-1.3-3.1-7-5.5-11.5C18.9 4.2 17.7 3 16 3zm0 3.2c.5 0 .9.5 1.6 1.8.6 1.1 2.8 5.9 4.9 10.6.6 1.4.8 2.2.8 2.7 0 1.1-.9 2-2 2-.7 0-1.4-.3-2.4-1.1-1.1-.9-2.1-1.7-3.2-1.7s-2.1.8-3.2 1.7c-1 .8-1.7 1.1-2.4 1.1-1.1 0-2-.9-2-2 0-.5.2-1.3.8-2.7 2.1-4.7 4.3-9.5 4.9-10.6.7-1.3 1.1-1.8 1.6-1.8z"/></svg>
-            <b>Airbnb</b><span class="rw-badge__num">4.95</span><span class="rw-badge__stars">★★★★★</span>
+            <b>Airbnb</b><span class="rw-badge__num">4.71</span><span class="rw-badge__stars">★★★★★</span>
           </span>
         </div>
       </div>
@@ -41,10 +41,10 @@ const seed = [...reviews, ...rotate(reviews, 7), ...rotate(reviews, 13)];
         {seed.map((r) => (
           <figure class="rw-card">
             <div class="rw-card__top">
-              <img class="rw-card__avatar" src={r.avatar} alt="" loading="lazy" />
+              <span class="rw-card__avatar" style={`background:${avatarColor(r.name)}`} aria-hidden="true">{initial(r.name)}</span>
               <div>
                 <figcaption class="rw-card__name">{r.name}</figcaption>
-                <div class="rw-card__meta">{r.meta}</div>
+                <div class="rw-card__meta">{r.meta || (r.platform === 'google' ? 'Verified Google review' : 'Verified Airbnb stay')}</div>
               </div>
               <span class={`rw-card__badge rw-card__badge--${r.platform}`} aria-label={r.platform === 'google' ? 'Google review' : 'Airbnb review'}>
                 {r.platform === 'google' ? (
@@ -83,7 +83,7 @@ const seed = [...reviews, ...rotate(reviews, 7), ...rotate(reviews, 13)];
     var shown = seedCount;
 
     function updateCount() {
-      if (counter) counter.textContent = 'Showing ' + shown.toLocaleString('en-US') + ' of 2,000+ verified reviews';
+      if (counter) counter.textContent = 'Showing ' + shown.toLocaleString('en-US') + ' of 3,500+ verified reviews';
     }
     updateCount();
 
@@ -132,7 +132,7 @@ const seed = [...reviews, ...rotate(reviews, 7), ...rotate(reviews, 13)];
   .rw-grid { column-count: 3; column-gap: 22px; }
   .rw-card { break-inside: avoid; -webkit-column-break-inside: avoid; display: inline-block; width: 100%; margin: 0 0 22px; padding: 22px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
   .rw-card__top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-  .rw-card__avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex: none; }
+  .rw-card__avatar { width: 44px; height: 44px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; }
   .rw-card__name { font-weight: 600; font-size: .98rem; }
   .rw-card__meta { font-size: .8rem; color: var(--muted); margin-top: 2px; }
   .rw-card__badge { margin-left: auto; width: 22px; height: 22px; flex: none; }
