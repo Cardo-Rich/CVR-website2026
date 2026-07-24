@@ -682,8 +682,16 @@ function openOwnerTestModal(id: string | null) {
   ensureOwnerTestSeeded();
   const list = content.ownerTestimonials;
   const existing = id ? list.find((x) => x.id === id) : null;
+  const fromCard = id ? ownerTestFromCard(id) : null;
   const t: OwnerTestimonialItem = existing ? { ...existing }
-    : (id && ownerTestFromCard(id)) || { id: id || '', quote: '', name: '', home: '', source: 'google', text: '', size: 'md' };
+    : (fromCard || { id: id || '', quote: '', name: '', home: '', source: 'google', text: '', size: 'md' });
+  // Backfill fields that predate the full-text / source / size CMS shape, so
+  // editing a legacy review keeps its full text instead of blanking it.
+  if (fromCard) {
+    if (!t.text) t.text = fromCard.text || '';
+    if (!t.source) t.source = fromCard.source;
+    if (!t.size) t.size = fromCard.size;
+  }
   const name = field('Name (e.g. Andrew H.)', t.name);
   const home = field('Unit / location (e.g. Oceanfront condo, Pacific Beach)', t.home);
   const srcSel = el('select', {}, [el('option', { value: 'google' }, ['Google']), el('option', { value: 'yelp' }, ['Yelp'])]) as HTMLSelectElement;

@@ -133,11 +133,24 @@ export function hydrateOwnerTestimonials(items) {
   if (!wall || !Array.isArray(items)) return;
   var shown = items.filter(function (t) { return t && (t.quote || t.pullQuote); });
   if (!shown.length) return;
+  // Snapshot the baked-in cards by id so CMS items that predate the full-text /
+  // source / size fields fall back to the static values instead of blanking.
+  var prior = {};
+  wall.querySelectorAll('.qcard[data-ot-id]').forEach(function (card) {
+    var id = card.getAttribute('data-ot-id');
+    var f = {}; try { f = JSON.parse(card.querySelector('[data-qfull]').textContent); } catch (e) {}
+    var sc = Array.prototype.slice.call(card.classList).filter(function (c) { return /^qcard--(lg|md|sm)$/.test(c); })[0];
+    prior[id] = { text: f.text || '', rating: f.rating || 5, source: card.getAttribute('data-source') || '', size: sc ? sc.replace('qcard--', '') : '' };
+  });
   wall.innerHTML = '';
   shown.forEach(function (t, i) {
-    var src = t.source === 'yelp' ? 'yelp' : 'google';
+    var p = prior[t.id] || {};
+    var src = (t.source === 'yelp' || t.source === 'google') ? t.source : (p.source || 'google');
+    var size = t.size || p.size || 'md';
+    var text = (t.text && String(t.text).trim()) ? t.text : (p.text || '');
+    var rating = t.rating || p.rating || 5;
     var card = document.createElement('div');
-    card.className = 'qcard qcard--' + (t.size || 'md') + (i >= 3 ? ' qcard--extra' : '');
+    card.className = 'qcard qcard--' + size + (i >= 3 ? ' qcard--extra' : '');
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
     card.setAttribute('data-ot-id', t.id || '');
@@ -151,7 +164,7 @@ export function hydrateOwnerTestimonials(items) {
     who.appendChild(nm); who.appendChild(loc);
     var cue = document.createElement('span'); cue.className = 'qcard__cue'; cue.innerHTML = OT_CUE;
     var full = document.createElement('script'); full.type = 'application/json'; full.setAttribute('data-qfull', '');
-    full.textContent = JSON.stringify({ text: t.text || '', rating: t.rating || 5 });
+    full.textContent = JSON.stringify({ text: text, rating: rating });
     card.appendChild(mark); card.appendChild(q); card.appendChild(who); card.appendChild(cue); card.appendChild(full);
     wall.appendChild(card);
   });
