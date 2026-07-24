@@ -16,7 +16,7 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
   <div class="otest__head reveal">
     <p class="eyebrow center">What owners say</p>
     <h2>Owners who switched, and never looked back.</h2>
-    <p class="otest__sub">Real reviews from San Diego homeowners on Google &amp; Yelp.</p>
+    <p class="otest__sub">Real reviews from real homeowners.</p>
   </div>
 
   <div class="qwall" data-qwall>
@@ -73,12 +73,10 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
   @media (max-width: 1000px) { .qwall { columns: 2; } }
   @media (max-width: 640px)  { .qwall { columns: 1; } }
 
-  /* Borderless quotes — no card block, just the quote itself. */
-  .qcard { position: relative; break-inside: avoid; display: block; width: 100%; text-align: left; margin: 0 0 clamp(30px,3.2vw,52px); padding: 0; background: none; border: 0; cursor: pointer; font-family: inherit; color: var(--ink); }
-  .qcard__quote { transition: color var(--dur-fast) var(--ease); }
-  .qcard:hover .qcard__quote, .qcard:focus-visible .qcard__quote { color: var(--rose); }
-  .qcard:focus-visible { outline: 2px solid var(--rose); outline-offset: 6px; border-radius: 4px; }
-  .qcard__mark { display: block; height: 20px; margin-bottom: 12px; }
+  .qcard { position: relative; break-inside: avoid; display: block; width: 100%; text-align: left; margin: 0 0 clamp(20px,2.4vw,34px); padding: 24px 24px 22px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); cursor: pointer; font-family: inherit; color: var(--ink); transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
+  .qcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--line-strong, rgba(14,17,27,.2)); }
+  .qcard:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; }
+  .qcard__mark { display: block; height: 20px; margin-bottom: 14px; }
   .qcard__mark svg { height: 20px; width: 20px; display: block; }
   .qcard__mark .src-yelp { height: 20px; width: auto; display: block; }
   .qcard__quote { margin: 0; font-family: var(--font-display); font-weight: 500; line-height: 1.24; color: var(--ink); text-wrap: pretty; }

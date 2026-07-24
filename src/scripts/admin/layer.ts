@@ -689,10 +689,11 @@ function openOwnerTestModal(id: string | null) {
   const srcSel = el('select', {}, [el('option', { value: 'google' }, ['Google']), el('option', { value: 'yelp' }, ['Yelp'])]) as HTMLSelectElement;
   srcSel.value = t.source || 'google';
   const sizeSel = el('select', {}, [
-    el('option', { value: 'xl' }, ['Extra large']), el('option', { value: 'lg' }, ['Large']),
-    el('option', { value: 'md' }, ['Medium']), el('option', { value: 'sm' }, ['Small']),
+    el('option', { value: 'lg' }, ['Large']),
+    el('option', { value: 'md' }, ['Medium']),
+    el('option', { value: 'sm' }, ['Small']),
   ]) as HTMLSelectElement;
-  sizeSel.value = t.size || 'md';
+  sizeSel.value = t.size === 'xl' ? 'lg' : (t.size || 'md');
   const quote = field('Pull-quote (shown on the wall)', t.quote, { wide: true, textarea: true });
   const text = field('Full review (shown when the quote is tapped)', t.text || '', { wide: true, textarea: true });
   (text.wrap.querySelector('textarea') as HTMLTextAreaElement).style.minHeight = '180px';
@@ -700,7 +701,7 @@ function openOwnerTestModal(id: string | null) {
     el('div', { class: 'cadm-grid2' }, [name.wrap, home.wrap]),
     el('div', { class: 'cadm-grid2' }, [
       el('label', { class: 'cadm-field' }, [el('span', {}, ['Source']), srcSel]),
-      el('label', { class: 'cadm-field' }, [el('span', {}, ['Wall size']), sizeSel]),
+      el('label', { class: 'cadm-field' }, [el('span', {}, ['Text size']), sizeSel]),
     ]),
     quote.wrap,
     text.wrap,

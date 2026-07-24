@@ -17,8 +17,8 @@ export interface OwnerReview {
   text: string;
   /** Short, high-impact verbatim excerpt shown on the quote wall. */
   pullQuote: string;
-  /** Visual weight on the wall. */
-  size?: 'xl' | 'lg' | 'md' | 'sm';
+  /** Text size on the wall — Large / Medium / Small. */
+  size?: 'lg' | 'md' | 'sm';
   /** Show on the quote wall (some archive entries are hidden). */
   wall?: boolean;
   /** Platform date — kept for reference, not displayed. */
@@ -27,7 +27,7 @@ export interface OwnerReview {
 
 export const ownerReviews: OwnerReview[] = [
   {
-    name: 'Sean M.', source: 'yelp', rating: 5, location: '', date: 'Jan 7, 2021', wall: true, size: 'xl',
+    name: 'Sean M.', source: 'yelp', rating: 5, location: '', date: 'Jan 7, 2021', wall: true, size: 'lg',
     pullQuote: 'Hands down best property management company in San Diego, let alone the United States!',
     text: "Hands down best property management company in San Diego, let alone the United States! I truly could not have done it without them. I was in constant phone contact with Rich, the owner, who worked tirelessly on countless occasions to help salvage a short term rental of mine in San Diego, all while I was living in Montana. Broken fridge on 4th of July weekend, gas leak, no hot water on multiple occasions… Rich was all over it somehow managing to sort out the issues while simultaneously keeping the guests happy and the great reviews coming in! The guy deserves some sort of a medal. If you are in need of management look no further, 5 stars all round!",
   },
