@@ -741,18 +741,27 @@ video.ghero__bg { pointer-events: none; }
    OWNER — Combined Partners band (replaces trust bar + channels)
    ==================================================================== */
 .partners { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--paper); }
-.partners__inner { max-width: var(--container); margin: 0 auto; padding: 28px 24px; display: flex; align-items: center; justify-content: center; gap: 22px 48px; flex-wrap: wrap; }
-.partners__label { font-size: .74rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.partners__inner { max-width: var(--container); margin: 0 auto; padding: 34px 24px; display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.partners__eyebrow { justify-content: center; margin: 0; }
+.partners__marks { display: flex; align-items: center; justify-content: center; gap: 22px 48px; flex-wrap: wrap; }
 .pmark { display: inline-flex; align-items: center; }
-.pmark img { height: 88px; width: auto; max-width: 272px; object-fit: contain; display: block; }
-.pmark--logo img { height: 51px; }
-.pmark--word { font-weight: 800; font-size: 2.9rem; letter-spacing: -.02em; }
-.pmark--zillow { color: #1277E1; }
+.pmark img { height: 84px; width: auto; max-width: 272px; object-fit: contain; display: block; }
+.pmark--logo img { height: 48px; }
+.pmark--google img { height: 62px; }   /* Google Premier Partner Awards badge */
+.pmark--booking img { height: 60px; }   /* stacked Booking.com logo */
+.pmark--bg img { height: 26px; }        /* Blueground horizontal wordmark */
+.pmark--zillow img { height: 30px; }
 .pmark--hopper img { height: 30px; }
-.pmark--rev { gap: 8px; font-weight: 600; font-size: 1rem; color: var(--ink-soft); }
-.pmark--rev svg { flex: none; display: block; }
-.pmark--rev b { font-weight: 700; color: var(--ink); }
-@media (max-width: 620px) { .partners__inner { gap: 18px 32px; } .pmark img { height: 66px; } .pmark--logo img { height: 40px; } .pmark--word { font-size: 2.2rem; } }
+@media (max-width: 620px) {
+  .partners__marks { gap: 18px 32px; }
+  .pmark img { height: 62px; }
+  .pmark--logo img { height: 38px; }
+  .pmark--google img { height: 50px; }
+  .pmark--booking img { height: 46px; }
+  .pmark--bg img { height: 22px; }
+  .pmark--zillow img { height: 24px; }
+  .pmark--hopper img { height: 24px; }
+}
 
 /* ====================================================================
    OWNER — "What comes standard" — dark, squared, confident (no pink)
