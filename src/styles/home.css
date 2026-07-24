@@ -101,6 +101,9 @@
 
 /* Glass cards */
 .gcase { position: relative; text-align: left; width: 100%; cursor: pointer; border: 1px solid rgba(255,255,255,.18); border-radius: var(--radius-lg); overflow: hidden; background: rgba(255,255,255,.08); backdrop-filter: blur(16px) saturate(1.1); -webkit-backdrop-filter: blur(16px) saturate(1.1); box-shadow: 0 18px 50px rgba(0,0,0,.32); transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), background var(--dur) var(--ease); font-family: var(--font-body); color: #fff; display: flex; flex-direction: column; }
+/* .gcase sets display:flex, which overrides the UA [hidden]{display:none};
+   restore it so the "Load more" pager can actually hide cards. */
+.gcase[hidden] { display: none; }
 .gcase:hover { transform: translateY(-4px); background: rgba(255,255,255,.13); box-shadow: 0 26px 64px rgba(0,0,0,.42); }
 .gcase__media { position: relative; aspect-ratio: 4/3; }
 .gcase__media img { width: 100%; height: 100%; object-fit: cover; }
