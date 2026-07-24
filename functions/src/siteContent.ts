@@ -55,6 +55,9 @@ export interface OwnerTestimonialItem {
   quote: string;
   name: string;
   home: string;
+  source?: 'google' | 'yelp';
+  text?: string;
+  size?: 'xl' | 'lg' | 'md' | 'sm';
 }
 
 // Blog articles are the single source of truth for the blog index/detail pages,
@@ -282,6 +285,9 @@ export async function setOwnerTestimonials(db: Firestore, items: OwnerTestimonia
     quote: String(it.quote || '').slice(0, 800),
     name: String(it.name || '').slice(0, 120),
     home: String(it.home || '').slice(0, 160),
+    source: it.source === 'yelp' ? 'yelp' : 'google',
+    text: String(it.text || '').slice(0, 4000),
+    size: (['xl', 'lg', 'md', 'sm'] as const).includes(it.size as 'xl') ? it.size : 'md',
   }));
   await ownerTestRef(db, root).set({ items: clean }, { merge: false });
 }

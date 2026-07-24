@@ -247,7 +247,11 @@ function buildSectionControls() {
   document.querySelectorAll<HTMLElement>('[data-section]').forEach((sec) => {
     const key = sec.getAttribute('data-section')!;
     sec.classList.add('cadm-editable');
-    const on = sections[key] !== false;
+    // Explicit CMS value wins; otherwise a `data-section-hidden` section
+    // defaults to OFF (parked out of public view), everything else to ON.
+    const on = Object.prototype.hasOwnProperty.call(sections, key)
+      ? sections[key] !== false
+      : !sec.hasAttribute('data-section-hidden');
     const secbar = sec.querySelector('.cadm-secbar') || makeSecbar(sec, key);
     // toggle
     const input = el('input', { type: 'checkbox' }) as HTMLInputElement;
@@ -318,7 +322,7 @@ function buildEditors() {
   // Owner testimonials → Add chip + Edit/Delete on each quote card
   document.querySelectorAll<HTMLElement>('[data-cms="owner-testimonials"]').forEach((sec) => {
     const bar = (sec.querySelector('.cadm-secbar') as HTMLElement) || makeSecbar(sec, 'owner-testimonials');
-    bar.append(editChip('Add quote', () => openOwnerTestModal(null)));
+    bar.append(editChip('Add review', () => openOwnerTestModal(null)));
   });
   // Neighborhood index → Add chip + Edit/Delete on each card
   document.querySelectorAll<HTMLElement>('[data-cms="neighborhoods"]').forEach((sec) => {
@@ -606,9 +610,9 @@ function openTeamModal(id: string | null) {
 }
 
 // ---------- owner testimonials (quote wall) ----------
-// Each wall card carries data-ot-id; admins edit its pull-quote, name, and —
-// the main use — the unit LOCATION (stored as `home`). Full review text is
-// baked in from the data file and isn't edited here.
+// Each wall card carries data-ot-id / data-source and a hidden [data-qfull]
+// with the full review. Admins edit the pull-quote, name, unit LOCATION,
+// source (Google/Yelp), wall size, and the full review — plus add and delete.
 function decorateOwnerTestCards() {
   const wall = document.querySelector('[data-qwall]');
   if (!wall || !content) return;
@@ -616,27 +620,62 @@ function decorateOwnerTestCards() {
     if (card.querySelector('.cadm-edit-fab')) return;
     card.classList.add('cadm-hoverable');
     const id = card.getAttribute('data-ot-id')!;
-    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this review (add unit location)', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openOwnerTestModal(id); } });
-    card.append(editBtn);
+    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this review', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openOwnerTestModal(id); } });
+    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:52px', title: 'Delete this review', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteOwnerTest(id); } });
+    card.append(delBtn, editBtn);
   });
 }
 function ownerTestFromCard(id: string): OwnerTestimonialItem | null {
-  const card = document.querySelector(`.qcard[data-ot-id="${cssSel(id)}"]`);
+  const card = document.querySelector<HTMLElement>(`.qcard[data-ot-id="${cssSel(id)}"]`);
   if (!card) return null;
+  let full: { text?: string; rating?: number } = {};
+  try { full = JSON.parse(card.querySelector('[data-qfull]')?.textContent || '{}'); } catch { /* */ }
+  const sizeClass = Array.from(card.classList).find((c) => /^qcard--(xl|lg|md|sm)$/.test(c));
   return {
     id,
     quote: (card.querySelector('.qcard__quote')?.textContent || '').replace(/^[“"]|[”"]$/g, '').trim(),
     name: (card.querySelector('.qcard__name')?.textContent || '').trim(),
     home: (card.querySelector('[data-ot-loc]')?.textContent || '').trim(),
+    source: card.getAttribute('data-source') === 'yelp' ? 'yelp' : 'google',
+    text: (full.text || '').trim(),
+    size: (sizeClass ? sizeClass.replace('qcard--', '') : 'md') as OwnerTestimonialItem['size'],
   };
 }
 function ensureOwnerTestSeeded() {
   if (!content) return;
   const list = content.ownerTestimonials || (content.ownerTestimonials = []);
   if (list.length) return;
+  // Seed from the full archive embed (has source + full text + size).
+  const embed = document.querySelector('[data-owner-seed]');
+  if (embed) {
+    try {
+      const seed = JSON.parse(embed.textContent || '[]');
+      if (Array.isArray(seed) && seed.length) {
+        content.ownerTestimonials = seed.map((r: Record<string, unknown>) => ({
+          id: slugify(`${String(r.name || 'owner')}-${String(r.source || 'google')}`),
+          quote: String(r.pullQuote || ''),
+          name: String(r.name || ''),
+          home: String(r.location || ''),
+          source: r.source === 'yelp' ? 'yelp' : 'google',
+          text: String(r.text || ''),
+          size: (['xl', 'lg', 'md', 'sm'].includes(String(r.size)) ? r.size : 'md') as OwnerTestimonialItem['size'],
+        }));
+        return;
+      }
+    } catch { /* fall through to DOM */ }
+  }
   const ids = Array.from(document.querySelectorAll('.qcard[data-ot-id]')).map((c) => c.getAttribute('data-ot-id') || '');
   const seeded = ids.map((id) => ownerTestFromCard(id)).filter(Boolean) as OwnerTestimonialItem[];
   if (seeded.length) content.ownerTestimonials = seeded;
+}
+async function deleteOwnerTest(id: string) {
+  if (!content) return;
+  ensureOwnerTestSeeded();
+  const it = content.ownerTestimonials.find((x) => x.id === id);
+  if (!confirm(`Delete ${it?.name || 'this review'}? Applies on publish.`)) return;
+  content.ownerTestimonials = content.ownerTestimonials.filter((x) => x.id !== id);
+  try { await persist({ ownerTestimonials: content.ownerTestimonials }); applyDraftToPage(); toast('Review removed (draft).'); }
+  catch (e) { toast((e as Error).message, true); }
 }
 function openOwnerTestModal(id: string | null) {
   if (!content) return;
@@ -644,18 +683,33 @@ function openOwnerTestModal(id: string | null) {
   const list = content.ownerTestimonials;
   const existing = id ? list.find((x) => x.id === id) : null;
   const t: OwnerTestimonialItem = existing ? { ...existing }
-    : (id && ownerTestFromCard(id)) || { id: id || '', quote: '', name: '', home: '' };
-  const home = field('Unit / location (e.g. Oceanfront condo, Pacific Beach)', t.home, { wide: true });
-  const name = field('Name', t.name);
+    : (id && ownerTestFromCard(id)) || { id: id || '', quote: '', name: '', home: '', source: 'google', text: '', size: 'md' };
+  const name = field('Name (e.g. Andrew H.)', t.name);
+  const home = field('Unit / location (e.g. Oceanfront condo, Pacific Beach)', t.home);
+  const srcSel = el('select', {}, [el('option', { value: 'google' }, ['Google']), el('option', { value: 'yelp' }, ['Yelp'])]) as HTMLSelectElement;
+  srcSel.value = t.source || 'google';
+  const sizeSel = el('select', {}, [
+    el('option', { value: 'xl' }, ['Extra large']), el('option', { value: 'lg' }, ['Large']),
+    el('option', { value: 'md' }, ['Medium']), el('option', { value: 'sm' }, ['Small']),
+  ]) as HTMLSelectElement;
+  sizeSel.value = t.size || 'md';
   const quote = field('Pull-quote (shown on the wall)', t.quote, { wide: true, textarea: true });
-  modal(existing ? `Edit review — ${t.name}` : 'Owner review', [
-    home.wrap,
-    name.wrap,
+  const text = field('Full review (shown when the quote is tapped)', t.text || '', { wide: true, textarea: true });
+  (text.wrap.querySelector('textarea') as HTMLTextAreaElement).style.minHeight = '180px';
+  modal(existing ? `Edit review — ${t.name}` : 'New owner review', [
+    el('div', { class: 'cadm-grid2' }, [name.wrap, home.wrap]),
+    el('div', { class: 'cadm-grid2' }, [
+      el('label', { class: 'cadm-field' }, [el('span', {}, ['Source']), srcSel]),
+      el('label', { class: 'cadm-field' }, [el('span', {}, ['Wall size']), sizeSel]),
+    ]),
     quote.wrap,
+    text.wrap,
   ], async () => {
-    t.home = home.get(); t.name = name.get(); t.quote = quote.get();
+    t.name = name.get(); t.home = home.get(); t.quote = quote.get(); t.text = text.get();
+    t.source = srcSel.value === 'yelp' ? 'yelp' : 'google';
+    t.size = sizeSel.value as OwnerTestimonialItem['size'];
     if (!t.quote.trim()) throw new Error('A pull-quote is required.');
-    if (!t.id) t.id = slugify(t.name || 'owner');
+    if (!t.id) t.id = slugify(`${t.name || 'owner'}-${t.source}`);
     const next = list.slice();
     const idx = next.findIndex((x) => x.id === t.id);
     if (idx >= 0) next[idx] = t; else next.push(t);

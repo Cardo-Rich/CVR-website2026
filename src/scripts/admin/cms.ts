@@ -69,7 +69,7 @@ export interface FeaturedHomeItem {
 }
 export interface GuestPhotoItem { id: string; photo: string; location: string; big?: boolean }
 export interface TeamMemberItem { id: string; name: string; role: string; photo: string }
-export interface OwnerTestimonialItem { id: string; quote: string; name: string; home: string }
+export interface OwnerTestimonialItem { id: string; quote: string; name: string; home: string; source?: 'google' | 'yelp'; text?: string; size?: 'xl' | 'lg' | 'md' | 'sm' }
 export interface NeighborhoodItem {
   slug: string; name: string; note: string; img: string;
   seo: { title: string; description: string };

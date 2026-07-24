@@ -16,12 +16,12 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
   <div class="otest__head reveal">
     <p class="eyebrow center">What owners say</p>
     <h2>Owners who switched, and never looked back.</h2>
-    <p class="otest__sub">Real reviews from San Diego homeowners on Google &amp; Yelp. Tap any quote to read the full review.</p>
+    <p class="otest__sub">Real reviews from San Diego homeowners on Google &amp; Yelp.</p>
   </div>
 
   <div class="qwall" data-qwall>
     {wall.map((r, i) => (
-      <div class:list={['qcard', `qcard--${r.size || 'md'}`, { 'qcard--extra': i >= 3 }]} role="button" tabindex="0" aria-label={`Read ${r.name}'s full review`} data-qidx={i} data-ot-id={slug(r)}>
+      <div class:list={['qcard', `qcard--${r.size || 'md'}`, { 'qcard--extra': i >= 3 }]} role="button" tabindex="0" aria-label={`Read ${r.name}'s full review`} data-ot-id={slug(r)} data-source={r.source}>
         <span class="qcard__mark" set:html={r.source === 'google' ? GBADGE : YMARK} />
         <blockquote class="qcard__quote">{r.pullQuote}</blockquote>
         <span class="qcard__who">
@@ -29,12 +29,14 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
           <span class="qcard__loc" data-ot-loc>{r.location}</span>
         </span>
         <span class="qcard__cue">Read review<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <script type="application/json" data-qfull set:html={JSON.stringify({ text: r.text, rating: r.rating })}></script>
       </div>
     ))}
   </div>
   <div class="qwall__more"><button type="button" class="qwall__more-btn" data-qmore>Load more reviews</button></div>
 
-  <script type="application/json" data-owner-json set:html={JSON.stringify(wall)}></script>
+  <!-- Full archive for the CMS editor (add/edit/delete owner reviews). -->
+  <script type="application/json" data-owner-seed set:html={JSON.stringify(wall)}></script>
 
   <!-- Read-full modal (populated by owners.js on tap) -->
   <div class="orv" data-orv hidden aria-hidden="true">
@@ -58,7 +60,8 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
   </div>
 </section>
 
-<style>
+<style is:global>
+  /* Global (not scoped) so CMS-rebuilt cards get the same styling. */
   .otest { background: var(--cream); padding: clamp(48px,7vw,88px) 0; }
   .otest__head { max-width: 720px; margin: 0 auto 40px; padding: 0 24px; text-align: center; }
   .otest__head h2 { margin: 8px 0 12px; }
@@ -70,13 +73,14 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
   @media (max-width: 1000px) { .qwall { columns: 2; } }
   @media (max-width: 640px)  { .qwall { columns: 1; } }
 
-  .qcard { position: relative; break-inside: avoid; display: block; width: 100%; text-align: left; margin: 0 0 clamp(20px,2.4vw,34px); padding: 22px 22px 20px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); cursor: pointer; font-family: inherit; color: var(--ink); transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
-  .qcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--line-strong, rgba(14,17,27,.2)); }
-  .qcard__mark { display: block; height: 20px; margin-bottom: 14px; }
-  /* Marks are injected via set:html, so they carry no Astro scope hash —
-     these rules must be :global to reach them. */
-  .qcard__mark :global(svg) { height: 20px; width: 20px; display: block; }
-  .qcard__mark :global(.src-yelp) { height: 20px; width: auto; display: block; }
+  /* Borderless quotes — no card block, just the quote itself. */
+  .qcard { position: relative; break-inside: avoid; display: block; width: 100%; text-align: left; margin: 0 0 clamp(30px,3.2vw,52px); padding: 0; background: none; border: 0; cursor: pointer; font-family: inherit; color: var(--ink); }
+  .qcard__quote { transition: color var(--dur-fast) var(--ease); }
+  .qcard:hover .qcard__quote, .qcard:focus-visible .qcard__quote { color: var(--rose); }
+  .qcard:focus-visible { outline: 2px solid var(--rose); outline-offset: 6px; border-radius: 4px; }
+  .qcard__mark { display: block; height: 20px; margin-bottom: 12px; }
+  .qcard__mark svg { height: 20px; width: 20px; display: block; }
+  .qcard__mark .src-yelp { height: 20px; width: auto; display: block; }
   .qcard__quote { margin: 0; font-family: var(--font-display); font-weight: 500; line-height: 1.24; color: var(--ink); text-wrap: pretty; }
   .qcard__quote::before { content: '\201C'; }
   .qcard__quote::after { content: '\201D'; }
@@ -116,8 +120,8 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
   .orv__body { overflow-y: auto; padding: clamp(28px,4vw,44px); }
   .orv__top { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-right: 40px; }
   .orv__mark { flex: none; display: inline-flex; }
-  .orv__mark :global(svg) { width: 26px; height: 26px; }
-  .orv__mark :global(.src-yelp) { height: 24px; width: auto; }
+  .orv__mark svg { width: 26px; height: 26px; }
+  .orv__mark .src-yelp { height: 24px; width: auto; }
   .orv__id { min-width: 0; }
   .orv__name { font-weight: 700; font-size: 1.1rem; }
   .orv__meta { font-size: .85rem; color: var(--muted); }

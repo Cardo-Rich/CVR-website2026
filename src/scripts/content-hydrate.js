@@ -122,20 +122,38 @@ export function hydrateTeam(items) {
 
 // Rebuild the owners-page owner-testimonial quote cards from CMS items. Static
 // seed cards remain the fallback when the endpoint is unavailable or empty.
-// Patch the owner-review quote wall in place (by data-ot-id): the unit
-// `location` (stored as `home`), plus pull-quote/name if edited. The full
-// review text stays baked in from src/data/owner-reviews.ts.
+// Rebuild the owner-review quote wall from CMS items (add/edit/delete/location/
+// source/full-text). Inline sizing on the marks keeps them correct even though
+// these cards are created in JS. Static seed stands when the CMS is empty.
+var OT_GBADGE = '<svg width="20" height="20" viewBox="0 0 24 24" style="display:block" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>';
+var OT_YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yelp" style="height:20px;width:auto;display:block" />';
+var OT_CUE = 'Read review<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
 export function hydrateOwnerTestimonials(items) {
   var wall = document.querySelector('[data-qwall]');
   if (!wall || !Array.isArray(items)) return;
-  items.forEach(function (t) {
-    if (!t || !t.id) return;
-    var sel = (typeof CSS !== 'undefined' && CSS.escape) ? CSS.escape(t.id) : t.id;
-    var card = wall.querySelector('.qcard[data-ot-id="' + sel + '"]');
-    if (!card) return;
-    if (typeof t.home === 'string') { var loc = card.querySelector('[data-ot-loc]'); if (loc) loc.textContent = t.home; }
-    if (t.quote) { var q = card.querySelector('.qcard__quote'); if (q) q.textContent = t.quote; }
-    if (t.name) { var nm = card.querySelector('.qcard__name'); if (nm) nm.textContent = t.name; }
+  var shown = items.filter(function (t) { return t && (t.quote || t.pullQuote); });
+  if (!shown.length) return;
+  wall.innerHTML = '';
+  shown.forEach(function (t, i) {
+    var src = t.source === 'yelp' ? 'yelp' : 'google';
+    var card = document.createElement('div');
+    card.className = 'qcard qcard--' + (t.size || 'md') + (i >= 3 ? ' qcard--extra' : '');
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('data-ot-id', t.id || '');
+    card.setAttribute('data-source', src);
+    card.setAttribute('aria-label', 'Read ' + (t.name || '') + '’s full review');
+    var mark = document.createElement('span'); mark.className = 'qcard__mark'; mark.innerHTML = src === 'yelp' ? OT_YMARK : OT_GBADGE;
+    var q = document.createElement('blockquote'); q.className = 'qcard__quote'; q.textContent = t.quote || t.pullQuote || '';
+    var who = document.createElement('span'); who.className = 'qcard__who';
+    var nm = document.createElement('span'); nm.className = 'qcard__name'; nm.textContent = t.name || '';
+    var loc = document.createElement('span'); loc.className = 'qcard__loc'; loc.setAttribute('data-ot-loc', ''); loc.textContent = t.home || '';
+    who.appendChild(nm); who.appendChild(loc);
+    var cue = document.createElement('span'); cue.className = 'qcard__cue'; cue.innerHTML = OT_CUE;
+    var full = document.createElement('script'); full.type = 'application/json'; full.setAttribute('data-qfull', '');
+    full.textContent = JSON.stringify({ text: t.text || '', rating: t.rating || 5 });
+    card.appendChild(mark); card.appendChild(q); card.appendChild(who); card.appendChild(cue); card.appendChild(full);
+    wall.appendChild(card);
   });
 }
 
