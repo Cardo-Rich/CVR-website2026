@@ -122,24 +122,20 @@ export function hydrateTeam(items) {
 
 // Rebuild the owners-page owner-testimonial quote cards from CMS items. Static
 // seed cards remain the fallback when the endpoint is unavailable or empty.
+// Patch the owner-review quote wall in place (by data-ot-id): the unit
+// `location` (stored as `home`), plus pull-quote/name if edited. The full
+// review text stays baked in from src/data/owner-reviews.ts.
 export function hydrateOwnerTestimonials(items) {
-  var grid = document.querySelector('[data-otest-grid]');
-  if (!grid || !Array.isArray(items)) return;
-  var shown = items.filter(function (t) { return t && t.quote; });
-  if (!shown.length) return;
-  grid.innerHTML = '';
-  shown.forEach(function (t) {
-    var fig = document.createElement('figure');
-    fig.className = 'otest__card reveal is-in';
-    fig.setAttribute('data-ot-id', t.id || '');
-    var stars = document.createElement('div'); stars.className = 'otest__cardstars'; stars.textContent = '★★★★★';
-    var q = document.createElement('blockquote'); q.className = 'otest__quote'; q.textContent = '“' + t.quote + '”';
-    var cap = document.createElement('figcaption'); cap.className = 'otest__who';
-    var nm = document.createElement('span'); nm.className = 'otest__name'; nm.textContent = t.name || '';
-    var home = document.createElement('span'); home.className = 'otest__home'; home.textContent = t.home || '';
-    cap.appendChild(nm); cap.appendChild(home);
-    fig.appendChild(stars); fig.appendChild(q); fig.appendChild(cap);
-    grid.appendChild(fig);
+  var wall = document.querySelector('[data-qwall]');
+  if (!wall || !Array.isArray(items)) return;
+  items.forEach(function (t) {
+    if (!t || !t.id) return;
+    var sel = (typeof CSS !== 'undefined' && CSS.escape) ? CSS.escape(t.id) : t.id;
+    var card = wall.querySelector('.qcard[data-ot-id="' + sel + '"]');
+    if (!card) return;
+    if (typeof t.home === 'string') { var loc = card.querySelector('[data-ot-loc]'); if (loc) loc.textContent = t.home; }
+    if (t.quote) { var q = card.querySelector('.qcard__quote'); if (q) q.textContent = t.quote; }
+    if (t.name) { var nm = card.querySelector('.qcard__name'); if (nm) nm.textContent = t.name; }
   });
 }
 

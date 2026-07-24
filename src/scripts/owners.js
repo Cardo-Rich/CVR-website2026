@@ -164,11 +164,15 @@
     apply();
   })();
 
-  /* ----- Owner reviews: full-screen "all reviews" modal ----- */
+  /* ----- Owner reviews: quote wall → tap a quote to read the full review;
+          mobile shows 3 with a "Load more" button. ----- */
   (function(){
+    var wall = document.querySelector('[data-qwall]');
     var modal = document.querySelector('[data-orv]');
-    if (!modal) return;
-    var opener = document.querySelector('[data-orv-open]');
+    if (!wall || !modal) return;
+    var data = [];
+    try { data = JSON.parse(document.querySelector('[data-owner-json]').textContent); } catch(e){}
+
     function open(){
       modal.hidden = false;
       modal.setAttribute('aria-hidden', 'false');
@@ -181,9 +185,46 @@
       document.documentElement.style.overflow = '';
       setTimeout(function(){ modal.hidden = true; }, 320);
     }
-    opener && opener.addEventListener('click', open);
+    function openReview(card){
+      var idx = parseInt(card.getAttribute('data-qidx'), 10);
+      var r = data[idx]; if (!r) return;
+      modal.querySelector('[data-orv-name]').textContent = r.name;
+      // Location can be patched live from the card (CMS-editable).
+      var loc = card.querySelector('[data-ot-loc]');
+      modal.querySelector('[data-orv-loc]').textContent = (loc && loc.textContent.trim()) || r.location || '';
+      modal.querySelector('[data-orv-stars]').textContent = '★★★★★'.slice(0, r.rating || 5);
+      modal.querySelector('[data-orv-mark]').innerHTML = card.querySelector('.qcard__mark').innerHTML;
+      var text = modal.querySelector('[data-orv-text]'); text.innerHTML = '';
+      String(r.text || '').split(/\n\s*\n/).forEach(function(p){
+        var el = document.createElement('p'); el.textContent = p.trim();
+        if (el.textContent) text.appendChild(el);
+      });
+      open();
+    }
+    wall.addEventListener('click', function(e){
+      // Let admin edit controls handle their own clicks.
+      if (e.target.closest && e.target.closest('.cadm-edit-fab')) return;
+      var card = e.target.closest && e.target.closest('.qcard');
+      if (card) openReview(card);
+    });
+    wall.addEventListener('keydown', function(e){
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var card = e.target.closest && e.target.closest('.qcard');
+      if (card) { e.preventDefault(); openReview(card); }
+    });
     modal.querySelectorAll('[data-orv-close]').forEach(function(el){ el.addEventListener('click', close); });
     document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !modal.hidden) close(); });
+
+    // Mobile: collapse to 3 until "Load more".
+    var more = document.querySelector('[data-qmore]');
+    var collapsed = true;
+    function apply(){
+      var mobile = window.matchMedia('(max-width: 640px)').matches;
+      wall.classList.toggle('is-collapsed', mobile && collapsed);
+    }
+    apply();
+    window.addEventListener('resize', apply);
+    more && more.addEventListener('click', function(){ collapsed = false; apply(); });
   })();
 
   /* ----- "How we beat the market": fold-out manifest ----- */

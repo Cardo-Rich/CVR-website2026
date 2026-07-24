@@ -605,44 +605,38 @@ function openTeamModal(id: string | null) {
   });
 }
 
-// ---------- owner testimonials ----------
+// ---------- owner testimonials (quote wall) ----------
+// Each wall card carries data-ot-id; admins edit its pull-quote, name, and —
+// the main use — the unit LOCATION (stored as `home`). Full review text is
+// baked in from the data file and isn't edited here.
 function decorateOwnerTestCards() {
-  const grid = document.querySelector('[data-otest-grid]');
-  if (!grid || !content) return;
-  grid.querySelectorAll<HTMLElement>('.otest__card[data-ot-id]').forEach((card) => {
+  const wall = document.querySelector('[data-qwall]');
+  if (!wall || !content) return;
+  wall.querySelectorAll<HTMLElement>('.qcard[data-ot-id]').forEach((card) => {
     if (card.querySelector('.cadm-edit-fab')) return;
     card.classList.add('cadm-hoverable');
     const id = card.getAttribute('data-ot-id')!;
-    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this quote', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openOwnerTestModal(id); } });
-    const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:52px', title: 'Remove this quote', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteOwnerTest(id); } });
-    card.append(delBtn, editBtn);
+    const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this review (add unit location)', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openOwnerTestModal(id); } });
+    card.append(editBtn);
   });
 }
 function ownerTestFromCard(id: string): OwnerTestimonialItem | null {
-  const card = document.querySelector(`.otest__card[data-ot-id="${cssSel(id)}"]`);
+  const card = document.querySelector(`.qcard[data-ot-id="${cssSel(id)}"]`);
   if (!card) return null;
   return {
     id,
-    quote: (card.querySelector('.otest__quote')?.textContent || '').replace(/^[“"]|[”"]$/g, '').trim(),
-    name: (card.querySelector('.otest__name')?.textContent || '').trim(),
-    home: (card.querySelector('.otest__home')?.textContent || '').trim(),
+    quote: (card.querySelector('.qcard__quote')?.textContent || '').replace(/^[“"]|[”"]$/g, '').trim(),
+    name: (card.querySelector('.qcard__name')?.textContent || '').trim(),
+    home: (card.querySelector('[data-ot-loc]')?.textContent || '').trim(),
   };
 }
 function ensureOwnerTestSeeded() {
   if (!content) return;
   const list = content.ownerTestimonials || (content.ownerTestimonials = []);
   if (list.length) return;
-  const ids = Array.from(document.querySelectorAll('.otest__card[data-ot-id]')).map((c) => c.getAttribute('data-ot-id') || '');
+  const ids = Array.from(document.querySelectorAll('.qcard[data-ot-id]')).map((c) => c.getAttribute('data-ot-id') || '');
   const seeded = ids.map((id) => ownerTestFromCard(id)).filter(Boolean) as OwnerTestimonialItem[];
   if (seeded.length) content.ownerTestimonials = seeded;
-}
-async function deleteOwnerTest(id: string) {
-  if (!content) return;
-  ensureOwnerTestSeeded();
-  if (!confirm('Remove this testimonial? Applies on publish.')) return;
-  content.ownerTestimonials = content.ownerTestimonials.filter((x) => x.id !== id);
-  try { await persist({ ownerTestimonials: content.ownerTestimonials }); applyDraftToPage(); toast('Testimonial removed (draft).'); }
-  catch (e) { toast((e as Error).message, true); }
 }
 function openOwnerTestModal(id: string | null) {
   if (!content) return;
@@ -651,15 +645,16 @@ function openOwnerTestModal(id: string | null) {
   const existing = id ? list.find((x) => x.id === id) : null;
   const t: OwnerTestimonialItem = existing ? { ...existing }
     : (id && ownerTestFromCard(id)) || { id: id || '', quote: '', name: '', home: '' };
-  const quote = field('Quote', t.quote, { wide: true, textarea: true });
+  const home = field('Unit / location (e.g. Oceanfront condo, Pacific Beach)', t.home, { wide: true });
   const name = field('Name', t.name);
-  const home = field('Home (e.g. Oceanfront condo, Pacific Beach)', t.home);
-  modal(existing ? `Edit testimonial — ${t.name}` : 'New owner testimonial', [
+  const quote = field('Pull-quote (shown on the wall)', t.quote, { wide: true, textarea: true });
+  modal(existing ? `Edit review — ${t.name}` : 'Owner review', [
+    home.wrap,
+    name.wrap,
     quote.wrap,
-    el('div', { class: 'cadm-grid2' }, [name.wrap, home.wrap]),
   ], async () => {
-    t.quote = quote.get(); t.name = name.get(); t.home = home.get();
-    if (!t.quote.trim()) throw new Error('A quote is required.');
+    t.home = home.get(); t.name = name.get(); t.quote = quote.get();
+    if (!t.quote.trim()) throw new Error('A pull-quote is required.');
     if (!t.id) t.id = slugify(t.name || 'owner');
     const next = list.slice();
     const idx = next.findIndex((x) => x.id === t.id);
