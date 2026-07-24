@@ -392,14 +392,20 @@ export async function setReviews(db: Firestore, patch: Partial<ReviewsDoc>, root
 // Pull rating, review count, and the latest review cards from the Places API
 // (New) and store them on the reviews doc. Requires a SERVER key (no referrer
 // restriction) and the business's place ID.
+// Cardo Vacation Rentals' Google Business Profile place ID (Google Maps),
+// derived 2026-07-24. Used as the default so the sync works out of the box;
+// an admin can still override it in the CMS Reviews tab.
+export const CARDO_GOOGLE_PLACE_ID = 'ChIJv4vQSxGq3oARguoBw-y9wmc';
+
 export async function syncGoogleReviews(db: Firestore, apiKey: string, placeIdOverride?: string): Promise<{ rating: number; count: number; reviews: number }> {
   // Read the place ID from the draft copy first (an admin may have just typed
-  // it), then fall back to the published copy. Sync results land in the draft.
+  // it), then fall back to the published copy, then the hardcoded default.
   const draftDoc = await reviewsRef(db, DRAFT).get();
   const pubDoc = await reviewsRef(db, PUBLISHED).get();
   const placeId = placeIdOverride
     || (draftDoc.data()?.google?.placeId as string | undefined)
-    || (pubDoc.data()?.google?.placeId as string | undefined);
+    || (pubDoc.data()?.google?.placeId as string | undefined)
+    || CARDO_GOOGLE_PLACE_ID;
   if (!apiKey) throw new Error('GOOGLE_PLACES_API_KEY secret is not set');
   if (!placeId) throw new Error('No Google place ID configured — set it in the CMS Reviews tab first');
 

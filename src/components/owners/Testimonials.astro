@@ -1,10 +1,16 @@
 ---
-// Owner testimonials — seed quotes; CMS-managed via the inline admin layer.
-const owners = [
-  { id: 'marcus-t', quote: 'Switched from a national manager and my net was up double digits in the first quarter. The statements are so clear I stopped second-guessing.', name: 'Marcus T.', home: 'Oceanfront condo, Pacific Beach' },
-  { id: 'priya-sam', quote: "Their design team restyled the whole house before launch and the photos are unreal. Booked 26 nights the first month at a rate I didn't think was possible.", name: 'Priya & Sam', home: 'Hillside home, La Jolla' },
-  { id: 'diane-r', quote: "A pipe let go at 11pm. Someone was there within the hour and I found out after it was fixed. That's why I sleep at night.", name: 'Diane R.', home: 'Beach cottage, Encinitas' },
-];
+// Owner testimonials — REAL reviews from Google + Yelp (src/data/owner-reviews.ts).
+// Shows 3 featured cards; a button opens a full-screen modal with every review.
+// The 3 cards keep the data-cms / data-ot-id hooks so the inline admin layer
+// can still manage the featured set.
+import { ownerReviews } from '../../data/owner-reviews';
+import { initial, avatarColor } from '../../data/reviews';
+
+const featured = ownerReviews.filter((r) => r.featured);
+const slug = (n: string) => n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+const GBADGE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>';
+const YBADGE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#FF1A1A" d="M12.5 2.3c1-.2 3.3.6 3.9 1.3.2.3.3.6.3 1l-.5 7.4c-.1 1.3-1.7 1.7-2.5.7L11 9.5c-.4-.5-.4-1 0-1.9.6-1.6 1.2-3.6 1.5-5.3zM10 13.2c.5.2.7.7.5 1.4l-1 3c-.4 1.2-2 1.1-2.3-.2-.3-1.2-.4-2.7-.2-3.6.1-.4.3-.7.7-.8.9-.3 1.7-.1 2.3.2zm-.6-2c-.2.5-.7.7-1.5.6l-3-.4c-1.3-.2-1.5-1.8-.3-2.4 1.1-.5 2.7-1 3.7-1 .4 0 .7.2.9.5.5.8.5 1.6.2 2.1zm9.2 3.6c1 .5 2.3 1.3 2.8 2 .2.3.2.7 0 1-.6 1-2 2-3 2.3-.4.1-.8 0-1-.4-.5-.8-1.2-2.3-1.5-3.3-.1-.4 0-.8.4-1 .7-.4 1.5-.5 2.3-.2zm.3-2.8c-1 .3-2.6.5-3.6.4-.4 0-.7-.3-.8-.7-.2-.9-.1-1.7.2-2.3.2-.5.7-.6 1.4-.4l3 .9c1.2.4 1 2-.2 2.1z"/></svg>';
 ---
 
 <section class="otest section-pad-sm" id="owner-reviews" data-screen-label="Owner testimonials" data-section="owner-testimonials" data-cms="owner-testimonials">
@@ -16,21 +22,64 @@ const owners = [
       </div>
       <div class="otest__rating">
         <span class="otest__stars">★★★★★</span>
-        <span class="otest__num">4.9</span>
-        <span class="otest__count">from San Diego homeowners</span>
+        <span class="otest__count">Verified on Google &amp; Yelp</span>
       </div>
     </div>
     <div class="otest__grid" data-otest-grid>
-      {owners.map((t) => (
-        <figure class="otest__card reveal" data-ot-id={t.id}>
-          <div class="otest__cardstars">★★★★★</div>
-          <blockquote class="otest__quote">“{t.quote}”</blockquote>
+      {featured.map((t) => (
+        <figure class="otest__card reveal" data-ot-id={slug(t.name)}>
+          <div class="otest__cardstars">{'★★★★★'.slice(0, t.rating)}<span class="otest__src" set:html={t.source === 'google' ? GBADGE : YBADGE} /></div>
+          <blockquote class="otest__quote">“{t.short || t.text}”</blockquote>
           <figcaption class="otest__who">
             <span class="otest__name">{t.name}</span>
-            <span class="otest__home">{t.home}</span>
+            <span class="otest__home">Property owner · {t.source === 'google' ? 'Google' : 'Yelp'} review</span>
           </figcaption>
         </figure>
       ))}
+    </div>
+    <div class="otest__more reveal">
+      <button type="button" class="otest__more-btn" data-orv-open>Read all {ownerReviews.length} owner reviews</button>
+    </div>
+  </div>
+
+  <!-- Full-screen modal: every owner review -->
+  <div class="orv" data-orv hidden aria-hidden="true">
+    <div class="orv__scrim" data-orv-close></div>
+    <div class="orv__panel" role="dialog" aria-modal="true" aria-label="All owner reviews">
+      <header class="orv__head">
+        <div>
+          <p class="eyebrow">What owners say</p>
+          <h3 class="orv__title">All owner reviews</h3>
+        </div>
+        <span class="orv__badge"><span class="otest__stars">★★★★★</span> Verified on Google &amp; Yelp</span>
+        <button type="button" class="orv__close" data-orv-close aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+      <div class="orv__body">
+        {ownerReviews.map((r) => (
+          <article class="orv__item">
+            <div class="orv__top">
+              <span class="orv__avatar" style={`background:${avatarColor(r.name)}`} aria-hidden="true">{initial(r.name)}</span>
+              <div class="orv__id">
+                <div class="orv__name">{r.name}</div>
+                <div class="orv__meta">
+                  <span class="orv__srcmark" set:html={r.source === 'google' ? GBADGE : YBADGE} />
+                  {r.source === 'google' ? 'Google' : 'Yelp'}{r.location ? ` · ${r.location}` : ''} · {r.date}
+                </div>
+              </div>
+              <span class="orv__stars">{'★★★★★'.slice(0, r.rating)}</span>
+            </div>
+            {r.text.split('\n\n').map((p) => <p class="orv__text">{p}</p>)}
+            {r.reply && (
+              <div class="orv__reply">
+                <div class="orv__replyhead">Response from Cardo Vacation Rentals</div>
+                <p>{r.reply}</p>
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
     </div>
   </div>
 </section>
@@ -41,14 +90,49 @@ const owners = [
   .otest__head h2 { margin: 8px 0 0; }
   .otest__rating { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
   .otest__stars { color: var(--gold); letter-spacing: 2px; font-size: 1.05rem; }
-  .otest__num { font-family: var(--font-display); font-size: 1.5rem; line-height: 1; }
   .otest__count { color: var(--muted); font-size: .9rem; }
   .otest__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   .otest__card { margin: 0; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 26px; display: flex; flex-direction: column; }
-  .otest__cardstars { color: var(--gold); letter-spacing: 2px; font-size: .95rem; margin-bottom: 12px; }
+  .otest__cardstars { display: flex; align-items: center; gap: 8px; color: var(--gold); letter-spacing: 2px; font-size: .95rem; margin-bottom: 12px; }
+  .otest__src { width: 15px; height: 15px; display: inline-block; }
+  .otest__src svg { width: 15px; height: 15px; display: block; }
   .otest__quote { margin: 0 0 18px; font-family: var(--font-display); font-size: 1.12rem; line-height: 1.5; color: var(--ink); flex: 1; }
   .otest__who { display: flex; flex-direction: column; gap: 2px; }
   .otest__name { font-weight: 600; }
   .otest__home { font-size: .85rem; color: var(--muted); }
+  .otest__more { margin-top: 28px; text-align: center; }
+  .otest__more-btn { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-body); font-weight: 600; font-size: 1rem; color: var(--ink); background: transparent; border: 1px solid var(--line-strong, rgba(14,17,27,.22)); border-radius: var(--radius-pill); padding: 14px 28px; cursor: pointer; transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
+  .otest__more-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
   @media (max-width: 900px) { .otest__grid { grid-template-columns: 1fr; } .otest__card { padding: 22px; } }
+
+  /* ---- full-screen owner-reviews modal ---- */
+  .orv { position: fixed; inset: 0; z-index: 200; display: flex; align-items: stretch; justify-content: center; }
+  .orv[hidden] { display: none; }
+  .orv__scrim { position: absolute; inset: 0; background: rgba(14,17,27,.55); backdrop-filter: blur(2px); opacity: 0; transition: opacity .3s var(--ease); }
+  .orv.is-open .orv__scrim { opacity: 1; }
+  .orv__panel { position: relative; margin: auto; width: min(760px, 100%); max-height: 100vh; height: 100%; background: var(--cream); display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,.4); transform: translateY(16px); opacity: 0; transition: transform .35s var(--ease), opacity .35s var(--ease); }
+  .orv.is-open .orv__panel { transform: none; opacity: 1; }
+  .orv__head { display: flex; align-items: center; gap: 16px; padding: 20px clamp(20px,4vw,36px); border-bottom: 1px solid var(--line); background: var(--paper); position: sticky; top: 0; }
+  .orv__title { margin: 4px 0 0; font-size: 1.5rem; }
+  .orv__badge { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; font-size: .85rem; color: var(--muted); white-space: nowrap; }
+  .orv__close { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper); color: var(--ink); cursor: pointer; display: grid; place-items: center; }
+  .orv__close:hover { background: var(--ink); color: #fff; }
+  .orv__close svg { width: 18px; height: 18px; }
+  .orv__body { overflow-y: auto; padding: clamp(16px,3vw,28px) clamp(20px,4vw,36px) 60px; }
+  .orv__item { padding: 24px 0; border-bottom: 1px solid var(--line); }
+  .orv__item:last-child { border-bottom: none; }
+  .orv__top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .orv__avatar { flex: none; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; }
+  .orv__id { min-width: 0; }
+  .orv__name { font-weight: 600; }
+  .orv__meta { display: flex; align-items: center; gap: 6px; font-size: .82rem; color: var(--muted); }
+  .orv__srcmark { width: 13px; height: 13px; display: inline-block; }
+  .orv__srcmark svg { width: 13px; height: 13px; display: block; }
+  .orv__stars { margin-left: auto; color: var(--gold); letter-spacing: 1px; white-space: nowrap; align-self: flex-start; }
+  .orv__text { margin: 0 0 10px; color: var(--ink-soft, #3a4048); line-height: 1.62; font-size: .98rem; }
+  .orv__text:last-of-type { margin-bottom: 0; }
+  .orv__reply { margin-top: 14px; padding: 14px 16px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); }
+  .orv__replyhead { font-weight: 600; font-size: .82rem; color: var(--ink); margin-bottom: 4px; }
+  .orv__reply p { margin: 0; font-size: .92rem; color: var(--muted); line-height: 1.55; }
+  @media (max-width: 600px) { .orv__badge { display: none; } }
 </style>

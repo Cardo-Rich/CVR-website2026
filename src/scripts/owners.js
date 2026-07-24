@@ -164,6 +164,28 @@
     apply();
   })();
 
+  /* ----- Owner reviews: full-screen "all reviews" modal ----- */
+  (function(){
+    var modal = document.querySelector('[data-orv]');
+    if (!modal) return;
+    var opener = document.querySelector('[data-orv-open]');
+    function open(){
+      modal.hidden = false;
+      modal.setAttribute('aria-hidden', 'false');
+      document.documentElement.style.overflow = 'hidden';
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ modal.classList.add('is-open'); }); });
+    }
+    function close(){
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.documentElement.style.overflow = '';
+      setTimeout(function(){ modal.hidden = true; }, 320);
+    }
+    opener && opener.addEventListener('click', open);
+    modal.querySelectorAll('[data-orv-close]').forEach(function(el){ el.addEventListener('click', close); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !modal.hidden) close(); });
+  })();
+
   /* ----- "How we beat the market": fold-out manifest ----- */
   (function(){
     var sec = document.getElementById('marketing');

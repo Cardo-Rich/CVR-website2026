@@ -49,6 +49,9 @@
 .greview__time { font-size: .8rem; color: var(--muted); margin-top: 1px; }
 .greview__stars { color: #FBBC04; font-size: 1rem; letter-spacing: 1px; margin-bottom: 10px; }
 .greview__text { color: var(--ink-soft); font-size: .98rem; line-height: 1.62; margin: 0; }
+.greview__verify { display: inline-flex; align-items: center; gap: 4px; margin-top: 12px; font-size: .8rem; font-weight: 600; color: var(--muted); text-decoration: none; transition: color var(--dur-fast) var(--ease); }
+.greview__verify svg { width: 13px; height: 13px; }
+.greview__verify:hover { color: #4285F4; }
 .greviews__foot { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 28px; }
 .greviews__dots { display: flex; gap: 8px; }
 .greviews__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); border: none; padding: 0; cursor: pointer; transition: all var(--dur-fast) var(--ease); }
@@ -377,6 +380,7 @@ video.ghero__bg { pointer-events: none; }
 .revtab:hover { border-color: var(--rose); }
 .revtab.is-active { background: var(--ink); color: #fff; border-color: var(--ink); }
 .revtab svg { width: 18px; height: 18px; flex: none; }
+.revtab img.abmark { height: 17px; width: auto; flex: none; }
 .revpanel { display: none; }
 .revpanel.is-active { display: block; animation: pfade2 .35s var(--ease); }
 @keyframes pfade2 { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
@@ -385,6 +389,7 @@ video.ghero__bg { pointer-events: none; }
 .abnb__head { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 22px; }
 .abnb__brand { display: flex; align-items: center; gap: 10px; }
 .abnb__brand svg { width: 30px; height: 30px; }
+.abnb__brand img.abmark { height: 30px; width: auto; }
 .abnb__brand .word { font-weight: 700; font-size: 1.5rem; color: #FF385C; letter-spacing: -.01em; }
 .abnb__score { display: flex; align-items: center; gap: 12px; }
 .abnb__score .big { font-family: var(--font-display); font-weight: 500; font-size: 2.4rem; color: var(--ink); line-height: 1; }
@@ -743,7 +748,7 @@ video.ghero__bg { pointer-events: none; }
 .pmark--logo img { height: 51px; }
 .pmark--word { font-weight: 800; font-size: 2.9rem; letter-spacing: -.02em; }
 .pmark--zillow { color: #1277E1; }
-.pmark--hopper { color: #FA4D5E; }
+.pmark--hopper img { height: 30px; }
 .pmark--rev { gap: 8px; font-weight: 600; font-size: 1rem; color: var(--ink-soft); }
 .pmark--rev svg { flex: none; display: block; }
 .pmark--rev b { font-weight: 700; color: var(--ink); }

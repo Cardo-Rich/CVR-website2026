@@ -29,6 +29,11 @@ export function initial(name: string): string {
   return (name.trim()[0] || '?').toUpperCase();
 }
 
+// Cardo's public Google reviews list (opens the verified review feed on
+// Google so visitors can confirm each review is real). Google doesn't expose
+// stable per-review permalinks, so each Google card links here.
+export const GOOGLE_REVIEWS_URL = 'https://search.google.com/local/reviews?placeid=ChIJv4vQSxGq3oARguoBw-y9wmc';
+
 export const reviews: Review[] = [
   // ---------- Google (real — Cardo Vacation Rentals, 4.8★) ----------
   { name: 'Audrey G.', platform: 'google', stars: 5, meta: '', text: 'My family had a wonderful stay at one of the properties in San Diego. The house was very clean, spacious, private, and felt incredibly homey.' },

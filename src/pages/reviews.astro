@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import MarketingHeader from '../components/sections/MarketingHeader.astro';
 import Footer from '../components/sections/Footer.astro';
-import { reviews, initial, avatarColor } from '../data/reviews';
+import { reviews, initial, avatarColor, GOOGLE_REVIEWS_URL } from '../data/reviews';
 
 // Seed the waterfall a few times over so the first paint is full; the client
 // script keeps appending as the visitor scrolls, toward our 3,500+ total.
@@ -29,7 +29,7 @@ const seed = [...reviews, ...rotate(reviews, 7), ...rotate(reviews, 13)];
             <b>Google</b><span class="rw-badge__num">4.8</span><span class="rw-badge__stars">★★★★★</span>
           </span>
           <span class="rw-badge">
-            <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#FF385C" d="M16 3c-1.7 0-2.9 1.2-4.1 3.4-2.4 4.5-5 10.2-5.5 11.5-.9 2.3-1.1 3.4-1.1 4.1 0 2.4 1.9 4.3 4.3 4.3 1.5 0 2.7-.6 4.3-2 .9-.8 1.6-1.5 2.1-1.5s1.2.7 2.1 1.5c1.6 1.4 2.8 2 4.3 2 2.4 0 4.3-1.9 4.3-4.3 0-.7-.2-1.8-1.1-4.1-.5-1.3-3.1-7-5.5-11.5C18.9 4.2 17.7 3 16 3zm0 3.2c.5 0 .9.5 1.6 1.8.6 1.1 2.8 5.9 4.9 10.6.6 1.4.8 2.2.8 2.7 0 1.1-.9 2-2 2-.7 0-1.4-.3-2.4-1.1-1.1-.9-2.1-1.7-3.2-1.7s-2.1.8-3.2 1.7c-1 .8-1.7 1.1-2.4 1.1-1.1 0-2-.9-2-2 0-.5.2-1.3.8-2.7 2.1-4.7 4.3-9.5 4.9-10.6.7-1.3 1.1-1.8 1.6-1.8z"/></svg>
+            <img class="abmark" src="/assets/badges/airbnb-mark-trimmed.png" alt="Airbnb" />
             <b>Airbnb</b><span class="rw-badge__num">3,500+</span><span class="rw-badge__stars">★★★★★</span>
           </span>
         </div>
@@ -50,12 +50,15 @@ const seed = [...reviews, ...rotate(reviews, 7), ...rotate(reviews, 13)];
                 {r.platform === 'google' ? (
                   <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
                 ) : (
-                  <svg viewBox="0 0 32 32"><path fill="#FF385C" d="M16 3c-1.7 0-2.9 1.2-4.1 3.4-2.4 4.5-5 10.2-5.5 11.5-.9 2.3-1.1 3.4-1.1 4.1 0 2.4 1.9 4.3 4.3 4.3 1.5 0 2.7-.6 4.3-2 .9-.8 1.6-1.5 2.1-1.5s1.2.7 2.1 1.5c1.6 1.4 2.8 2 4.3 2 2.4 0 4.3-1.9 4.3-4.3 0-.7-.2-1.8-1.1-4.1-.5-1.3-3.1-7-5.5-11.5C18.9 4.2 17.7 3 16 3zm0 3.2c.5 0 .9.5 1.6 1.8.6 1.1 2.8 5.9 4.9 10.6.6 1.4.8 2.2.8 2.7 0 1.1-.9 2-2 2-.7 0-1.4-.3-2.4-1.1-1.1-.9-2.1-1.7-3.2-1.7s-2.1.8-3.2 1.7c-1 .8-1.7 1.1-2.4 1.1-1.1 0-2-.9-2-2 0-.5.2-1.3.8-2.7 2.1-4.7 4.3-9.5 4.9-10.6.7-1.3 1.1-1.8 1.6-1.8z"/></svg>
+                  <img class="abmark" src="/assets/badges/airbnb-mark-trimmed.png" alt="Airbnb" />
                 )}
               </span>
             </div>
             <div class="rw-card__stars" aria-hidden="true">★★★★★</div>
             <p class="rw-card__text">{r.text}</p>
+            {r.platform === 'google' && (
+              <a class="rw-card__verify" href={GOOGLE_REVIEWS_URL} target="_blank" rel="noopener nofollow">Verify on Google<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></a>
+            )}
           </figure>
         ))}
       </div>
@@ -125,6 +128,7 @@ const seed = [...reviews, ...rotate(reviews, 7), ...rotate(reviews, 13)];
   .rw-badges { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 26px; }
   .rw-badge { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--paper); box-shadow: var(--shadow-sm); font-weight: 600; font-size: .95rem; }
   .rw-badge svg { width: 18px; height: 18px; }
+  .rw-badge .abmark { height: 18px; width: auto; }
   .rw-badge__num { font-family: var(--font-display); font-size: 1.15rem; }
   .rw-badge__stars { color: #FBBC04; letter-spacing: 1px; }
 
@@ -133,10 +137,14 @@ const seed = [...reviews, ...rotate(reviews, 7), ...rotate(reviews, 13)];
   .rw-card { break-inside: avoid; -webkit-column-break-inside: avoid; display: inline-block; width: 100%; margin: 0 0 22px; padding: 22px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
   .rw-card__top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
   .rw-card__avatar { width: 44px; height: 44px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; }
+  .rw-card__verify { display: inline-flex; align-items: center; gap: 4px; margin-top: 12px; font-size: .78rem; font-weight: 600; color: var(--muted); text-decoration: none; }
+  .rw-card__verify svg { width: 12px; height: 12px; }
+  .rw-card__verify:hover { color: #4285F4; }
   .rw-card__name { font-weight: 600; font-size: .98rem; }
   .rw-card__meta { font-size: .8rem; color: var(--muted); margin-top: 2px; }
   .rw-card__badge { margin-left: auto; width: 22px; height: 22px; flex: none; }
   .rw-card__badge svg { width: 100%; height: 100%; display: block; }
+  .rw-card__badge .abmark { height: 100%; width: auto; display: block; margin: 0 auto; }
   .rw-card__stars { color: #FBBC04; letter-spacing: 1.5px; font-size: .95rem; margin-bottom: 8px; }
   .rw-card__text { margin: 0; font-size: .95rem; line-height: 1.6; color: var(--ink-soft); }
 
