@@ -25,7 +25,7 @@ const AIRBNB_MARK = '<svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#FF
       </button>
       <button type="button" class="revtab" data-revtab="airbnb">
         <Fragment set:html={AIRBNB_MARK} />
-        Airbnb · <span data-ct="a-rating">4.71</span>
+        Airbnb · <span data-ct="a-count-short">3,500+</span>
       </button>
     </div>
 
@@ -72,7 +72,7 @@ const AIRBNB_MARK = '<svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#FF
             <Fragment set:html={AIRBNB_MARK} />
             <span class="word">Airbnb</span>
           </div>
-          <div class="abnb__score"><span class="big" data-ct="a-rating">4.71</span><span class="stars">★★★★★</span><span class="count" data-ct="a-count">3,500+ reviews</span></div>
+          <div class="abnb__score"><span class="stars">★★★★★</span><span class="count" data-ct="a-count">3,500+ 5-star reviews</span></div>
         </div>
         <div class="abnb__cards">
           {airbnbReviews.map((r) => (
