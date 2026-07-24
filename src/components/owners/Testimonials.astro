@@ -8,7 +8,7 @@ import { ownerReviews } from '../../data/owner-reviews';
 const wall = ownerReviews.filter((r) => r.wall);
 const slug = (r: { name: string; source: string }) => (r.name + '-' + r.source).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
-const GBADGE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>';
+const GBADGE = '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>';
 const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yelp" />';
 ---
 
@@ -73,8 +73,10 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
   .qcard { position: relative; break-inside: avoid; display: block; width: 100%; text-align: left; margin: 0 0 clamp(20px,2.4vw,34px); padding: 22px 22px 20px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); cursor: pointer; font-family: inherit; color: var(--ink); transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
   .qcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--line-strong, rgba(14,17,27,.2)); }
   .qcard__mark { display: block; height: 20px; margin-bottom: 14px; }
-  .qcard__mark svg { height: 20px; width: 20px; display: block; }
-  .qcard__mark .src-yelp { height: 20px; width: auto; display: block; }
+  /* Marks are injected via set:html, so they carry no Astro scope hash —
+     these rules must be :global to reach them. */
+  .qcard__mark :global(svg) { height: 20px; width: 20px; display: block; }
+  .qcard__mark :global(.src-yelp) { height: 20px; width: auto; display: block; }
   .qcard__quote { margin: 0; font-family: var(--font-display); font-weight: 500; line-height: 1.24; color: var(--ink); text-wrap: pretty; }
   .qcard__quote::before { content: '\201C'; }
   .qcard__quote::after { content: '\201D'; }
@@ -114,8 +116,8 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
   .orv__body { overflow-y: auto; padding: clamp(28px,4vw,44px); }
   .orv__top { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-right: 40px; }
   .orv__mark { flex: none; display: inline-flex; }
-  .orv__mark svg { width: 26px; height: 26px; }
-  .orv__mark .src-yelp { height: 24px; width: auto; }
+  .orv__mark :global(svg) { width: 26px; height: 26px; }
+  .orv__mark :global(.src-yelp) { height: 24px; width: auto; }
   .orv__id { min-width: 0; }
   .orv__name { font-weight: 700; font-size: 1.1rem; }
   .orv__meta { font-size: .85rem; color: var(--muted); }
