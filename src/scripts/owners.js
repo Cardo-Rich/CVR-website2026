@@ -36,38 +36,6 @@
     }
   })();
 
-  /* ----- "Read all owner reviews" (from the home page → /owners#owner-reviews)
-     lands on the TOP of the reviews section. The raw hash jump is unreliable
-     here: lazy images and the /api/content hydration that re-renders the quote
-     wall shift the section after the browser's initial jump, so we re-scroll to
-     the section top once layout settles, leaving room for the sticky header. --- */
-  (function(){
-    function sectionTop(){
-      var sec = document.getElementById('owner-reviews');
-      return sec ? sec.getBoundingClientRect().top + window.scrollY - 80 : null;
-    }
-    function scrollToReviews(){
-      var top = sectionTop();
-      if (top != null) window.scrollTo({ top: top, behavior: 'smooth' });
-    }
-    document.addEventListener('click', function(e){
-      var a = e.target.closest && e.target.closest('a[href="#owner-reviews"], a[href="/owners#owner-reviews"]');
-      if (!a) return;
-      var samePage = a.getAttribute('href').charAt(0) === '#' ||
-        (location.pathname.replace(/\/$/, '') === '/owners');
-      if (!samePage) return; // cross-page: let the browser navigate; on-load handler finishes
-      e.preventDefault();
-      scrollToReviews();
-      if (history.replaceState) history.replaceState(null, '', '#owner-reviews');
-    });
-    // Arrived via /owners#owner-reviews: correct the landing spot after layout
-    // settles, then again after load/hydration in case heights above changed.
-    if (location.hash === '#owner-reviews') {
-      requestAnimationFrame(function(){ requestAnimationFrame(scrollToReviews); });
-      window.addEventListener('load', function(){ setTimeout(scrollToReviews, 400); });
-    }
-  })();
-
   /* ----- Floating "Get my free earning estimate" button: appears after scrolling past the hero form ----- */
   (function(){
     var ctas = [].slice.call(document.querySelectorAll('[data-estimate-fab]'));

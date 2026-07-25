@@ -279,6 +279,14 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
 
     openBtn.addEventListener('click', openMenu);
     closers.forEach(function (c) { c.addEventListener('click', closeMenu); });
+    // Any in-menu navigation link closes the drawer so it unlocks page scroll
+    // (html.menu-open sets overflow:hidden). Without this a same-page hash link
+    // — e.g. Pricing while already on /owners — can't scroll. The owner-side
+    // splash CTA (a.nav-cta) manages its own timed navigation, so leave it be.
+    panel.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]');
+      if (a && !a.classList.contains('nav-cta')) closeMenu();
+    });
     segs.forEach(function (s) {
       s.addEventListener('click', function () { setMode(s.getAttribute('data-mode-btn')); });
     });
