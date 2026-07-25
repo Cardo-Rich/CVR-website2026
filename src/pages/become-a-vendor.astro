@@ -10,43 +10,154 @@ const nav = [
   { label: 'Blog', href: '/blog' },
 ];
 const cta = { label: 'Free estimate', href: '/owners#estimate' };
+
+// Trades we regularly work with across the managed portfolio.
+const trades = [
+  'Cleaning & laundry', 'Handyman & maintenance', 'Plumbing', 'Electrical',
+  'HVAC', 'Landscaping', 'Pool & spa', 'Painting', 'Pest control',
+  'Interior design & staging', 'Photography', 'Locksmith',
+];
+
+// Why a good vendor wants to be on Cardo's roster.
+const why = [
+  'A steady pipeline of work across a growing portfolio of managed San Diego homes.',
+  'One point of contact and coordinated scheduling — no chasing owners for access or approvals.',
+  'Homes are prepped and entry is arranged before you arrive on site.',
+  'Great work earns more work — we lean on the partners who show up and deliver.',
+];
+
+// From application to first job.
+const steps = [
+  { n: '1', title: 'Apply', blurb: 'Tell us about your business, the trades you cover, and where you work.' },
+  { n: '2', title: 'Vet', blurb: 'We review licensing, insurance, and references so our owners are covered.' },
+  { n: '3', title: 'Onboard', blurb: 'We add you to our vendor network and walk you through how we coordinate work.' },
+  { n: '4', title: 'Get to work', blurb: 'We reach out when a job in your trade and service area comes up.' },
+];
 ---
 
 <Base
   title="Become a Vendor | Cardo Vacation Rentals"
-  description="Placeholder page — partner with Cardo as a trusted vendor. Details coming soon."
+  description="Cleaners, handypeople, and local trades: join Cardo's vendor network and get a steady stream of work servicing San Diego's best short-term rentals. Apply in minutes."
 >
   <MarketingHeader {nav} {cta} />
 
   <main>
     <section class="phero" data-screen-label="Vendor hero">
-      <img class="phero__bg" src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=1600&q=80" alt="" />
+      <img class="phero__bg" src="/assets/photos/vendor-handyman.jpg" alt="" />
       <div class="phero__overlay"></div>
       <div class="phero__inner narrow">
-        <p class="eyebrow">Partners</p>
-        <h1>Become a Vendor</h1>
-        <p>Cleaners, handypeople, designers, and local trades — partner with Cardo to service San Diego's best homes. Placeholder copy, details coming soon.</p>
-        <a class="btn btn-lg" href="mailto:vendors@cardorentals.com">Apply to partner</a>
+        <p class="eyebrow">For local trades</p>
+        <h1>Become a Cardo vendor.</h1>
+        <p>Cleaners, handypeople, and skilled trades — join the network that keeps San Diego’s best short-term rentals spotless, safe, and guest-ready. Steady work, coordinated scheduling, and a team that values reliable partners.</p>
+        <a class="btn btn-lg" href="#apply">Apply to partner</a>
       </div>
     </section>
 
-    <section class="section-pad" data-screen-label="Vendor body">
-      <div class="section-narrow">
-        <div class="section-head reveal">
-          <p class="eyebrow">How it works</p>
-          <h2>Placeholder heading for vendor partnerships.</h2>
+    <!-- Trades -->
+    <section class="section-pad" data-screen-label="Trades">
+      <div class="section-wrap">
+        <div class="section-head center reveal">
+          <p class="eyebrow">Trades we partner with</p>
+          <h2>If you keep homes running, we want to know you.</h2>
         </div>
-        <p class="lede muted reveal">This is filler text. We work with vetted local vendors who help keep our homes spotless, safe, and beautifully maintained. The application process, requirements, and what we look for in a partner will be detailed here.</p>
-        <p class="reveal">Lorem ipsum placeholder — onboarding steps, insurance requirements, and payment terms will live on this page. Nothing here is final.</p>
+        <ul class="vn-trades reveal">
+          {trades.map((t) => <li>{t}</li>)}
+        </ul>
+        <p class="vn-trades__note reveal">Don’t see your trade? Apply anyway — we’re always adding reliable local partners.</p>
+      </div>
+    </section>
+
+    <!-- Why partner -->
+    <section class="section-pad rf-alt" data-screen-label="Why partner">
+      <div class="section-wrap vn-why">
+        <div class="vn-why__intro reveal">
+          <p class="eyebrow">Why partner with Cardo</p>
+          <h2>Consistent work, without the runaround.</h2>
+          <p class="lede muted">We manage a growing portfolio of homes across San Diego, and every one needs dependable trades to stay guest-ready. Do great work for us and you’ll stay busy.</p>
+        </div>
+        <ul class="vn-why__list reveal">
+          {why.map((w) => (
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+              <span>{w}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section-pad" data-screen-label="How it works">
+      <div class="section-wrap">
+        <div class="section-head center reveal">
+          <p class="eyebrow">How it works</p>
+          <h2>From application to first job.</h2>
+        </div>
+        <ol class="vn-steps">
+          {steps.map((s) => (
+            <li class="vn-step reveal">
+              <span class="vn-step__n">{s.n}</span>
+              <h3 class="vn-step__title">{s.title}</h3>
+              <p class="vn-step__blurb">{s.blurb}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- Application form -->
+    <section class="section-pad rf-alt" id="apply" data-screen-label="Vendor application">
+      <div class="section-wrap vn-reg">
+        <div class="section-head center reveal">
+          <p class="eyebrow">Vendor application</p>
+          <h2>Tell us about your business.</h2>
+          <p class="lede muted">Share your details and the services you offer. We’ll review and reach out about adding you to our vendor network. Fields marked * are required.</p>
+        </div>
+
+        <form class="vn-form reveal" data-vendor-form novalidate>
+          <fieldset>
+            <legend>Your business</legend>
+            <div class="vn-form__grid">
+              <label>Business name *<input name="Business name" type="text" required autocomplete="organization" /></label>
+              <label>Primary contact *<input name="Primary contact" type="text" required autocomplete="name" /></label>
+              <label>Email *<input name="Email" type="email" required autocomplete="email" /></label>
+              <label>Phone *<input name="Phone" type="tel" required autocomplete="tel" /></label>
+              <label>Website<input name="Website" type="text" placeholder="optional" /></label>
+              <label>Years in business<input name="Years in business" type="text" inputmode="numeric" placeholder="optional" /></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Your services</legend>
+            <div class="vn-form__grid">
+              <label>Trade / services offered *<input name="Trade / services" type="text" required placeholder="e.g. Handyman, plumbing, painting" /></label>
+              <label>Service areas<input name="Service areas" type="text" placeholder="e.g. La Jolla, Pacific Beach, Coronado" /></label>
+              <label>Carry liability insurance? *
+                <select name="Liability insurance" required>
+                  <option value="" disabled selected>Select…</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </label>
+              <label>License # (if applicable)<input name="License #" type="text" placeholder="optional" /></label>
+              <label class="vn-form__wide">Tell us about your business<textarea name="About" rows="3" placeholder="Crew size, specialties, availability, anything else we should know"></textarea></label>
+            </div>
+          </fieldset>
+
+          <div class="vn-form__foot">
+            <button class="btn btn-lg" type="submit">Submit application</button>
+            <p class="vn-form__note" data-vendor-status role="status">Opens your email app to send us the details — nothing is shared until you hit send. Prefer email? Reach us at <a href="mailto:owners@cardorentals.com">owners@cardorentals.com</a> or <a href="tel:+16197195282">619-719-5282</a>.</p>
+          </div>
+        </form>
       </div>
     </section>
 
     <section class="cta" data-screen-label="CTA">
       <div class="cta__inner reveal">
-        <p class="eyebrow">Let's work together</p>
+        <p class="eyebrow">Let’s work together</p>
         <h2>Ready to partner with Cardo?</h2>
-        <p>Tell us about your business and the services you offer.</p>
-        <a class="btn btn-lg" href="mailto:vendors@cardorentals.com">Start your application</a>
+        <p>Tell us about your business and the services you offer — we’re always looking for reliable local trades.</p>
+        <a class="btn btn-lg" href="#apply">Start your application</a>
       </div>
     </section>
   </main>
@@ -54,6 +165,85 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
   <Footer />
 </Base>
 
+<style>
+  /* ---- Trades ---- */
+  .vn-trades { list-style: none; margin: 0 auto; padding: 0; max-width: 780px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .vn-trades li { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-pill); padding: 10px 20px; font-size: .95rem; font-weight: 600; color: var(--ink); box-shadow: var(--shadow-sm); }
+  .vn-trades__note { text-align: center; margin: 24px auto 0; color: var(--muted); font-size: .92rem; }
+
+  /* ---- Alternating band (shared name with referral page styles) ---- */
+  .rf-alt { background: var(--cream); }
+
+  /* ---- Why ---- */
+  .vn-why { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 72px); align-items: center; }
+  .vn-why__intro h2 { margin: 8px 0 14px; }
+  .vn-why__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; }
+  .vn-why__list li { display: flex; gap: 14px; align-items: flex-start; font-size: 1.02rem; line-height: 1.5; color: var(--ink); }
+  .vn-why__list svg { flex: none; width: 24px; height: 24px; margin-top: 1px; }
+
+  /* ---- Steps ---- */
+  .vn-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .vn-step__n { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; margin-bottom: 16px; }
+  .vn-step__title { margin: 0 0 8px; font-size: 1.15rem; }
+  .vn-step__blurb { margin: 0; color: var(--muted); font-size: .93rem; line-height: 1.55; }
+
+  /* ---- Application form ---- */
+  .vn-reg { max-width: 820px; }
+  .vn-form { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(24px, 4vw, 40px); box-shadow: var(--shadow-sm); }
+  .vn-form fieldset { border: 0; margin: 0 0 26px; padding: 0; }
+  .vn-form fieldset:last-of-type { margin-bottom: 22px; }
+  .vn-form legend { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 14px; padding: 0; }
+  .vn-form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .vn-form label { display: flex; flex-direction: column; gap: 6px; font-size: .88rem; font-weight: 600; color: var(--ink); }
+  .vn-form__wide { grid-column: 1 / -1; }
+  .vn-form input, .vn-form textarea, .vn-form select { font: inherit; font-weight: 400; color: var(--ink); background: var(--cream); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; width: 100%; transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }
+  .vn-form input:focus, .vn-form textarea:focus, .vn-form select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(193,154,91,.18); }
+  .vn-form textarea { resize: vertical; min-height: 76px; }
+  .vn-form__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 22px; }
+  .vn-form__foot .btn { flex: none; }
+  .vn-form__note { margin: 0; flex: 1; min-width: 240px; font-size: .84rem; color: var(--muted); line-height: 1.5; }
+  .vn-form__note a { color: var(--rose); font-weight: 600; }
+  .vn-form__note.is-sent { color: var(--success, #2e7d32); font-weight: 600; }
+
+  @media (max-width: 900px) {
+    .vn-steps { grid-template-columns: 1fr 1fr; }
+    .vn-why { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .vn-steps { grid-template-columns: 1fr; }
+    .vn-form__grid { grid-template-columns: 1fr; }
+  }
+</style>
+
 <script>
   import '../scripts/reveal.js';
+
+  // Vendor application → compose a pre-filled email to owners@ (no backend needed).
+  (function () {
+    var form = document.querySelector('[data-vendor-form]');
+    if (!form) return;
+    var status = form.querySelector('[data-vendor-status]');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!(form as HTMLFormElement).reportValidity()) return;
+      var lines = [];
+      var seen = {};
+      form.querySelectorAll('input, textarea, select').forEach(function (el) {
+        var f = el as HTMLInputElement;
+        if (!f.name || seen[f.name]) return;
+        seen[f.name] = 1;
+        var v = (f.value || '').trim();
+        if (v) lines.push(f.name + ': ' + v);
+      });
+      var biz = (form.querySelector('[name="Business name"]') as HTMLInputElement);
+      var subject = 'Vendor application' + (biz && biz.value ? ' — ' + biz.value.trim() : '');
+      var body = 'New vendor application submitted from cardorentals.com/become-a-vendor\n\n' + lines.join('\n');
+      window.location.href = 'mailto:owners@cardorentals.com?subject=' +
+        encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      if (status) {
+        status.textContent = 'Thanks! Your email app should have opened with your application — just hit send and we’ll be in touch.';
+        status.classList.add('is-sent');
+      }
+    });
+  })();
 </script>
