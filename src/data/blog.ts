@@ -5,8 +5,8 @@
 // article). A future CMS will populate this `articles[]` array; every field
 // here is plain data — including the article body, stored as an HTML
 // string (`bodyHtml`) — so the rendering template stays decoupled from
-// content. The six non-featured entries carry brief, clearly-generic
-// placeholder bodies until the CMS supplies real copy.
+// content. Every article now carries a fully-authored body; a future CMS can
+// override any field here.
 // =============================================================
 
 export interface CaseStudyMeta {
