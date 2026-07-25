@@ -7,14 +7,18 @@ import { ownerReviews } from '../../data/owner-reviews';
 // page follows.
 const featured = ownerReviews.filter((r) => r.wall).slice(0, 3);
 
-// Teaser excerpt from the full review text, trimmed at a word boundary and
-// kept under 100 characters. Tapping "Read all owner reviews" shows the rest.
-function excerpt(s: string, max = 99): string {
+// A ~200-character teaser from the full review text. Prefer ending on a clean
+// sentence boundary; otherwise trim at a word boundary and add an ellipsis.
+// The complete review is one tap away via "Read all owner reviews".
+function excerpt(s: string, max = 200): string {
   const clean = s.replace(/\s+/g, ' ').trim();
   if (clean.length <= max) return clean;
-  let cut = clean.slice(0, max - 1);
+  const window = clean.slice(0, max);
+  const sentenceEnd = Math.max(window.lastIndexOf('. '), window.lastIndexOf('! '), window.lastIndexOf('? '));
+  if (sentenceEnd >= 120) return window.slice(0, sentenceEnd + 1); // clean full sentence(s)
+  let cut = window.slice(0, max - 1);
   const lastSpace = cut.lastIndexOf(' ');
-  if (lastSpace > 40) cut = cut.slice(0, lastSpace);
+  if (lastSpace > 80) cut = cut.slice(0, lastSpace);
   return cut.replace(/[\s,.;:!?—-]+$/, '') + '…';
 }
 
