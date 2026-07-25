@@ -145,7 +145,12 @@ export function hydrateOwnerTestimonials(items) {
   wall.innerHTML = '';
   shown.forEach(function (t, i) {
     var p = prior[t.id] || {};
-    var src = (t.source === 'yelp' || t.source === 'google') ? t.source : (p.source || 'google');
+    // A review's platform is immutable, so the baked-in seed source (from
+    // owner-reviews.ts, on the card's data-source) is authoritative and must win
+    // over a stale CMS value — an older publish clobbered every source to
+    // 'google'. Fall back to the CMS source only for CMS-only additions with no
+    // matching seed card.
+    var src = p.source || ((t.source === 'yelp' || t.source === 'google') ? t.source : 'google');
     var size = t.size || p.size || 'md';
     var text = (t.text && String(t.text).trim()) ? t.text : (p.text || '');
     var rating = t.rating || p.rating || 5;

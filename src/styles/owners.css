@@ -298,7 +298,7 @@
 
     /* ---------- Footer ---------- */
     .footer { background: #0b1825; color: rgba(248,243,236,.7); }
-    .footer__main { max-width: var(--container); margin: 0 auto; padding: 64px 24px 40px; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; }
+    .footer__main { max-width: var(--container); margin: 0 auto; padding: 64px 24px 40px; display: grid; grid-template-columns: 1.5fr repeat(4, 1fr); gap: 40px; }
     .footer__logo { height: 40px; width: auto; margin-bottom: 18px; }
     .footer__brand p { font-size: .92rem; line-height: 1.6; max-width: 260px; }
     .footer__phone { color: #fff; font-weight: 600; font-size: 1.1rem; display: inline-block; margin-top: 10px; }
