@@ -72,6 +72,7 @@
     ],
     "rewrites": [
       { "source": "/api/ghl", "function": { "functionId": "ghl", "region": "us-central1" } },
+      { "source": "/api/lead", "function": { "functionId": "lead", "region": "us-central1" } },
       { "source": "/api/content", "function": { "functionId": "content", "region": "us-central1" } },
       { "source": "/admin/**", "destination": "/admin/index.html" }
     ]

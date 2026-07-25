@@ -108,3 +108,60 @@ export async function addNote(cfg: GhlConfig, contactId: string, text: string): 
   const r = await fetch(`${BASE}/contacts/${contactId}/notes`, { method: 'POST', headers: headers(cfg, '2021-07-28'), body: JSON.stringify({ body: text }) });
   if (!r.ok) throw new Error(`GHL note ${r.status}: ${await r.text()}`);
 }
+
+// ---- Generic lead helpers (referral / vendor / cost-seg website forms) ----
+
+export interface LeadContactInput {
+  firstName?: string; lastName?: string; email?: string; phone?: string;
+  source?: string; tags?: string[];
+}
+// Upsert a contact (idempotent by email/phone) with a source + tags. No appointment.
+export async function upsertContact(cfg: GhlConfig, input: LeadContactInput): Promise<string> {
+  const body: Record<string, unknown> = {
+    locationId: cfg.locationId(),
+    firstName: input.firstName || '',
+    lastName: input.lastName || '',
+    email: input.email || '',
+    phone: input.phone || '',
+    source: input.source || 'Website',
+  };
+  if (input.tags && input.tags.length) body.tags = input.tags;
+  const r = await fetch(`${BASE}/contacts/upsert`, { method: 'POST', headers: headers(cfg, '2021-07-28'), body: JSON.stringify(body) });
+  if (!r.ok) throw new Error(`GHL contact upsert ${r.status}: ${await r.text()}`);
+  const j = (await r.json()) as { contact?: { id?: string }; id?: string };
+  const id = j.contact?.id || j.id;
+  if (!id) throw new Error('GHL upsert returned no contact id');
+  return id;
+}
+
+export interface PipelineRef { pipelineId: string; stageId: string; }
+// Find a pipeline by (case-insensitive) name and return it + its first stage.
+export async function findPipeline(cfg: GhlConfig, name: string): Promise<PipelineRef | null> {
+  const r = await fetch(`${BASE}/opportunities/pipelines?locationId=${encodeURIComponent(cfg.locationId())}`, { headers: headers(cfg, '2021-07-28') });
+  if (!r.ok) throw new Error(`GHL pipelines ${r.status}: ${await r.text()}`);
+  const j = (await r.json()) as { pipelines?: Array<{ id: string; name: string; stages?: Array<{ id: string }> }> };
+  const want = name.trim().toLowerCase();
+  const p = (j.pipelines || []).find((x) => (x.name || '').trim().toLowerCase() === want);
+  if (!p || !p.stages || !p.stages.length) return null;
+  return { pipelineId: p.id, stageId: p.stages[0].id };
+}
+
+// Create an opportunity in the given pipeline stage for a contact.
+export async function createOpportunity(
+  cfg: GhlConfig,
+  input: { pipelineId: string; stageId: string; contactId: string; name: string; monetaryValue?: number },
+): Promise<string> {
+  const body: Record<string, unknown> = {
+    pipelineId: input.pipelineId,
+    locationId: cfg.locationId(),
+    pipelineStageId: input.stageId,
+    name: input.name,
+    status: 'open',
+    contactId: input.contactId,
+  };
+  if (input.monetaryValue) body.monetaryValue = input.monetaryValue;
+  const r = await fetch(`${BASE}/opportunities/`, { method: 'POST', headers: headers(cfg, '2021-07-28'), body: JSON.stringify(body) });
+  if (!r.ok) throw new Error(`GHL opportunity ${r.status}: ${await r.text()}`);
+  const j = (await r.json()) as { opportunity?: { id?: string }; id?: string };
+  return j.opportunity?.id || j.id || '';
+}

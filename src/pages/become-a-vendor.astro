@@ -217,33 +217,17 @@ const steps = [
 
 <script>
   import '../scripts/reveal.js';
+  import { wireLeadForm } from '../scripts/lead-form.js';
 
-  // Vendor application → compose a pre-filled email to owners@ (no backend needed).
-  (function () {
-    var form = document.querySelector('[data-vendor-form]');
-    if (!form) return;
-    var status = form.querySelector('[data-vendor-status]');
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (!(form as HTMLFormElement).reportValidity()) return;
-      var lines = [];
-      var seen = {};
-      form.querySelectorAll('input, textarea, select').forEach(function (el) {
-        var f = el as HTMLInputElement;
-        if (!f.name || seen[f.name]) return;
-        seen[f.name] = 1;
-        var v = (f.value || '').trim();
-        if (v) lines.push(f.name + ': ' + v);
-      });
-      var biz = (form.querySelector('[name="Business name"]') as HTMLInputElement);
-      var subject = 'Vendor application' + (biz && biz.value ? ' — ' + biz.value.trim() : '');
-      var body = 'New vendor application submitted from cardorentals.com/become-a-vendor\n\n' + lines.join('\n');
-      window.location.href = 'mailto:owners@cardorentals.com?subject=' +
-        encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-      if (status) {
-        status.textContent = 'Thanks! Your email app should have opened with your application — just hit send and we’ll be in touch.';
-        status.classList.add('is-sent');
-      }
-    });
-  })();
+  wireLeadForm({
+    form: '[data-vendor-form]',
+    type: 'vendor',
+    nameField: 'Primary contact',
+    emailField: 'Email',
+    phoneField: 'Phone',
+    fallbackTo: 'owners@cardorentals.com',
+    subject: 'Vendor application',
+    status: '[data-vendor-status]',
+    successText: 'Thanks! Your application is in — we’ll review it and reach out about joining our vendor network.',
+  });
 </script>

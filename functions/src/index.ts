@@ -10,6 +10,7 @@ import {
 } from './actions.js';
 import { resolveAdmin } from './claims.js';
 import { getSlots, book as ghlBook, addNote as ghlAddNote, type GhlConfig } from './ghl.js';
+import { handleLead } from './lead.js';
 import { getContent, getContentForAdmin, setCaseStudies, setReviews, setSections, setFeaturedHomes, setGuestPhotos, setTeamMembers, setOwnerTestimonials, setNeighborhoods, setBlog, publishDrafts, discardDrafts, syncGoogleReviews } from './siteContent.js';
 import type { AgreementDoc } from './types.js';
 
@@ -106,6 +107,24 @@ export const ghl = onRequest({ secrets: [GHL_API_TOKEN], cors: false }, async (r
   } catch (e) {
     console.error('ghl error', e);
     res.status(502).json({ error: (e as Error).message || 'GHL request failed' });
+  }
+});
+
+// ---- Public lead intake (referral / vendor / cost-seg forms) ----
+// POST /api/lead {type, name, email, phone, fields} → tags the lead into
+// HighLevel (contact + note, plus an opportunity for cost-seg) and emails the
+// right internal inbox. CRM and email each degrade independently.
+export const lead = onRequest({ secrets: [GHL_API_TOKEN, RESEND_API_KEY], cors: false }, async (req, res) => {
+  Object.entries(CORS).forEach(([k, v]) => res.set(k, v));
+  if (req.method === 'OPTIONS') { res.status(204).send(''); return; }
+  if (req.method !== 'POST') { res.status(405).json({ error: 'POST only' }); return; }
+  try {
+    const settings = await getSettings(getDb());
+    const send = makeSendEmail(RESEND_API_KEY.value(), settings);
+    res.json(await handleLead(ghlCfg, send, req.body ?? {}));
+  } catch (e) {
+    console.error('lead error', e);
+    res.status(400).json({ error: (e as Error).message || 'Lead submission failed' });
   }
 });
 

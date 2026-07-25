@@ -10,11 +10,27 @@ const nav = [
   { label: 'Blog', href: '/blog' },
 ];
 const cta = { label: 'Free estimate', href: '/owners#estimate' };
+
+// Illustrative first-year outcomes. Assumes a cost-seg study reclassifies ~17–18%
+// of the purchase price into short-life assets eligible for accelerated / bonus
+// depreciation, and a 37% marginal rate. Clearly labelled as examples.
+const examples = [
+  { price: '$750K', accel: '~$130,000', savings: '~$48,000' },
+  { price: '$1.2M', accel: '~$210,000', savings: '~$78,000', featured: true },
+  { price: '$2.5M', accel: '~$450,000', savings: '~$165,000' },
+];
+
+const steps = [
+  { n: '1', title: 'Free analysis', blurb: 'Tell us about the property. A cost-seg specialist estimates your potential first-year deduction at no cost.' },
+  { n: '2', title: 'The study', blurb: 'Engineers itemize and reclassify assets — finishes, fixtures, appliances, land improvements — into 5, 7, and 15-year lives.' },
+  { n: '3', title: 'File', blurb: 'Your CPA applies the accelerated depreciation on this year’s return — or a look-back study catches up prior years with no amended returns.' },
+  { n: '4', title: 'Keep more', blurb: 'The deductions lower your taxable income, freeing up cash to reinvest in the property or your next one.' },
+];
 ---
 
 <Base
-  title="Cost Segregation Study | Cardo Vacation Rentals"
-  description="Placeholder page — a cost segregation study for San Diego short-term rental owners. Content coming soon."
+  title="Cost Segregation for Short-Term Rentals | Cardo Vacation Rentals"
+  description="How San Diego short-term rental owners use cost segregation and the STR tax treatment to accelerate depreciation and offset active income — with real savings examples. Get a free analysis."
 >
   <MarketingHeader {nav} {cta} />
 
@@ -23,30 +39,149 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
       <img class="phero__bg" src="/assets/photos/imported/unsplash-1554224155-6726b3ff858f-1600.jpg" alt="" />
       <div class="phero__overlay"></div>
       <div class="phero__inner narrow">
-        <p class="eyebrow">For owners</p>
-        <h1>Cost Segregation Study</h1>
-        <p>Accelerate depreciation and unlock cash flow on your San Diego rental property. Placeholder copy — real details coming soon.</p>
-        <a class="btn btn-lg" href="/owners#estimate">Talk to our team</a>
+        <p class="eyebrow">For short-term rental owners</p>
+        <h1>Turn your rental into one of the best tax shelters you own.</h1>
+        <p>Short-term rentals get a tax treatment long-term rentals don’t. Paired with a cost segregation study, it can turn a big chunk of your property into a first-year deduction — often against your active income. Here’s how it works, with real numbers.</p>
+        <a class="btn btn-lg" href="#analysis">Get a free analysis</a>
       </div>
     </section>
 
-    <section class="section-pad" data-screen-label="Cost segregation body">
-      <div class="section-narrow">
+    <!-- What it is -->
+    <section class="section-pad" data-screen-label="What it is">
+      <div class="section-wrap cs-intro">
         <div class="section-head reveal">
-          <p class="eyebrow">What it is</p>
-          <h2>Placeholder heading for cost segregation.</h2>
+          <p class="eyebrow">What is cost segregation?</p>
+          <h2>Depreciate faster, not slower.</h2>
         </div>
-        <p class="lede muted reveal">This is filler text. A cost segregation study reclassifies components of an investment property so owners can accelerate depreciation and improve near-term cash flow. Final copy, examples, and a walkthrough of the process for Cardo owners will live here.</p>
-        <p class="reveal">Lorem ipsum placeholder — we'll outline eligibility, the study process, typical timelines, and how Cardo coordinates with your tax professional. Nothing on this page is final.</p>
+        <p class="lede muted reveal">Normally a rental building depreciates over 27.5 or 39 years — a slow trickle. A <strong>cost segregation study</strong> has engineers break the property into its parts — flooring, cabinetry, appliances, lighting, landscaping, pool equipment — and reclassify them into 5, 7, and 15-year lives. Those shorter-life assets qualify for <strong>accelerated and first-year bonus depreciation</strong>, so instead of a trickle you get a flood of deductions in year one.</p>
+      </div>
+    </section>
+
+    <!-- The STR advantage -->
+    <section class="section-pad rf-alt" data-screen-label="STR advantage">
+      <div class="section-wrap cs-why">
+        <div class="cs-why__intro reveal">
+          <p class="eyebrow">The short-term rental advantage</p>
+          <h2>Why STRs beat long-term rentals at tax time.</h2>
+          <p class="lede muted">This is the part most owners don’t know about.</p>
+        </div>
+        <ul class="cs-why__list reveal">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+            <span><strong>It can offset active income.</strong> When the average guest stay is 7 days or fewer and you materially participate, the IRS doesn’t treat it as a passive rental. The accelerated depreciation can offset active income — including W-2 and business income — not just rental profit.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+            <span><strong>No “real estate professional” status required.</strong> Long-term rental owners usually need REP status to unlock these losses. STR owners generally don’t — the shorter-stay rule does the heavy lifting.</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+            <span><strong>Material participation is very doable.</strong> Meeting one of the IRS tests — for example, being the person most involved in the rental, or 100+ hours with no one involved more — is realistic for an engaged owner, and Cardo’s reporting helps you document it.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Examples -->
+    <section class="section-pad" data-screen-label="Savings examples">
+      <div class="section-wrap">
+        <div class="section-head center reveal">
+          <p class="eyebrow">What it can be worth</p>
+          <h2>Real numbers, first year.</h2>
+        </div>
+        <div class="cs-ex">
+          {examples.map((e) => (
+            <div class:list={['cs-card', 'reveal', { 'cs-card--featured': e.featured }]}>
+              <div class="cs-card__price">{e.price}<span>property</span></div>
+              <div class="cs-card__row"><span>Accelerated deduction, yr 1</span><b>{e.accel}</b></div>
+              <div class="cs-card__row cs-card__row--hero"><span>Est. first-year tax savings</span><b>{e.savings}</b></div>
+            </div>
+          ))}
+        </div>
+        <p class="cs-fine reveal">Illustrative only. Figures assume a cost-seg study reclassifies roughly 17–18% of the purchase price into short-life assets eligible for bonus depreciation, and a 37% marginal tax rate. Your actual results depend on the property, your tax situation, and current law.</p>
+      </div>
+    </section>
+
+    <!-- Already own -->
+    <section class="section-pad rf-alt" data-screen-label="Already own">
+      <div class="section-wrap cs-already reveal">
+        <p class="eyebrow">Already own the property?</p>
+        <h2>You didn’t miss the window.</h2>
+        <p class="lede muted">Bought your rental last year — or five years ago — and never did a study? You can still run a <strong>look-back cost segregation study</strong> and claim all the depreciation you should have taken, all at once, on this year’s return. There’s no need to amend past returns; your CPA files a single change-of-accounting form (Form 3115). For many owners it’s the biggest single deduction they’ll take this year.</p>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section-pad" data-screen-label="How it works">
+      <div class="section-wrap">
+        <div class="section-head center reveal">
+          <p class="eyebrow">How it works</p>
+          <h2>From analysis to savings.</h2>
+        </div>
+        <ol class="cs-steps">
+          {steps.map((s) => (
+            <li class="cs-step reveal">
+              <span class="cs-step__n">{s.n}</span>
+              <h3 class="cs-step__title">{s.title}</h3>
+              <p class="cs-step__blurb">{s.blurb}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- Lead form -->
+    <section class="section-pad rf-alt" id="analysis" data-screen-label="Free analysis">
+      <div class="section-wrap cs-reg">
+        <div class="section-head center reveal">
+          <p class="eyebrow">Free cost-seg analysis</p>
+          <h2>See what your property could save.</h2>
+          <p class="lede muted">Share a few details and we’ll connect you with a cost segregation specialist for a no-cost estimate of your first-year deduction. Fields marked * are required.</p>
+        </div>
+
+        <form class="cs-form reveal" data-costseg-form novalidate>
+          <div class="cs-form__grid">
+            <label>Name *<input name="Name" type="text" required autocomplete="name" /></label>
+            <label>Email *<input name="Email" type="email" required autocomplete="email" /></label>
+            <label>Phone *<input name="Phone" type="tel" required autocomplete="tel" /></label>
+            <label>Property address or city<input name="Property" type="text" placeholder="e.g. La Jolla, CA" /></label>
+            <label>Your situation *
+              <select name="Situation" required>
+                <option value="" disabled selected>Select…</option>
+                <option value="I own a short-term rental">I own a short-term rental</option>
+                <option value="I own another investment property">I own another investment property</option>
+                <option value="I'm buying / considering buying">I’m buying / considering buying</option>
+                <option value="Just exploring">Just exploring</option>
+              </select>
+            </label>
+            <label>Approx. property value
+              <select name="Property value">
+                <option value="" disabled selected>Select…</option>
+                <option value="Under $750K">Under $750K</option>
+                <option value="$750K – $1.5M">$750K – $1.5M</option>
+                <option value="$1.5M – $3M">$1.5M – $3M</option>
+                <option value="$3M+">$3M+</option>
+              </select>
+            </label>
+            <label class="cs-form__wide">Anything else we should know?<textarea name="Notes" rows="3" placeholder="Year purchased, whether you've done a study before, etc."></textarea></label>
+          </div>
+
+          <div class="cs-form__foot">
+            <button class="btn btn-lg" type="submit">Get my free analysis</button>
+            <p class="cs-form__note" data-costseg-status role="status">No cost, no obligation. We’ll connect you with a specialist and your numbers.</p>
+          </div>
+        </form>
+
+        <p class="cs-disclaimer reveal">This page is general information, not tax, legal, or accounting advice. Cost segregation results and short-term rental tax treatment depend on your specific circumstances and current tax law. Please consult your CPA or tax advisor. Cardo can connect you with a qualified cost segregation specialist.</p>
       </div>
     </section>
 
     <section class="cta" data-screen-label="CTA">
       <div class="cta__inner reveal">
         <p class="eyebrow">Since 2013</p>
-        <h2>Curious what your home could earn — and keep?</h2>
-        <p>Get a free, data-backed projection for your San Diego property.</p>
-        <a class="btn btn-lg" href="/owners#estimate">Schedule a consultation</a>
+        <h2>Own a rental? Let’s see what it can save you.</h2>
+        <p>A quick, no-cost analysis is the easiest way to find out what cost segregation is worth for your property.</p>
+        <a class="btn btn-lg" href="#analysis">Get a free analysis</a>
       </div>
     </section>
   </main>
@@ -54,6 +189,78 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
   <Footer />
 </Base>
 
+<style>
+  .rf-alt { background: var(--cream); }
+  .cs-intro { max-width: 820px; }
+
+  /* Why / STR advantage */
+  .cs-why { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(32px, 5vw, 72px); align-items: start; }
+  .cs-why__intro h2 { margin: 8px 0 12px; }
+  .cs-why__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 22px; }
+  .cs-why__list li { display: flex; gap: 14px; align-items: flex-start; font-size: 1.02rem; line-height: 1.55; color: var(--ink); }
+  .cs-why__list svg { flex: none; width: 24px; height: 24px; margin-top: 2px; }
+  .cs-why__list strong { color: var(--ink); }
+
+  /* Examples */
+  .cs-ex { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: stretch; }
+  .cs-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px 26px; box-shadow: var(--shadow-sm); }
+  .cs-card--featured { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), var(--shadow-md); }
+  .cs-card__price { font-family: var(--font-display); font-weight: 600; font-size: 2rem; color: var(--ink); line-height: 1; margin-bottom: 20px; }
+  .cs-card__price span { display: block; font-family: var(--font-body); font-size: .82rem; font-weight: 500; color: var(--muted); margin-top: 6px; letter-spacing: .02em; }
+  .cs-card__row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); font-size: .9rem; color: var(--muted); }
+  .cs-card__row b { color: var(--ink); font-size: 1.05rem; }
+  .cs-card__row--hero b { color: var(--rose); font-size: 1.3rem; font-family: var(--font-display); }
+  .cs-fine { max-width: 760px; margin: 26px auto 0; text-align: center; font-size: .82rem; color: var(--muted); line-height: 1.6; }
+
+  .cs-already { max-width: 760px; }
+  .cs-already h2 { margin: 8px 0 14px; }
+  .cs-already strong { color: var(--ink); }
+
+  /* Steps */
+  .cs-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .cs-step__n { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; margin-bottom: 16px; }
+  .cs-step__title { margin: 0 0 8px; font-size: 1.12rem; }
+  .cs-step__blurb { margin: 0; color: var(--muted); font-size: .92rem; line-height: 1.55; }
+
+  /* Form */
+  .cs-reg { max-width: 820px; }
+  .cs-form { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(24px, 4vw, 40px); box-shadow: var(--shadow-sm); }
+  .cs-form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .cs-form label { display: flex; flex-direction: column; gap: 6px; font-size: .88rem; font-weight: 600; color: var(--ink); }
+  .cs-form__wide { grid-column: 1 / -1; }
+  .cs-form input, .cs-form textarea, .cs-form select { font: inherit; font-weight: 400; color: var(--ink); background: var(--cream); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; width: 100%; transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }
+  .cs-form input:focus, .cs-form textarea:focus, .cs-form select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(193,154,91,.18); }
+  .cs-form textarea { resize: vertical; min-height: 76px; }
+  .cs-form__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 22px; margin-top: 20px; }
+  .cs-form__foot .btn { flex: none; }
+  .cs-form__note { margin: 0; flex: 1; min-width: 240px; font-size: .84rem; color: var(--muted); line-height: 1.5; }
+  .cs-form__note.is-sent { color: var(--success, #2e7d32); font-weight: 600; }
+  .cs-disclaimer { max-width: 760px; margin: 22px auto 0; text-align: center; font-size: .78rem; color: var(--muted); line-height: 1.6; }
+
+  @media (max-width: 900px) {
+    .cs-why { grid-template-columns: 1fr; }
+    .cs-ex { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
+    .cs-steps { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .cs-steps { grid-template-columns: 1fr; }
+    .cs-form__grid { grid-template-columns: 1fr; }
+  }
+</style>
+
 <script>
   import '../scripts/reveal.js';
+  import { wireLeadForm } from '../scripts/lead-form.js';
+
+  wireLeadForm({
+    form: '[data-costseg-form]',
+    type: 'costseg',
+    nameField: 'Name',
+    emailField: 'Email',
+    phoneField: 'Phone',
+    fallbackTo: 'sales@cardorentals.com',
+    subject: 'Cost segregation inquiry',
+    status: '[data-costseg-status]',
+    successText: 'Thanks! We’ve got your details — a cost segregation specialist will reach out with your free analysis.',
+  });
 </script>

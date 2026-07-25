@@ -286,34 +286,17 @@ const steps = [
 
 <script>
   import '../scripts/reveal.js';
+  import { wireLeadForm } from '../scripts/lead-form.js';
 
-  // Referral form → compose a pre-filled email to sales@ (no backend needed).
-  // Works everywhere; upgrade to a CRM POST once the functions deploy is fixed.
-  (function () {
-    var form = document.querySelector('[data-referral-form]');
-    if (!form) return;
-    var status = form.querySelector('[data-referral-status]');
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (!(form as HTMLFormElement).reportValidity()) return;
-      var lines = [];
-      var seen = {};
-      form.querySelectorAll('input, textarea').forEach(function (el) {
-        var f = el as HTMLInputElement;
-        if (!f.name || seen[f.name]) return;
-        seen[f.name] = 1;
-        var v = (f.value || '').trim();
-        if (v) lines.push(f.name + ': ' + v);
-      });
-      var brokerage = (form.querySelector('[name="Brokerage name"]') as HTMLInputElement);
-      var subject = 'Broker referral' + (brokerage && brokerage.value ? ' — ' + brokerage.value.trim() : '');
-      var body = 'New broker referral submitted from cardorentals.com/realtor-referral\n\n' + lines.join('\n');
-      window.location.href = 'mailto:sales@cardorentals.com?subject=' +
-        encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-      if (status) {
-        status.textContent = 'Thanks! Your email app should have opened with the details — just hit send and we’ll take it from there.';
-        status.classList.add('is-sent');
-      }
-    });
-  })();
+  wireLeadForm({
+    form: '[data-referral-form]',
+    type: 'referral',
+    nameField: 'Agent name',
+    emailField: 'Agent email',
+    phoneField: 'Agent phone',
+    fallbackTo: 'sales@cardorentals.com',
+    subject: 'Broker referral',
+    status: '[data-referral-status]',
+    successText: 'Thanks! Your referral is in — we’ll follow up with the owner and email you the partner agreement to sign.',
+  });
 </script>
