@@ -10,34 +10,153 @@ const nav = [
   { label: 'Blog', href: '/blog' },
 ];
 const cta = { label: 'Free estimate', href: '/owners#estimate' };
+
+const MAILTO = 'mailto:sales@cardorentals.com?subject=Broker%20Referral%20Partner%20Program';
+
+// Fee tiers — paid to the referring brokerage once a referred home goes live.
+const tiers = [
+  {
+    fee: '$1,500',
+    name: 'Standard referred home',
+    blurb: 'A one-time fee paid to your brokerage after a referred home signs a Cardo management agreement and goes live.',
+  },
+  {
+    fee: '$2,500',
+    name: 'Luxury tier',
+    blurb: 'For homes we expect to produce more than $150,000 in annual gross booking revenue, based on our good-faith underwriting.',
+    featured: true,
+  },
+];
+
+// Ongoing partner benefits.
+const perks = [
+  {
+    tag: 'Once per year',
+    title: 'Annual two-night stay',
+    blurb: 'While at least one referred home stays active, request one approved two-night stay each year — nightly rate and standard cleaning fee included.',
+  },
+  {
+    tag: 'Cleaning fee only',
+    title: 'Review stays',
+    blurb: 'Stay at any Cardo-managed property for just the standard cleaning fee, so you can speak to the guest experience firsthand. Subject to availability and approval.',
+  },
+  {
+    tag: 'In referred homes',
+    title: 'In-home agent placement',
+    blurb: 'Approved agent and brokerage information can be displayed inside referred homes for guests considering a future purchase in the area.',
+  },
+];
+
+// Why owners are a good fit for Cardo.
+const why = [
+  'A mature vacation rental management company with 14 years of operating experience.',
+  'Full-service owner support, guest communication, listing strategy, and revenue oversight.',
+  'In-house cleaning and laundry operations built to protect the guest experience.',
+  'A professional handoff for clients who want income without managing the day-to-day.',
+];
+
+// The four steps from introduction to payout.
+const steps = [
+  { n: '1', title: 'Introduce', blurb: 'Register your referral with us before we’ve had an active sales conversation with the owner.' },
+  { n: '2', title: 'Evaluate', blurb: 'We underwrite the home, confirm it can operate as a vacation rental, and set the fee tier.' },
+  { n: '3', title: 'Onboard', blurb: 'The owner signs, we onboard and launch the listing. You’re hands-off from here.' },
+  { n: '4', title: 'Get paid', blurb: 'Your brokerage is paid within 30 days of the home going live.' },
+];
 ---
 
 <Base
-  title="Realtor Referral Program | Cardo Vacation Rentals"
-  description="Placeholder page — refer clients to Cardo and get rewarded. Program details coming soon."
+  title="Broker Referral Partner Program | Cardo Vacation Rentals"
+  description="Realtors and brokers: introduce owners, investors, and second-home buyers to Cardo and earn $1,500–$2,500 per home, plus annual stays and review stays. San Diego vacation rental management."
 >
   <MarketingHeader {nav} {cta} />
 
   <main>
-    <section class="phero" data-screen-label="Realtor referral hero">
+    <section class="phero" data-screen-label="Referral hero">
       <img class="phero__bg" src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80" alt="" />
       <div class="phero__overlay"></div>
       <div class="phero__inner narrow">
-        <p class="eyebrow">For agents</p>
-        <h1>Realtor Referral Program</h1>
-        <p>Refer buyers and sellers to Cardo and earn on every home we take on. Placeholder copy — program terms coming soon.</p>
-        <a class="btn btn-lg" href="mailto:referrals@cardorentals.com">Refer a client</a>
+        <p class="eyebrow">For agents &amp; brokers</p>
+        <h1>Broker Referral Partner Program</h1>
+        <p>A clean referral path for Realtors who meet owners, investors, and second-home buyers before they choose a vacation rental manager. Introduce them to Cardo — earn on every home we take on.</p>
+        <a class="btn btn-lg" href={MAILTO}>Become a referral partner</a>
       </div>
     </section>
 
-    <section class="section-pad" data-screen-label="Realtor referral body">
-      <div class="section-narrow">
-        <div class="section-head reveal">
-          <p class="eyebrow">How it works</p>
-          <h2>Placeholder heading for the referral program.</h2>
+    <!-- Fee tiers -->
+    <section class="section-pad" data-screen-label="Referral fees">
+      <div class="section-wrap">
+        <div class="section-head center reveal">
+          <p class="eyebrow">What you earn</p>
+          <h2>A referral fee on every home that goes live.</h2>
         </div>
-        <p class="lede muted reveal">This is filler text. Realtors who refer clients to Cardo's management or design services can earn a referral reward. The structure, payout, and how to submit a referral will be detailed here.</p>
-        <p class="reveal">Lorem ipsum placeholder — eligibility, tracking, and payout timelines will live on this page. Nothing here is final.</p>
+        <div class="rf-tiers">
+          {tiers.map((t) => (
+            <div class:list={['rf-tier', 'reveal', { 'rf-tier--featured': t.featured }]}>
+              {t.featured && <span class="rf-tier__flag">Luxury</span>}
+              <div class="rf-tier__fee">{t.fee}</div>
+              <div class="rf-tier__name">{t.name}</div>
+              <p class="rf-tier__blurb">{t.blurb}</p>
+            </div>
+          ))}
+        </div>
+        <p class="rf-fineprint reveal">Referral fees are paid to the referring brokerage — not directly to an individual agent — after the home signs, onboarding is substantially complete, and the listing is live. See the Broker Referral Agreement for full terms.</p>
+      </div>
+    </section>
+
+    <!-- Partner benefits -->
+    <section class="section-pad rf-alt" data-screen-label="Partner benefits">
+      <div class="section-wrap">
+        <div class="section-head center reveal">
+          <p class="eyebrow">Partner benefits</p>
+          <h2>More than a one-time payout.</h2>
+        </div>
+        <div class="rf-perks">
+          {perks.map((p) => (
+            <div class="rf-perk reveal">
+              <span class="rf-perk__tag">{p.tag}</span>
+              <h3 class="rf-perk__title">{p.title}</h3>
+              <p class="rf-perk__blurb">{p.blurb}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Why refer to Cardo -->
+    <section class="section-pad" data-screen-label="Why Cardo">
+      <div class="section-wrap rf-why">
+        <div class="rf-why__intro reveal">
+          <p class="eyebrow">Why refer owners to Cardo</p>
+          <h2>Your clients are in expert hands.</h2>
+          <p class="lede muted">When you introduce an owner to Cardo, you’re handing them to a team that treats their investment like its own — and you keep the relationship for their next purchase or sale.</p>
+        </div>
+        <ul class="rf-why__list reveal">
+          {why.map((w) => (
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+              <span>{w}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section-pad rf-alt" data-screen-label="How it works">
+      <div class="section-wrap">
+        <div class="section-head center reveal">
+          <p class="eyebrow">How the program works</p>
+          <h2>From introduction to payout.</h2>
+        </div>
+        <ol class="rf-steps">
+          {steps.map((s) => (
+            <li class="rf-step reveal">
+              <span class="rf-step__n">{s.n}</span>
+              <h3 class="rf-step__title">{s.title}</h3>
+              <p class="rf-step__blurb">{s.blurb}</p>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
 
@@ -45,14 +164,61 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
       <div class="cta__inner reveal">
         <p class="eyebrow">Partner with Cardo</p>
         <h2>Have a client with a home to rent?</h2>
-        <p>Send them our way — we'll take great care of them, and of you.</p>
-        <a class="btn btn-lg" href="mailto:referrals@cardorentals.com">Submit a referral</a>
+        <p>Introduce them to Cardo — we’ll take great care of them, and of you. Reach us at <a href="mailto:sales@cardorentals.com">sales@cardorentals.com</a> or <a href="tel:+16197195282">619-719-5282</a> and we’ll send over the partner agreement.</p>
+        <a class="btn btn-lg" href={MAILTO}>Become a referral partner</a>
       </div>
     </section>
   </main>
 
   <Footer />
 </Base>
+
+<style>
+  /* ---- Fee tiers ---- */
+  .rf-tiers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 860px; margin: 0 auto; }
+  .rf-tier { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 36px 32px 34px; box-shadow: var(--shadow-sm); text-align: center; }
+  .rf-tier--featured { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), var(--shadow-md); }
+  .rf-tier__flag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--gold); color: var(--ink); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 5px 14px; border-radius: var(--radius-pill); }
+  .rf-tier__fee { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.6rem, 4vw, 3.4rem); line-height: 1; color: var(--ink); }
+  .rf-tier__name { margin-top: 10px; font-weight: 600; font-size: 1.05rem; color: var(--ink); }
+  .rf-tier__blurb { margin: 12px 0 0; color: var(--muted); font-size: .95rem; line-height: 1.55; }
+  .rf-fineprint { max-width: 720px; margin: 28px auto 0; text-align: center; font-size: .85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ---- Alternating band ---- */
+  .rf-alt { background: var(--cream); }
+
+  /* ---- Perks ---- */
+  .rf-perks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .rf-perk { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px 26px; box-shadow: var(--shadow-sm); }
+  .rf-perk__tag { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+  .rf-perk__title { margin: 0 0 8px; font-size: 1.2rem; }
+  .rf-perk__blurb { margin: 0; color: var(--muted); font-size: .93rem; line-height: 1.55; }
+
+  /* ---- Why ---- */
+  .rf-why { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 5vw, 72px); align-items: center; }
+  .rf-why__intro h2 { margin: 8px 0 14px; }
+  .rf-why__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 18px; }
+  .rf-why__list li { display: flex; gap: 14px; align-items: flex-start; font-size: 1.02rem; line-height: 1.5; color: var(--ink); }
+  .rf-why__list svg { flex: none; width: 24px; height: 24px; margin-top: 1px; }
+
+  /* ---- Steps ---- */
+  .rf-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; counter-reset: none; }
+  .rf-step { position: relative; }
+  .rf-step__n { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; margin-bottom: 16px; }
+  .rf-step__title { margin: 0 0 8px; font-size: 1.15rem; }
+  .rf-step__blurb { margin: 0; color: var(--muted); font-size: .93rem; line-height: 1.55; }
+
+  .cta a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
+
+  @media (max-width: 900px) {
+    .rf-perks { grid-template-columns: 1fr 1fr; }
+    .rf-steps { grid-template-columns: 1fr 1fr; }
+    .rf-why { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .rf-tiers, .rf-perks, .rf-steps { grid-template-columns: 1fr; }
+  }
+</style>
 
 <script>
   import '../scripts/reveal.js';
