@@ -423,8 +423,12 @@ video.ghero__bg { pointer-events: none; }
 .ownrev__text { color: rgba(248,243,236,.92); font-size: .98rem; line-height: 1.6; margin: 0 0 16px; }
 .ownrev__who { display: flex; align-items: center; gap: 11px; }
 .ownrev__who img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: none; }
+.ownrev__src { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.94); }
+.ownrev__src svg { width: 20px; height: 20px; display: block; }
+.ownrev__src .src-yelp { width: 22px; height: auto; display: block; }
 .ownrev__name { font-weight: 600; color: #fff; font-size: .92rem; }
 .ownrev__home { font-size: .82rem; color: rgba(248,243,236,.66); }
+.ownrev__more { margin-top: 28px; text-align: center; }
 @media (max-width: 900px) { .ownrev { grid-template-columns: 1fr; max-width: 520px; } }
 
 /* ---- from styles/additions.css ---- */
