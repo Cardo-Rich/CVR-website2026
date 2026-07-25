@@ -33,7 +33,7 @@ export const neighborhoods: Neighborhood[] = [
     slug: 'la-jolla',
     name: 'La Jolla',
     note: 'Bluff-top luxury & coastal estates',
-    img: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1600&q=80',
+    img: '/assets/photos/imported/unsplash-1613490493576-7fde63acd811-1600.jpg',
     seo: {
       title: 'La Jolla Vacation Rental Management | Cardo — San Diego',
       description:
@@ -89,7 +89,7 @@ export const neighborhoods: Neighborhood[] = [
     slug: 'pacific-beach',
     name: 'Pacific Beach',
     note: 'Walkable, high-occupancy favorites',
-    img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=80',
+    img: '/assets/photos/imported/unsplash-1600596542815-ffad4c1539a9-1600.jpg',
     seo: {
       title: 'Pacific Beach Vacation Rental Management | Cardo — San Diego',
       description:
@@ -145,7 +145,7 @@ export const neighborhoods: Neighborhood[] = [
     slug: 'mission-beach',
     name: 'Mission Beach',
     note: 'Boardwalk demand & beachfront homes',
-    img: 'https://images.unsplash.com/photo-1502136969935-8d8eef54d77b?auto=format&fit=crop&w=1600&q=80',
+    img: '/assets/photos/imported/unsplash-1502136969935-8d8eef54d77b-1600.jpg',
     seo: {
       title: 'Mission Beach Vacation Rental Management | Cardo — San Diego',
       description:
@@ -201,7 +201,7 @@ export const neighborhoods: Neighborhood[] = [
     slug: 'del-mar',
     name: 'Del Mar',
     note: 'Racetrack-season premium homes',
-    img: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=80',
+    img: '/assets/photos/imported/unsplash-1600607687939-ce8a6c25118c-1600.jpg',
     seo: {
       title: 'Del Mar Vacation Rental Management | Cardo — San Diego',
       description:
@@ -257,7 +257,7 @@ export const neighborhoods: Neighborhood[] = [
     slug: 'encinitas',
     name: 'Encinitas',
     note: 'Surf-town charm, strong year-round',
-    img: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=80',
+    img: '/assets/photos/imported/unsplash-1505693416388-ac5ce068fe85-1600.jpg',
     seo: {
       title: 'Encinitas Vacation Rental Management | Cardo — San Diego',
       description:
@@ -313,7 +313,7 @@ export const neighborhoods: Neighborhood[] = [
     slug: 'carlsbad',
     name: 'Carlsbad',
     note: 'Family coastal & North County demand',
-    img: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=1600&q=80',
+    img: '/assets/photos/imported/unsplash-1571003123894-1f0594d2b5d9-1600.jpg',
     seo: {
       title: 'Carlsbad Vacation Rental Management | Cardo — San Diego',
       description:
@@ -369,7 +369,7 @@ export const neighborhoods: Neighborhood[] = [
     slug: 'coronado',
     name: 'Coronado',
     note: 'Island prestige & event demand',
-    img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=80',
+    img: '/assets/photos/imported/unsplash-1512917774080-9991f1c4c750-1600.jpg',
     seo: {
       title: 'Coronado Vacation Rental Management | Cardo — San Diego',
       description:

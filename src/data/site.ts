@@ -52,7 +52,7 @@ export const cases = [
     gross: '$214,800',
     lift: '+57% over market',
     beds: '4 BR',
-    img: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811',
+    img: '/assets/photos/imported/unsplash-1613490493576-7fde63acd811.jpg',
   },
   {
     home: 'Cardiff Surf House',
@@ -60,7 +60,7 @@ export const cases = [
     gross: '$168,300',
     lift: '+41% over market',
     beds: '3 BR',
-    img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9',
+    img: '/assets/photos/imported/unsplash-1600596542815-ffad4c1539a9.jpg',
   },
   {
     home: 'Del Mar Retreat',
@@ -68,17 +68,17 @@ export const cases = [
     gross: '$192,500',
     lift: '+48% over market',
     beds: '4 BR',
-    img: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c',
+    img: '/assets/photos/imported/unsplash-1600607687939-ce8a6c25118c.jpg',
   },
 ];
 
 export const neighborhoods = [
-  { name: 'La Jolla', note: 'Bluff-top luxury & coastal estates', img: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811' },
-  { name: 'Pacific Beach', note: 'Walkable, high-occupancy favorites', img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9' },
-  { name: 'Del Mar', note: 'Racetrack-season premium homes', img: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c' },
-  { name: 'Encinitas', note: 'Surf-town charm, strong year-round', img: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85' },
-  { name: 'Coronado', note: 'Island prestige & event demand', img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750' },
-  { name: 'Carlsbad', note: 'Family coastal & North County demand', img: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9' },
+  { name: 'La Jolla', note: 'Bluff-top luxury & coastal estates', img: '/assets/photos/imported/unsplash-1613490493576-7fde63acd811.jpg' },
+  { name: 'Pacific Beach', note: 'Walkable, high-occupancy favorites', img: '/assets/photos/imported/unsplash-1600596542815-ffad4c1539a9.jpg' },
+  { name: 'Del Mar', note: 'Racetrack-season premium homes', img: '/assets/photos/imported/unsplash-1600607687939-ce8a6c25118c.jpg' },
+  { name: 'Encinitas', note: 'Surf-town charm, strong year-round', img: '/assets/photos/imported/unsplash-1505693416388-ac5ce068fe85.jpg' },
+  { name: 'Coronado', note: 'Island prestige & event demand', img: '/assets/photos/imported/unsplash-1512917774080-9991f1c4c750.jpg' },
+  { name: 'Carlsbad', note: 'Family coastal & North County demand', img: '/assets/photos/imported/unsplash-1571003123894-1f0594d2b5d9.jpg' },
 ];
 
 export const faqs = [

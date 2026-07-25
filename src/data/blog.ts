@@ -59,7 +59,7 @@ export const articles: Article[] = [
     readTime: '8 min read',
     dateFull: 'June 18, 2026',
     dateShort: 'Jun 2026',
-    img: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1100&q=80',
+    img: '/assets/photos/imported/unsplash-1613490493576-7fde63acd811-1100.jpg',
     featured: true,
     seo: {
       title: 'What your San Diego home earns in 2026 — The Cardo Journal',
@@ -112,7 +112,7 @@ export const articles: Article[] = [
     readTime: '6 min read',
     dateFull: 'May 12, 2026',
     dateShort: 'May 2026',
-    img: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80',
+    img: '/assets/photos/imported/unsplash-1505691938895-1758d7feb511-800.jpg',
     seo: {
       title: 'Design choices that lift nightly rate — The Cardo Journal',
       description: 'Five durable, photogenic interior-design upgrades that raise a San Diego vacation rental\'s nightly rate and reviews — and why design is a pricing input, not decor.',
@@ -132,7 +132,7 @@ export const articles: Article[] = [
     readTime: '6 min read',
     dateFull: 'April 22, 2026',
     dateShort: 'Apr 2026',
-    img: 'https://images.unsplash.com/photo-1630375604571-4e370942fa65?auto=format&fit=crop&w=1600&q=80',
+    img: '/assets/photos/imported/unsplash-1630375604571-4e370942fa65-1600.jpg',
     seo: {
       title: 'STRO Permits and TOT in San Diego — The Cardo Journal',
       description: 'A plain-English guide to San Diego short-term rental compliance: the STRO license tiers, Transient Occupancy Tax, the TMD assessment, renewals, and what happens if you miss a deadline.',
@@ -152,7 +152,7 @@ export const articles: Article[] = [
     readTime: '6 min read',
     dateFull: 'March 30, 2026',
     dateShort: 'Mar 2026',
-    img: 'https://images.unsplash.com/photo-1617142584114-730e9bda61b2?auto=format&fit=crop&w=1600&q=80',
+    img: '/assets/photos/imported/unsplash-1617142584114-730e9bda61b2-1600.jpg',
     seo: {
       title: 'La Jolla vs. Pacific Beach for Rentals — The Cardo Journal',
       description: 'La Jolla earns on nightly rate and longer quiet stays; Pacific Beach earns on turnover and a livelier crowd. Here\'s how to match a San Diego property to the right market.',
@@ -172,7 +172,7 @@ export const articles: Article[] = [
     readTime: '6 min read',
     dateFull: 'March 9, 2026',
     dateShort: 'Mar 2026',
-    img: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80',
+    img: '/assets/photos/imported/unsplash-1554224155-6726b3ff858f-800.jpg',
     seo: {
       title: 'The real cost of mystery fees — The Cardo Journal',
       description: 'How to read a short-term-rental management statement, spot cleaning markups and hidden tech and marketing fees, and know what a clean, itemized statement looks like.',
@@ -192,7 +192,7 @@ export const articles: Article[] = [
     readTime: '6 min read',
     dateFull: 'March 2, 2026',
     dateShort: 'Mar 2026',
-    img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80',
+    img: '/assets/photos/imported/unsplash-1582719478250-c89cae4dc85b-800.jpg',
     seo: {
       title: 'Turnovers that protect five-star reviews — The Cardo Journal',
       description: 'The inspection and cleaning checklist behind a spotless vacation rental turnover, why it is never skipped on same-day turns, and how it compounds into reviews and rate.',
@@ -212,7 +212,7 @@ export const articles: Article[] = [
     readTime: '6 min read',
     dateFull: 'February 14, 2026',
     dateShort: 'Feb 2026',
-    img: 'https://images.unsplash.com/photo-1509399316151-9b86c70fdd40?auto=format&fit=crop&w=1600&q=80',
+    img: '/assets/photos/imported/unsplash-1509399316151-9b86c70fdd40-1600.jpg',
     seo: {
       title: 'Del Mar Racing Season and Your Pricing — The Cardo Journal',
       description: 'Event-driven demand — Del Mar racing, fairs, conventions, holidays — compresses weeks of bookings into a few dates. Here\'s why pricing ahead of the calendar captures the spike.',
@@ -397,7 +397,7 @@ export const articles: Article[] = [
     readTime: '5 min read',
     dateFull: 'June 10, 2026',
     dateShort: 'Jun 2026',
-    img: 'https://images.unsplash.com/photo-1502933691298-84fc14542831?auto=format&fit=crop&w=1100&q=80',
+    img: '/assets/photos/imported/unsplash-1502933691298-84fc14542831-1100.jpg',
     localTip: 'Dawn patrol beats the crowds',
     showOnHome: true,
     seo: {
@@ -416,7 +416,7 @@ export const articles: Article[] = [
     readTime: '5 min read',
     dateFull: 'June 4, 2026',
     dateShort: 'Jun 2026',
-    img: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=1600&q=80',
+    img: '/assets/photos/imported/unsplash-1551504734-5ee1c4a1479b-1600.jpg',
     localTip: 'Go early — the lines are real',
     showOnHome: true,
     seo: {
@@ -435,7 +435,7 @@ export const articles: Article[] = [
     readTime: '6 min read',
     dateFull: 'May 28, 2026',
     dateShort: 'May 2026',
-    img: 'https://images.unsplash.com/photo-1612301738481-cb439dcf3c05?auto=format&fit=crop&w=1600&q=80',
+    img: '/assets/photos/imported/unsplash-1612301738481-cb439dcf3c05-1600.jpg',
     localTip: 'Free museum Tuesdays in Balboa Park',
     showOnHome: true,
     seo: {

@@ -58,4 +58,4 @@ export type PhotoLibraryKey = keyof typeof photoLibrary;
 // Hero video now lives at /assets/video/san-diego-hero.mp4 and plays as the
 // hero background; this poster is the pre-load frame shown before it starts.
 export const heroPoster =
-  'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2000&q=80';
+  '/assets/photos/imported/unsplash-1613490493576-7fde63acd811-2000.jpg';
