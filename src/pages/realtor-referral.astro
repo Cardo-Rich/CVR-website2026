@@ -11,8 +11,6 @@ const nav = [
 ];
 const cta = { label: 'Free estimate', href: '/owners#estimate' };
 
-const MAILTO = 'mailto:sales@cardorentals.com?subject=Broker%20Referral%20Partner%20Program';
-
 // Fee tiers — paid to the referring brokerage once a referred home goes live.
 const tiers = [
   {
@@ -78,7 +76,7 @@ const steps = [
         <p class="eyebrow">For agents &amp; brokers</p>
         <h1>Broker Referral Partner Program</h1>
         <p>A clean referral path for Realtors who meet owners, investors, and second-home buyers before they choose a vacation rental manager. Introduce them to Cardo — earn on every home we take on.</p>
-        <a class="btn btn-lg" href={MAILTO}>Become a referral partner</a>
+        <a class="btn btn-lg" href="#register">Become a referral partner</a>
       </div>
     </section>
 
@@ -160,12 +158,59 @@ const steps = [
       </div>
     </section>
 
+    <!-- Register a referral -->
+    <section class="section-pad" id="register" data-screen-label="Register a referral">
+      <div class="section-wrap rf-reg">
+        <div class="section-head center reveal">
+          <p class="eyebrow">Register a referral</p>
+          <h2>Introduce an owner in two minutes.</h2>
+          <p class="lede muted">Tell us who you’re referring and how to reach them. We’ll register the referral, follow up with the owner, and email you the partner agreement to sign. Fields marked * are required.</p>
+        </div>
+
+        <form class="rf-form reveal" data-referral-form novalidate>
+          <fieldset>
+            <legend>Your brokerage</legend>
+            <div class="rf-form__grid">
+              <label>Brokerage name *<input name="Brokerage name" type="text" required autocomplete="organization" /></label>
+              <label>Responsible broker<input name="Responsible broker" type="text" /></label>
+              <label>Broker DRE #<input name="Broker DRE #" type="text" inputmode="numeric" /></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>You (referring agent)</legend>
+            <div class="rf-form__grid">
+              <label>Your name *<input name="Agent name" type="text" required autocomplete="name" /></label>
+              <label>Agent DRE #<input name="Agent DRE #" type="text" inputmode="numeric" /></label>
+              <label>Email *<input name="Agent email" type="email" required autocomplete="email" /></label>
+              <label>Phone *<input name="Agent phone" type="tel" required autocomplete="tel" /></label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>The referral</legend>
+            <div class="rf-form__grid">
+              <label>Owner name *<input name="Owner name" type="text" required /></label>
+              <label>Owner email or phone<input name="Owner contact" type="text" /></label>
+              <label class="rf-form__wide">Property address or city *<input name="Property" type="text" required /></label>
+              <label class="rf-form__wide">Anything else we should know?<textarea name="Notes" rows="3"></textarea></label>
+            </div>
+          </fieldset>
+
+          <div class="rf-form__foot">
+            <button class="btn btn-lg" type="submit">Submit referral</button>
+            <p class="rf-form__note" data-referral-status role="status">Opens your email app to send us the details — nothing is shared until you hit send. Prefer to do it offline? Email <a href="mailto:sales@cardorentals.com">sales@cardorentals.com</a> or call <a href="tel:+16197195282">619-719-5282</a> for the agreement.</p>
+          </div>
+        </form>
+      </div>
+    </section>
+
     <section class="cta" data-screen-label="CTA">
       <div class="cta__inner reveal">
         <p class="eyebrow">Partner with Cardo</p>
         <h2>Have a client with a home to rent?</h2>
         <p>Introduce them to Cardo — we’ll take great care of them, and of you. Reach us at <a href="mailto:sales@cardorentals.com">sales@cardorentals.com</a> or <a href="tel:+16197195282">619-719-5282</a> and we’ll send over the partner agreement.</p>
-        <a class="btn btn-lg" href={MAILTO}>Become a referral partner</a>
+        <a class="btn btn-lg" href="#register">Register a referral</a>
       </div>
     </section>
   </main>
@@ -210,6 +255,24 @@ const steps = [
 
   .cta a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
 
+  /* ---- Register form ---- */
+  .rf-reg { max-width: 820px; }
+  .rf-form { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(24px, 4vw, 40px); box-shadow: var(--shadow-sm); }
+  .rf-form fieldset { border: 0; margin: 0 0 26px; padding: 0; }
+  .rf-form fieldset:last-of-type { margin-bottom: 22px; }
+  .rf-form legend { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 14px; padding: 0; }
+  .rf-form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .rf-form label { display: flex; flex-direction: column; gap: 6px; font-size: .88rem; font-weight: 600; color: var(--ink); }
+  .rf-form__wide { grid-column: 1 / -1; }
+  .rf-form input, .rf-form textarea { font: inherit; font-weight: 400; color: var(--ink); background: var(--cream); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; width: 100%; transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease); }
+  .rf-form input:focus, .rf-form textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(193,154,91,.18); }
+  .rf-form textarea { resize: vertical; min-height: 76px; }
+  .rf-form__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 22px; }
+  .rf-form__foot .btn { flex: none; }
+  .rf-form__note { margin: 0; flex: 1; min-width: 240px; font-size: .84rem; color: var(--muted); line-height: 1.5; }
+  .rf-form__note a { color: var(--rose); font-weight: 600; }
+  .rf-form__note.is-sent { color: var(--success, #2e7d32); font-weight: 600; }
+
   @media (max-width: 900px) {
     .rf-perks { grid-template-columns: 1fr 1fr; }
     .rf-steps { grid-template-columns: 1fr 1fr; }
@@ -217,9 +280,40 @@ const steps = [
   }
   @media (max-width: 560px) {
     .rf-tiers, .rf-perks, .rf-steps { grid-template-columns: 1fr; }
+    .rf-form__grid { grid-template-columns: 1fr; }
   }
 </style>
 
 <script>
   import '../scripts/reveal.js';
+
+  // Referral form → compose a pre-filled email to sales@ (no backend needed).
+  // Works everywhere; upgrade to a CRM POST once the functions deploy is fixed.
+  (function () {
+    var form = document.querySelector('[data-referral-form]');
+    if (!form) return;
+    var status = form.querySelector('[data-referral-status]');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!(form as HTMLFormElement).reportValidity()) return;
+      var lines = [];
+      var seen = {};
+      form.querySelectorAll('input, textarea').forEach(function (el) {
+        var f = el as HTMLInputElement;
+        if (!f.name || seen[f.name]) return;
+        seen[f.name] = 1;
+        var v = (f.value || '').trim();
+        if (v) lines.push(f.name + ': ' + v);
+      });
+      var brokerage = (form.querySelector('[name="Brokerage name"]') as HTMLInputElement);
+      var subject = 'Broker referral' + (brokerage && brokerage.value ? ' — ' + brokerage.value.trim() : '');
+      var body = 'New broker referral submitted from cardorentals.com/realtor-referral\n\n' + lines.join('\n');
+      window.location.href = 'mailto:sales@cardorentals.com?subject=' +
+        encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      if (status) {
+        status.textContent = 'Thanks! Your email app should have opened with the details — just hit send and we’ll take it from there.';
+        status.classList.add('is-sent');
+      }
+    });
+  })();
 </script>
