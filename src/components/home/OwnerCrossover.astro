@@ -45,9 +45,9 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
   </div>
   <div class="crossover__owners" style="position:relative;z-index:2;max-width:var(--container);margin:0 auto;padding:0 24px;">
     <p class="eyebrow reveal" style="color:#fff;justify-content:center;text-align:center">What owners say</p>
-    <div class="ownrev reveal">
+    <div class="ownrev reveal" data-ohm-wall>
       {featured.map((r) => (
-        <div class="ownrev__card">
+        <div class="ownrev__card" role="button" tabindex="0" aria-label={`Read ${r.name}'s full review`}>
           <div class="ownrev__stars">{'★'.repeat(r.rating)}</div>
           <p class="ownrev__text">{excerpt(r.text)}</p>
           <div class="ownrev__who">
@@ -57,6 +57,8 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
               <div class="ownrev__home">Verified {r.source === 'google' ? 'Google' : 'Yelp'} review</div>
             </div>
           </div>
+          <span class="ownrev__cue">Read full review<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <script type="application/json" data-ohm-data set:html={JSON.stringify({ name: r.name, source: r.source, rating: r.rating, text: r.text })}></script>
         </div>
       ))}
     </div>
@@ -64,4 +66,100 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
       <a href="/owners#owner-reviews" class="btn btn-ghost-light">Read all owner reviews</a>
     </div>
   </div>
+
+  <!-- Read-full modal (populated on card tap) -->
+  <div class="ohm" data-ohm-modal hidden aria-hidden="true">
+    <div class="ohm__scrim" data-ohm-close></div>
+    <div class="ohm__panel" role="dialog" aria-modal="true" aria-label="Owner review">
+      <button type="button" class="ohm__close" data-ohm-close aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="ohm__top">
+        <span class="ohm__mark" data-ohm-mark></span>
+        <div class="ohm__id">
+          <div class="ohm__name" data-ohm-name></div>
+          <div class="ohm__meta" data-ohm-meta></div>
+        </div>
+        <span class="ohm__stars" data-ohm-stars>★★★★★</span>
+      </div>
+      <div class="ohm__text" data-ohm-text></div>
+    </div>
+  </div>
 </section>
+
+<style is:global>
+  /* Home "What owners say" — read-full modal (global so JS-built paragraphs
+     inside .ohm__text are styled too). */
+  .ohm { position: fixed; inset: 0; z-index: 200; display: flex; }
+  .ohm[hidden] { display: none; }
+  .ohm__scrim { position: absolute; inset: 0; background: rgba(14,17,27,.55); backdrop-filter: blur(2px); opacity: 0; transition: opacity .3s var(--ease); }
+  .ohm.is-open .ohm__scrim { opacity: 1; }
+  .ohm__panel { position: relative; margin: auto; width: min(680px, 100%); max-height: 90vh; background: var(--paper); border-radius: var(--radius-lg); display: flex; flex-direction: column; box-shadow: 0 30px 80px rgba(0,0,0,.4); transform: translateY(16px) scale(.98); opacity: 0; transition: transform .35s var(--ease), opacity .35s var(--ease); padding: clamp(28px,4vw,44px); overflow-y: auto; }
+  .ohm.is-open .ohm__panel { transform: none; opacity: 1; }
+  @media (max-width: 600px) { .ohm__panel { max-height: 100vh; height: 100%; border-radius: 0; width: 100%; } }
+  .ohm__close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper); color: var(--ink); cursor: pointer; display: grid; place-items: center; z-index: 2; }
+  .ohm__close:hover { background: var(--ink); color: #fff; }
+  .ohm__close svg { width: 18px; height: 18px; }
+  .ohm__top { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-right: 40px; }
+  .ohm__mark { flex: none; display: inline-flex; }
+  .ohm__mark svg { width: 26px; height: 26px; }
+  .ohm__mark .src-yelp { height: 24px; width: auto; }
+  .ohm__id { min-width: 0; }
+  .ohm__name { font-weight: 700; font-size: 1.1rem; }
+  .ohm__meta { font-size: .85rem; color: var(--muted); }
+  .ohm__meta:empty { display: none; }
+  .ohm__stars { margin-left: auto; color: var(--gold); letter-spacing: 1px; white-space: nowrap; }
+  .ohm__text p { margin: 0 0 12px; color: var(--ink-soft, #3a4048); line-height: 1.65; font-size: 1.02rem; }
+  .ohm__text p:last-child { margin-bottom: 0; }
+</style>
+
+<script>
+  (function () {
+    var wall = document.querySelector('[data-ohm-wall]');
+    var modal = document.querySelector('[data-ohm-modal]');
+    if (!wall || !modal) return;
+    var mark = modal.querySelector('[data-ohm-mark]');
+    var nameEl = modal.querySelector('[data-ohm-name]');
+    var metaEl = modal.querySelector('[data-ohm-meta]');
+    var starsEl = modal.querySelector('[data-ohm-stars]');
+    var textEl = modal.querySelector('[data-ohm-text]');
+    var lastFocus = null;
+
+    function open(card) {
+      var data = {};
+      try { data = JSON.parse(card.querySelector('[data-ohm-data]').textContent); } catch (e) {}
+      var src = card.querySelector('.ownrev__src');
+      mark.innerHTML = src ? src.innerHTML : '';
+      nameEl.textContent = data.name || '';
+      metaEl.textContent = 'Verified ' + (data.source === 'google' ? 'Google' : 'Yelp') + ' review';
+      starsEl.textContent = '★★★★★'.slice(0, data.rating || 5);
+      textEl.innerHTML = '';
+      String(data.text || '').split(/\n\s*\n/).forEach(function (par) {
+        var p = document.createElement('p'); p.textContent = par.trim();
+        if (p.textContent) textEl.appendChild(p);
+      });
+      lastFocus = document.activeElement;
+      modal.hidden = false; modal.setAttribute('aria-hidden', 'false');
+      document.documentElement.style.overflow = 'hidden';
+      requestAnimationFrame(function () { requestAnimationFrame(function () { modal.classList.add('is-open'); }); });
+      var closeBtn = modal.querySelector('.ohm__close'); if (closeBtn) closeBtn.focus();
+    }
+    function close() {
+      modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true');
+      document.documentElement.style.overflow = '';
+      setTimeout(function () { modal.hidden = true; }, 300);
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+    wall.addEventListener('click', function (e) {
+      var card = e.target.closest && e.target.closest('.ownrev__card');
+      if (card) open(card);
+    });
+    wall.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var card = e.target.closest && e.target.closest('.ownrev__card');
+      if (card) { e.preventDefault(); open(card); }
+    });
+    modal.querySelectorAll('[data-ohm-close]').forEach(function (el) { el.addEventListener('click', close); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) close(); });
+  })();
+</script>

@@ -418,7 +418,11 @@ video.ghero__bg { pointer-events: none; }
 
 /* ---------- Owner reviews (in crossover) ---------- */
 .ownrev { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 42px; }
-.ownrev__card { background: rgba(255,255,255,.08); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.16); border-radius: var(--radius-lg); padding: 24px; }
+.ownrev__card { background: rgba(255,255,255,.08); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.16); border-radius: var(--radius-lg); padding: 24px; cursor: pointer; transition: transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
+.ownrev__card:hover { transform: translateY(-3px); background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.28); }
+.ownrev__card:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.ownrev__cue { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: .82rem; font-weight: 600; color: #fff; opacity: .82; }
+.ownrev__cue svg { width: 14px; height: 14px; }
 .ownrev__stars { color: var(--gold); font-size: .95rem; letter-spacing: 2px; margin-bottom: 12px; }
 .ownrev__text { color: rgba(248,243,236,.92); font-size: .98rem; line-height: 1.6; margin: 0 0 16px; }
 .ownrev__who { display: flex; align-items: center; gap: 11px; }
