@@ -1,11 +1,14 @@
 /* Global in-page anchor scrolling.
    Native hash jumps land targets under the sticky site header, and on pages
-   that reflow after load (the owners page draws its performance chart with JS,
-   hydrates case studies / reviews / sections from /api/content, and lazy-loads
-   images) the target ends up mid-screen. This lands every #hash target at the
-   top of the viewport just below the header, then re-corrects across a few
-   frames so late layout shifts can't leave it off-position. User scroll input
-   cancels the pending corrections so we never yank the page back. */
+   that reflow after load the target ends up mid-screen. The owners page is the
+   worst case: the booking widget grows once /api/ghl slots load, /api/content
+   hydration re-renders sections, the performance chart is drawn with JS, and
+   images lazy-load — all AFTER the initial jump, shifting every anchor below
+   them. This lands each #hash target just below the header, then re-pins it as
+   the layout settles (via ResizeObserver on the body, plus backstop timers)
+   until the user scrolls or a short window elapses — so late growth can't
+   leave the target off-position, and we never yank the page back once the
+   reader takes over. */
 (function () {
   'use strict';
 
@@ -33,33 +36,52 @@
     window.scrollTo({ top: top, behavior: smooth ? 'smooth' : 'auto' });
   }
 
-  var timers = [];
-  function cancel() {
-    timers.forEach(clearTimeout);
-    timers = [];
-    window.removeEventListener('wheel', cancel);
-    window.removeEventListener('touchmove', cancel);
-    window.removeEventListener('keydown', onKey);
-  }
-  function onKey(e) {
-    // Ignore modifier-only keys; any real navigation key means "leave me be".
-    if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta') return;
-    cancel();
-  }
-
-  // Land on the target, then re-apply as late layout shifts settle. Delays are
-  // aligned with the chart draw / CMS hydration / reveal safety net (~1.2s).
+  // At most one active "settle" at a time.
+  var teardown = null;
   function settleTo(el, smooth) {
-    cancel();
-    scrollToEl(el, smooth);
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () { scrollToEl(el, smooth); });
+    if (teardown) teardown();
+    var active = true;
+    var timers = [];
+    var ro = null;
+
+    function repin(sm) { if (active && el.isConnected) scrollToEl(el, sm); }
+
+    teardown = function () {
+      active = false;
+      timers.forEach(clearTimeout);
+      timers = [];
+      if (ro) { ro.disconnect(); ro = null; }
+      window.removeEventListener('wheel', stop, { passive: true });
+      window.removeEventListener('touchmove', stop, { passive: true });
+      window.removeEventListener('keydown', onKey);
+      teardown = null;
+    };
+    function stop() { if (teardown) teardown(); }
+    function onKey(e) {
+      if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta') return;
+      stop();
+    }
+
+    // Initial land (smooth for clicks), plus a next-frame correction.
+    repin(smooth);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { repin(smooth); }); });
+
+    // Re-pin whenever the document height changes (widget render, hydration,
+    // images). ResizeObserver fires on any body size change.
+    if ('ResizeObserver' in window) {
+      ro = new ResizeObserver(function () { repin(false); });
+      try { ro.observe(document.body); } catch (e) { ro = null; }
+    }
+    // Backstop passes for browsers without ResizeObserver / missed frames.
+    [120, 400, 900, 1600, 2600, 3800].forEach(function (ms) {
+      timers.push(setTimeout(function () { repin(false); }, ms));
     });
-    [120, 400, 900, 1500].forEach(function (ms) {
-      timers.push(setTimeout(function () { scrollToEl(el, false); }, ms));
-    });
-    window.addEventListener('wheel', cancel, { passive: true });
-    window.addEventListener('touchmove', cancel, { passive: true });
+    // Hard stop so we never re-pin indefinitely (covers slow /api responses).
+    timers.push(setTimeout(stop, 5000));
+
+    // Any real user scroll/scrub hands control back to the reader.
+    window.addEventListener('wheel', stop, { passive: true });
+    window.addEventListener('touchmove', stop, { passive: true });
     window.addEventListener('keydown', onKey);
   }
 
