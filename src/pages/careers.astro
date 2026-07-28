@@ -12,9 +12,13 @@ const nav = [
 const cta = { label: 'Free estimate', href: '/owners#estimate' };
 ---
 
+<!-- Still placeholder copy (no real roles yet), so keep it out of search until
+     there's something worth ranking. Drop `noindex` and the /careers entry in
+     astro.config's sitemap filter once this page is written for real. -->
 <Base
   title="Careers | Cardo Vacation Rentals"
-  description="Placeholder page — careers at Cardo Vacation Rentals. Open roles coming soon."
+  description="Careers at Cardo Vacation Rentals — open roles coming soon."
+  noindex={true}
 >
   <MarketingHeader {nav} {cta} />
 
