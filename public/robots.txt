@@ -2,9 +2,17 @@
 User-agent: *
 Allow: /
 
-# Keep private/utility routes out of search results
-Disallow: /admin
+# /admin, /portal and /careers each carry a `noindex` meta tag, which is what
+# actually keeps them out of the index — so they must stay crawlable. Blocking
+# them here would hide the noindex from Google and leave the URLs eligible for
+# a bare, snippet-less listing instead.
+
+# /agreement is reached only through a tokenized link we email owners, so there
+# is nothing for a crawler to find. Blocked outright; it is noindex too.
 Disallow: /agreement
-Disallow: /portal
+
+# Cloud Function endpoints — they answer GET with 400/405, which Search Console
+# files under "Blocked due to other 4xx issue". Nothing here is a page.
+Disallow: /api/
 
 Sitemap: https://cardorentals.com/sitemap-index.xml

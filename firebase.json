@@ -45,7 +45,6 @@
       { "source": "/contact-us", "destination": "/owners", "type": 301 },
       { "source": "/contact", "destination": "/owners", "type": 301 },
       { "source": "/sales", "destination": "/owners", "type": 301 },
-      { "source": "/careers/**", "destination": "/owners", "type": 301 },
       { "source": "/business-development-sales-manager", "destination": "/owners", "type": 301 },
       { "source": "/outside-sales-representative", "destination": "/owners", "type": 301 },
       { "source": "/property-manager", "destination": "/owners", "type": 301 },
@@ -68,7 +67,8 @@
       { "source": "/acceptable-use-policy", "destination": "/terms", "type": 301 },
       { "source": "/terms-of-service", "destination": "/terms", "type": 301 },
       { "source": "/rental-agreement", "destination": "/terms", "type": 301 },
-      { "source": "/site-map", "destination": "/", "type": 301 }
+      { "source": "/site-map", "destination": "/", "type": 301 },
+      { "source": "/sitemap.xml", "destination": "/sitemap-index.xml", "type": 301 }
     ],
     "rewrites": [
       { "source": "/api/ghl", "function": { "functionId": "ghl", "region": "us-central1" } },
