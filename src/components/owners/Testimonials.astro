@@ -28,7 +28,7 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
           <span class="qcard__name">{r.name}</span>
           <span class="qcard__loc" data-ot-loc>{r.location}</span>
         </span>
-        <span class="qcard__cue">Read review<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        <span class="qcard__cue">Read full review<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         <script type="application/json" data-qfull set:html={JSON.stringify({ text: r.text, rating: r.rating })}></script>
       </div>
     ))}
@@ -93,6 +93,8 @@ const YMARK = '<img class="src-yelp" src="/assets/badges/yelp-logo.svg" alt="Yel
   .qcard__cue { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; font-size: .82rem; font-weight: 600; color: var(--rose); opacity: 0; transition: opacity var(--dur-fast) var(--ease); }
   .qcard__cue svg { width: 14px; height: 14px; }
   .qcard:hover .qcard__cue { opacity: 1; }
+  /* Touch / mobile has no hover — keep the "Read full review" cue visible. */
+  @media (hover: none), (max-width: 640px) { .qcard__cue { opacity: 1; } }
 
   .qwall__more { text-align: center; margin-top: 8px; }
   .qwall__more-btn { display: none; align-items: center; gap: 10px; font-weight: 600; font-size: 1rem; color: var(--ink); background: transparent; border: 1px solid var(--line-strong, rgba(14,17,27,.22)); border-radius: var(--radius-pill); padding: 13px 26px; cursor: pointer; }
