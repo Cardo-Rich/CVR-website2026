@@ -1,6 +1,6 @@
 /* guest.js — booking search, rental filters, favorites, and reviews carousel
    for the Cardo "Book a Stay" page. Plain vanilla. */
-import { bookingUrlFrom } from './booking.js';
+import { bookingUrlFrom, initDateFields } from './booking.js';
 (function () {
   'use strict';
 
@@ -57,6 +57,9 @@ import { bookingUrlFrom } from './booking.js';
       b.classList.toggle('is-on');
     });
   });
+
+  /* ---- Search widget dates: today → 3 nights out, on every widget ---- */
+  [].slice.call(document.querySelectorAll('[data-bookbar], [data-navsearch]')).forEach(initDateFields);
 
   /* ---- Booking bar → booking site ---- */
   (function () {

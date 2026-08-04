@@ -835,6 +835,9 @@ video.ghero__bg { pointer-events: none; }
 .navsearch.is-shown { opacity: 1; transform: none; pointer-events: auto; }
 .navsearch__ic { width: 16px; height: 16px; color: var(--muted); flex: none; }
 .navsearch select, .navsearch input { border: none; background: none; font-family: var(--font-body); font-size: .84rem; color: var(--ink); outline: none; padding: 4px 2px; cursor: pointer; max-width: 116px; }
+/* Neighborhood names run longer than the date fields — give the select room and
+   trim anything that still overflows rather than cutting a word mid-letter. */
+.navsearch select { max-width: 136px; text-overflow: ellipsis; }
 .navsearch input[type="date"] { max-width: 116px; color: var(--ink-soft); }
 .navsearch__div { width: 1px; height: 18px; background: var(--line); flex: none; }
 .navsearch button { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--rose); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; flex: none; transition: background var(--dur-fast) var(--ease); }
