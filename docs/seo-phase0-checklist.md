@@ -72,7 +72,56 @@ month movement is visible.
 
 Expected baseline: Cardo named in 0–1 of 10. Strategy target: 5+ by month 6.
 
-## 4. Not doing (on purpose)
+## 4. Branded-SERP cleanup — stale booking portals (takedowns)
+
+Searching "Cardo Vacation Rentals" surfaces booking sites from past PMS
+platforms that Cardo no longer controls. They pollute the branded SERP that
+owners (and AI assistants doing entity verification) see, they show stale
+inventory under our name, and they can even take bookings. Known offenders
+(July 2026):
+
+| Site | What it is | Who controls it |
+|---|---|---|
+| `cardo.guestybookings.com` | Old Guesty booking portal, property pages indexed | **Guesty** (platform subdomain, not the old PM company) |
+| `cardorentals.hostify.com` | Old Hostify booking portal | **Hostify** (platform subdomain) |
+| `cardo-vacation-rentals.wheree.com` | Directory scrape | Wheree |
+| `cardo-furnished-rentals.webflow.io` | Legacy Webflow site | Possibly still ours — check the old Webflow account first |
+
+Key insight: the subdomains belong to the **PMS platforms**, not to the old
+management companies who won't cooperate. Platforms have abuse/brand channels
+and no incentive to defend a churned account's stale portal.
+
+Escalation ladder, in order:
+
+- [ ] **Webflow site**: check whether the old Webflow account is still
+      accessible (it was Cardo's own) — if so, just unpublish it. Done.
+- [ ] **Platform brand complaint** (Guesty + Hostify support/legal): the site
+      uses the "Cardo Vacation Rentals" name and brand without authorization,
+      the account holder no longer manages these properties, and live booking
+      pages under our name create consumer confusion and booking risk.
+      Request the portal be disabled or the brand name removed. Include proof
+      you're Cardo (email from cardorentals.com, business license).
+- [ ] **DMCA takedown** if the portals show Cardo-owned photography (they
+      almost certainly do): a copyright notice to the platform's designated
+      agent is the fastest lever there is — platforms process DMCA on a clock.
+      Inventory which photos are ours first.
+- [ ] **Trademark angle**: if "Cardo Vacation Rentals" is registered (check —
+      if not, a registration is worth it for exactly this), platforms respond
+      much faster to trademark complaints. Common-law rights still work in
+      the complaint even unregistered.
+- [ ] **After any page comes down**: submit the dead URLs to Google's
+      [Remove Outdated Content tool](https://search.google.com/search-console/remove-outdated-content)
+      so the SERP entry disappears instead of lingering for weeks.
+- [ ] **Wheree + other scrapes**: removal-request via their listed contact;
+      low priority — they rank below the real profiles once GBP/Yelp/LinkedIn
+      are strong.
+- [ ] **Fallback = suppression**: if a platform stalls, the parallel fix is
+      owning the branded SERP — site, GBP, Yelp, LinkedIn, Instagram,
+      Facebook, press mentions all outranking the stale portals. That work is
+      sections 1–3 of this checklist and Workstream 4 of the strategy; it
+      happens anyway.
+
+## 5. Not doing (on purpose)
 
 - **llms.txt / Speakable schema** — no engine uses them (see strategy §4).
 - **Wikipedia page** — won't pass notability for a local SMB; revisit only
