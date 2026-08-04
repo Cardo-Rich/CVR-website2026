@@ -54,12 +54,28 @@ export async function getSlots(cfg: GhlConfig, days: number): Promise<Day[]> {
 export interface BookInput {
   firstName?: string; lastName?: string; email?: string; phone?: string;
   startIso?: string; guests?: string; earlyContact?: boolean;
+  hearAbout?: string;
 }
+
+// The public endpoint can't be trusted to tag contacts with arbitrary strings,
+// so attribution answers are allowlisted against the form's own options. Must
+// stay in sync with the "How did you hear about us?" select in OwnerHero.astro.
+const HEAR_ABOUT_OPTIONS = new Set([
+  'Google search',
+  'AI assistant (ChatGPT, Perplexity, etc.)',
+  'Airbnb or VRBO',
+  'Referral from a friend or owner',
+  'My realtor',
+  'Social media',
+  'Stayed in a Cardo home',
+  'Other',
+]);
 
 // Upsert the contact (idempotent by email/phone) and, if a slot was chosen,
 // create the appointment. On a round-robin calendar GHL assigns the owner.
 export async function book(cfg: GhlConfig, input: BookInput): Promise<{ contactId: string; appointmentId?: string }> {
   const tz = cfg.timezone();
+  const hearAbout = HEAR_ABOUT_OPTIONS.has((input.hearAbout || '').trim()) ? (input.hearAbout || '').trim() : '';
   const contactBody: Record<string, unknown> = {
     locationId: cfg.locationId(),
     firstName: input.firstName || '',
@@ -68,6 +84,7 @@ export async function book(cfg: GhlConfig, input: BookInput): Promise<{ contactI
     phone: input.phone || '',
     source: 'Owners landing page',
   };
+  if (hearAbout) contactBody.tags = [`Heard: ${hearAbout}`];
   const cRes = await fetch(`${BASE}/contacts/upsert`, { method: 'POST', headers: headers(cfg, '2021-07-28'), body: JSON.stringify(contactBody) });
   if (!cRes.ok) throw new Error(`GHL contact upsert ${cRes.status}: ${await cRes.text()}`);
   const cJson = (await cRes.json()) as { contact?: { id?: string }; id?: string };
@@ -81,6 +98,7 @@ export async function book(cfg: GhlConfig, input: BookInput): Promise<{ contactI
     const extras = [
       input.guests ? `Additional guests: ${input.guests}` : '',
       input.earlyContact ? 'Wants earlier contact if a slot opens up.' : '',
+      hearAbout ? `Heard about us via: ${hearAbout}` : '',
     ].filter(Boolean).join('\n');
     const apptBody: Record<string, unknown> = {
       calendarId: cfg.calendarId(),
