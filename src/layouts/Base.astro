@@ -65,10 +65,26 @@ const orgSchema = {
   ].map((name) => ({ '@type': 'City', name })),
   address: {
     '@type': 'PostalAddress',
+    streetAddress: '3633 Camino Del Rio S, Ste 101',
     addressLocality: 'San Diego',
     addressRegion: 'CA',
+    postalCode: '92108',
     addressCountry: 'US',
   },
+  foundingDate: '2013',
+  founder: {
+    '@type': 'Person',
+    name: 'Rich Scherf',
+    jobTitle: 'Founder & CEO',
+  },
+  // Entity resolution for search/answer engines: tie this LocalBusiness to the
+  // same brand on the platforms AI assistants actually read (Yelp feeds
+  // Perplexity and ChatGPT directly). Only verified, Cardo-owned profiles here.
+  sameAs: [
+    'https://www.yelp.com/biz/cardo-vacation-rentals-san-diego',
+    'https://www.instagram.com/cardovacationrentals/',
+    'https://www.facebook.com/CardoVacationRentals/',
+  ],
   aggregateRating: {
     '@type': 'AggregateRating',
     ratingValue: '5',
