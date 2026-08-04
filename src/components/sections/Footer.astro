@@ -1,5 +1,6 @@
 ---
 import { company } from '../../data/site';
+import { CATEGORIES, categoryUrl } from '../../scripts/booking.js';
 ---
 
 <footer class="footer" data-screen-label="Footer">
@@ -19,11 +20,7 @@ import { company } from '../../data/site';
       <div class="footer__h">Guests</div>
       <ul>
         <li><a href="/">Find a rental</a></li>
-        <li><a href="/#results">Pet Friendly</a></li>
-        <li><a href="/#results">Pools</a></li>
-        <li><a href="/#results">Beachside</a></li>
-        <li><a href="/#results">Has a View</a></li>
-        <li><a href="/#results">Large Groups</a></li>
+        {CATEGORIES.map((c) => <li><a href={categoryUrl(c)}>{c.label}</a></li>)}
         <li><a href="/concierge">Concierge</a></li>
         <li><a href="/#explore">Local Faves</a></li>
         <li><a href="/reviews">Reviews</a></li>

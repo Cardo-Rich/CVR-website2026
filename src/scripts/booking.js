@@ -17,7 +17,10 @@
 export var BOOKING_BASE = 'https://booking.cardorentals.com';
 var SEARCH_PATH = '/s';
 
-// Nights between the pre-filled check-in and check-out dates.
+// Pre-filled stay: check-in a week out, three nights. The lead time matters —
+// in peak season the next few days are booked solid, so opening the search on
+// today's date lands the visitor on "no homes available".
+export var LEAD_DAYS = 7;
 export var STAY_NIGHTS = 3;
 
 // Default party size for the hero widget's Guests select.
@@ -58,6 +61,29 @@ export function boxFor(label) {
   return '';
 }
 
+/* ---- Browse-by-category links (menu drawer + footer) ---------------------
+   These used to be dead links that scrolled to the featured-homes strip. Each
+   now runs a real filtered search. The engine's amenity vocabulary is a fixed
+   enum — an unknown code is a 400, and a valid-but-unused one returns nothing
+   — so every filter here was checked against the live search before shipping,
+   with the count it returned today in the comment. Multiple amenities are OR'd.
+
+   Note on pools: no home in the portfolio carries a pool amenity
+   (OUTDOOR_POOL / INDOOR_POOL / HEATED_POOL all return zero), so a "Pools"
+   link could only ever land on an empty result page. It's a hot tub link
+   instead until pool homes are tagged upstream. */
+export var CATEGORIES = [
+  { label: 'Pet Friendly', params: 'petAllowed=true' },                                  // 13 homes
+  { label: 'Hot Tub', params: 'amenities=HOT_TUB' },                                     //  9 homes
+  { label: 'Beachside', params: 'boundaries=-117.290,32.700,-117.230,32.880' },          // 16 homes — the coastal strip, OB up through La Jolla
+  { label: 'Has a View', params: 'amenities=OCEAN_VIEW,MOUNTAIN_VIEW,CITY_VIEW' },       // 18 homes
+  { label: 'Large Groups', params: 'guests=10' }                                         //  5 homes
+];
+
+export function categoryUrl(category) {
+  return BOOKING_BASE + SEARCH_PATH + '?' + category.params;
+}
+
 function guestsNum(v) {
   var m = String(v || '').match(/\d+/);
   return m ? m[0] : '';
@@ -80,20 +106,32 @@ export function addDays(iso, n) {
   return isoDate(new Date(+p[0], +p[1] - 1, +p[2] + n));
 }
 
-/* Pre-fill a widget's dates with today → today + STAY_NIGHTS and keep the pair
-   sane afterwards. The markup carries build-time dates so the fields are never
-   blank on first paint; this re-stamps them so a build that's been live for a
-   while still opens on the visitor's actual today. */
+// The stay the widgets open on: a week out, three nights.
+export function defaultCheckIn() { return addDays(today(), LEAD_DAYS); }
+export function defaultCheckOut() { return addDays(defaultCheckIn(), STAY_NIGHTS); }
+
+/* Pre-fill a widget's dates with the default stay and keep the pair sane
+   afterwards. The markup carries build-time dates so the fields are never blank
+   on first paint; this re-stamps them so a build that's been live for a while
+   still opens on a stay in the visitor's future, not the build's. */
 export function initDateFields(form) {
   var ci = form.querySelector('input[aria-label="Check in"]');
   var co = form.querySelector('input[aria-label="Check out"]');
   if (!ci || !co) return;
   var now = today();
 
+  // Re-stamp only a field the visitor hasn't touched: the markup records what
+  // the build put there, so a value that still matches is ours to move forward,
+  // and anything else (a real choice, or one the browser restored) is left be.
+  function untouched(el) { return !el.value || el.value === el.getAttribute('data-default'); }
+  var ciFresh = untouched(ci), coFresh = untouched(co);
+
+  // Visitors can still pick anything from today onward; only the pre-filled
+  // value leads by a week.
   ci.min = now;
-  if (!ci.value || ci.value < now) ci.value = now;
+  if (ciFresh || ci.value < now) ci.value = defaultCheckIn();
   co.min = addDays(ci.value, 1);
-  if (!co.value || co.value <= ci.value) co.value = addDays(ci.value, STAY_NIGHTS);
+  if (coFresh || co.value <= ci.value) co.value = addDays(ci.value, STAY_NIGHTS);
 
   ci.addEventListener('change', function () {
     if (!ci.value) return; // visitor cleared it — leave the pair alone

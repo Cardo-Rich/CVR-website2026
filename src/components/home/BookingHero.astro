@@ -1,11 +1,12 @@
 ---
 import { heroPoster } from '../../data/home';
-import { AREAS, GUEST_OPTIONS, GUESTS_DEFAULT, STAY_NIGHTS, today, addDays } from '../../scripts/booking.js';
+import { AREAS, GUEST_OPTIONS, GUESTS_DEFAULT, today, addDays, defaultCheckIn, defaultCheckOut } from '../../scripts/booking.js';
 
 // Build-time dates so the fields are never blank on first paint; guest.js
-// re-stamps them on load so a long-lived build still opens on today's date.
-const checkIn = today();
-const checkOut = addDays(checkIn, STAY_NIGHTS);
+// re-stamps them on load so a long-lived build still opens a week out.
+// data-default marks these as the build's values, not the visitor's.
+const checkIn = defaultCheckIn();
+const checkOut = defaultCheckOut();
 ---
 
 <section class="ghero" data-screen-label="Hero">
@@ -25,8 +26,8 @@ const checkOut = addDays(checkIn, STAY_NIGHTS);
             {AREAS.map((a) => <option>{a.label}</option>)}
           </select>
         </label>
-        <label class="bookbar__field"><span>Check in</span><input type="date" value={checkIn} min={checkIn} aria-label="Check in" /></label>
-        <label class="bookbar__field"><span>Check out</span><input type="date" value={checkOut} min={addDays(checkIn, 1)} aria-label="Check out" /></label>
+        <label class="bookbar__field"><span>Check in</span><input type="date" value={checkIn} data-default={checkIn} min={today()} aria-label="Check in" /></label>
+        <label class="bookbar__field"><span>Check out</span><input type="date" value={checkOut} data-default={checkOut} min={addDays(today(), 1)} aria-label="Check out" /></label>
         <label class="bookbar__field"><span>Guests</span>
           <select aria-label="Guests">
             {GUEST_OPTIONS.map((g) => <option value={g.value} selected={g.value === GUESTS_DEFAULT}>{g.label}</option>)}
