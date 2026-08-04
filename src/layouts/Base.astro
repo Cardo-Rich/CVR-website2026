@@ -65,8 +65,10 @@ const orgSchema = {
   ].map((name) => ({ '@type': 'City', name })),
   address: {
     '@type': 'PostalAddress',
-    addressLocality: 'San Diego',
-    addressRegion: 'CA',
+    streetAddress: company.address.street,
+    addressLocality: company.address.city,
+    addressRegion: company.address.region,
+    postalCode: company.address.postalCode,
     addressCountry: 'US',
   },
   aggregateRating: {
