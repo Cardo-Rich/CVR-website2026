@@ -476,7 +476,8 @@
       try {
         fetch('/api/ghl', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({
           action:'book', firstName: lead.firstName, lastName: lead.lastName, email: lead.email, phone: lead.phone,
-          startIso: lead.appointmentStart, guests: lead.guests, earlyContact: !!lead.earlyContact
+          startIso: lead.appointmentStart, guests: lead.guests, earlyContact: !!lead.earlyContact,
+          hearAbout: lead.hearAbout || ''
         })}).then(function(r){ return r.json(); }).then(function(d){
           if (d && d.configured && d.contactId) saveLead({ contactId: d.contactId, appointmentId: d.appointmentId });
         }).catch(function(){});
@@ -486,6 +487,7 @@
       if (!lead.contactId) return;
       var text = [ lead.noProperty ? 'No property yet.' : ('Property: ' + (lead.address || '')),
         lead.amenities ? ('Amenities: ' + lead.amenities) : '',
+        lead.hearAbout ? ('Heard about us via: ' + lead.hearAbout) : '',
         lead.details ? ('Notes: ' + lead.details) : '' ].filter(Boolean).join('\n');
       try {
         fetch('/api/ghl', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'note', contactId: lead.contactId, text: text }) }).catch(function(){});
