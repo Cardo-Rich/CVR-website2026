@@ -11,6 +11,12 @@ export const company = {
   phone: '619-719-5282',
   phoneHref: '+16197195282',
   tagline: 'Luxury short-term rental management in San Diego.',
+  address: {
+    street: '3633 Camino del Rio S, Suite 101',
+    city: 'San Diego',
+    region: 'CA',
+    postalCode: '92108',
+  },
 };
 
 export const nav = ['For Owners', 'Design', 'Neighborhoods', 'Blog'];

@@ -65,10 +65,11 @@ const orgSchema = {
   ].map((name) => ({ '@type': 'City', name })),
   address: {
     '@type': 'PostalAddress',
-    streetAddress: '3633 Camino Del Rio S, Ste 101',
-    addressLocality: 'San Diego',
-    addressRegion: 'CA',
-    postalCode: '92108',
+    // From the shared `company` data so the schema and the footer can't drift.
+    streetAddress: company.address.street,
+    addressLocality: company.address.city,
+    addressRegion: company.address.region,
+    postalCode: company.address.postalCode,
     addressCountry: 'US',
   },
   foundingDate: '2013',

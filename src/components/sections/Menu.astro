@@ -5,6 +5,7 @@
 // The trigger button (`[data-menu-open]`) lives in each page's header.
 import { articles } from '../../data/blog';
 import { reviews, initial, avatarColor } from '../../data/reviews';
+import { CATEGORIES, categoryUrl } from '../../scripts/booking.js';
 
 const ownerFeature = articles.find((a) => a.featured) ?? articles[0];
 // A few standout Google reviews for the in-menu carousel.
@@ -31,11 +32,7 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
         <div class="menu-group">
           <div class="menu-group__h">By Accommodation Type</div>
           <div class="menu-chips">
-            <a href="/#results">Pet Friendly</a>
-            <a href="/#results">Pools</a>
-            <a href="/#results">Beachside</a>
-            <a href="/#results">Has a View</a>
-            <a href="/#results">Large Groups</a>
+            {CATEGORIES.map((c) => <a href={categoryUrl(c)}>{c.label}</a>)}
           </div>
         </div>
         <a class="menu-item" href="/#concierge">
@@ -154,16 +151,43 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
     if (!window.matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
 
     var HOLD_MS = 4200; // keep in sync with @keyframes navsplash-fill duration
+    var HOVER_MS = 140; // hover intent — a quick pass over the button shouldn't fire
     var locked = false; // once clicked, hold shown until we navigate
     var navTimer = null;
+    var hoverTimer = null;
     var pendingHref = '/owners';
+    // The reveal is deferred two frames so the CSS transition runs. A fast
+    // mouse-over/-out would otherwise land its mouseleave *between* those
+    // frames, and the queued callback would re-show a splash we'd just hidden
+    // — leaving it stuck over the page. `wantShown` is the source of truth.
+    var wantShown = false;
+    var rafA = 0, rafB = 0;
 
+    function cancelFrames() {
+      if (rafA) window.cancelAnimationFrame(rafA);
+      if (rafB) window.cancelAnimationFrame(rafB);
+      rafA = rafB = 0;
+    }
     function show() {
+      wantShown = true;
+      cancelFrames();
       splash.setAttribute('aria-hidden', 'false');
-      requestAnimationFrame(function () { requestAnimationFrame(function () { splash.classList.add('is-shown'); }); });
+      rafA = window.requestAnimationFrame(function () {
+        rafB = window.requestAnimationFrame(function () {
+          rafA = rafB = 0;
+          if (wantShown) splash.classList.add('is-shown');
+        });
+      });
+    }
+    function preview() { // hover/focus entry point — waits out a quick fly-by
+      window.clearTimeout(hoverTimer);
+      hoverTimer = window.setTimeout(show, HOVER_MS);
     }
     function hide() {
+      window.clearTimeout(hoverTimer);
       if (locked) return; // don't hide a splash we've committed to navigating from
+      wantShown = false;
+      cancelFrames();
       splash.classList.remove('is-shown');
       splash.setAttribute('aria-hidden', 'true');
     }
@@ -173,9 +197,9 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
     }
 
     ctas.forEach(function (a) {
-      a.addEventListener('mouseenter', show);
+      a.addEventListener('mouseenter', preview);
       a.addEventListener('mouseleave', hide);
-      a.addEventListener('focus', show);
+      a.addEventListener('focus', preview);
       a.addEventListener('blur', hide);
       a.addEventListener('click', function (e) {
         e.preventDefault();
@@ -190,6 +214,19 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
         navTimer = window.setTimeout(go, HOLD_MS);
       });
     });
+
+    // Safety net: the splash is pointer-events:none during the preview, so any
+    // mouse activity elsewhere on the page means the cursor has left the CTA.
+    // Catches a mouseleave the browser never delivered (fast slide, pointer
+    // leaving the window) instead of stranding the splash on screen.
+    document.addEventListener('mouseover', function (e) {
+      if (locked || !wantShown) return;
+      var t = e.target;
+      if (t && t.closest && t.closest('a.nav-cta')) return;
+      hide();
+    });
+    // Same idea for tab-away / window blur while the preview is up.
+    window.addEventListener('blur', function () { if (!locked) hide(); });
 
     // Click anywhere on the held splash to continue immediately.
     splash.addEventListener('click', function () { if (locked) go(); });

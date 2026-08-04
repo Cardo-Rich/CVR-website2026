@@ -2,6 +2,11 @@
 // V3 guest header: light-sand bar, a centered nav search that appears on
 // scroll, and a right-aligned "Menu" drawer (shared <Menu /> component).
 import Menu from './Menu.astro';
+import { AREAS, GUEST_OPTIONS, GUESTS_DEFAULT, today, addDays, defaultCheckIn, defaultCheckOut } from '../../scripts/booking.js';
+
+// Build-time dates; guest.js re-stamps them on load (see BookingHero).
+const checkIn = defaultCheckIn();
+const checkOut = defaultCheckOut();
 ---
 
 <header class="site-header" data-header data-screen-label="Header">
@@ -9,16 +14,22 @@ import Menu from './Menu.astro';
     <a href="/" class="site-header__logo" aria-label="Cardo — home">
       <img src="/assets/logo-horizontal-color.png" alt="Cardo Vacation Rentals" />
     </a>
+    <!-- Sits between the logo and the CTA so it can use the whole gap they
+         leave — see .navsearch in home.css. -->
+    <form class="navsearch" data-navsearch aria-label="Search rentals">
+      <svg class="navsearch__ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <select class="navsearch__where" aria-label="Where">{AREAS.map((a) => <option>{a.label}</option>)}</select>
+      <span class="navsearch__div"></span>
+      <input type="date" value={checkIn} data-default={checkIn} min={today()} aria-label="Check in" />
+      <span class="navsearch__div"></span>
+      <input type="date" value={checkOut} data-default={checkOut} min={addDays(today(), 1)} aria-label="Check out" />
+      <span class="navsearch__div navsearch__div--guests"></span>
+      <select class="navsearch__guests" aria-label="Guests">
+        {GUEST_OPTIONS.map((g) => <option value={g.value} selected={g.value === GUESTS_DEFAULT}>{g.label}</option>)}
+      </select>
+      <button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+    </form>
     <nav class="site-header__nav site-header__nav--guest">
-      <form class="navsearch" data-navsearch aria-label="Search rentals">
-        <svg class="navsearch__ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-        <select aria-label="Where"><option>Anywhere</option><option>La Jolla</option><option>Pacific Beach</option><option>Mission Beach</option><option>Del Mar</option><option>Encinitas</option><option>Carlsbad</option><option>Coronado</option></select>
-        <span class="navsearch__div"></span>
-        <input type="date" value="2026-07-10" aria-label="Check in" />
-        <span class="navsearch__div"></span>
-        <input type="date" value="2026-07-15" aria-label="Check out" />
-        <button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
-      </form>
       <a class="nav-cta" href="/owners"><span>Manage My Home</span></a>
       <button type="button" class="menu-btn" data-menu-open aria-expanded="false" aria-controls="site-menu" aria-label="Open menu">
         <span class="menu-btn__bars" aria-hidden="true"><span></span><span></span><span></span></span>

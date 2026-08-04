@@ -1,5 +1,12 @@
 ---
 import { heroPoster } from '../../data/home';
+import { AREAS, GUEST_OPTIONS, GUESTS_DEFAULT, today, addDays, defaultCheckIn, defaultCheckOut } from '../../scripts/booking.js';
+
+// Build-time dates so the fields are never blank on first paint; guest.js
+// re-stamps them on load so a long-lived build still opens a week out.
+// data-default marks these as the build's values, not the visitor's.
+const checkIn = defaultCheckIn();
+const checkOut = defaultCheckOut();
 ---
 
 <section class="ghero" data-screen-label="Hero">
@@ -16,13 +23,15 @@ import { heroPoster } from '../../data/home';
       <div class="bookbar__card">
         <label class="bookbar__field"><span>Where</span>
           <select aria-label="Neighborhood">
-            <option>Anywhere</option><option>La Jolla</option><option>Pacific Beach</option><option>Mission Beach</option><option>Del Mar</option><option>Encinitas</option><option>Carlsbad</option><option>Coronado</option>
+            {AREAS.map((a) => <option>{a.label}</option>)}
           </select>
         </label>
-        <label class="bookbar__field"><span>Check in</span><input type="date" value="2026-07-10" aria-label="Check in" /></label>
-        <label class="bookbar__field"><span>Check out</span><input type="date" value="2026-07-15" aria-label="Check out" /></label>
+        <label class="bookbar__field"><span>Check in</span><input type="date" value={checkIn} data-default={checkIn} min={today()} aria-label="Check in" /></label>
+        <label class="bookbar__field"><span>Check out</span><input type="date" value={checkOut} data-default={checkOut} min={addDays(today(), 1)} aria-label="Check out" /></label>
         <label class="bookbar__field"><span>Guests</span>
-          <select aria-label="Guests"><option>2 guests</option><option>4 guests</option><option>6 guests</option><option>8 guests</option><option>10+ guests</option></select>
+          <select aria-label="Guests">
+            {GUEST_OPTIONS.map((g) => <option value={g.value} selected={g.value === GUESTS_DEFAULT}>{g.label}</option>)}
+          </select>
         </label>
         <button type="submit" class="bookbar__search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg> Search</button>
       </div>
