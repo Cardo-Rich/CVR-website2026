@@ -1,0 +1,405 @@
+---
+import Base from '../layouts/Base.astro';
+import MarketingHeader from '../components/sections/MarketingHeader.astro';
+import Footer from '../components/sections/Footer.astro';
+
+// home.css carries the shared FAQ-accordion styles this page reuses.
+import '../styles/home.css';
+
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs' },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog' },
+];
+const cta = { label: 'Free estimate', href: '/owners#estimate' };
+
+// Visible date + schema dateModified. Bump whenever the numbers are re-checked
+// — freshness is a real ranking input for AI answer engines, and a stale fees
+// page is worse than none. Re-verify the market ranges at least quarterly.
+const UPDATED_ISO = '2026-08-06';
+const UPDATED_LABEL = 'August 2026';
+
+// Market ranges must stay consistent with the /owners comparison table
+// (Compare.astro: Cardo 20% · full-service 18–35% · half-service 10–20%).
+const feeModels = [
+  {
+    model: 'Full-service management',
+    rate: '18–35%',
+    of: 'of booking revenue',
+    covers: 'Marketing, pricing, guest care, turnovers, compliance — everything.',
+    watch: 'The range is wide because "full service" isn\'t standardized. Ask exactly what\'s excluded.',
+  },
+  {
+    model: 'Cardo — full service',
+    rate: '20%',
+    of: 'of booking revenue, all-in',
+    covers: 'Everything below. No setup fees, no monthly minimums, no charge until your home earns.',
+    watch: null,
+    cardo: true,
+  },
+  {
+    model: 'Half-service / co-hosting',
+    rate: '10–20%',
+    of: 'of booking revenue',
+    covers: 'Usually listing and pricing only. Guest problems, turnovers, and compliance stay yours.',
+    watch: 'With some national half-service brands the listing and its reviews belong to them — leave, and you start from zero.',
+  },
+  {
+    model: 'Flat monthly fee',
+    rate: '$300–500',
+    of: 'per month',
+    covers: 'A fixed scope of coordination tasks.',
+    watch: 'The manager earns the same whether your home is booked or empty — incentives point the wrong way.',
+  },
+];
+
+const included = [
+  { t: 'Professional marketing', d: 'Pro photography, listing copy, and distribution across Airbnb, VRBO, and direct booking.' },
+  { t: 'Dynamic pricing', d: 'Rates tuned daily to San Diego demand — racing season, conventions, swell windows.' },
+  { t: '24/7 guest care', d: 'Every message, question, and midnight lockout handled by our team, not you.' },
+  { t: 'Turnovers & inspections', d: 'In-house cleaning, inspected after every stay, with a 5-star cleanliness guarantee.' },
+  { t: 'STRO & TOT compliance', d: 'City licensing, compliance reporting, and transient occupancy tax filings, handled.' },
+  { t: 'Transparent accounting', d: 'Real-time owner dashboard and itemized monthly statements. Every dollar visible.' },
+];
+
+const hiddenFees = [
+  { t: 'Onboarding or "setup" fees', d: 'Hundreds to thousands of dollars before your first booking. Cardo charges none.' },
+  { t: 'Technology and channel fees', d: 'Monthly software surcharges layered on top of the management percentage.' },
+  { t: 'Maintenance markups', d: 'A percentage silently added to every vendor invoice that crosses the manager\'s desk.' },
+  { t: 'Linen and restocking programs', d: 'Mandatory supply programs billed above retail.' },
+  { t: 'Guest-fee skimming', d: 'Booking or "resort" fees charged to guests that never appear on your statement.' },
+  { t: 'Exit penalties and listing lock-in', d: 'Long terms, cancellation fees — or losing your listing\'s reviews when you leave.' },
+];
+
+const faqs = [
+  {
+    q: 'How much do Airbnb property managers charge in San Diego?',
+    a: 'Full-service vacation rental managers in San Diego typically charge 18–35% of booking revenue. Half-service and co-hosting arrangements run 10–20%, and flat-rate services advertise $300–500 per month. Cardo charges a straight 20% of booking revenue, all-in.',
+  },
+  {
+    q: 'Does Cardo charge setup or onboarding fees?',
+    a: 'No. No setup fees, no monthly minimums, and no charge until your home is earning. Onboarding, design consultation, photography, and listing build-out are part of getting your home live — not a line item.',
+  },
+  {
+    q: 'Do I pay anything when the calendar is empty?',
+    a: 'No. Cardo earns a percentage of booking revenue only, so we are paid exactly when you are. An empty calendar costs us too — which is the incentive structure you want your manager to have.',
+  },
+  {
+    q: 'Who pays for cleaning?',
+    a: 'Guests do, through the cleaning fee on each booking — that is standard across the industry. What is not standard: Cardo guarantees the clean. If a turnover isn\'t 5-star quality, Cardo covers that guest\'s cleaning fee.',
+  },
+  {
+    q: 'Why do some companies charge 30% and others 10%?',
+    a: 'Scope. National full-service brands in San Diego commonly run 25–35%. The 10–15% offers are usually half-service: your listing gets marketed, but guest care, turnovers, and compliance stay your job — and with some brands, the listing and its reviews belong to them if you ever leave. Compare what you keep, not just what you pay.',
+  },
+  {
+    q: 'Does hiring a manager change my tax benefits?',
+    a: 'Short-term rentals keep their favorable tax treatment with a manager involved, but if you use the STR material-participation strategy, how the work is split matters. Read our cost segregation guide and talk to your CPA about your situation.',
+  },
+];
+
+const description =
+  'What vacation rental management costs in San Diego in 2026: full-service runs 18–35% of revenue. Cardo charges a transparent 20% all-in — no setup fees, no minimums. See exactly what\'s included.';
+
+const faqSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+});
+
+const pageSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://cardorentals.com/management-fees',
+  name: 'Vacation Rental Management Fees in San Diego (2026 Guide)',
+  description,
+  dateModified: UPDATED_ISO,
+  isPartOf: { '@id': 'https://cardorentals.com/#organization' },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
+      { '@type': 'ListItem', position: 2, name: 'For Owners', item: 'https://cardorentals.com/owners' },
+      { '@type': 'ListItem', position: 3, name: 'Management fees', item: 'https://cardorentals.com/management-fees' },
+    ],
+  },
+});
+---
+
+<Base
+  title="Vacation Rental Management Fees in San Diego (2026 Guide) | Cardo Vacation Rentals"
+  description={description}
+  image="/assets/og/og-owners.jpg"
+  imageAlt="Cardo Vacation Rentals — transparent vacation rental management pricing in San Diego"
+>
+  <script slot="head" type="application/ld+json" is:inline set:html={pageSchema} />
+  <MarketingHeader {nav} {cta} />
+
+  <main>
+    <!-- Hero: the direct answer, first — this is the chunk answer engines lift. -->
+    <section class="phero" data-screen-label="Fees hero">
+      <img class="phero__bg" src="/assets/photos/imported/unsplash-1600607687939-ce8a6c25118c.jpg" alt="" />
+      <div class="phero__overlay"></div>
+      <div class="phero__inner narrow">
+        <p class="eyebrow">Management fees, explained</p>
+        <h1>What vacation rental management costs in San Diego.</h1>
+        <p>
+          Full-service vacation rental managers in San Diego charge <strong>18–35% of booking
+          revenue</strong>. Cardo charges a straight <strong>20%, all-in</strong> — no setup fees,
+          no monthly minimums, and no charge until your home is earning. Here's the whole market,
+          what our 20% covers, and the fees to watch for anywhere else.
+        </p>
+        <a class="btn btn-lg" href="/owners#estimate">See what your home would net</a>
+        <p class="mf-updated">Updated {UPDATED_LABEL} · rates re-checked against the current San Diego market</p>
+      </div>
+    </section>
+
+    <!-- Market rates -->
+    <section class="section-pad" data-screen-label="Market rates">
+      <div class="section-wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">The market</p>
+          <h2>What do Airbnb property managers charge?</h2>
+          <p class="lede muted">
+            Four pricing models cover nearly every management company in San Diego. The percentage
+            is only half the question — what it buys is the other half.
+          </p>
+        </div>
+        <div class="mf-models">
+          {feeModels.map((m) => (
+            <div class:list={['mf-model', 'reveal', { 'mf-model--cardo': m.cardo }]}>
+              <div class="mf-model__head">
+                <h3>{m.model}</h3>
+                <div class="mf-model__rate">{m.rate}<span>{m.of}</span></div>
+              </div>
+              <p class="mf-model__covers">{m.covers}</p>
+              {m.watch && <p class="mf-model__watch">Watch for: {m.watch}</p>}
+              {m.cardo && <a class="link-more" href="/owners#compare">See the full comparison →</a>}
+            </div>
+          ))}
+        </div>
+        <p class="mf-fine reveal">
+          Ranges reflect published San Diego rates and industry fee surveys as of {UPDATED_LABEL}.
+          "Full service" varies by company — always compare scope line by line.
+        </p>
+      </div>
+    </section>
+
+    <!-- What 20% includes -->
+    <section class="section-pad mf-alt" data-screen-label="What's included">
+      <div class="section-wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Cardo's 20%</p>
+          <h2>What's included — and what you'll never be billed for.</h2>
+          <p class="lede muted">
+            One number covers the entire operation. If it's part of running your home well, it's in
+            the 20%.
+          </p>
+        </div>
+        <div class="mf-inc">
+          {included.map((i) => (
+            <div class="mf-inc__item reveal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+              <div>
+                <h3>{i.t}</h3>
+                <p>{i.d}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="mf-never reveal">
+          Never on a Cardo statement: setup fees, onboarding fees, monthly minimums, technology
+          surcharges, or charges while your home isn't earning.
+        </p>
+      </div>
+    </section>
+
+    <!-- Hidden fees -->
+    <section class="section-pad" data-screen-label="Hidden fees">
+      <div class="section-wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Read the fine print</p>
+          <h2>Six fees that hide inside "competitive" rates.</h2>
+          <p class="lede muted">
+            A low headline percentage often grows on the statement. These are the six to ask any
+            manager about before you sign.
+          </p>
+        </div>
+        <div class="mf-hidden">
+          {hiddenFees.map((h, i) => (
+            <div class="mf-hidden__item reveal">
+              <span class="mf-hidden__n">{i + 1}</span>
+              <div>
+                <h3>{h.t}</h3>
+                <p>{h.d}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="mf-fine reveal">
+          The long version, with real statement examples:
+          <a href="/blog/the-real-cost-of-mystery-fees">The real cost of mystery fees →</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- Worth it -->
+    <section class="section-pad mf-alt" data-screen-label="Worth it">
+      <div class="section-wrap mf-worth">
+        <div class="mf-worth__intro reveal">
+          <p class="eyebrow">The real question</p>
+          <h2>Is 20% worth it?</h2>
+          <p class="lede muted">
+            The fee is what you see. The return is what a professionally run home earns over one
+            that's listed and left alone.
+          </p>
+        </div>
+        <ul class="mf-worth__list reveal">
+          <li>
+            <strong>Revenue is made, not listed.</strong> Daily dynamic pricing, professional
+            photography, and design that commands higher rates — Cardo-designed homes outperform
+            their market by up to 61%.
+          </li>
+          <li>
+            <strong>Reviews compound.</strong> 3,500+ five-star Airbnb reviews mean placement,
+            trust, and pricing power a new or part-time listing can't reach.
+          </li>
+          <li>
+            <strong>Your time has a rate too.</strong> Self-managing a busy STR is guest messages
+            at midnight, turnover logistics, licensing renewals, and TOT filings — most owners
+            spend 15+ hours a month, every month.
+          </li>
+          <li>
+            <strong>Compliance is not optional.</strong> San Diego's STRO licenses are capped and
+            precious; a filing mistake can cost you the license itself. Protecting it is part of
+            the job.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section-pad" data-screen-label="Fees FAQ">
+      <div class="section-wrap">
+        <div class="faq__head reveal">
+          <p class="eyebrow center" style="justify-content:center">Fees, answered</p>
+          <h2>Common questions about management fees.</h2>
+        </div>
+        <div class="faq__list" data-faq>
+          {faqs.map((f, i) => (
+            <div class:list={['faq__item', i === 0 ? 'is-open' : '']} data-faq-item>
+              <button class="faq__q" type="button" aria-expanded={i === 0 ? 'true' : 'false'}>
+                <span>{f.q}</span>
+                <span class="faq__plus">+</span>
+              </button>
+              <div class="faq__panel">
+                <p class="muted faq__a">{f.a}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="mf-fine reveal" style="text-align:center">
+          Tax question in there? Start with our <a href="/cost-segregation">cost segregation guide for STR owners</a>.
+        </p>
+      </div>
+      <script type="application/ld+json" is:inline set:html={faqSchema} />
+    </section>
+
+    <section class="cta" data-screen-label="CTA">
+      <div class="cta__inner reveal">
+        <p class="eyebrow">Transparent since 2013</p>
+        <h2>See the number that actually matters: your net.</h2>
+        <p>
+          A free earning estimate shows what your home should gross in today's San Diego market —
+          and exactly what you'd keep after our 20%.
+        </p>
+        <a class="btn btn-lg" href="/owners#estimate">Get my free estimate</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .mf-alt { background: var(--cream); }
+  .mf-updated { margin-top: 14px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.75); }
+
+  /* Market models */
+  .mf-models { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .mf-model { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px 26px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 12px; }
+  .mf-model--cardo { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), var(--shadow-md); }
+  .mf-model__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .mf-model__head h3 { margin: 0; font-size: 1.12rem; }
+  .mf-model__rate { font-family: var(--font-display); font-weight: 600; font-size: 1.7rem; color: var(--ink); line-height: 1; text-align: right; }
+  .mf-model--cardo .mf-model__rate { color: var(--rose); }
+  .mf-model__rate span { display: block; font-family: var(--font-body); font-size: 0.72rem; font-weight: 500; color: var(--muted); margin-top: 5px; letter-spacing: 0.02em; }
+  .mf-model__covers { margin: 0; color: var(--ink); font-size: 0.95rem; line-height: 1.55; }
+  .mf-model__watch { margin: 0; color: var(--muted); font-size: 0.85rem; line-height: 1.55; border-top: 1px solid var(--line); padding-top: 12px; }
+  .link-more { font-size: 0.9rem; font-weight: 600; }
+  .mf-fine { max-width: 760px; margin: 26px auto 0; font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+  /* Included grid */
+  .mf-inc { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .mf-inc__item { display: flex; gap: 12px; align-items: flex-start; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 22px 20px; box-shadow: var(--shadow-sm); }
+  .mf-inc__item svg { flex: none; width: 22px; height: 22px; margin-top: 2px; }
+  .mf-inc__item h3 { margin: 0 0 6px; font-size: 1.02rem; }
+  .mf-inc__item p { margin: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.55; }
+  .mf-never { max-width: 760px; margin: 26px auto 0; text-align: center; font-weight: 600; color: var(--ink); }
+
+  /* Hidden fees */
+  .mf-hidden { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 28px; }
+  .mf-hidden__item { display: flex; gap: 14px; align-items: flex-start; }
+  .mf-hidden__n { display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; }
+  .mf-hidden__item h3 { margin: 0 0 4px; font-size: 1.02rem; }
+  .mf-hidden__item p { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.55; }
+
+  /* Worth it */
+  .mf-worth { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(32px, 5vw, 72px); align-items: start; }
+  .mf-worth__intro h2 { margin: 8px 0 12px; }
+  .mf-worth__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 20px; }
+  .mf-worth__list li { font-size: 1.02rem; line-height: 1.6; color: var(--muted); padding-left: 18px; border-left: 2px solid var(--gold); }
+  .mf-worth__list strong { color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .mf-models { grid-template-columns: 1fr; }
+    .mf-inc { grid-template-columns: 1fr 1fr; }
+    .mf-worth { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .mf-inc { grid-template-columns: 1fr; }
+    .mf-hidden { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  import '../scripts/reveal.js';
+
+  // FAQ accordion — same single-open behavior as the owners page (owners.js),
+  // inlined so this page doesn't pull in the whole owners bundle.
+  const list = document.querySelector('[data-faq]');
+  list?.querySelectorAll('[data-faq-item]').forEach((item) => {
+    const btn = item.querySelector('.faq__q');
+    const panel = item.querySelector('.faq__panel') as HTMLElement | null;
+    btn?.addEventListener('click', () => {
+      const willOpen = !item.classList.contains('is-open');
+      list.querySelectorAll('[data-faq-item]').forEach((o) => {
+        o.classList.remove('is-open');
+        o.querySelector('.faq__q')?.setAttribute('aria-expanded', 'false');
+        (o.querySelector('.faq__panel') as HTMLElement).style.maxHeight = '';
+      });
+      if (willOpen && panel) {
+        item.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+  const open = list?.querySelector('[data-faq-item].is-open .faq__panel') as HTMLElement | null;
+  if (open) open.style.maxHeight = open.scrollHeight + 'px';
+</script>

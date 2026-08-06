@@ -6,6 +6,7 @@ const faqs = [
   {
     q: 'What does Cardo charge?',
     a: 'A straight 20% of booking revenue — no setup fees, no monthly minimums, and no charge until your home is earning. Other full-service managers run 18–35%. Your exact scope is confirmed in your free property analysis.',
+    more: { href: '/management-fees', label: 'See the full fee breakdown →' },
   },
   {
     q: 'How fast can my home go live?',
@@ -52,7 +53,10 @@ const faqSchema = JSON.stringify({
               <span class="faq__plus">+</span>
             </button>
             <div class="faq__panel">
-              <p class="muted faq__a">{f.a}</p>
+              <p class="muted faq__a">
+                {f.a}
+                {f.more && <> <a href={f.more.href}>{f.more.label}</a></>}
+              </p>
             </div>
           </div>
         ))
