@@ -23,7 +23,7 @@ const steps = [
     n: '1',
     title: 'Read your termination clause',
     blurb:
-      'Find the notice period (usually 30–60 days), any early-exit fee, and — most important — who owns the listing, its reviews, and the photos. That one line decides how the rest of the switch goes.',
+      'Find the notice period (usually 30–60 days), any early-exit fee, and, most important, who owns the listing, its reviews, and the photos. That one line decides how the rest of the switch goes.',
   },
   {
     n: '2',
@@ -47,7 +47,7 @@ const steps = [
     n: '5',
     title: 'Relaunch stronger',
     blurb:
-      'New photography, sharper listing copy, dynamic pricing, and a compliance check — so the switch reads as an upgrade to guests and to the algorithm, not a reset.',
+      'New photography, sharper listing copy, dynamic pricing, and a compliance check, so the switch reads as an upgrade to guests and to the algorithm, not a reset.',
   },
 ];
 
@@ -58,7 +58,7 @@ const faqs = [
   },
   {
     q: 'Will I lose my Airbnb reviews if I change managers?',
-    a: 'It depends on who owns the listing. If it was created under your own Airbnb account, the reviews stay with you and move to the new manager. If the listing lives under the manager\'s account — common with some national brands — the reviews stay with them when you leave. Check this before you sign with anyone, and ask us to assess what\'s portable before you switch.',
+    a: 'It depends on who owns the listing. Reviews belong to the listing, so a listing created under your own account moves with you, while one that lives under a management account generally stays behind, whichever company runs it. Before you switch, we assess what is portable and plan the relaunch to rebuild momentum fast.',
   },
   {
     q: 'What happens to bookings already on the calendar?',
@@ -66,15 +66,15 @@ const faqs = [
   },
   {
     q: 'What happens to my San Diego STRO license when I switch?',
-    a: 'Your STRO license belongs to you, the host — not to your management company. Switching managers doesn\'t forfeit it. The city\'s records (like the local-contact designation) need updating, and Cardo handles that as part of onboarding, along with TOT filings going forward.',
+    a: 'Your STRO license belongs to you, the host, not to your management company. Switching managers doesn\'t forfeit it. The city\'s records (like the local-contact designation) need updating, and Cardo handles that as part of onboarding, along with TOT filings going forward.',
   },
   {
     q: 'How long does switching take?',
-    a: 'The contractual notice period — typically 30–60 days — runs in parallel with onboarding. Most Cardo homes are live in about two weeks, so the notice period, not the setup, is usually the long pole.',
+    a: 'The contractual notice period, typically 30–60 days, runs in parallel with onboarding. Most Cardo homes are live in about two weeks, so the notice period, not the setup, is usually the long pole.',
   },
   {
     q: 'What does switching to Cardo cost?',
-    a: 'Nothing. No setup fees, no onboarding fees, and no charge until your home is earning. Cardo is a straight 20% of booking revenue once bookings land — see the full fee breakdown for how that compares.',
+    a: 'Nothing. No setup fees, no onboarding fees, and no charge until your home is earning. Cardo is a straight 20% of booking revenue once bookings land. See the full fee breakdown for how that compares.',
   },
 ];
 
@@ -114,7 +114,7 @@ const pageSchema = JSON.stringify({
   title="How to Switch Vacation Rental Managers in San Diego | Cardo Vacation Rentals"
   description={description}
   image="/assets/og/og-owners.jpg"
-  imageAlt="Cardo Vacation Rentals — switching short-term rental management companies in San Diego"
+  imageAlt="Cardo Vacation Rentals, switching short-term rental management companies in San Diego"
 >
   <script slot="head" type="application/ld+json" is:inline set:html={pageSchema} />
   <MarketingHeader {nav} {cta} />
@@ -129,9 +129,9 @@ const pageSchema = JSON.stringify({
         <h1>Switching vacation rental managers is easier than staying unhappy.</h1>
         <p>
           Owners put up with slow responses and murky statements for years because switching feels
-          risky. It isn't: with the handover run in the right order — <strong>contract first, new
-          manager second, notice third</strong> — you keep your reviews, your bookings, and your
-          STRO license, and your calendar never goes dark.
+          risky. It isn't. Run the handover in the right order, <strong>contract first, new
+          manager second, notice third</strong>, and you keep your reviews, your bookings, and your
+          STRO license while your calendar never goes dark.
         </p>
         <a class="btn btn-lg" href="/owners#estimate">Plan my switch</a>
         <p class="sw-updated">Updated {UPDATED_LABEL}</p>
@@ -167,7 +167,7 @@ const pageSchema = JSON.stringify({
     <section class="section-pad sw-alt" data-screen-label="Contract check">
       <div class="section-wrap sw-contract">
         <div class="sw-contract__intro reveal">
-          <p class="eyebrow">Before you sign anything — or leave anyone</p>
+          <p class="eyebrow">Before you sign anything, or leave anyone</p>
           <h2>The four contract lines that decide your switch.</h2>
           <p class="lede muted">
             Five minutes with your current agreement answers most of the scary questions.
@@ -182,7 +182,7 @@ const pageSchema = JSON.stringify({
           </li>
           <li>
             <strong>Notice period.</strong> Usually 30–60 days. Onboarding with the new manager
-            runs in parallel, so notice time is setup time — not downtime.
+            runs in parallel, so notice time is setup time, not downtime.
           </li>
           <li>
             <strong>Termination fees.</strong> Some contracts charge for leaving early or keep
@@ -191,7 +191,7 @@ const pageSchema = JSON.stringify({
           </li>
           <li>
             <strong>Photo ownership.</strong> Manager-commissioned photos often don't come with
-            you. Cardo reshoots every home it takes on anyway — in-house, at no charge.
+            you. Cardo reshoots every home it takes on anyway, in-house, at no charge.
           </li>
         </ul>
       </div>
@@ -204,18 +204,18 @@ const pageSchema = JSON.stringify({
           <p class="eyebrow">What we take off your plate</p>
           <h2>A handover you mostly watch happen.</h2>
           <p class="lede muted">
-            Tell us your notice date and we run the rest as a checklist — most owners are
+            Tell us your notice date and we run the rest as a checklist. Most owners are
             surprised how little lands on them.
           </p>
         </div>
         <div class="sw-handover">
           {[
             { t: 'Transition timing', d: 'We map the switch around existing reservations so no booking is disturbed and no revenue gap opens.' },
-            { t: 'Asset transfer', d: 'Listings, reviews where portable, guest data, lock codes, vendor handoffs — inventoried and moved.' },
+            { t: 'Asset transfer', d: 'Listings, reviews where portable, guest data, lock codes, vendor handoffs: inventoried and moved.' },
             { t: 'City paperwork', d: 'STRO local-contact updates and TOT filing setup, so compliance never skips a month.' },
             { t: 'The awkward part', d: "If you'd rather not manage the goodbye, we coordinate directly with your outgoing manager." },
             { t: 'Relaunch design & photos', d: 'In-house design review and fresh photography, so the listing relaunches above where it left off.' },
-            { t: 'Pricing reset', d: 'Dynamic pricing tuned to your neighborhood from day one — most switches come with an immediate rate correction.' },
+            { t: 'Pricing reset', d: 'Dynamic pricing tuned to your neighborhood from day one. Most switches come with an immediate rate correction.' },
           ].map((i) => (
             <div class="sw-handover__item reveal">
               <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
@@ -263,7 +263,7 @@ const pageSchema = JSON.stringify({
         <h2>Switch without the booking gap.</h2>
         <p>
           Tell us where your home is and when your notice period could start. We'll map the
-          transition — and show you what the home should be earning on the other side of it.
+          transition and show you what the home should be earning on the other side of it.
         </p>
         <a class="btn btn-lg" href="/owners#estimate">Get my free estimate</a>
       </div>

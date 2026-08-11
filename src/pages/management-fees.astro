@@ -17,7 +17,7 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
 // Visible date + schema dateModified. Bump whenever the numbers are re-checked
 // — freshness is a real ranking input for AI answer engines, and a stale fees
 // page is worse than none. Re-verify the market ranges at least quarterly.
-const UPDATED_ISO = '2026-08-06';
+const UPDATED_ISO = '2026-08-11';
 const UPDATED_LABEL = 'August 2026';
 
 // Market ranges must stay consistent with the /owners comparison table
@@ -27,11 +27,11 @@ const feeModels = [
     model: 'Full-service management',
     rate: '18–35%',
     of: 'of booking revenue',
-    covers: 'Marketing, pricing, guest care, turnovers, compliance — everything.',
+    covers: 'Marketing, pricing, guest care, turnovers, compliance. Everything.',
     watch: 'The range is wide because "full service" isn\'t standardized. Ask exactly what\'s excluded.',
   },
   {
-    model: 'Cardo — full service',
+    model: 'Cardo: full service',
     rate: '20%',
     of: 'of booking revenue, all-in',
     covers: 'Everything below. No setup fees, no monthly minimums, no charge until your home earns.',
@@ -42,21 +42,21 @@ const feeModels = [
     model: 'Half-service / co-hosting',
     rate: '10–20%',
     of: 'of booking revenue',
-    covers: 'Usually listing and pricing only. Guest problems, turnovers, and compliance stay yours.',
-    watch: 'With some national half-service brands the listing and its reviews belong to them — leave, and you start from zero.',
+    covers: 'Two flavors: national half-service brands, and independent co-hosts. Both leave real work on your plate.',
+    watch: 'National brands (like Evolve) stop managing after the guest checks in, so the stay itself is yours. Co-hosts may manage the full reservation, but only on one platform, so the rest of the market never sees your home.',
   },
   {
     model: 'Flat monthly fee',
     rate: '$300–500',
     of: 'per month',
     covers: 'A fixed scope of coordination tasks.',
-    watch: 'The manager earns the same whether your home is booked or empty — incentives point the wrong way.',
+    watch: 'The manager earns the same whether your home is booked or empty. Incentives point the wrong way.',
   },
 ];
 
 const included = [
-  { t: 'Professional marketing', d: 'Pro photography, listing copy, and distribution across Airbnb, VRBO, and direct booking.' },
-  { t: 'Dynamic pricing', d: 'Rates tuned daily to San Diego demand — racing season, conventions, swell windows.' },
+  { t: 'Professional marketing', d: 'Pro photography, listing copy, and distribution across Airbnb, Vrbo, Booking.com, and several other high-traffic travel agencies.' },
+  { t: 'Dynamic pricing', d: 'Rates tuned daily to San Diego demand. Over 10,000 data points managed by a real human that spots trends and gaps to maximize income.' },
   { t: '24/7 guest care', d: 'Every message, question, and midnight lockout handled by our team, not you.' },
   { t: 'Turnovers & inspections', d: 'In-house cleaning, inspected after every stay, with a 5-star cleanliness guarantee.' },
   { t: 'STRO & TOT compliance', d: 'City licensing, compliance reporting, and transient occupancy tax filings, handled.' },
@@ -69,29 +69,29 @@ const hiddenFees = [
   { t: 'Maintenance markups', d: 'A percentage silently added to every vendor invoice that crosses the manager\'s desk.' },
   { t: 'Linen and restocking programs', d: 'Mandatory supply programs billed above retail.' },
   { t: 'Guest-fee skimming', d: 'Booking or "resort" fees charged to guests that never appear on your statement.' },
-  { t: 'Exit penalties and listing lock-in', d: 'Long terms, cancellation fees — or losing your listing\'s reviews when you leave.' },
+  { t: 'Vendor lock-in', d: 'High cost vendors that give kick-backs.' },
 ];
 
 const faqs = [
   {
-    q: 'How much do Airbnb property managers charge in San Diego?',
-    a: 'Full-service vacation rental managers in San Diego typically charge 18–35% of booking revenue. Half-service and co-hosting arrangements run 10–20%, and flat-rate services advertise $300–500 per month. Cardo charges a straight 20% of booking revenue, all-in.',
-  },
-  {
-    q: 'Does Cardo charge setup or onboarding fees?',
-    a: 'No. No setup fees, no monthly minimums, and no charge until your home is earning. Onboarding, design consultation, photography, and listing build-out are part of getting your home live — not a line item.',
-  },
-  {
-    q: 'Do I pay anything when the calendar is empty?',
-    a: 'No. Cardo earns a percentage of booking revenue only, so we are paid exactly when you are. An empty calendar costs us too — which is the incentive structure you want your manager to have.',
+    q: 'What happens if a guest damages my home?',
+    a: 'Every stay is covered by $0-deductible damage protection, and every home is inspected after each stay, so issues are caught and resolved before they become your problem.',
   },
   {
     q: 'Who pays for cleaning?',
-    a: 'Guests do, through the cleaning fee on each booking — that is standard across the industry. What is not standard: Cardo guarantees the clean. If a turnover isn\'t 5-star quality, Cardo covers that guest\'s cleaning fee.',
+    a: 'Guests do, through the cleaning fee on each booking. That is standard across the industry. What is not standard: Cardo guarantees the clean. If a turnover is not 5-star quality, Cardo covers that guest\'s cleaning fee.',
   },
   {
-    q: 'Why do some companies charge 30% and others 10%?',
-    a: 'Scope. National full-service brands in San Diego commonly run 25–35%. The 10–15% offers are usually half-service: your listing gets marketed, but guest care, turnovers, and compliance stay your job — and with some brands, the listing and its reviews belong to them if you ever leave. Compare what you keep, not just what you pay.',
+    q: 'Do I pay for design and photography up front?',
+    a: 'No. In-house design and professional photography are part of getting your home live. There are no setup fees, and launch work is never a line item on your statement.',
+  },
+  {
+    q: 'Can I still use my home whenever I want?',
+    a: 'Always. Block owner stays anytime from your dashboard. It is your home; we keep it performing when you are not using it.',
+  },
+  {
+    q: 'Do you manage homes outside the coastal neighborhoods?',
+    a: 'Our core is the San Diego coast, from La Jolla and Pacific Beach up to Carlsbad and across to Coronado, and we take on select homes elsewhere in the county. Ask, and we will tell you honestly whether your home is a fit.',
   },
   {
     q: 'Does hiring a manager change my tax benefits?',
@@ -100,7 +100,7 @@ const faqs = [
 ];
 
 const description =
-  'What vacation rental management costs in San Diego in 2026: full-service runs 18–35% of revenue. Cardo charges a transparent 20% all-in — no setup fees, no minimums. See exactly what\'s included.';
+  'What vacation rental management costs in San Diego in 2026: full-service runs 18–35% of revenue. Cardo charges a transparent 20% all-in: no setup fees, no minimums. See exactly what\'s included.';
 
 const faqSchema = JSON.stringify({
   '@context': 'https://schema.org',
@@ -135,7 +135,7 @@ const pageSchema = JSON.stringify({
   title="Vacation Rental Management Fees in San Diego (2026 Guide) | Cardo Vacation Rentals"
   description={description}
   image="/assets/og/og-owners.jpg"
-  imageAlt="Cardo Vacation Rentals — transparent vacation rental management pricing in San Diego"
+  imageAlt="Cardo Vacation Rentals, transparent vacation rental management pricing in San Diego"
 >
   <script slot="head" type="application/ld+json" is:inline set:html={pageSchema} />
   <MarketingHeader {nav} {cta} />
@@ -150,7 +150,7 @@ const pageSchema = JSON.stringify({
         <h1>What vacation rental management costs in San Diego.</h1>
         <p>
           Full-service vacation rental managers in San Diego charge <strong>18–35% of booking
-          revenue</strong>. Cardo charges a straight <strong>20%, all-in</strong> — no setup fees,
+          revenue</strong>. Cardo charges a straight <strong>20%, all-in</strong>: no setup fees,
           no monthly minimums, and no charge until your home is earning. Here's the whole market,
           what our 20% covers, and the fees to watch for anywhere else.
         </p>
@@ -167,7 +167,7 @@ const pageSchema = JSON.stringify({
           <h2>What do Airbnb property managers charge?</h2>
           <p class="lede muted">
             Four pricing models cover nearly every management company in San Diego. The percentage
-            is only half the question — what it buys is the other half.
+            is only half the question. What it buys is the other half.
           </p>
         </div>
         <div class="mf-models">
@@ -185,7 +185,7 @@ const pageSchema = JSON.stringify({
         </div>
         <p class="mf-fine reveal">
           Ranges reflect published San Diego rates and industry fee surveys as of {UPDATED_LABEL}.
-          "Full service" varies by company — always compare scope line by line.
+          "Full service" varies by company. Always compare scope line by line.
         </p>
       </div>
     </section>
@@ -195,7 +195,7 @@ const pageSchema = JSON.stringify({
       <div class="section-wrap">
         <div class="section-head reveal">
           <p class="eyebrow">Cardo's 20%</p>
-          <h2>What's included — and what you'll never be billed for.</h2>
+          <h2>What's included, and what you'll never be billed for.</h2>
           <p class="lede muted">
             One number covers the entire operation. If it's part of running your home well, it's in
             the 20%.
@@ -263,18 +263,19 @@ const pageSchema = JSON.stringify({
         </div>
         <ul class="mf-worth__list reveal">
           <li>
-            <strong>Revenue is made, not listed.</strong> Daily dynamic pricing, professional
-            photography, and design that commands higher rates — Cardo-designed homes outperform
-            their market by up to 61%.
+            <strong>Revenue is fought for, not given.</strong> Daily dynamic pricing, closing
+            leads, curated marketing channels, and design that commands higher rates.
+            Cardo-designed homes outperform their market by up to 32%, and outperform solo
+            managers by more than 60%.
           </li>
           <li>
             <strong>Reviews compound.</strong> 3,500+ five-star Airbnb reviews mean placement,
-            trust, and pricing power a new or part-time listing can't reach.
+            trust, and pricing power a new profile can't reach.
           </li>
           <li>
             <strong>Your time has a rate too.</strong> Self-managing a busy STR is guest messages
-            at midnight, turnover logistics, licensing renewals, and TOT filings — most owners
-            spend 15+ hours a month, every month.
+            morning to midnight, overseeing cleaners, guest complaints, and filing quarterly
+            reports. Most owners spend 15-30 hours a month, every month.
           </li>
           <li>
             <strong>Compliance is not optional.</strong> San Diego's STRO licenses are capped and
@@ -317,7 +318,7 @@ const pageSchema = JSON.stringify({
         <p class="eyebrow">Transparent since 2013</p>
         <h2>See the number that actually matters: your net.</h2>
         <p>
-          A free earning estimate shows what your home should gross in today's San Diego market —
+          A free earning estimate shows what your home should gross in today's San Diego market,
           and exactly what you'd keep after our 20%.
         </p>
         <a class="btn btn-lg" href="/owners#estimate">Get my free estimate</a>
