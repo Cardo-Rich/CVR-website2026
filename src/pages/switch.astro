@@ -1,0 +1,336 @@
+---
+import Base from '../layouts/Base.astro';
+import MarketingHeader from '../components/sections/MarketingHeader.astro';
+import Footer from '../components/sections/Footer.astro';
+
+// home.css carries the shared FAQ-accordion styles this page reuses.
+import '../styles/home.css';
+
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs' },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog' },
+];
+const cta = { label: 'Free estimate', href: '/owners#estimate' };
+
+// Visible date + schema dateModified — bump on every substantive re-check.
+const UPDATED_ISO = '2026-08-11';
+const UPDATED_LABEL = 'August 2026';
+
+const steps = [
+  {
+    n: '1',
+    title: 'Read your termination clause',
+    blurb:
+      'Find the notice period (usually 30–60 days), any early-exit fee, and — most important — who owns the listing, its reviews, and the photos. That one line decides how the rest of the switch goes.',
+  },
+  {
+    n: '2',
+    title: 'Line up the new manager first',
+    blurb:
+      'Sign with your next manager before you give notice, so onboarding runs during the notice period and your calendar never goes dark. Cardo homes are typically live in about two weeks.',
+  },
+  {
+    n: '3',
+    title: 'Give written notice',
+    blurb:
+      "Short, dated, and per the contract's notice terms. You don't owe a reason. If you'd rather not have the conversation at all, Cardo can coordinate the handover with your outgoing manager.",
+  },
+  {
+    n: '4',
+    title: 'Transfer the assets',
+    blurb:
+      'Listings and reviews (if you own them), photos, guest history, future bookings, smart-lock codes, vendor list, and your STRO license details. We run this as a checklist so nothing is lost in the move.',
+  },
+  {
+    n: '5',
+    title: 'Relaunch stronger',
+    blurb:
+      'New photography, sharper listing copy, dynamic pricing, and a compliance check — so the switch reads as an upgrade to guests and to the algorithm, not a reset.',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How do I switch vacation rental management companies?',
+    a: 'Check your contract for the notice period and who owns your listing, sign with the new manager first so onboarding overlaps the notice period, give written notice, then transfer listings, reviews, photos, future bookings, and license details. Done in that order, your calendar never goes dark.',
+  },
+  {
+    q: 'Will I lose my Airbnb reviews if I change managers?',
+    a: 'It depends on who owns the listing. If it was created under your own Airbnb account, the reviews stay with you and move to the new manager. If the listing lives under the manager\'s account — common with some national brands — the reviews stay with them when you leave. Check this before you sign with anyone, and ask us to assess what\'s portable before you switch.',
+  },
+  {
+    q: 'What happens to bookings already on the calendar?',
+    a: 'They get honored. Future reservations are either migrated to the new listing or hosted through the transition, and guests are told nothing changed except the quality of the stay. A good handover is invisible to guests.',
+  },
+  {
+    q: 'What happens to my San Diego STRO license when I switch?',
+    a: 'Your STRO license belongs to you, the host — not to your management company. Switching managers doesn\'t forfeit it. The city\'s records (like the local-contact designation) need updating, and Cardo handles that as part of onboarding, along with TOT filings going forward.',
+  },
+  {
+    q: 'How long does switching take?',
+    a: 'The contractual notice period — typically 30–60 days — runs in parallel with onboarding. Most Cardo homes are live in about two weeks, so the notice period, not the setup, is usually the long pole.',
+  },
+  {
+    q: 'What does switching to Cardo cost?',
+    a: 'Nothing. No setup fees, no onboarding fees, and no charge until your home is earning. Cardo is a straight 20% of booking revenue once bookings land — see the full fee breakdown for how that compares.',
+  },
+];
+
+const description =
+  'How to switch vacation rental management companies in San Diego without losing reviews, bookings, or your STRO license: the 5-step handover, what to check in your contract, and what a clean transition looks like.';
+
+const faqSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+});
+
+const pageSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://cardorentals.com/switch',
+  name: 'How to Switch Vacation Rental Managers in San Diego',
+  description,
+  dateModified: UPDATED_ISO,
+  isPartOf: { '@id': 'https://cardorentals.com/#organization' },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
+      { '@type': 'ListItem', position: 2, name: 'For Owners', item: 'https://cardorentals.com/owners' },
+      { '@type': 'ListItem', position: 3, name: 'Switching managers', item: 'https://cardorentals.com/switch' },
+    ],
+  },
+});
+---
+
+<Base
+  title="How to Switch Vacation Rental Managers in San Diego | Cardo Vacation Rentals"
+  description={description}
+  image="/assets/og/og-owners.jpg"
+  imageAlt="Cardo Vacation Rentals — switching short-term rental management companies in San Diego"
+>
+  <script slot="head" type="application/ld+json" is:inline set:html={pageSchema} />
+  <MarketingHeader {nav} {cta} />
+
+  <main>
+    <!-- Hero: direct answer first — the retrievable chunk. -->
+    <section class="phero" data-screen-label="Switch hero">
+      <img class="phero__bg" src="/assets/photos/imported/unsplash-1613490493576-7fde63acd811.jpg" alt="" />
+      <div class="phero__overlay"></div>
+      <div class="phero__inner narrow">
+        <p class="eyebrow">Switching managers</p>
+        <h1>Switching vacation rental managers is easier than staying unhappy.</h1>
+        <p>
+          Owners put up with slow responses and murky statements for years because switching feels
+          risky. It isn't: with the handover run in the right order — <strong>contract first, new
+          manager second, notice third</strong> — you keep your reviews, your bookings, and your
+          STRO license, and your calendar never goes dark.
+        </p>
+        <a class="btn btn-lg" href="/owners#estimate">Plan my switch</a>
+        <p class="sw-updated">Updated {UPDATED_LABEL}</p>
+      </div>
+    </section>
+
+    <!-- The five steps -->
+    <section class="section-pad" data-screen-label="Five steps">
+      <div class="section-wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">The handover</p>
+          <h2>How to switch, in five steps.</h2>
+          <p class="lede muted">
+            The whole move usually fits inside your contract's notice period. The order is what
+            protects you.
+          </p>
+        </div>
+        <ol class="sw-steps">
+          {steps.map((s) => (
+            <li class="sw-step reveal">
+              <span class="sw-step__n">{s.n}</span>
+              <div>
+                <h3 class="sw-step__title">{s.title}</h3>
+                <p class="sw-step__blurb">{s.blurb}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- Contract gotchas -->
+    <section class="section-pad sw-alt" data-screen-label="Contract check">
+      <div class="section-wrap sw-contract">
+        <div class="sw-contract__intro reveal">
+          <p class="eyebrow">Before you sign anything — or leave anyone</p>
+          <h2>The four contract lines that decide your switch.</h2>
+          <p class="lede muted">
+            Five minutes with your current agreement answers most of the scary questions.
+          </p>
+        </div>
+        <ul class="sw-contract__list reveal">
+          <li>
+            <strong>Listing &amp; review ownership.</strong> If the listing lives under the
+            manager's account, its reviews stay behind when you go. If it's under yours, everything
+            moves with you. This single line is the biggest difference between a painless switch
+            and starting over.
+          </li>
+          <li>
+            <strong>Notice period.</strong> Usually 30–60 days. Onboarding with the new manager
+            runs in parallel, so notice time is setup time — not downtime.
+          </li>
+          <li>
+            <strong>Termination fees.</strong> Some contracts charge for leaving early or keep
+            commissions on bookings made before you left. Know the number before you decide the
+            timing.
+          </li>
+          <li>
+            <strong>Photo ownership.</strong> Manager-commissioned photos often don't come with
+            you. Cardo reshoots every home it takes on anyway — in-house, at no charge.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- What Cardo handles -->
+    <section class="section-pad" data-screen-label="Cardo handover">
+      <div class="section-wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">What we take off your plate</p>
+          <h2>A handover you mostly watch happen.</h2>
+          <p class="lede muted">
+            Tell us your notice date and we run the rest as a checklist — most owners are
+            surprised how little lands on them.
+          </p>
+        </div>
+        <div class="sw-handover">
+          {[
+            { t: 'Transition timing', d: 'We map the switch around existing reservations so no booking is disturbed and no revenue gap opens.' },
+            { t: 'Asset transfer', d: 'Listings, reviews where portable, guest data, lock codes, vendor handoffs — inventoried and moved.' },
+            { t: 'City paperwork', d: 'STRO local-contact updates and TOT filing setup, so compliance never skips a month.' },
+            { t: 'The awkward part', d: "If you'd rather not manage the goodbye, we coordinate directly with your outgoing manager." },
+            { t: 'Relaunch design & photos', d: 'In-house design review and fresh photography, so the listing relaunches above where it left off.' },
+            { t: 'Pricing reset', d: 'Dynamic pricing tuned to your neighborhood from day one — most switches come with an immediate rate correction.' },
+          ].map((i) => (
+            <div class="sw-handover__item reveal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+              <div>
+                <h3>{i.t}</h3>
+                <p>{i.d}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="sw-fine reveal">
+          Wondering what the new arrangement costs? The whole fee structure is public:
+          <a href="/management-fees">management fees in San Diego, explained →</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section-pad sw-alt" data-screen-label="Switch FAQ">
+      <div class="section-wrap">
+        <div class="faq__head reveal">
+          <p class="eyebrow center" style="justify-content:center">Switching, answered</p>
+          <h2>The questions every switching owner asks.</h2>
+        </div>
+        <div class="faq__list" data-faq>
+          {faqs.map((f, i) => (
+            <div class:list={['faq__item', i === 0 ? 'is-open' : '']} data-faq-item>
+              <button class="faq__q" type="button" aria-expanded={i === 0 ? 'true' : 'false'}>
+                <span>{f.q}</span>
+                <span class="faq__plus">+</span>
+              </button>
+              <div class="faq__panel">
+                <p class="muted faq__a">{f.a}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <script type="application/ld+json" is:inline set:html={faqSchema} />
+    </section>
+
+    <section class="cta" data-screen-label="CTA">
+      <div class="cta__inner reveal">
+        <p class="eyebrow">Quiet handovers since 2013</p>
+        <h2>Switch without the booking gap.</h2>
+        <p>
+          Tell us where your home is and when your notice period could start. We'll map the
+          transition — and show you what the home should be earning on the other side of it.
+        </p>
+        <a class="btn btn-lg" href="/owners#estimate">Get my free estimate</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .sw-alt { background: var(--cream); }
+  .sw-updated { margin-top: 14px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.75); }
+
+  /* Steps — numbered vertical list */
+  .sw-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 26px; max-width: 820px; }
+  .sw-step { display: flex; gap: 18px; align-items: flex-start; }
+  .sw-step__n { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; }
+  .sw-step__title { margin: 2px 0 6px; font-size: 1.15rem; }
+  .sw-step__blurb { margin: 0; color: var(--muted); font-size: 0.96rem; line-height: 1.6; }
+
+  /* Contract check */
+  .sw-contract { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(32px, 5vw, 72px); align-items: start; }
+  .sw-contract__intro h2 { margin: 8px 0 12px; }
+  .sw-contract__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 20px; }
+  .sw-contract__list li { font-size: 1rem; line-height: 1.6; color: var(--muted); padding-left: 18px; border-left: 2px solid var(--gold); }
+  .sw-contract__list strong { color: var(--ink); }
+
+  /* Handover grid */
+  .sw-handover { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .sw-handover__item { display: flex; gap: 12px; align-items: flex-start; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 22px 20px; box-shadow: var(--shadow-sm); }
+  .sw-handover__item svg { flex: none; width: 22px; height: 22px; margin-top: 2px; }
+  .sw-handover__item h3 { margin: 0 0 6px; font-size: 1.02rem; }
+  .sw-handover__item p { margin: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.55; }
+  .sw-fine { max-width: 760px; margin: 26px auto 0; text-align: center; font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  @media (max-width: 900px) {
+    .sw-contract { grid-template-columns: 1fr; }
+    .sw-handover { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .sw-handover { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  import '../scripts/reveal.js';
+
+  // FAQ accordion — same single-open behavior as the owners page (owners.js),
+  // inlined so this page doesn't pull in the whole owners bundle.
+  const list = document.querySelector('[data-faq]');
+  list?.querySelectorAll('[data-faq-item]').forEach((item) => {
+    const btn = item.querySelector('.faq__q');
+    const panel = item.querySelector('.faq__panel') as HTMLElement | null;
+    btn?.addEventListener('click', () => {
+      const willOpen = !item.classList.contains('is-open');
+      list.querySelectorAll('[data-faq-item]').forEach((o) => {
+        o.classList.remove('is-open');
+        o.querySelector('.faq__q')?.setAttribute('aria-expanded', 'false');
+        (o.querySelector('.faq__panel') as HTMLElement).style.maxHeight = '';
+      });
+      if (willOpen && panel) {
+        item.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+  const open = list?.querySelector('[data-faq-item].is-open .faq__panel') as HTMLElement | null;
+  if (open) open.style.maxHeight = open.scrollHeight + 'px';
+</script>

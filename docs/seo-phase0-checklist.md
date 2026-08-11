@@ -72,6 +72,17 @@ month movement is visible.
 
 Expected baseline: Cardo named in 0–1 of 10. Strategy target: 5+ by month 6.
 
+**First data point (Aug 11, 2026, Google AI Overview, "list of vacation rental
+management companies in san diego"):** Cardo not named. Named: Bluewater,
+Vacation Rentals by Kimberly, NXT Vacation Management, Air Concierge, Swell
+Property, AvantStay, Evolve, iTrip San Diego. Cited sources → outreach targets:
+- Yelp "TOP 10 BEST Vacation Rental Management in San Diego" category page
+  (raise Cardo's Yelp review count/engagement — sections 1 above)
+- NXT's self-published "Best Airbnb Management Companies in San Diego"
+  listicle (the publish-your-own-listicle play, validated twice now — ours is
+  in the Phase 1 backlog)
+- Bluewater's own service page (deep owner-facing service pages get cited)
+
 ## 4. Branded-SERP cleanup — stale booking portals (takedowns)
 
 Searching "Cardo Vacation Rentals" surfaces booking sites from past PMS
