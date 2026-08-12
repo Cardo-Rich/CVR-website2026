@@ -3,9 +3,6 @@ import Base from '../layouts/Base.astro';
 import MarketingHeader from '../components/sections/MarketingHeader.astro';
 import Footer from '../components/sections/Footer.astro';
 
-// home.css carries the shared FAQ-accordion styles this page reuses.
-import '../styles/home.css';
-
 const nav = [
   { label: 'For Owners', href: '/owners' },
   { label: 'Design', href: '/home-designs' },
@@ -275,6 +272,20 @@ const pageSchema = JSON.stringify({
 
 <style>
   .sw-alt { background: var(--cream); }
+
+  /* FAQ accordion (same visual as the owners page; styles scoped here because
+     the shared rules live in owners.css, which drags in header/section
+     overrides these pages must not load) */
+  .faq__head { text-align: center; margin-bottom: 44px; }
+  .faq__head h2 { margin: 8px 0 0; }
+  .faq__list { max-width: var(--container-narrow); margin: 0 auto; }
+  .faq__item { border-bottom: 1px solid var(--line); }
+  .faq__q { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 26px 0; background: none; border: none; cursor: pointer; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: 1.3rem; color: var(--ink); }
+  .faq__plus { color: var(--rose); flex: none; transition: transform var(--dur) var(--ease); }
+  .faq__item.is-open .faq__plus { transform: rotate(45deg); }
+  .faq__panel { max-height: 0; overflow: hidden; transition: max-height var(--dur) var(--ease); }
+  .faq__a { margin: 0; padding: 0 0 26px; font-size: 1.05rem; line-height: 1.65; color: var(--text-body); max-width: 760px; }
+
   .sw-updated { margin-top: 14px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.75); }
 
   /* Steps — numbered vertical list */
