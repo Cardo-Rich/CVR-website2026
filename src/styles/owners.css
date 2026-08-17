@@ -25,7 +25,15 @@
     .hero__inner { position: relative; z-index: 2; max-width: var(--container); margin: 0 auto; padding: 150px 24px 84px; display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
     .hero__copy { max-width: 600px; }
     .hero__title { color: #fff; font-size: calc(clamp(2.5rem, 4.8vw, 4.1rem) * var(--hero-h-scale)); margin: 0 0 20px; }
-    .hero__lede { color: rgba(248,243,236,.92); font-size: 1.24rem; line-height: 1.55; max-width: 560px; margin-bottom: 30px; }
+    .hero__lede { color: rgba(248,243,236,.92); font-size: 1.24rem; line-height: 1.55; max-width: 560px; margin-bottom: 22px; }
+    /* Conspicuous click-to-call — one tap to reach a person, no form needed. */
+    .hero__call { display: inline-flex; align-items: center; gap: 13px; margin-bottom: 26px; padding: 12px 20px 12px 14px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.22); border-radius: var(--radius-pill); backdrop-filter: blur(8px); color: #fff; text-decoration: none; transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease); }
+    .hero__call:hover { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.4); transform: translateY(-1px); }
+    .hero__call-ic { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--rose); color: #fff; }
+    .hero__call-ic svg { width: 20px; height: 20px; }
+    .hero__call-txt { display: flex; flex-direction: column; line-height: 1.2; }
+    .hero__call-lbl { font-size: .78rem; font-weight: 600; color: rgba(248,243,236,.82); text-transform: uppercase; letter-spacing: .04em; }
+    .hero__call-num { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; color: #fff; }
     .hero__actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 30px; }
     .hero__trust { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; color: rgba(248,243,236,.9); font-size: .95rem; }
     .hero__trust .stars { color: var(--gold); letter-spacing: 2px; font-size: 1.05rem; }
@@ -399,7 +407,10 @@
     .leadbook__head { text-align: center; margin-bottom: 18px; }
     .leadbook__head h3 { margin: 0 0 6px; font-size: 1.3rem; }
     .leadbook__head p { margin: 0 auto; max-width: 340px; font-size: .92rem; }
-    .leadcal { margin-top: 4px; }
+    /* Reserve the scheduler's rendered height so the panel doesn't jump when
+       the async /api/ghl slots load and the calendar renders (measured ~297px). */
+    .leadcal { margin-top: 4px; min-height: 300px; }
+    .leadcal__loading { display: flex; align-items: center; justify-content: center; min-height: 296px; text-align: center; }
     .leadcal iframe { display: block; width: 100%; border: 0; border-radius: var(--radius); }
     .leadcal__label { font-size: .74rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 4px 0 10px; }
     .leadcal__days { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 18px; }
