@@ -68,7 +68,9 @@
       { "source": "/terms-of-service", "destination": "/terms", "type": 301 },
       { "source": "/rental-agreement", "destination": "/terms", "type": 301 },
       { "source": "/site-map", "destination": "/", "type": 301 },
-      { "source": "/sitemap.xml", "destination": "/sitemap-index.xml", "type": 301 }
+      { "source": "/sitemap.xml", "destination": "/sitemap-index.xml", "type": 301 },
+      { "source": "/sitemap", "destination": "/sitemap-index.xml", "type": 301 },
+      { "source": "/signal_sitemap.xml", "destination": "/sitemap-index.xml", "type": 301 }
     ],
     "rewrites": [
       { "source": "/api/ghl", "function": { "functionId": "ghl", "region": "us-central1" } },
