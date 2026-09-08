@@ -46,7 +46,7 @@ export const caseStudies: CaseStudy[] = [
     date: 'June 2026',
     hook: 'An inherited bluff home, dated and half-furnished, fully reimagined and launched in five weeks.',
     seo: {
-      title: 'Falcon — Case study — Cardo Vacation Rentals',
+      title: 'Falcon | Case Study | Cardo Vacation Rentals',
       description: 'An inherited bluff home, dated and half-furnished, fully reimagined and launched in five weeks.',
     },
     cardImg: '/assets/photos/designs-living-craftsman.jpg',
@@ -87,7 +87,7 @@ export const caseStudies: CaseStudy[] = [
     date: 'May 2026',
     hook: 'A tired walk-street rental turned light, bright, and fully booked within its first month.',
     seo: {
-      title: 'Nute — Case study — Cardo Vacation Rentals',
+      title: 'Nute | Case Study | Cardo Vacation Rentals',
       description: 'A tired walk-street rental turned light, bright, and fully booked within its first month.',
     },
     cardImg: '/assets/photos/designs-living-bright.jpg',
@@ -128,7 +128,7 @@ export const caseStudies: CaseStudy[] = [
     date: 'May 2026',
     hook: "A craftsman classic styled to own Del Mar's racing season — and hold strong the rest of the year.",
     seo: {
-      title: 'Twain — Case study — Cardo Vacation Rentals',
+      title: 'Twain | Case Study | Cardo Vacation Rentals',
       description: "A craftsman classic styled to own Del Mar's racing season — and hold strong the rest of the year.",
     },
     cardImg: '/assets/photos/designs-dining.jpg',
@@ -169,7 +169,7 @@ export const caseStudies: CaseStudy[] = [
     date: 'April 2026',
     hook: 'A compact two-bedroom that punches well above its size — and its nightly comps.',
     seo: {
-      title: 'Sixth — Case study — Cardo Vacation Rentals',
+      title: 'Sixth | Case Study | Cardo Vacation Rentals',
       description: 'A compact two-bedroom that punches well above its size — and its nightly comps.',
     },
     cardImg: '/assets/photos/designs-bedroom-floral.jpg',
@@ -210,7 +210,7 @@ export const caseStudies: CaseStudy[] = [
     date: 'April 2026',
     hook: 'A surf-town home with a game room guests now book it specifically for.',
     seo: {
-      title: 'Kane — Case study — Cardo Vacation Rentals',
+      title: 'Kane | Case Study | Cardo Vacation Rentals',
       description: 'A surf-town home with a game room guests now book it specifically for.',
     },
     cardImg: '/assets/photos/designs-gameroom.jpg',
@@ -251,7 +251,7 @@ export const caseStudies: CaseStudy[] = [
     date: 'March 2026',
     hook: 'A five-bedroom estate with a resort backyard, finished to sit at the top of its market.',
     seo: {
-      title: 'Mt Ainsworth — Case study — Cardo Vacation Rentals',
+      title: 'Mt Ainsworth | Case Study | Cardo Vacation Rentals',
       description: 'A five-bedroom estate with a resort backyard, finished to sit at the top of its market.',
     },
     cardImg: '/assets/photos/designs-pool.jpg',

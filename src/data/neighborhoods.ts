@@ -35,7 +35,7 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Bluff-top luxury & coastal estates',
     img: '/assets/photos/imported/unsplash-1613490493576-7fde63acd811-1600.jpg',
     seo: {
-      title: 'La Jolla Vacation Rental Management | Cardo — San Diego',
+      title: 'La Jolla Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
         'Luxury short-term rental management in La Jolla, San Diego. Cardo designs, markets, and manages La Jolla vacation rentals to beat the market — 5-star Superhost since 2013.',
     },
@@ -91,7 +91,7 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Walkable, high-occupancy favorites',
     img: '/assets/photos/imported/unsplash-1600596542815-ffad4c1539a9-1600.jpg',
     seo: {
-      title: 'Pacific Beach Vacation Rental Management | Cardo — San Diego',
+      title: 'Pacific Beach Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
         'Luxury short-term rental management in Pacific Beach, San Diego. Cardo designs, markets, and manages Pacific Beach vacation rentals to beat the market — 5-star Superhost since 2013.',
     },
@@ -147,7 +147,7 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Boardwalk demand & beachfront homes',
     img: '/assets/photos/imported/unsplash-1502136969935-8d8eef54d77b-1600.jpg',
     seo: {
-      title: 'Mission Beach Vacation Rental Management | Cardo — San Diego',
+      title: 'Mission Beach Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
         'Luxury short-term rental management in Mission Beach, San Diego. Cardo designs, markets, and manages Mission Beach vacation rentals to beat the market — 5-star Superhost since 2013.',
     },
@@ -203,7 +203,7 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Racetrack-season premium homes',
     img: '/assets/photos/imported/unsplash-1600607687939-ce8a6c25118c-1600.jpg',
     seo: {
-      title: 'Del Mar Vacation Rental Management | Cardo — San Diego',
+      title: 'Del Mar Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
         'Luxury short-term rental management in Del Mar, San Diego. Cardo designs, markets, and manages Del Mar vacation rentals to beat the market — 5-star Superhost since 2013.',
     },
@@ -259,7 +259,7 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Surf-town charm, strong year-round',
     img: '/assets/photos/imported/unsplash-1505693416388-ac5ce068fe85-1600.jpg',
     seo: {
-      title: 'Encinitas Vacation Rental Management | Cardo — San Diego',
+      title: 'Encinitas Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
         'Luxury short-term rental management in Encinitas, San Diego. Cardo designs, markets, and manages Encinitas vacation rentals to beat the market — 5-star Superhost since 2013.',
     },
@@ -315,7 +315,7 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Family coastal & North County demand',
     img: '/assets/photos/imported/unsplash-1571003123894-1f0594d2b5d9-1600.jpg',
     seo: {
-      title: 'Carlsbad Vacation Rental Management | Cardo — San Diego',
+      title: 'Carlsbad Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
         'Luxury short-term rental management in Carlsbad, San Diego. Cardo designs, markets, and manages Carlsbad vacation rentals to beat the market — 5-star Superhost since 2013.',
     },
@@ -371,7 +371,7 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Island prestige & event demand',
     img: '/assets/photos/imported/unsplash-1512917774080-9991f1c4c750-1600.jpg',
     seo: {
-      title: 'Coronado Vacation Rental Management | Cardo — San Diego',
+      title: 'Coronado Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
         'Luxury short-term rental management in Coronado, San Diego. Cardo designs, markets, and manages Coronado vacation rentals to beat the market — 5-star Superhost since 2013.',
     },
