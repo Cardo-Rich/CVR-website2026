@@ -170,7 +170,7 @@ const pageSchema = JSON.stringify({
 ---
 
 <Base
-  title="San Diego STRO License Guide and Tracker (Updated Monthly) | Cardo Vacation Rentals"
+  title="San Diego STRO License Guide and Tracker (Updated Daily) | Cardo Vacation Rentals"
   description={description}
   image="/assets/og/og-owners.jpg"
   imageAlt="Cardo Vacation Rentals, San Diego STRO license guide and availability tracker"
@@ -251,7 +251,7 @@ const pageSchema = JSON.stringify({
         </div>
         <p class="st-source reveal">
           Source: City of San Diego STRO license dataset (data.sandiego.gov), retrieved {asOfLabel}.
-          Caps and fees per the City Treasurer's STRO program page. Figures refresh when this page rebuilds.
+          Caps and fees per the City Treasurer's STRO program page. License figures refresh daily.
         </p>
       </div>
     </section>
@@ -307,10 +307,20 @@ const pageSchema = JSON.stringify({
           </li>
           <li>
             <strong>Keep filings current.</strong> TOT registration, remittance, and the city's
-            local-contact designation all have to stay accurate. Cardo handles all three for the
-            homes it manages, along with applications and renewals.
+            local-contact designation all have to stay accurate, and each runs on its own
+            schedule.
           </li>
         </ul>
+        <div class="st-handled reveal">
+          <h3>All three, handled.</h3>
+          <p>
+            Cardo manages STRO applications and renewals, tracks the 90-day utilization
+            requirement, and keeps TOT filings and the local-contact designation current for
+            every home it operates. Nothing slips through the cracks, and nothing depends on
+            your calendar.
+          </p>
+          <a class="btn" href="/owners#estimate">Get my free estimate</a>
+        </div>
       </div>
     </section>
 
@@ -399,6 +409,11 @@ const pageSchema = JSON.stringify({
   .st-tier__rules { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.55; }
   .st-tier__cap { margin: 10px 0 0; font-size: 0.85rem; font-weight: 600; color: #C7861F; }
 
+  /* Cardo close panel */
+  .st-handled { grid-column: 2; background: var(--paper); border: 1px solid var(--gold); border-radius: var(--radius-lg); padding: 24px; box-shadow: 0 0 0 1px var(--gold), var(--shadow-sm); margin-top: 4px; }
+  .st-handled h3 { margin: 0 0 8px; font-size: 1.15rem; }
+  .st-handled p { margin: 0 0 16px; color: var(--muted); font-size: 0.95rem; line-height: 1.6; }
+
   /* Keep list */
   .st-keep { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(32px, 5vw, 72px); align-items: start; }
   .st-keep__intro h2 { margin: 8px 0 12px; }
@@ -420,6 +435,7 @@ const pageSchema = JSON.stringify({
   @media (max-width: 800px) {
     .st-tiers { grid-template-columns: 1fr; }
     .st-keep { grid-template-columns: 1fr; }
+    .st-handled { grid-column: auto; }
   }
 </style>
 

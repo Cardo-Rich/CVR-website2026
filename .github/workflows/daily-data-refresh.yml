@@ -1,0 +1,35 @@
+name: Daily data refresh (live)
+
+# Rebuilds and redeploys the live site once a day so build-time data stays
+# current — today that means the STRO license tracker on
+# /san-diego-stro-license, which fetches the City of San Diego's open license
+# dataset during the build. Runs at 14:10 UTC (6:10/7:10am Pacific), plus
+# manually via the Actions tab. Hosting only: functions don't change on a
+# schedule, so they are not redeployed here.
+on:
+  schedule:
+    - cron: '10 14 * * *'
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build:all
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}
+          PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.PUBLIC_GOOGLE_MAPS_API_KEY }}
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}
+          projectId: cardo-website-2026
+          channelId: live
