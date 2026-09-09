@@ -104,35 +104,21 @@ const orgSchemaJson = JSON.stringify(orgSchema);
 
     <!-- Google Tag Manager — container GTM-KN9V8WJP (work account,
          rich@cardorentals.com; replaced the old "Cardo Furnished Rentals"
-         container GTM-TT9LPF7 in Sept 2026). GA4 (G-V5MWW8XE4X) is configured
-         as a Google Tag INSIDE this container, firing on Initialization - All
-         Pages. Manage analytics tags in the GTM UI — do NOT also hardcode GA4
-         here, or events will be counted twice. The Meta Pixel below is the one
-         exception: it is hardcoded, so it must NOT also be added as a tag
-         inside GTM. -->
+         container GTM-TT9LPF7 in Sept 2026). ALL analytics/marketing tags are
+         managed INSIDE this container so the ads team can work without code
+         deploys: GA4 (G-V5MWW8XE4X) as a Google Tag and the Meta Pixel
+         (28102798859389302) as a Meta Pixel template tag, both firing on
+         Initialization - All Pages. Do NOT also hardcode GA4 or the pixel in
+         this file, or every PageView and conversion gets counted twice. The
+         only tracking markup allowed here is the pair of <noscript> fallbacks
+         at the top of <body>, which render solely for JavaScript-off visitors
+         that GTM cannot reach. -->
     <script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-KN9V8WJP');</script>
     <!-- End Google Tag Manager -->
-
-    <!-- Meta Pixel — ID 28102798859389302. Hardcoded here, NOT in GTM; adding it
-         in both places would double-count PageView and every conversion. The
-         matching <noscript> fallback lives at the top of <body>. -->
-    <script is:inline>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '28102798859389302');
-    fbq('track', 'PageView');
-    </script>
-    <!-- End Meta Pixel -->
 
     <link rel="icon" href="/assets/favicon.svg" />
     <link rel="alternate icon" href="/assets/favicon.png" />
@@ -179,7 +165,8 @@ const orgSchemaJson = JSON.stringify(orgSchema);
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KN9V8WJP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <!-- Meta Pixel (noscript) -->
+    <!-- Meta Pixel (noscript) — the pixel itself is a GTM tag; this image only
+         renders for JavaScript-off visitors, so it never double-counts. -->
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=28102798859389302&ev=PageView&noscript=1" /></noscript>
     <!-- End Meta Pixel (noscript) -->
     <slot />
