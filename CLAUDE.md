@@ -22,6 +22,10 @@
   criteria explicit (what is included, what it costs, who does the work). No
   catch phrases, aphorisms, or clever turns ("Revenue is fought for, not
   given" is the pattern to avoid). Guest-facing pages may stay warmer.
+  Register by page type (Rich's calibration): comparison/data pages (listicle,
+  fees) stay reported and analytical; guide/how-to pages (e.g. /switch) read
+  as a journalistic walk-through: second person, narrative, warmer, still
+  factual and catch-phrase-free.
 - **Never use em dashes (—) in site copy.** Rich's standing rule. Use periods,
   commas, or colons instead. (En dashes in numeric ranges like 18–35% are fine.)
 - Cardo lists homes under its own Airbnb account. Listing/review portability is
