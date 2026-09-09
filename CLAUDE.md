@@ -13,6 +13,18 @@
 - PRs deploy to a temporary preview channel via `pr-preview.yml`; that build is
   also the CI signal (a green preview deploy == build passed).
 
+## Copy rules
+
+- **Never use em dashes (—) in site copy.** Rich's standing rule. Use periods,
+  commas, or colons instead. (En dashes in numeric ranges like 18–35% are fine.)
+- Cardo lists homes under its own Airbnb account. Listing/review portability is
+  **not** a selling point to promote against competitors; keep any ownership
+  talk neutral and factual.
+- Brand casing: "Vrbo", not "VRBO". Channels to name: Airbnb, Vrbo,
+  Booking.com, "and several other high-traffic travel agencies."
+- Performance claims: homes outperform their market **by up to 32%** (and solo
+  managers by more than 60%). Do not use the old 61% figure.
+
 ## Project shape
 
 - Astro marketing site. `npm run build` (or `build:all` incl. the `admin/` app).

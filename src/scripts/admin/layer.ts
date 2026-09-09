@@ -971,7 +971,9 @@ function modal(title: string, bodyKids: (Node | string)[], onSave: () => Promise
       saveBtn,
     ]),
   ]));
-  scrim.addEventListener('click', (e) => { if (e.target === scrim) close(); });
+  // Backdrop clicks intentionally do NOT close admin dialogs — they close only
+  // via their explicit buttons (Cancel/Save/Close), so a text-selection drag
+  // that happens to end on the darkened scrim can't discard an in-progress edit.
   document.body.append(scrim);
 }
 function field(label: string, value: string, opts: { wide?: boolean; textarea?: boolean } = {}): { wrap: HTMLElement; get: () => string } {
@@ -1062,7 +1064,9 @@ function openPhotoPicker(current: string, onPick: (url: string) => void): void {
     ]),
     body,
   ]));
-  scrim.addEventListener('click', (e) => { if (e.target === scrim) close(); });
+  // Backdrop clicks intentionally do NOT close admin dialogs — they close only
+  // via their explicit buttons (Cancel/Save/Close), so a text-selection drag
+  // that happens to end on the darkened scrim can't discard an in-progress edit.
   document.body.append(scrim);
   listPhotos().then(render).catch((e) => {
     render([]);
