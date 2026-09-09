@@ -24,14 +24,14 @@ const feeModels = [
     model: 'Full-service management',
     rate: '18–35%',
     of: 'of booking revenue',
-    covers: 'Marketing, pricing, guest care, turnovers, compliance. Everything.',
+    covers: 'Marketing, pricing, guest care, turnovers, and compliance.',
     watch: 'The range is wide because "full service" isn\'t standardized. Ask exactly what\'s excluded.',
   },
   {
     model: 'Cardo: full service',
     rate: '20%',
     of: 'of booking revenue, all-in',
-    covers: 'Everything below. No setup fees, no monthly minimums, no charge until your home earns.',
+    covers: 'All services listed below. No setup fees, no monthly minimums, no charge until your home earns.',
     watch: null,
     cardo: true,
   },
@@ -39,7 +39,7 @@ const feeModels = [
     model: 'Half-service / co-hosting',
     rate: '10–20%',
     of: 'of booking revenue',
-    covers: 'Two types: national half-service brands, and independent co-hosts. Both leave real work on your plate.',
+    covers: 'Two types: national half-service brands, and independent co-hosts. Both models leave part of the operation with the owner.',
     watch: 'National brands (like Evolve) stop managing after the guest checks in, so the stay itself is yours. Co-hosts may manage the full reservation, but only on one platform, so the rest of the market never sees your home.',
   },
   {
@@ -72,7 +72,7 @@ const hiddenFees = [
 const faqs = [
   {
     q: 'What happens if a guest damages my home?',
-    a: 'Every stay is covered by $0-deductible damage protection, and every home is inspected after each stay, so issues are caught and resolved before they become your problem.',
+    a: 'Every stay is covered by $0-deductible damage protection, and every home is inspected after each stay, so issues are identified and resolved promptly.',
   },
   {
     q: 'Who pays for cleaning?',
@@ -84,7 +84,7 @@ const faqs = [
   },
   {
     q: 'Can I still use my home whenever I want?',
-    a: 'Always. Block owner stays anytime from your dashboard. It is your home; we keep it performing when you are not using it.',
+    a: 'Yes. Owner stays can be blocked anytime from your dashboard, with no limit and no charge.',
   },
   {
     q: 'Do you manage homes outside the coastal neighborhoods?',
@@ -148,8 +148,9 @@ const pageSchema = JSON.stringify({
         <p>
           Full-service vacation rental managers in San Diego charge <strong>18–35% of booking
           revenue</strong>. Cardo charges a straight <strong>20%, all-in</strong>: no setup fees,
-          no monthly minimums, and no charge until your home is earning. Here's the whole market,
-          what our 20% covers, and the fees to watch for at other companies.
+          no monthly minimums, and no charge until your home is earning. This guide covers the
+          market's pricing models, what Cardo's 20% includes, and the fee structures to review
+          before signing with any company.
         </p>
         <a class="btn btn-lg" href="/owners#estimate">See what your home would net</a>
         <p class="mf-updated">Updated {UPDATED_LABEL} · rates re-checked against the current San Diego market</p>
@@ -195,8 +196,7 @@ const pageSchema = JSON.stringify({
           <p class="eyebrow">Cardo's 20%</p>
           <h2>What's included, and what you'll never be billed for.</h2>
           <p class="lede muted">
-            One number covers the entire operation. If it's part of running your home well, it's in
-            the 20%.
+            The 20% covers the full operation. The list below is what that means in practice.
           </p>
         </div>
         <div class="mf-inc">
@@ -222,7 +222,7 @@ const pageSchema = JSON.stringify({
       <div class="section-wrap">
         <div class="section-head reveal">
           <p class="eyebrow">Read the fine print</p>
-          <h2>Six fees that hide inside "competitive" rates.</h2>
+          <h2>Six fees to review before signing with any company.</h2>
           <p class="lede muted">
             A low advertised rate often costs more once extra fees show up on your statement.
             These are the six to ask any manager about before you sign.
@@ -261,24 +261,24 @@ const pageSchema = JSON.stringify({
         </div>
         <ul class="mf-worth__list reveal">
           <li>
-            <strong>Revenue is fought for, not given.</strong> Daily dynamic pricing, closing
-            leads, curated marketing channels, and design that commands higher rates.
-            Cardo-designed homes outperform their market by up to 32%, and outperform solo
-            managers by more than 60%.
+            <strong>Revenue depends on active management.</strong> Daily dynamic pricing, lead
+            follow-up, curated marketing channels, and design all move the number. Cardo-designed
+            homes outperform their market by up to 32%, and outperform solo managers by more
+            than 60%.
           </li>
           <li>
-            <strong>Reviews compound.</strong> 3,500+ five-star Airbnb reviews mean placement,
-            trust, and pricing power a new profile can't reach.
+            <strong>Review history compounds.</strong> 3,500+ five-star Airbnb reviews carry
+            placement, trust, and pricing power that a new profile cannot reach.
           </li>
           <li>
-            <strong>Your time has a rate too.</strong> Self-managing a busy STR is guest messages
-            morning to midnight, overseeing cleaners, guest complaints, and filing quarterly
-            reports. Most owners spend 15-30 hours a month, every month.
+            <strong>Self-management is a significant time commitment.</strong> Guest messages
+            from morning to midnight, cleaner oversight, guest complaints, and quarterly filings
+            typically take owners 15-30 hours a month.
           </li>
           <li>
-            <strong>Compliance is not optional.</strong> The city limits how many STRO licenses
-            exist, and a filing mistake can cost you yours. Protecting your license is part of
-            our job.
+            <strong>Compliance carries real risk.</strong> The city limits how many STRO
+            licenses exist, and a filing mistake can cost you yours. License protection is part
+            of the service.
           </li>
         </ul>
       </div>
@@ -314,7 +314,7 @@ const pageSchema = JSON.stringify({
     <section class="cta" data-screen-label="CTA">
       <div class="cta__inner reveal">
         <p class="eyebrow">Transparent since 2013</p>
-        <h2>See the number that matters: what you keep.</h2>
+        <h2>See what your home would earn, and what you would keep.</h2>
         <p>
           A free earning estimate shows what your home should earn in today's San Diego market,
           and exactly what you'd keep after our 20%.

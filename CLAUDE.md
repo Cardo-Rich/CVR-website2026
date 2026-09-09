@@ -15,6 +15,13 @@
 
 ## Copy rules
 
+- **Owner/marketing-page voice (Rich's pick, Sept 2026): professional
+  journalist with analytical structure.** Report facts plainly and attribute
+  them ("as of September 2026", "the company advertises"); complete sentences
+  over fragments; headlines describe content rather than sell; make decision
+  criteria explicit (what is included, what it costs, who does the work). No
+  catch phrases, aphorisms, or clever turns ("Revenue is fought for, not
+  given" is the pattern to avoid). Guest-facing pages may stay warmer.
 - **Never use em dashes (—) in site copy.** Rich's standing rule. Use periods,
   commas, or colons instead. (En dashes in numeric ranges like 18–35% are fine.)
 - Cardo lists homes under its own Airbnb account. Listing/review portability is

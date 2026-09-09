@@ -12,8 +12,8 @@ const nav = [
 const cta = { label: 'Free estimate', href: '/owners#estimate' };
 
 // Visible date + schema dateModified — bump on every substantive re-check.
-const UPDATED_ISO = '2026-08-11';
-const UPDATED_LABEL = 'August 2026';
+const UPDATED_ISO = '2026-09-09';
+const UPDATED_LABEL = 'September 2026';
 
 const steps = [
   {
@@ -44,14 +44,14 @@ const steps = [
     n: '5',
     title: 'Relaunch stronger',
     blurb:
-      'New photography, sharper listing copy, dynamic pricing, and a compliance check, so the switch reads as an upgrade to guests and to the algorithm, not a reset.',
+      'New photography, updated listing copy, dynamic pricing, and a compliance check position the listing to perform better after the transition than before it.',
   },
 ];
 
 const faqs = [
   {
     q: 'How do I switch vacation rental management companies?',
-    a: 'Check your contract for the notice period and who owns your listing, sign with the new manager first so onboarding overlaps the notice period, give written notice, then transfer listings, reviews, photos, future bookings, and license details. Done in that order, your calendar never goes dark.',
+    a: 'Check your contract for the notice period and who owns your listing, sign with the new manager first so onboarding overlaps the notice period, give written notice, then transfer listings, reviews, photos, future bookings, and license details. Done in that order, there is no booking gap.',
   },
   {
     q: 'Will I lose my Airbnb reviews if I change managers?',
@@ -59,7 +59,7 @@ const faqs = [
   },
   {
     q: 'What happens to bookings already on the calendar?',
-    a: 'They get honored. Future reservations are either migrated to the new listing or hosted through the transition, and guests are told nothing changed except the quality of the stay. A good handover is invisible to guests.',
+    a: 'They are honored. Future reservations are either migrated to the new listing or hosted through the transition, and guests experience no disruption.',
   },
   {
     q: 'What happens to my San Diego STRO license when I switch?',
@@ -127,12 +127,13 @@ const pageSchema = JSON.stringify({
       <div class="phero__overlay"></div>
       <div class="phero__inner narrow">
         <p class="eyebrow">Switching managers</p>
-        <h1>Switching vacation rental managers is easier than staying unhappy.</h1>
+        <h1>How to switch vacation rental management companies in San Diego.</h1>
         <p>
-          Owners put up with slow responses and murky statements for years because switching feels
-          risky. It isn't. Run the handover in the right order, <strong>contract first, new
-          manager second, notice third</strong>, and you keep your reviews, your bookings, and your
-          STRO license while your calendar never goes dark.
+          Switching managers is a contained process, and most transitions complete inside the
+          outgoing contract's notice period. The order of operations matters most:
+          <strong>review the contract first, sign the new manager second, give notice
+          third</strong>. Done in that order, owners keep their existing bookings, their STRO
+          license, and their reviews where the listing allows, without a gap in the calendar.
         </p>
         <a class="btn btn-lg" href="/owners#estimate">Plan my switch</a>
         <p class="sw-updated">Updated {UPDATED_LABEL}</p>
@@ -168,18 +169,17 @@ const pageSchema = JSON.stringify({
     <section class="section-pad sw-alt" data-screen-label="Contract check">
       <div class="section-wrap sw-contract">
         <div class="sw-contract__intro reveal">
-          <p class="eyebrow">Before you sign anything, or leave anyone</p>
-          <h2>The four contract lines that decide your switch.</h2>
+          <p class="eyebrow">Contract review</p>
+          <h2>Four contract terms that determine the transition.</h2>
           <p class="lede muted">
-            Five minutes with your current agreement answers most of the scary questions.
+            Most questions about a switch are answered by the current agreement itself.
           </p>
         </div>
         <ul class="sw-contract__list reveal">
           <li>
             <strong>Listing &amp; review ownership.</strong> If the listing lives under the
             manager's account, its reviews stay behind when you go. If it's under yours, everything
-            moves with you. This single line is the biggest difference between a painless switch
-            and starting over.
+            moves with you. This term has the largest effect on what transfers.
           </li>
           <li>
             <strong>Notice period.</strong> Usually 30–60 days. Onboarding with the new manager
@@ -203,10 +203,10 @@ const pageSchema = JSON.stringify({
       <div class="section-wrap">
         <div class="section-head reveal">
           <p class="eyebrow">What we take off your plate</p>
-          <h2>A handover you mostly watch happen.</h2>
+          <h2>What Cardo handles during the transition.</h2>
           <p class="lede muted">
-            Tell us your notice date and we run the rest as a checklist. Most owners are
-            surprised how little lands on them.
+            Cardo runs the transition as a checklist from the notice date. The items below are
+            handled without owner involvement unless a decision is needed.
           </p>
         </div>
         <div class="sw-handover">
@@ -214,7 +214,7 @@ const pageSchema = JSON.stringify({
             { t: 'Transition timing', d: 'We map the switch around existing reservations so no booking is disturbed and no revenue gap opens.' },
             { t: 'Asset transfer', d: 'Listings, reviews where portable, guest data, lock codes, vendor handoffs: inventoried and moved.' },
             { t: 'City paperwork', d: 'STRO local-contact updates and TOT filing setup, so compliance never skips a month.' },
-            { t: 'The awkward part', d: "If you'd rather not manage the goodbye, we coordinate directly with your outgoing manager." },
+            { t: 'Manager coordination', d: 'If preferred, Cardo communicates directly with the outgoing manager for the full handover.' },
             { t: 'Relaunch design & photos', d: 'In-house design review and fresh photography, so the listing relaunches above where it left off.' },
             { t: 'Pricing reset', d: 'Dynamic pricing tuned to your neighborhood from day one. Most switches come with an immediate rate correction.' },
           ].map((i) => (
@@ -261,7 +261,7 @@ const pageSchema = JSON.stringify({
     <section class="cta" data-screen-label="CTA">
       <div class="cta__inner reveal">
         <p class="eyebrow">Quiet handovers since 2013</p>
-        <h2>Switch without the booking gap.</h2>
+        <h2>Plan the transition before giving notice.</h2>
         <p>
           Tell us where your home is and when your notice period could start. We'll map the
           transition and show you what the home should be earning on the other side of it.
