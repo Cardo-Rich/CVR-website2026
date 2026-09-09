@@ -106,6 +106,11 @@ Escalation ladder, in order:
 
 - [ ] **Webflow site**: check whether the old Webflow account is still
       accessible (it was Cardo's own) — if so, just unpublish it. Done.
+- [x] **DONE (Sept 2026): Hostify portal taken down** after Rich's brand
+      complaint email; URL now dead. Submit the old URL to Google's
+      [Remove Outdated Content tool](https://search.google.com/search-console/remove-outdated-content)
+      to clear the search result. Guesty portal noindexed via meta snippet
+      (kept for internal team use); Webflow site unpublished by Rich.
 - [ ] **Platform brand complaint** (Guesty + Hostify support/legal): the site
       uses the "Cardo Vacation Rentals" name and brand without authorization,
       the account holder no longer manages these properties, and live booking

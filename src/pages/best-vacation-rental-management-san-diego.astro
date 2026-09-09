@@ -1,0 +1,372 @@
+---
+import Base from '../layouts/Base.astro';
+import MarketingHeader from '../components/sections/MarketingHeader.astro';
+import Footer from '../components/sections/Footer.astro';
+
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs' },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog' },
+];
+const cta = { label: 'Free estimate', href: '/owners#estimate' };
+
+// Visible date + schema dateModified. Re-verify every company's public claims
+// (fees, scope, coverage) each quarter; a stale roundup is a trust liability.
+const UPDATED_ISO = '2026-09-09';
+const UPDATED_LABEL = 'September 2026';
+
+// Every claim below comes from each company's own public website or published
+// marketing as of the updated date. Factual, no disparagement: their words,
+// their numbers. Cardo's entry is ours and says so.
+const companies = [
+  {
+    name: 'Cardo Vacation Rentals',
+    url: 'https://cardorentals.com/owners',
+    bestFor: 'Design-led luxury homes on the San Diego coast',
+    fee: '20% all-in',
+    blurb:
+      'Cardo publishes this guide. The company has operated as a San Diego 5-star Airbnb Superhost since 2013, reports more than 3,500 five-star Airbnb reviews, and runs interior design and cleaning in-house, with pricing adjusted daily by an analyst. It charges a flat 20% of booking revenue with no setup fees or monthly minimums, and it concentrates on design-led homes positioned for the top of their market.',
+    cardo: true,
+  },
+  {
+    name: 'Air Concierge',
+    url: 'https://www.airconcierge.net/',
+    bestFor: 'Established full-service track record',
+    fee: 'Quoted per property',
+    blurb:
+      'Among the longest-running Airbnb management companies in San Diego, serving coastal properties from Carlsbad to Coronado, with advertised partnerships alongside major hospitality brands. The company fits owners who prioritize an established, larger local operator.',
+  },
+  {
+    name: 'Bluewater Vacation Homes',
+    url: 'https://www.bluewatervacationhomes.com/',
+    bestFor: 'Longtime luxury coastal inventory',
+    fee: 'Quoted per property',
+    blurb:
+      'Bluewater has managed upscale San Diego coastal homes since 2009, distributes across the major booking channels, and concentrates its portfolio in the beach communities. It is among the most established luxury-positioned managers in the county.',
+  },
+  {
+    name: 'Haustay',
+    url: 'https://www.haustay.com/',
+    bestFor: 'North County (Carlsbad, Oceanside, Encinitas)',
+    fee: 'Quoted per property',
+    blurb:
+      'A North County specialist that advertises a curated portfolio of more than $100 million in home value along the coastline. Its coverage is strongest from Carlsbad through Oceanside, with a presence in La Jolla as well.',
+  },
+  {
+    name: 'West Coast Homestays',
+    url: 'https://www.westcoasthomestays.com/',
+    bestFor: 'Owners who want published data and guides',
+    fee: 'Quoted per property',
+    blurb:
+      'A full-service manager reporting 80+ San Diego rentals that publishes more owner education than any other local company: fee guides, regulation explainers, and neighborhood revenue benchmarks. Owners who research the market thoroughly will find its library useful.',
+  },
+  {
+    name: 'Superstays',
+    url: 'https://superstaysmanagement.com/',
+    bestFor: 'Boutique attention at a published rate',
+    fee: '18% advertised',
+    blurb:
+      'A small boutique operation that publishes its management percentage and emphasizes personalized attention: listing optimization, photography, guest communication, and cleaning coordination across a compact portfolio.',
+  },
+  {
+    name: 'AvantStay',
+    url: 'https://avantstay.com/',
+    bestFor: 'Large luxury estates on a national platform',
+    fee: 'Quoted per property',
+    blurb:
+      'A tech-enabled national manager with a meaningful San Diego footprint in large, high-end group-travel homes. Owners get national-brand marketing and technology; the trade-off of any national platform is how much of the operation is local.',
+  },
+  {
+    name: 'Evolve',
+    url: 'https://evolve.com/',
+    bestFor: 'Budget-conscious owners who will self-operate',
+    fee: 'From 10%, half-service',
+    blurb:
+      'A national half-service model: Evolve markets the listing across the major platforms for a low percentage, while on-the-ground work (guest issues during stays, turnovers, compliance) remains with the owner or vendors the owner arranges. The model suits hands-on owners and is a mismatch for owners who want operations handled.',
+  },
+  {
+    name: 'Vacasa',
+    url: 'https://www.vacasa.com/',
+    bestFor: 'National full-service scale',
+    fee: 'Quoted per property, typically 25%+',
+    blurb:
+      'The largest vacation rental manager in North America, with San Diego coverage that includes the former SeaBreeze portfolio. Full-service scope at national scale; owners weighing it should compare local staffing levels and total fees against local alternatives.',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How did Cardo rank this list?',
+    a: 'Cardo appears first and discloses that placement. Every other entry is ordered by how established the company is in San Diego and described using its own published claims: fees where the company advertises them, coverage areas, and service scope. The descriptions are factual rather than critical; these are the companies we would evaluate if we were shopping the market ourselves.',
+  },
+  {
+    q: 'Should I choose a local company or a national brand?',
+    a: 'The practical test is who physically responds when something goes wrong during a stay. Local full-service companies staff their own market. National platforms vary by city, so ask how many local employees serve San Diego and whether guest care and turnovers are in-house or contracted.',
+  },
+  {
+    q: 'What should I ask before signing with any company on this list?',
+    a: 'Five things: the full fee structure including every add-on, who owns the listing and its reviews, the contract term and exit terms, who handles STRO licensing and TOT filings, and real statements from a comparable home. Our fee guide covers what the answers should look like.',
+  },
+  {
+    q: 'What does Cardo charge compared to these companies?',
+    a: 'A straight 20% of booking revenue, all-in: no setup fees, no monthly minimums, no charge until your home earns. San Diego full-service rates run 18-35%. The full breakdown, including the hidden fees to watch for anywhere, is on our management fees page.',
+  },
+];
+
+const description =
+  'Nine San Diego vacation rental and Airbnb management companies compared on fees, service scope, and coverage: local specialists, luxury managers, and national platforms. Published by Cardo Vacation Rentals, which appears on the list.';
+
+const itemListSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Best Vacation Rental Management Companies in San Diego',
+  itemListOrder: 'https://schema.org/ItemListOrderAscending',
+  numberOfItems: companies.length,
+  itemListElement: companies.map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.name,
+    url: c.url,
+  })),
+});
+
+const faqSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+});
+
+const pageSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://cardorentals.com/best-vacation-rental-management-san-diego',
+  name: 'Best Vacation Rental Management Companies in San Diego (2026)',
+  description,
+  dateModified: UPDATED_ISO,
+  isPartOf: { '@id': 'https://cardorentals.com/#organization' },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
+      { '@type': 'ListItem', position: 2, name: 'For Owners', item: 'https://cardorentals.com/owners' },
+      { '@type': 'ListItem', position: 3, name: 'Best management companies', item: 'https://cardorentals.com/best-vacation-rental-management-san-diego' },
+    ],
+  },
+});
+---
+
+<Base
+  title="9 Best Vacation Rental Management Companies in San Diego (2026) | Cardo"
+  description={description}
+  image="/assets/og/og-owners.jpg"
+  imageAlt="Cardo Vacation Rentals, comparing the best San Diego vacation rental management companies"
+>
+  <script slot="head" type="application/ld+json" is:inline set:html={pageSchema} />
+  <script slot="head" type="application/ld+json" is:inline set:html={itemListSchema} />
+  <MarketingHeader {nav} {cta} />
+
+  <main>
+    <section class="phero" data-screen-label="Best-of hero">
+      <img class="phero__bg" src="/assets/photos/imported/unsplash-1512917774080-9991f1c4c750.jpg" alt="" />
+      <div class="phero__overlay"></div>
+      <div class="phero__inner narrow">
+        <p class="eyebrow">Company comparison</p>
+        <h1>The best vacation rental management companies in San Diego.</h1>
+        <p>
+          San Diego has more than a dozen short-term rental management companies serving property
+          owners, from small local operators to national platforms. This guide compares nine of
+          them on three questions: what is included in the fee, what the fee is, and who does the
+          work locally. A disclosure before you read: the guide is written and maintained by Cardo
+          Vacation Rentals, which appears on the list. Information about each company comes from
+          its own published materials as of {UPDATED_LABEL}, and every entry links to the
+          company's site so you can verify the details.
+        </p>
+        <a class="btn btn-lg" href="/owners#estimate">Get a free Cardo earning estimate</a>
+        <p class="bo-updated">Updated {UPDATED_LABEL}. Fees and claims re-checked against each company's public site.</p>
+      </div>
+    </section>
+
+    <!-- The list -->
+    <section class="section-pad" data-screen-label="The list">
+      <div class="section-wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">The comparison</p>
+          <h2>Nine companies, compared.</h2>
+          <p class="lede muted">
+            The right choice depends on the property and on how involved the owner wants to
+            remain. Each entry lists the company's advertised fee where one is published and the
+            type of owner the model fits best.
+          </p>
+        </div>
+        <ol class="bo-list">
+          {companies.map((c, i) => (
+            <li class:list={['bo-card', 'reveal', { 'bo-card--cardo': c.cardo }]}>
+              <div class="bo-card__head">
+                <span class="bo-card__n">{i + 1}</span>
+                <div class="bo-card__title">
+                  <h3>{c.cardo ? c.name : <a href={c.url} rel="noopener">{c.name}</a>}</h3>
+                  <p class="bo-card__best">Best for: {c.bestFor}</p>
+                </div>
+                <div class="bo-card__fee">{c.fee}</div>
+              </div>
+              <p class="bo-card__blurb">{c.blurb}</p>
+              {c.cardo && <a class="btn" href="/owners#estimate">Get your free earning estimate</a>}
+            </li>
+          ))}
+        </ol>
+        <p class="bo-fine reveal">
+          Fees marked "quoted per property" are companies that do not publish a rate; expect
+          San Diego full-service management to run 18-35% of booking revenue.
+          <a href="/management-fees">Our full fee guide explains every model. →</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- How to choose -->
+    <section class="section-pad bo-alt" data-screen-label="How to choose">
+      <div class="section-wrap bo-choose">
+        <div class="bo-choose__intro reveal">
+          <p class="eyebrow">Evaluation criteria</p>
+          <h2>How to evaluate the companies on this list.</h2>
+          <p class="lede muted">
+            Three questions separate the companies on this list quickly.
+          </p>
+        </div>
+        <ul class="bo-choose__list reveal">
+          <li>
+            <strong>Match the model to your involvement.</strong> Full-service means everything is
+            handled and costs more. Half-service means a lower fee and real work left on your
+            plate. Decide which owner you are before comparing percentages.
+          </li>
+          <li>
+            <strong>Ask who is actually local.</strong> Guest care and turnovers are physical
+            work. Ask how many people the company employs in San Diego, and whether cleaning is
+            in-house or subcontracted.
+          </li>
+          <li>
+            <strong>Read the fee structure closely.</strong> Setup fees, technology fees,
+            maintenance markups, and exit terms determine what an owner actually keeps.
+            <a href="/management-fees">The six hidden fees to ask about are here.</a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section-pad" data-screen-label="Best-of FAQ">
+      <div class="section-wrap">
+        <div class="faq__head reveal">
+          <p class="eyebrow center" style="justify-content:center">Fair questions</p>
+          <h2>About this list.</h2>
+        </div>
+        <div class="faq__list" data-faq>
+          {faqs.map((f, i) => (
+            <div class:list={['faq__item', i === 0 ? 'is-open' : '']} data-faq-item>
+              <button class="faq__q" type="button" aria-expanded={i === 0 ? 'true' : 'false'}>
+                <span>{f.q}</span>
+                <span class="faq__plus">+</span>
+              </button>
+              <div class="faq__panel">
+                <p class="muted faq__a">{f.a}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <script type="application/ld+json" is:inline set:html={faqSchema} />
+    </section>
+
+    <section class="cta" data-screen-label="CTA">
+      <div class="cta__inner reveal">
+        <p class="eyebrow">Superhost since 2013</p>
+        <h2>Compare every company against a real number.</h2>
+        <p>
+          A free Cardo earning estimate shows what your home should earn in today's San Diego
+          market, and gives you a benchmark for every conversation on this list.
+        </p>
+        <a class="btn btn-lg" href="/owners#estimate">Get my free estimate</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .bo-alt { background: var(--cream); }
+  .bo-updated { margin-top: 14px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.75); }
+
+  /* List cards */
+  .bo-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 22px; max-width: 880px; margin-inline: auto; }
+  .bo-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 26px 26px 24px; box-shadow: var(--shadow-sm); }
+  .bo-card--cardo { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), var(--shadow-md); }
+  .bo-card__head { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 12px; }
+  .bo-card__n { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 50%; background: var(--ink); color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; }
+  .bo-card--cardo .bo-card__n { background: var(--rose); }
+  .bo-card__title { flex: 1; min-width: 0; }
+  .bo-card__title h3 { margin: 2px 0 4px; font-size: 1.25rem; }
+  .bo-card__title h3 a { color: inherit; text-decoration: none; }
+  .bo-card__title h3 a:hover { color: var(--rose); }
+  .bo-card__best { margin: 0; font-size: 0.86rem; font-weight: 600; color: var(--muted); }
+  .bo-card__fee { flex: none; font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: var(--ink); text-align: right; }
+  .bo-card--cardo .bo-card__fee { color: var(--rose); }
+  .bo-card__blurb { margin: 0; color: var(--muted); font-size: 0.97rem; line-height: 1.62; }
+  .bo-card .btn { margin-top: 16px; }
+  .bo-fine { max-width: 760px; margin: 26px auto 0; text-align: center; font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* Choose */
+  .bo-choose { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(32px, 5vw, 72px); align-items: start; }
+  .bo-choose__intro h2 { margin: 8px 0 12px; }
+  .bo-choose__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 20px; }
+  .bo-choose__list li { font-size: 1rem; line-height: 1.6; color: var(--muted); padding-left: 18px; border-left: 2px solid var(--gold); }
+  .bo-choose__list strong { color: var(--ink); }
+
+  /* FAQ accordion (scoped copy of the owners-page styles; shared rules live in
+     owners.css which carries header overrides this page must not load) */
+  .faq__head { text-align: center; margin-bottom: 44px; }
+  .faq__head h2 { margin: 8px 0 0; }
+  .faq__list { max-width: var(--container-narrow); margin: 0 auto; }
+  .faq__item { border-bottom: 1px solid var(--line); }
+  .faq__q { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 26px 0; background: none; border: none; cursor: pointer; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: 1.3rem; color: var(--ink); }
+  .faq__plus { color: var(--rose); flex: none; transition: transform var(--dur) var(--ease); }
+  .faq__item.is-open .faq__plus { transform: rotate(45deg); }
+  .faq__panel { max-height: 0; overflow: hidden; transition: max-height var(--dur) var(--ease); }
+  .faq__a { margin: 0; padding: 0 0 26px; font-size: 1.05rem; line-height: 1.65; color: var(--text-body); max-width: 760px; }
+
+  @media (max-width: 700px) {
+    .bo-card__head { flex-wrap: wrap; }
+    .bo-card__fee { text-align: left; width: 100%; padding-left: 54px; }
+    .bo-choose { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  import '../scripts/reveal.js';
+
+  // FAQ accordion, same single-open behavior as the owners page.
+  const list = document.querySelector('[data-faq]');
+  list?.querySelectorAll('[data-faq-item]').forEach((item) => {
+    const btn = item.querySelector('.faq__q');
+    const panel = item.querySelector('.faq__panel') as HTMLElement | null;
+    btn?.addEventListener('click', () => {
+      const willOpen = !item.classList.contains('is-open');
+      list.querySelectorAll('[data-faq-item]').forEach((o) => {
+        o.classList.remove('is-open');
+        o.querySelector('.faq__q')?.setAttribute('aria-expanded', 'false');
+        (o.querySelector('.faq__panel') as HTMLElement).style.maxHeight = '';
+      });
+      if (willOpen && panel) {
+        item.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+  const open = list?.querySelector('[data-faq-item].is-open .faq__panel') as HTMLElement | null;
+  if (open) open.style.maxHeight = open.scrollHeight + 'px';
+</script>
