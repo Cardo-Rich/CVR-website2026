@@ -8,6 +8,20 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Serialize live deploys. Two PRs merging within seconds of each other used to
+# run this workflow concurrently, which caused (a) an older commit's build
+# finishing last and clobbering a newer one on Hosting, and (b) HTTP 409
+# "unable to queue the operation" when both runs updated the same Cloud
+# Functions at once. A single-slot group makes each run finish (including its
+# in-flight GCP operations) before the next starts. cancel-in-progress is
+# false on purpose: cancelling a run does NOT cancel the GCP operation it has
+# already started, so a cancel could still 409 the next run — letting the
+# current run complete avoids that. GitHub keeps only the newest queued run per
+# group and drops older pending ones, so the latest commit still wins.
+concurrency:
+  group: deploy-live
+  cancel-in-progress: false
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
