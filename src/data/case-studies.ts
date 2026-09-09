@@ -57,8 +57,8 @@ export const caseStudies: CaseStudy[] = [
       '/assets/photos/designs-bedroom-fan.jpg',
     ],
     story: [
-      "Falcon came to us inherited and frozen in time — good bones and an unbeatable bluff location, buried under decades of mismatched furniture. The owner lived out of state and had neither the time nor the appetite to manage a renovation from afar, so they approved our plan and stepped back entirely.",
-      "Our design team cleared the home, repainted throughout, and furnished every room to make the most of the light and the view. We sourced and shipped the furniture, hung the art, stocked the kitchen, and staged it for the photographer — start to finish on a single invoice.",
+      "Falcon came to us inherited and frozen in time: good bones and an unbeatable bluff location, buried under decades of mismatched furniture. The owner lived out of state and had neither the time nor the appetite to manage a renovation from afar, so they approved our plan and stepped back entirely.",
+      "Our design team cleared the home, repainted throughout, and furnished every room to make the most of the light and the view. We sourced and shipped the furniture, hung the art, stocked the kitchen, and staged it for the photographer, start to finish on a single invoice.",
       "Five weeks later Falcon launched fully styled and photographed, and settled into the top tier of its La Jolla market at 57% above comparable homes.",
     ],
     stats: {
@@ -98,7 +98,7 @@ export const caseStudies: CaseStudy[] = [
       '/assets/photos/designs-amenities.jpg',
     ],
     story: [
-      "Nute had been a long-term rental for years — functional, dim, and forgettable. The owner wanted to move it to short-term but had been quoted long timelines and bigger budgets elsewhere, and had no interest in project-managing the work.",
+      "Nute had been a long-term rental for years: functional, dim, and forgettable. The owner wanted to move it to short-term but had been quoted long timelines and bigger budgets elsewhere, and had no interest in project-managing the work.",
       "We took it from drab to coastal-bright: a lighter palette, smarter furniture for the walk-street layout, and styling that made the small footprint feel generous. After one approval call, the owner left the rest to us.",
       "It photographed beautifully, booked solid in its first month, and now runs 44% ahead of its Pacific Beach market.",
     ],
@@ -126,10 +126,10 @@ export const caseStudies: CaseStudy[] = [
     neighborhood: 'Del Mar',
     beds: '4 BR',
     date: 'May 2026',
-    hook: "A craftsman classic styled to own Del Mar's racing season — and hold strong the rest of the year.",
+    hook: "A craftsman classic styled to own Del Mar's racing season, and hold strong the rest of the year.",
     seo: {
       title: 'Twain | Case Study | Cardo Vacation Rentals',
-      description: "A craftsman classic styled to own Del Mar's racing season — and hold strong the rest of the year.",
+      description: "A craftsman classic styled to own Del Mar's racing season, and hold strong the rest of the year.",
     },
     cardImg: '/assets/photos/designs-dining.jpg',
     gallery: [
@@ -139,7 +139,7 @@ export const caseStudies: CaseStudy[] = [
       '/assets/photos/designs-bedroom-fan.jpg',
     ],
     story: [
-      "Twain is a true craftsman — wood detailing, built-ins, character in every room. The owner loved the house but had no interest in furnishing it for short-term guests, and worried a generic staging would flatten everything that made it special.",
+      "Twain is a true craftsman: wood detailing, built-ins, character in every room. The owner loved the house but had no interest in furnishing it for short-term guests, and worried a generic staging would flatten everything that made it special.",
       "Our team designed around the architecture instead of over it: warm, layered furnishings that read editorial in photos and live comfortably for a full house. The owner trusted us with every detail, start to finish.",
       "Twain now commands Del Mar's racing-season premium and runs 48% above its market across the year.",
     ],
@@ -167,10 +167,10 @@ export const caseStudies: CaseStudy[] = [
     neighborhood: 'Mission Beach',
     beds: '2 BR',
     date: 'April 2026',
-    hook: 'A compact two-bedroom that punches well above its size — and its nightly comps.',
+    hook: 'A compact two-bedroom that punches well above its size, and its nightly comps.',
     seo: {
       title: 'Sixth | Case Study | Cardo Vacation Rentals',
-      description: 'A compact two-bedroom that punches well above its size — and its nightly comps.',
+      description: 'A compact two-bedroom that punches well above its size, and its nightly comps.',
     },
     cardImg: '/assets/photos/designs-bedroom-floral.jpg',
     gallery: [
@@ -180,9 +180,9 @@ export const caseStudies: CaseStudy[] = [
       '/assets/photos/designs-bedroom-fan.jpg',
     ],
     story: [
-      "Small homes are the hardest to make special, and Sixth is small — a two-bedroom a block from the sand. The owner assumed its size capped what it could earn, and had nearly listed it long-term to avoid the hassle.",
+      "Small homes are the hardest to make special, and Sixth is small: a two-bedroom a block from the sand. The owner assumed its size capped what it could earn, and had nearly listed it long-term to avoid the hassle.",
       "We designed every inch to work twice as hard: dual-purpose furniture, a bright cohesive palette, and styling that photographs larger than the footprint. The owner handed it over and let the team run.",
-      "Guests book it for the location and rate it for the comfort — and it now runs 39% above its Mission Beach market.",
+      "Guests book it for the location and rate it for the comfort, and it now runs 39% above its Mission Beach market.",
     ],
     stats: {
       annualRevenue: '$128,400',
@@ -221,7 +221,7 @@ export const caseStudies: CaseStudy[] = [
       '/assets/photos/designs-amenities.jpg',
     ],
     story: [
-      "Kane had an underused bonus room and an owner with a full-time job two time zones away. They knew the space could be a differentiator but had no bandwidth to figure out how — and no desire to coordinate vendors remotely.",
+      "Kane had an underused bonus room and an owner with a full-time job two time zones away. They knew the space could be a differentiator but had no bandwidth to figure out how, and no desire to coordinate vendors remotely.",
       "We turned the bonus room into a moody navy game room that anchors the whole listing, then styled the rest of the home to match the energy. The owner approved a moodboard remotely and stayed out of the rest.",
       "It has become the feature guests search for, lifting both bookings and rate to 41% above its Encinitas market.",
     ],
@@ -262,9 +262,9 @@ export const caseStudies: CaseStudy[] = [
       '/assets/photos/designs-living-bright.jpg',
     ],
     story: [
-      "Mt Ainsworth is the largest home in this group — five bedrooms, a pool, and a backyard built for entertaining. The owner wanted it to compete at the very top of Coronado’s market but had neither the time nor the design eye to get it there, and wanted to be entirely out of the process.",
+      "Mt Ainsworth is the largest home in this group: five bedrooms, a pool, and a backyard built for entertaining. The owner wanted it to compete at the very top of Coronado’s market but had neither the time nor the design eye to get it there, and wanted to be entirely out of the process.",
       "We furnished it as a true estate: cohesive rooms that photograph like a luxury hotel and a backyard styled into a destination of its own. After a single walkthrough, the owner left it entirely to us.",
-      "It launched at the top of its comp set and runs 61% above its Coronado market — the strongest lift of the six.",
+      "It launched at the top of its comp set and runs 61% above its Coronado market: the strongest lift of the six.",
     ],
     stats: {
       annualRevenue: '$268,900',
