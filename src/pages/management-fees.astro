@@ -14,8 +14,8 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
 // Visible date + schema dateModified. Bump whenever the numbers are re-checked
 // — freshness is a real ranking input for AI answer engines, and a stale fees
 // page is worse than none. Re-verify the market ranges at least quarterly.
-const UPDATED_ISO = '2026-08-11';
-const UPDATED_LABEL = 'August 2026';
+const UPDATED_ISO = '2026-09-09';
+const UPDATED_LABEL = 'September 2026';
 
 // Market ranges must stay consistent with the /owners comparison table
 // (Compare.astro: Cardo 20% · full-service 18–35% · half-service 10–20%).
@@ -39,7 +39,7 @@ const feeModels = [
     model: 'Half-service / co-hosting',
     rate: '10–20%',
     of: 'of booking revenue',
-    covers: 'Two flavors: national half-service brands, and independent co-hosts. Both leave real work on your plate.',
+    covers: 'Two types: national half-service brands, and independent co-hosts. Both leave real work on your plate.',
     watch: 'National brands (like Evolve) stop managing after the guest checks in, so the stay itself is yours. Co-hosts may manage the full reservation, but only on one platform, so the rest of the market never sees your home.',
   },
   {
@@ -47,7 +47,7 @@ const feeModels = [
     rate: '$300–500',
     of: 'per month',
     covers: 'A fixed scope of coordination tasks.',
-    watch: 'The manager earns the same whether your home is booked or empty. Incentives point the wrong way.',
+    watch: 'The manager gets paid the same whether your home is booked or empty, so there is little reason for them to fill your calendar.',
   },
 ];
 
@@ -62,10 +62,10 @@ const included = [
 
 const hiddenFees = [
   { t: 'Onboarding or "setup" fees', d: 'Hundreds to thousands of dollars before your first booking. Cardo charges none.' },
-  { t: 'Technology and channel fees', d: 'Monthly software surcharges layered on top of the management percentage.' },
-  { t: 'Maintenance markups', d: 'A percentage silently added to every vendor invoice that crosses the manager\'s desk.' },
-  { t: 'Linen and restocking programs', d: 'Mandatory supply programs billed above retail.' },
-  { t: 'Guest-fee skimming', d: 'Booking or "resort" fees charged to guests that never appear on your statement.' },
+  { t: 'Technology and channel fees', d: 'Monthly software charges stacked on top of the management percentage.' },
+  { t: 'Maintenance markups', d: 'An extra percentage quietly added to every repair or vendor bill before it reaches you.' },
+  { t: 'Linen and restocking programs', d: 'Required supply programs that bill you more than the products cost in a store.' },
+  { t: 'Guest-fee skimming', d: 'Booking or "resort" fees charged to your guests that never show up on your statement: money made off your home that you never see.' },
   { t: 'Vendor lock-in', d: 'High cost vendor relationships that benefit only your manager.' },
 ];
 
@@ -149,7 +149,7 @@ const pageSchema = JSON.stringify({
           Full-service vacation rental managers in San Diego charge <strong>18–35% of booking
           revenue</strong>. Cardo charges a straight <strong>20%, all-in</strong>: no setup fees,
           no monthly minimums, and no charge until your home is earning. Here's the whole market,
-          what our 20% covers, and the fees to watch for anywhere else.
+          what our 20% covers, and the fees to watch for at other companies.
         </p>
         <a class="btn btn-lg" href="/owners#estimate">See what your home would net</a>
         <p class="mf-updated">Updated {UPDATED_LABEL} · rates re-checked against the current San Diego market</p>
@@ -163,8 +163,8 @@ const pageSchema = JSON.stringify({
           <p class="eyebrow">The market</p>
           <h2>What do Airbnb property managers charge?</h2>
           <p class="lede muted">
-            Four pricing models cover nearly every management company in San Diego. The percentage
-            is only half the question. What it buys is the other half.
+            Nearly every management company in San Diego uses one of these four pricing models.
+            Look at what the fee includes, not just the number.
           </p>
         </div>
         <div class="mf-models">
@@ -182,7 +182,7 @@ const pageSchema = JSON.stringify({
         </div>
         <p class="mf-fine reveal">
           Ranges reflect published San Diego rates and industry fee surveys as of {UPDATED_LABEL}.
-          "Full service" varies by company. Always compare scope line by line.
+          "Full service" means something different at every company. Always compare exactly what is included, line by line.
         </p>
       </div>
     </section>
@@ -223,8 +223,8 @@ const pageSchema = JSON.stringify({
           <p class="eyebrow">Read the fine print</p>
           <h2>Six fees that hide inside "competitive" rates.</h2>
           <p class="lede muted">
-            A low headline percentage often grows on the statement. These are the six to ask any
-            manager about before you sign.
+            A low advertised rate often costs more once extra fees show up on your statement.
+            These are the six to ask any manager about before you sign.
           </p>
         </div>
         <div class="mf-hidden">
@@ -254,8 +254,8 @@ const pageSchema = JSON.stringify({
           <p class="eyebrow">The real question</p>
           <h2>Is 20% worth it?</h2>
           <p class="lede muted">
-            The fee is what you see. The return is what a professionally run home earns over one
-            that's listed and left alone.
+            A 20% fee only makes sense if we earn you more than it costs. Here is where that
+            extra income comes from.
           </p>
         </div>
         <ul class="mf-worth__list reveal">
@@ -275,9 +275,9 @@ const pageSchema = JSON.stringify({
             reports. Most owners spend 15-30 hours a month, every month.
           </li>
           <li>
-            <strong>Compliance is not optional.</strong> San Diego's STRO licenses are capped and
-            precious; a filing mistake can cost you the license itself. Protecting it is part of
-            the job.
+            <strong>Compliance is not optional.</strong> The city limits how many STRO licenses
+            exist, and a filing mistake can cost you yours. Protecting your license is part of
+            our job.
           </li>
         </ul>
       </div>
@@ -313,9 +313,9 @@ const pageSchema = JSON.stringify({
     <section class="cta" data-screen-label="CTA">
       <div class="cta__inner reveal">
         <p class="eyebrow">Transparent since 2013</p>
-        <h2>See the number that actually matters: your net.</h2>
+        <h2>See the number that matters: what you keep.</h2>
         <p>
-          A free earning estimate shows what your home should gross in today's San Diego market,
+          A free earning estimate shows what your home should earn in today's San Diego market,
           and exactly what you'd keep after our 20%.
         </p>
         <a class="btn btn-lg" href="/owners#estimate">Get my free estimate</a>
