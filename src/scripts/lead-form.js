@@ -36,6 +36,8 @@ export function wireLeadForm(opts) {
       const data = res.ok ? await res.json() : null;
       if (!data || !data.ok) throw new Error('bad response');
       form.reset();
+      // Conversion signal for GTM (GA4 generate_lead + Meta Lead fire on this).
+      try { (window.dataLayer = window.dataLayer || []).push({ event: 'lead_submit', leadForm: opts.type || 'lead' }); } catch (e2) {}
       if (status) {
         status.textContent = opts.successText || 'Thanks! We’ve got your details and will be in touch shortly.';
         status.classList.add('is-sent');
