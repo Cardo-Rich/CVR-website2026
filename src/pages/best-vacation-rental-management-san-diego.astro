@@ -25,6 +25,10 @@ const companies = [
     url: 'https://cardorentals.com/owners',
     bestFor: 'Design-led luxury homes on the San Diego coast',
     fee: '20% all-in',
+    feePct: 20,
+    model: 'Full service',
+    ops: 'Local, San Diego',
+    focus: 'Coastal luxury, design-led',
     blurb:
       'Cardo publishes this guide. The company has operated as a San Diego 5-star Airbnb Superhost since 2013, reports more than 3,500 five-star Airbnb reviews, and runs interior design and cleaning in-house, with pricing adjusted daily by an analyst. It charges a flat 20% of booking revenue with no setup fees or monthly minimums, and it concentrates on design-led homes positioned for the top of their market.',
     cardo: true,
@@ -34,6 +38,9 @@ const companies = [
     url: 'https://www.airconcierge.net/',
     bestFor: 'Established full-service track record',
     fee: 'Quoted per property',
+    model: 'Full service',
+    ops: 'Local, San Diego',
+    focus: 'Coastal, Carlsbad to Coronado',
     blurb:
       'Among the longest-running Airbnb management companies in San Diego, serving coastal properties from Carlsbad to Coronado, with advertised partnerships alongside major hospitality brands. The company fits owners who prioritize an established, larger local operator.',
   },
@@ -42,6 +49,9 @@ const companies = [
     url: 'https://www.bluewatervacationhomes.com/',
     bestFor: 'Longtime luxury coastal inventory',
     fee: 'Quoted per property',
+    model: 'Full service',
+    ops: 'Local, San Diego',
+    focus: 'Beach communities, upscale homes',
     blurb:
       'Bluewater has managed upscale San Diego coastal homes since 2009, distributes across the major booking channels, and concentrates its portfolio in the beach communities. It is among the most established luxury-positioned managers in the county.',
   },
@@ -50,6 +60,9 @@ const companies = [
     url: 'https://www.haustay.com/',
     bestFor: 'North County (Carlsbad, Oceanside, Encinitas)',
     fee: 'Quoted per property',
+    model: 'Full service',
+    ops: 'Local, North County',
+    focus: 'Carlsbad through Oceanside, La Jolla',
     blurb:
       'A North County specialist that advertises a curated portfolio of more than $100 million in home value along the coastline. Its coverage is strongest from Carlsbad through Oceanside, with a presence in La Jolla as well.',
   },
@@ -58,6 +71,9 @@ const companies = [
     url: 'https://www.westcoasthomestays.com/',
     bestFor: 'Owners who want published data and guides',
     fee: 'Quoted per property',
+    model: 'Full service',
+    ops: 'Local, San Diego',
+    focus: 'Citywide, research-minded owners',
     blurb:
       'A full-service manager reporting 80+ San Diego rentals that publishes more owner education than any other local company: fee guides, regulation explainers, and neighborhood revenue benchmarks. Owners who research the market thoroughly will find its library useful.',
   },
@@ -66,6 +82,10 @@ const companies = [
     url: 'https://superstaysmanagement.com/',
     bestFor: 'Boutique attention at a published rate',
     fee: '18% advertised',
+    feePct: 18,
+    model: 'Full service',
+    ops: 'Local, San Diego',
+    focus: 'Compact boutique portfolio',
     blurb:
       'A small boutique operation that publishes its management percentage and emphasizes personalized attention: listing optimization, photography, guest communication, and cleaning coordination across a compact portfolio.',
   },
@@ -74,6 +94,9 @@ const companies = [
     url: 'https://avantstay.com/',
     bestFor: 'Large luxury estates on a national platform',
     fee: 'Quoted per property',
+    model: 'Full service',
+    ops: 'National platform',
+    focus: 'Large group-travel estates',
     blurb:
       'A tech-enabled national manager with a meaningful San Diego footprint in large, high-end group-travel homes. Owners get national-brand marketing and technology; the trade-off of any national platform is how much of the operation is local.',
   },
@@ -82,6 +105,10 @@ const companies = [
     url: 'https://evolve.com/',
     bestFor: 'Budget-conscious owners who will self-operate',
     fee: 'From 10%, half-service',
+    feePct: 10,
+    model: 'Half service',
+    ops: 'National platform',
+    focus: 'Marketing only, owner operates',
     blurb:
       'A national half-service model: Evolve markets the listing across the major platforms for a low percentage, while on-the-ground work (guest issues during stays, turnovers, compliance) remains with the owner or vendors the owner arranges. The model suits hands-on owners and is a mismatch for owners who want operations handled.',
   },
@@ -90,6 +117,9 @@ const companies = [
     url: 'https://www.vacasa.com/',
     bestFor: 'National full-service scale',
     fee: 'Quoted per property, typically 25%+',
+    model: 'Full service',
+    ops: 'National platform',
+    focus: 'Broad coverage, former SeaBreeze portfolio',
     blurb:
       'The largest vacation rental manager in North America, with San Diego coverage that includes the former SeaBreeze portfolio. Full-service scope at national scale; owners weighing it should compare local staffing levels and total fees against local alternatives.',
   },
@@ -191,9 +221,39 @@ const pageSchema = JSON.stringify({
       </div>
     </section>
 
+    <!-- Market context: stat tiles (headline numbers, not a chart) -->
+    <section class="section-pad bo-stats-pad" data-screen-label="Market at a glance">
+      <div class="section-wrap">
+        <div class="bo-stats reveal">
+          <div class="bo-stat"><div class="bo-stat__v">≈16,000</div><div class="bo-stat__l">active short-term rentals in the San Diego market</div></div>
+          <div class="bo-stat"><div class="bo-stat__v">18–35%</div><div class="bo-stat__l">typical full-service management fee</div></div>
+          <div class="bo-stat"><div class="bo-stat__v">11.75–13.75%</div><div class="bo-stat__l">transient occupancy tax, set by zone</div></div>
+          <div class="bo-stat"><div class="bo-stat__v">1%</div><div class="bo-stat__l">of housing stock: the city's cap on whole-home STRO licenses</div></div>
+        </div>
+        <p class="bo-source reveal">Sources: public short-term rental market data and City of San Diego STRO and TOT schedules, as of {UPDATED_LABEL}.</p>
+      </div>
+    </section>
+
     <!-- The list -->
     <section class="section-pad" data-screen-label="The list">
       <div class="section-wrap">
+        <div class="bo-types reveal">
+          <div class="bo-type">
+            <span class="bo-type__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#00967F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg></span>
+            <h3>Hands-off, premium home</h3>
+            <p>A local full-service company runs everything. Start with entries 1 through 6.</p>
+          </div>
+          <div class="bo-type">
+            <span class="bo-type__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#00967F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+            <h3>Hands-on, fee-sensitive</h3>
+            <p>A half-service platform keeps the fee low and the work with you. See Evolve, and the fee guide for the trade-offs.</p>
+          </div>
+          <div class="bo-type">
+            <span class="bo-type__ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#00967F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 20V9l6-5 6 5v11"/><path d="M10 20v-4h4v4"/></svg></span>
+            <h3>Large estate, national brand</h3>
+            <p>The national platforms carry the biggest group-travel homes. See AvantStay and Vacasa.</p>
+          </div>
+        </div>
         <div class="section-head reveal">
           <p class="eyebrow">The comparison</p>
           <h2>Nine companies, compared.</h2>
@@ -211,6 +271,7 @@ const pageSchema = JSON.stringify({
                 <div class="bo-card__title">
                   <h3>{c.cardo ? c.name : <a href={c.url} rel="noopener">{c.name}</a>}</h3>
                   <p class="bo-card__best">Best for: {c.bestFor}</p>
+                  <p class="bo-card__chips"><span class="bo-chip">{c.ops}</span><span class="bo-chip">{c.model}</span></p>
                 </div>
                 <div class="bo-card__fee">{c.fee}</div>
               </div>
@@ -221,11 +282,90 @@ const pageSchema = JSON.stringify({
         </ol>
         <p class="bo-fine reveal">
           Fees marked "quoted per property" are companies that do not publish a rate; expect
-          San Diego full-service management to run 18-35% of booking revenue.
-          <a href="/management-fees">Our full fee guide explains every model. →</a>
+          San Diego full-service management to run 18-35% of booking revenue. <a href="/management-fees">Our full fee guide explains every model. →</a>
         </p>
       </div>
     </section>
+
+    <!-- Where published fees sit in the market: range bands + published-rate dots -->
+    <section class="section-pad bo-alt" data-screen-label="Fee chart">
+      <div class="section-wrap bo-chartwrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Fees in context</p>
+          <h2>Where the published rates sit.</h2>
+          <p class="lede muted">
+            Most companies quote per property, but three on this list publish a rate. The chart
+            shows where those published rates fall inside the market's two fee ranges; the table
+            below carries every company's numbers.
+          </p>
+        </div>
+        <figure class="bo-chart reveal">
+          <svg viewBox="0 0 720 210" role="img" aria-label="Chart of San Diego management fee ranges. Half-service runs 10 to 20 percent, full-service 18 to 35 percent. Published rates: Evolve from 10 percent, Superstays 18 percent, Cardo 20 percent all-in.">
+            <title>San Diego management fees: ranges and published rates</title>
+            <!-- x scale: 0% -> x=60, 40% -> x=700 (16px per point) -->
+            <!-- gridlines + axis -->
+            <g font-family="Inter, sans-serif" font-size="12" fill="#6B6D78">
+              <line x1="60" y1="30" x2="60" y2="150" stroke="#E5E0D8"/><text x="60" y="170" text-anchor="middle">0%</text>
+              <line x1="220" y1="30" x2="220" y2="150" stroke="#E5E0D8"/><text x="220" y="170" text-anchor="middle">10%</text>
+              <line x1="380" y1="30" x2="380" y2="150" stroke="#E5E0D8"/><text x="380" y="170" text-anchor="middle">20%</text>
+              <line x1="540" y1="30" x2="540" y2="150" stroke="#E5E0D8"/><text x="540" y="170" text-anchor="middle">30%</text>
+              <line x1="700" y1="30" x2="700" y2="150" stroke="#E5E0D8"/><text x="700" y="170" text-anchor="middle">40%</text>
+              <text x="380" y="196" text-anchor="middle">Management fee, % of booking revenue</text>
+            </g>
+            <!-- range bands (identity by row + direct label, not color alone) -->
+            <g>
+              <rect x="220" y="40" width="160" height="22" rx="4" fill="#00967F" opacity="0.18"/>
+              <rect x="220" y="40" width="160" height="22" rx="4" fill="none" stroke="#00967F" stroke-width="1"/>
+              <text x="212" y="55" text-anchor="end" font-family="Inter, sans-serif" font-size="12.5" fill="#0E1528">Half service, 10–20%</text>
+              <rect x="348" y="72" width="272" height="22" rx="4" fill="#C7861F" opacity="0.18"/>
+              <rect x="348" y="72" width="272" height="22" rx="4" fill="none" stroke="#C7861F" stroke-width="1"/>
+              <text x="340" y="87" text-anchor="end" font-family="Inter, sans-serif" font-size="12.5" fill="#0E1528">Full service, 18–35%</text>
+            </g>
+            <!-- published-rate dots on their own row, direct-labeled -->
+            <g>
+              <text x="52" y="126" text-anchor="end" font-family="Inter, sans-serif" font-size="12.5" fill="#0E1528">Published rates</text>
+              <circle cx="220" cy="122" r="7" fill="#00967F" stroke="#fff" stroke-width="2"/>
+              <text x="220" y="145" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#0E1528">Evolve, from 10%</text>
+              <circle cx="348" cy="122" r="7" fill="#00967F" stroke="#fff" stroke-width="2"/>
+              <text x="330" y="108" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#0E1528">Superstays 18%</text>
+              <circle cx="380" cy="122" r="9" fill="#C7861F" stroke="#fff" stroke-width="2"/>
+              <text x="424" y="145" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#0E1528">Cardo 20%, all-in</text>
+            </g>
+          </svg>
+          <figcaption class="bo-chart__cap">Published rates as advertised by each company, {UPDATED_LABEL}. Companies without a published rate quote per property.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Side-by-side comparison table -->
+    <section class="section-pad" data-screen-label="Comparison table">
+      <div class="section-wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Side by side</p>
+          <h2>Every company, one table.</h2>
+        </div>
+        <div class="bo-tablewrap reveal">
+          <table class="bo-table">
+            <thead>
+              <tr><th>Company</th><th>Advertised fee</th><th>Service model</th><th>Operations</th><th>Focus</th></tr>
+            </thead>
+            <tbody>
+              {companies.map((c) => (
+                <tr class:list={[{ 'is-cardo': c.cardo }]}>
+                  <td class="bo-table__name">{c.name}</td>
+                  <td>{c.fee}</td>
+                  <td>{c.model}</td>
+                  <td>{c.ops}</td>
+                  <td>{c.focus}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="bo-source reveal">All values from each company's published materials, {UPDATED_LABEL}.</p>
+      </div>
+    </section>
+
 
     <!-- How to choose -->
     <section class="section-pad bo-alt" data-screen-label="How to choose">
@@ -299,6 +439,40 @@ const pageSchema = JSON.stringify({
 
 <style>
   .bo-alt { background: var(--cream); }
+
+  /* Stat tiles */
+  .bo-stats-pad { padding-bottom: 0; }
+  .bo-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .bo-stat { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 22px 20px; box-shadow: var(--shadow-sm); }
+  .bo-stat__v { font-family: var(--font-display); font-weight: 600; font-size: 1.7rem; color: var(--ink); line-height: 1.1; }
+  .bo-stat__l { margin-top: 6px; font-size: 0.85rem; color: var(--muted); line-height: 1.45; }
+  .bo-source { margin: 16px 0 0; font-size: 0.78rem; color: var(--muted); }
+
+  /* Fee chart */
+  .bo-chartwrap { max-width: 880px; }
+  .bo-chart { margin: 0; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(16px, 3vw, 28px); box-shadow: var(--shadow-sm); overflow-x: auto; }
+  .bo-chart svg { width: 100%; min-width: 560px; height: auto; display: block; }
+  .bo-chart__cap { margin-top: 10px; font-size: 0.78rem; color: var(--muted); }
+
+  /* Comparison table */
+  .bo-tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--paper); box-shadow: var(--shadow-sm); }
+  .bo-table { width: 100%; min-width: 720px; border-collapse: collapse; font-size: 0.92rem; }
+  .bo-table th { text-align: left; font-family: var(--font-body); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  .bo-table td { padding: 13px 16px; border-bottom: 1px solid var(--line); color: var(--muted); vertical-align: top; }
+  .bo-table tr:last-child td { border-bottom: none; }
+  .bo-table__name { font-weight: 600; color: var(--ink); white-space: nowrap; }
+  .bo-table tr.is-cardo td { background: rgba(193, 154, 91, 0.1); color: var(--ink); }
+
+  /* Owner-type pictograph cards */
+  .bo-types { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+  .bo-type { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 22px 20px; box-shadow: var(--shadow-sm); }
+  .bo-type__ic svg { width: 30px; height: 30px; }
+  .bo-type h3 { margin: 10px 0 6px; font-size: 1.05rem; }
+  .bo-type p { margin: 0; font-size: 0.88rem; color: var(--muted); line-height: 1.55; }
+
+  /* Card chips */
+  .bo-card__chips { margin: 8px 0 0; display: flex; gap: 6px; flex-wrap: wrap; }
+  .bo-chip { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.03em; color: var(--ink); background: var(--cream); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; }
   .bo-updated { margin-top: 14px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.75); }
 
   /* List cards */
@@ -338,6 +512,10 @@ const pageSchema = JSON.stringify({
   .faq__panel { max-height: 0; overflow: hidden; transition: max-height var(--dur) var(--ease); }
   .faq__a { margin: 0; padding: 0 0 26px; font-size: 1.05rem; line-height: 1.65; color: var(--text-body); max-width: 760px; }
 
+  @media (max-width: 900px) {
+    .bo-stats { grid-template-columns: 1fr 1fr; }
+    .bo-types { grid-template-columns: 1fr; }
+  }
   @media (max-width: 700px) {
     .bo-card__head { flex-wrap: wrap; }
     .bo-card__fee { text-align: left; width: 100%; padding-left: 54px; }
