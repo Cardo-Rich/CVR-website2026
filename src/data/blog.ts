@@ -98,7 +98,7 @@ export const articles: Article[] = [
 
         <h2>3. Design is a pricing input, not decoration</h2>
         <p>Guests book the photos and rate the experience. A home styled to photograph beautifully and to hold up under a busy season earns a higher nightly rate and better reviews. Reviews compound into ranking, which compounds back into rate. It's the quietest flywheel in the business.</p>
-        <p>This is why our design team works in-house: the finish that wins the booking has to survive the year of stays that follows. Decorative choices that look good empty but fail in week three don't make the cut. <a href="/home-designs" class="inline">Home Designs by Cardo</a> exists to close exactly that gap.</p>
+        <p>This is why our design team works in-house: the finish that wins the booking has to survive the year of stays that follows. Decorative choices that look good empty but fail in week three don't make the cut. <a href="/owners/home-designs" class="inline">Home Designs by Cardo</a> exists to close exactly that gap.</p>
 
         <h2>So what's the number?</h2>
         <p>There isn't one honest answer that fits every home. Any manager who quotes you a figure sight-unseen is guessing. Your projection comes from your home's location, size, layout, and finish, run against current San Diego demand. That's the analysis we build for free, usually within a business day, before you ever sign anything.</p>
