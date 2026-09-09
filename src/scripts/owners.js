@@ -341,6 +341,8 @@
       if (!steps['2'].reportValidity()) return;
       saveLead(values(steps['2']));
       ghlBookLead(); // upsert contact + create the appointment in GHL (no-op if unconfigured)
+      // Conversion signal for GTM (GA4 generate_lead + Meta Lead fire on this).
+      try { (window.dataLayer = window.dataLayer || []).push({ event: 'lead_submit', leadForm: 'owner_estimate' }); } catch (err) {}
       if (lead.appointment && apptLabelEl) { apptLabelEl.textContent = lead.appointment; if (apptBanner) apptBanner.hidden = false; }
       show('3');
     });
