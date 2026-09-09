@@ -31,7 +31,7 @@ export const stats = [
 export const pillars = [
   {
     title: 'Marketing pros',
-    body: 'Pro photography, sharp listings, and dynamic pricing across every channel — your calendar run like the asset it is.',
+    body: 'Pro photography, sharp listings, and dynamic pricing across every channel: your calendar run like the asset it is.',
     icon: 'M5 13l4 4L19 7',
   },
   {
@@ -90,7 +90,7 @@ export const neighborhoods = [
 export const faqs = [
   {
     q: 'What does Cardo charge?',
-    a: 'A straightforward management percentage of booking revenue — no setup fees, no charge until your home is earning. We quote it exactly in your free property analysis.',
+    a: 'A straightforward management percentage of booking revenue, no setup fees, no charge until your home is earning. We quote it exactly in your free property analysis.',
   },
   {
     q: 'How fast can my home go live?',
@@ -98,11 +98,11 @@ export const faqs = [
   },
   {
     q: 'Will I still control my calendar?',
-    a: "Always. Block owner stays anytime from your dashboard. It's your home — we keep it performing when you're not using it.",
+    a: "Always. Block owner stays anytime from your dashboard. It's your home, we keep it performing when you're not using it.",
   },
   {
     q: 'Do you handle San Diego STR permits and TOT?',
-    a: 'Yes — STRO licensing, compliance reporting, and transient occupancy tax filings so your home stays fully compliant.',
+    a: 'Yes: STRO licensing, compliance reporting, and transient occupancy tax filings so your home stays fully compliant.',
   },
   {
     q: 'How do I see my numbers?',
