@@ -62,7 +62,7 @@ export const articles: Article[] = [
     img: '/assets/photos/imported/unsplash-1613490493576-7fde63acd811-1100.jpg',
     featured: true,
     seo: {
-      title: 'What your San Diego home earns in 2026 — The Cardo Journal',
+      title: 'What your San Diego home earns in 2026 | The Cardo Journal',
       description:
         'Occupancy is only half the story. How nightly rate, seasonality, and design quality combine into what lands on your statement.',
     },
@@ -114,7 +114,7 @@ export const articles: Article[] = [
     dateShort: 'May 2026',
     img: '/assets/photos/imported/unsplash-1505691938895-1758d7feb511-800.jpg',
     seo: {
-      title: 'Design choices that lift nightly rate — The Cardo Journal',
+      title: 'Design choices that lift nightly rate | The Cardo Journal',
       description: 'Five durable, photogenic interior-design upgrades that raise a San Diego vacation rental\'s nightly rate and reviews — and why design is a pricing input, not decor.',
     },
     author: {
@@ -134,7 +134,7 @@ export const articles: Article[] = [
     dateShort: 'Apr 2026',
     img: '/assets/photos/imported/unsplash-1630375604571-4e370942fa65-1600.jpg',
     seo: {
-      title: 'STRO Permits and TOT in San Diego — The Cardo Journal',
+      title: 'STRO Permits and TOT in San Diego | The Cardo Journal',
       description: 'A plain-English guide to San Diego short-term rental compliance: the STRO license tiers, Transient Occupancy Tax, the TMD assessment, renewals, and what happens if you miss a deadline.',
     },
     author: {
@@ -154,7 +154,7 @@ export const articles: Article[] = [
     dateShort: 'Mar 2026',
     img: '/assets/photos/imported/unsplash-1617142584114-730e9bda61b2-1600.jpg',
     seo: {
-      title: 'La Jolla vs. Pacific Beach for Rentals — The Cardo Journal',
+      title: 'La Jolla vs. Pacific Beach for Rentals | The Cardo Journal',
       description: 'La Jolla earns on nightly rate and longer quiet stays; Pacific Beach earns on turnover and a livelier crowd. Here\'s how to match a San Diego property to the right market.',
     },
     author: {
@@ -174,7 +174,7 @@ export const articles: Article[] = [
     dateShort: 'Mar 2026',
     img: '/assets/photos/imported/unsplash-1554224155-6726b3ff858f-800.jpg',
     seo: {
-      title: 'The real cost of mystery fees — The Cardo Journal',
+      title: 'The real cost of mystery fees | The Cardo Journal',
       description: 'How to read a short-term-rental management statement, spot cleaning markups and hidden tech and marketing fees, and know what a clean, itemized statement looks like.',
     },
     author: {
@@ -194,7 +194,7 @@ export const articles: Article[] = [
     dateShort: 'Mar 2026',
     img: '/assets/photos/imported/unsplash-1582719478250-c89cae4dc85b-800.jpg',
     seo: {
-      title: 'Turnovers that protect five-star reviews — The Cardo Journal',
+      title: 'Turnovers that protect five-star reviews | The Cardo Journal',
       description: 'The inspection and cleaning checklist behind a spotless vacation rental turnover, why it is never skipped on same-day turns, and how it compounds into reviews and rate.',
     },
     author: {
@@ -214,7 +214,7 @@ export const articles: Article[] = [
     dateShort: 'Feb 2026',
     img: '/assets/photos/imported/unsplash-1509399316151-9b86c70fdd40-1600.jpg',
     seo: {
-      title: 'Del Mar Racing Season and Your Pricing — The Cardo Journal',
+      title: 'Del Mar Racing Season and Your Pricing | The Cardo Journal',
       description: 'Event-driven demand — Del Mar racing, fairs, conventions, holidays — compresses weeks of bookings into a few dates. Here\'s why pricing ahead of the calendar captures the spike.',
     },
     author: {
@@ -244,7 +244,7 @@ export const articles: Article[] = [
       gallery: ['/assets/photos/designs-living-craftsman.jpg', '/assets/photos/designs-living-fireplace.jpg', '/assets/photos/designs-dining.jpg', '/assets/photos/designs-bedroom-fan.jpg'],
     },
     seo: {
-      title: 'Falcon — Design case study — Cardo Vacation Rentals',
+      title: 'Falcon | Design Case Study | Cardo Vacation Rentals',
       description: 'An inherited La Jolla bluff home, fully reimagined and launched in five weeks — now 57% above its market.',
     },
     author: { name: 'Cardo Design Team', initials: 'CV' },
@@ -270,7 +270,7 @@ export const articles: Article[] = [
       gallery: ['/assets/photos/designs-living-bright.jpg', '/assets/photos/designs-bedroom-floral.jpg', '/assets/photos/designs-dining.jpg', '/assets/photos/designs-amenities.jpg'],
     },
     seo: {
-      title: 'Nute — Design case study — Cardo Vacation Rentals',
+      title: 'Nute | Design Case Study | Cardo Vacation Rentals',
       description: 'A tired Pacific Beach walk-street rental turned light, bright, and fully booked within its first month.',
     },
     author: { name: 'Cardo Design Team', initials: 'CV' },
@@ -296,7 +296,7 @@ export const articles: Article[] = [
       gallery: ['/assets/photos/designs-dining.jpg', '/assets/photos/designs-living-craftsman.jpg', '/assets/photos/designs-living-fireplace.jpg', '/assets/photos/designs-bedroom-fan.jpg'],
     },
     seo: {
-      title: 'Twain — Design case study — Cardo Vacation Rentals',
+      title: 'Twain | Design Case Study | Cardo Vacation Rentals',
       description: "A Del Mar craftsman styled to own racing season and hold strong all year — 48% above its market.",
     },
     author: { name: 'Cardo Design Team', initials: 'CV' },
@@ -322,7 +322,7 @@ export const articles: Article[] = [
       gallery: ['/assets/photos/designs-bedroom-floral.jpg', '/assets/photos/designs-living-bright.jpg', '/assets/photos/designs-amenities.jpg', '/assets/photos/designs-bedroom-fan.jpg'],
     },
     seo: {
-      title: 'Sixth — Design case study — Cardo Vacation Rentals',
+      title: 'Sixth | Design Case Study | Cardo Vacation Rentals',
       description: 'A compact Mission Beach two-bedroom designed to punch well above its size — 39% above its market.',
     },
     author: { name: 'Cardo Design Team', initials: 'CV' },
@@ -348,7 +348,7 @@ export const articles: Article[] = [
       gallery: ['/assets/photos/designs-gameroom.jpg', '/assets/photos/designs-living-fireplace.jpg', '/assets/photos/designs-bedroom-fan.jpg', '/assets/photos/designs-amenities.jpg'],
     },
     seo: {
-      title: 'Kane — Design case study — Cardo Vacation Rentals',
+      title: 'Kane | Design Case Study | Cardo Vacation Rentals',
       description: 'An Encinitas surf home with a moody navy game room guests search for — 41% above its market.',
     },
     author: { name: 'Cardo Design Team', initials: 'CV' },
@@ -374,7 +374,7 @@ export const articles: Article[] = [
       gallery: ['/assets/photos/designs-pool.jpg', '/assets/photos/designs-living-craftsman.jpg', '/assets/photos/designs-dining.jpg', '/assets/photos/designs-living-bright.jpg'],
     },
     seo: {
-      title: 'Mt Ainsworth — Design case study — Cardo Vacation Rentals',
+      title: 'Mt Ainsworth | Design Case Study | Cardo Vacation Rentals',
       description: 'A five-bedroom Coronado estate with a resort backyard, finished for the top of its market — 61% above.',
     },
     author: { name: 'Cardo Design Team', initials: 'CV' },
@@ -401,7 +401,7 @@ export const articles: Article[] = [
     localTip: 'Dawn patrol beats the crowds',
     showOnHome: true,
     seo: {
-      title: 'Where to Surf in San Diego by Level — The Cardo Journal',
+      title: 'Where to Surf in San Diego by Level | The Cardo Journal',
       description: 'Where to surf around San Diego by skill level: beginner breaks like Tourmaline and Cardiff Reef, advanced spots like Black\'s, plus tide, timing and safety.',
     },
     author: { name: 'The Cardo Team', initials: 'CV' },
@@ -420,7 +420,7 @@ export const articles: Article[] = [
     localTip: 'Go early — the lines are real',
     showOnHome: true,
     seo: {
-      title: 'San Diego Food Guide: Down the Coast — The Cardo Journal',
+      title: 'San Diego Food Guide: Down the Coast | The Cardo Journal',
       description: 'A San Diego food and drink guide: fish tacos in Ocean Beach, Little Italy pasta and the Saturday Mercato, North Park breweries, Baja-Med flavor and coffee.',
     },
     author: { name: 'The Cardo Team', initials: 'CV' },
@@ -439,7 +439,7 @@ export const articles: Article[] = [
     localTip: 'Free museum Tuesdays in Balboa Park',
     showOnHome: true,
     seo: {
-      title: 'San Diego Family Fun Beyond Theme Parks — The Cardo Journal',
+      title: 'San Diego Family Fun Beyond Theme Parks | The Cardo Journal',
       description: "A local's guide to family days in San Diego without the theme parks: Balboa Park museums, the Birch Aquarium at Scripps in La Jolla, and the best low-tide tide pools — with tips on timing, parking, and free days.",
     },
     author: { name: 'The Cardo Team', initials: 'CV' },
