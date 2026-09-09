@@ -1,8 +1,8 @@
 ---
-import Base from '../layouts/Base.astro';
-import MarketingHeader from '../components/sections/MarketingHeader.astro';
-import Footer from '../components/sections/Footer.astro';
-import snapshot from '../data/stro-snapshot.json';
+import Base from '../../layouts/Base.astro';
+import MarketingHeader from '../../components/sections/MarketingHeader.astro';
+import Footer from '../../components/sections/Footer.astro';
+import snapshot from '../../data/stro-snapshot.json';
 
 const nav = [
   { label: 'For Owners', href: '/owners' },
@@ -153,7 +153,7 @@ const faqSchema = JSON.stringify({
 const pageSchema = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'WebPage',
-  '@id': 'https://cardorentals.com/san-diego-stro-license',
+  '@id': 'https://cardorentals.com/owners/san-diego-stro-license',
   name: 'San Diego STRO License Guide and Tracker',
   description,
   dateModified: asOf,
@@ -163,7 +163,7 @@ const pageSchema = JSON.stringify({
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
       { '@type': 'ListItem', position: 2, name: 'For Owners', item: 'https://cardorentals.com/owners' },
-      { '@type': 'ListItem', position: 3, name: 'STRO license guide', item: 'https://cardorentals.com/san-diego-stro-license' },
+      { '@type': 'ListItem', position: 3, name: 'STRO license guide', item: 'https://cardorentals.com/owners/san-diego-stro-license' },
     ],
   },
 });
@@ -346,7 +346,7 @@ const pageSchema = JSON.stringify({
         </div>
         <p class="st-source reveal" style="text-align:center">
           Thinking of changing managers without risking the license?
-          <a href="/switch">The switching guide covers the license handover. →</a>
+          <a href="/owners/switch">The switching guide covers the license handover. →</a>
         </p>
       </div>
       <script type="application/ld+json" is:inline set:html={faqSchema} />
@@ -440,7 +440,7 @@ const pageSchema = JSON.stringify({
 </style>
 
 <script>
-  import '../scripts/reveal.js';
+  import '../../scripts/reveal.js';
 
   // FAQ accordion, same single-open behavior as the owners page.
   const list = document.querySelector('[data-faq]');

@@ -37,7 +37,7 @@ const breadcrumbLd = JSON.stringify({
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
-    { '@type': 'ListItem', position: 2, name: 'Case studies', item: 'https://cardorentals.com/home-designs#case-studies' },
+    { '@type': 'ListItem', position: 2, name: 'Case studies', item: 'https://cardorentals.com/owners/home-designs#case-studies' },
     { '@type': 'ListItem', position: 3, name: c.name, item: canonical },
   ],
 });
@@ -50,7 +50,7 @@ const breadcrumbLd = JSON.stringify({
   <main>
     <article data-screen-label={`Case study: ${c.name}`}>
       <div class="cspost-head reveal">
-        <a href="/home-designs#case-studies" class="back">← Design case studies</a>
+        <a href="/owners/home-designs#case-studies" class="back">← Design case studies</a>
         <div class="post-cat">Design case study</div>
         <h1>{c.name}</h1>
         <p class="hook">{c.hook}</p>
