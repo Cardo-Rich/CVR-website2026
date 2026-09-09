@@ -83,6 +83,23 @@ Property, AvantStay, Evolve, iTrip San Diego. Cited sources → outreach targets
   in the Phase 1 backlog)
 - Bluewater's own service page (deep owner-facing service pages get cited)
 
+**September audit (Sept 9, 2026, 10-prompt SERP sweep):** Cardo named in 0 of
+10 (unchanged; money pages live only days). Encouraging: answer engines now
+extract the fees messaging verbatim ("straight 20%... no setup fees...
+18-35%") from crawled Cardo pages; branded SERP healthy. Not yet indexed or
+surfacing: /switch, /best-vacation-rental-management-san-diego (request
+indexing in GSC). New findings:
+- RedAwning's SD listicle now dominates 3 of the top prompts; West Coast
+  Homestays appears in 5 of 10; Stay Classy published its own 2026 roundup
+  (pitch inclusion, it names peers).
+- Google still shows the dead Webflow site (cardo-furnished-rentals.webflow.io,
+  now 404) on branded queries: submit it to the Remove Outdated Content tool.
+- Expanded outreach targets: RedAwning listicle, Comparent directory
+  (/str/ca/san-diego), OneFineBnb, Airbtics PM/revenue pages, TIDY + Awning
+  Vacasa-alternatives pages, BNBCalc/Truvi/19pine regulation guides, Key Crew
+  (verify the existing Cardo page), Stay Classy roundup. Yelp category Top-10
+  remains the biggest lever: 15 reviews is not cracking it.
+
 ## 4. Branded-SERP cleanup — stale booking portals (takedowns)
 
 Searching "Cardo Vacation Rentals" surfaces booking sites from past PMS

@@ -1,0 +1,18 @@
+{
+  "asOf": "2026-09-09",
+  "totalLicenses": 8436,
+  "tiers": {
+    "Tier 1": 134,
+    "Tier 2": 2355,
+    "Tier 3": 4849,
+    "Tier 4": 1098
+  },
+  "topTier3Areas": [
+    { "area": "Pacific Beach", "count": 967 },
+    { "area": "La Jolla", "count": 612 },
+    { "area": "Ocean Beach", "count": 459 },
+    { "area": "Uptown", "count": 416 },
+    { "area": "Downtown", "count": 319 },
+    { "area": "North Park", "count": 316 }
+  ]
+}
