@@ -2,6 +2,8 @@
 // lead to /api/lead so the site records it in HighLevel and emails the right
 // inbox server-side. If that endpoint is unavailable (e.g. offline, or before
 // functions deploy), it falls back to opening the visitor's email client.
+import { trackLead } from './analytics.js';
+
 export function wireLeadForm(opts) {
   const form = typeof opts.form === 'string' ? document.querySelector(opts.form) : opts.form;
   if (!form) return;
@@ -35,6 +37,7 @@ export function wireLeadForm(opts) {
       });
       const data = res.ok ? await res.json() : null;
       if (!data || !data.ok) throw new Error('bad response');
+      trackLead(opts.type);
       form.reset();
       if (status) {
         status.textContent = opts.successText || 'Thanks! We’ve got your details and will be in touch shortly.';

@@ -1,3 +1,5 @@
+import { trackLead, trackLeadStep } from './analytics.js';
+
 (function(){
   'use strict';
   var header = document.querySelector('[data-header]');
@@ -341,6 +343,9 @@
       if (!steps['2'].reportValidity()) return;
       saveLead(values(steps['2']));
       ghlBookLead(); // upsert contact + create the appointment in GHL (no-op if unconfigured)
+      // The conversion: name, email, phone and a booked consultation slot. Step 3
+      // only adds property detail to this same lead, so it must not fire again.
+      trackLead('owner', { early_contact: !!lead.earlyContact });
       if (lead.appointment && apptLabelEl) { apptLabelEl.textContent = lead.appointment; if (apptBanner) apptBanner.hidden = false; }
       show('3');
     });
@@ -351,6 +356,7 @@
       if (!steps['3'].reportValidity()) return;
       saveLead(values(steps['3']));
       ghlNoteLead(); // attach property details to the GHL contact as a note
+      trackLeadStep('owner', { step: 'property_details', has_property: !lead.noProperty });
       renderConfirmation();
       show('done');
     });
