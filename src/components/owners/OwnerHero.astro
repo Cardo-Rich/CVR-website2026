@@ -6,6 +6,7 @@
 //   Step 3 = your property (address, amenities, "tell us more").
 // Submitting all three reveals the full confirmation with a text-us shortcut.
 // The #estimate anchor sits on the section so links land on the hero heading.
+import { company } from '../../data/site';
 ---
 
 <section class="hero" id="estimate" data-screen-label="Hero">
@@ -14,6 +15,10 @@
     <div class="hero__copy">
       <h1 class="hero__title">Luxury Airbnb &amp; Vacation Rental Management in San Diego</h1>
       <p class="hero__lede">Find out what your home should be earning: a free estimate, walked through by your personal account manager.</p>
+      <a class="hero__call" href={`tel:${company.phoneHref}`} aria-label={`Call Cardo at ${company.phone}`}>
+        <span class="hero__call-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></span>
+        <span class="hero__call-txt"><span class="hero__call-lbl">Prefer to talk? Call us now</span><span class="hero__call-num">{company.phone}</span></span>
+      </a>
       <div class="hero__trust hero__trust--chips">
         <a class="trustchip trustchip--link" href="/reviews"><span class="stars">★★★★★</span> <span data-ct="a-chip">3,500+ 5-star reviews on Airbnb alone</span></a>
         <span class="trustchip">$0-deductible damage protection</span>
@@ -83,7 +88,7 @@
             <option value="">Select one…</option>
             <option>Google search</option>
             <option>AI assistant (ChatGPT, Perplexity, etc.)</option>
-            <option>Airbnb or VRBO</option>
+            <option>Airbnb or Vrbo</option>
             <option>Referral from a friend or owner</option>
             <option>My realtor</option>
             <option>Social media</option>
@@ -143,7 +148,6 @@
         </div>
       </div>
 
-      <p class="lead__callus">Management consultations by appointment only</p>
     </div>
   </div>
 </section>

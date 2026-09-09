@@ -63,7 +63,7 @@ export interface BookInput {
 const HEAR_ABOUT_OPTIONS = new Set([
   'Google search',
   'AI assistant (ChatGPT, Perplexity, etc.)',
-  'Airbnb or VRBO',
+  'Airbnb or Vrbo',
   'Referral from a friend or owner',
   'My realtor',
   'Social media',
