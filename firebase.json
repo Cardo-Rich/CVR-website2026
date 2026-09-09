@@ -69,6 +69,11 @@
       { "source": "/rental-agreement", "destination": "/terms", "type": 301 },
       { "source": "/site-map", "destination": "/", "type": 301 },
       { "source": "/sitemap.xml", "destination": "/sitemap-index.xml", "type": 301 },
+      { "source": "/management-fees", "destination": "/owners/management-fees", "type": 301 },
+      { "source": "/switch", "destination": "/owners/switch", "type": 301 },
+      { "source": "/best-vacation-rental-management-san-diego", "destination": "/owners/best-vacation-rental-management-san-diego", "type": 301 },
+      { "source": "/san-diego-stro-license", "destination": "/owners/san-diego-stro-license", "type": 301 },
+      { "source": "/cost-segregation", "destination": "/owners/cost-segregation", "type": 301 },
       { "source": "/sitemap", "destination": "/sitemap-index.xml", "type": 301 },
       { "source": "/signal_sitemap.xml", "destination": "/sitemap-index.xml", "type": 301 }
     ],

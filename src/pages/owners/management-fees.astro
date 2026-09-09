@@ -1,7 +1,7 @@
 ---
-import Base from '../layouts/Base.astro';
-import MarketingHeader from '../components/sections/MarketingHeader.astro';
-import Footer from '../components/sections/Footer.astro';
+import Base from '../../layouts/Base.astro';
+import MarketingHeader from '../../components/sections/MarketingHeader.astro';
+import Footer from '../../components/sections/Footer.astro';
 
 const nav = [
   { label: 'For Owners', href: '/owners' },
@@ -112,7 +112,7 @@ const faqSchema = JSON.stringify({
 const pageSchema = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'WebPage',
-  '@id': 'https://cardorentals.com/management-fees',
+  '@id': 'https://cardorentals.com/owners/management-fees',
   name: 'Vacation Rental Management Fees in San Diego (2026 Guide)',
   description,
   dateModified: UPDATED_ISO,
@@ -122,7 +122,7 @@ const pageSchema = JSON.stringify({
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
       { '@type': 'ListItem', position: 2, name: 'For Owners', item: 'https://cardorentals.com/owners' },
-      { '@type': 'ListItem', position: 3, name: 'Management fees', item: 'https://cardorentals.com/management-fees' },
+      { '@type': 'ListItem', position: 3, name: 'Management fees', item: 'https://cardorentals.com/owners/management-fees' },
     ],
   },
 });
@@ -184,7 +184,7 @@ const pageSchema = JSON.stringify({
         <p class="mf-fine reveal">
           Ranges reflect published San Diego rates and industry fee surveys as of {UPDATED_LABEL}.
           "Full service" means something different at every company. Always compare exactly what is included, line by line.
-          Shopping the market? <a href="/best-vacation-rental-management-san-diego">See our honest shortlist of San Diego's best management companies. →</a>
+          Shopping the market? <a href="/owners/best-vacation-rental-management-san-diego">See our honest shortlist of San Diego's best management companies. →</a>
         </p>
       </div>
     </section>
@@ -243,7 +243,7 @@ const pageSchema = JSON.stringify({
           The long version, with real statement examples:
           <a href="/blog/the-real-cost-of-mystery-fees">The real cost of mystery fees →</a>
           &nbsp;Already stuck in one of these contracts?
-          <a href="/switch">How to switch managers cleanly →</a>
+          <a href="/owners/switch">How to switch managers cleanly →</a>
         </p>
       </div>
     </section>
@@ -305,7 +305,7 @@ const pageSchema = JSON.stringify({
           ))}
         </div>
         <p class="mf-fine reveal" style="text-align:center">
-          Tax question in there? Start with our <a href="/cost-segregation">cost segregation guide for STR owners</a>. Licensing question? <a href="/san-diego-stro-license">The STRO guide and license tracker is here.</a>
+          Tax question in there? Start with our <a href="/owners/cost-segregation">cost segregation guide for STR owners</a>. Licensing question? <a href="/owners/san-diego-stro-license">The STRO guide and license tracker is here.</a>
         </p>
       </div>
       <script type="application/ld+json" is:inline set:html={faqSchema} />
@@ -393,7 +393,7 @@ const pageSchema = JSON.stringify({
 </style>
 
 <script>
-  import '../scripts/reveal.js';
+  import '../../scripts/reveal.js';
 
   // FAQ accordion — same single-open behavior as the owners page (owners.js),
   // inlined so this page doesn't pull in the whole owners bundle.
