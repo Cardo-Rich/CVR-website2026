@@ -225,7 +225,7 @@ const pageSchema = JSON.stringify({
           <div class="st-bar">
             <div class="st-bar__head">
               <span class="st-bar__name">Tier 4 · Mission Beach whole home</span>
-              <span class="st-bar__stat"><b>{t4Remaining === 0 ? 'None remaining' : `${t4Remaining} remaining`}</b> of {TIER4_CAP.toLocaleString('en-US')} licenses</span>
+              <span class="st-bar__stat"><b>{t4Remaining === 0 ? 'None remaining' : `${t4Remaining} below the cap (waitlist only)`}</b> of {TIER4_CAP.toLocaleString('en-US')} licenses</span>
             </div>
             <div class="st-bar__track" role="img" aria-label={`Tier 4: ${t4.toLocaleString('en-US')} licenses issued of ${TIER4_CAP.toLocaleString('en-US')}, waitlist only`}>
               <div class="st-bar__fill st-bar__fill--full" style={`width:${Math.min(100, (t4 / TIER4_CAP) * 100).toFixed(1)}%`}></div>
