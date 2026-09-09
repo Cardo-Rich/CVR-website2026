@@ -1,0 +1,450 @@
+---
+import Base from '../layouts/Base.astro';
+import MarketingHeader from '../components/sections/MarketingHeader.astro';
+import Footer from '../components/sections/Footer.astro';
+import snapshot from '../data/stro-snapshot.json';
+
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs' },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog' },
+];
+const cta = { label: 'Free estimate', href: '/owners#estimate' };
+
+// License data refreshes at build time from the city's open dataset; the baked
+// snapshot (src/data/stro-snapshot.json) is the fallback when the fetch fails
+// (offline builds, dataset outage). Regulatory constants (fees, caps) come from
+// sandiego.gov and must be re-verified on each content review.
+const CSV_URL = 'https://seshat.datasd.org/stro_licenses/stro_licenses_datasd.csv';
+// Tier 3 cap: the city holds Tier 3 to 1% of total housing units. Issued (4,849)
+// plus remaining (808) per the City Treasurer, September 2026.
+const TIER3_CAP = 5657;
+const TIER4_CAP = 1099;
+
+let tiers: Record<string, number> = { ...snapshot.tiers };
+let topAreas: { area: string; count: number }[] = [...snapshot.topTier3Areas];
+let asOf = snapshot.asOf;
+try {
+  const res = await fetch(CSV_URL);
+  if (res.ok) {
+    const text = await res.text();
+    const lines = text.split('\n');
+    const header = lines[0].split(',').map((h) => h.replace(/"/g, ''));
+    const tierIdx = header.indexOf('tier');
+    const areaIdx = header.indexOf('community_planning_area');
+    if (tierIdx > -1 && areaIdx > -1) {
+      const tierCounts: Record<string, number> = {};
+      const areaCounts: Record<string, number> = {};
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split('","');
+        if (cols.length <= Math.max(tierIdx, areaIdx)) continue;
+        const tier = cols[tierIdx]?.replace(/"/g, '').trim();
+        if (!tier) continue;
+        tierCounts[tier] = (tierCounts[tier] || 0) + 1;
+        if (tier === 'Tier 3') {
+          const area = cols[areaIdx]?.replace(/"/g, '').trim();
+          if (area) areaCounts[area] = (areaCounts[area] || 0) + 1;
+        }
+      }
+      if (tierCounts['Tier 3'] > 1000) {
+        tiers = tierCounts;
+        const titleCase = (s: string) =>
+          s.toLowerCase().replace(/\b[a-z]/g, (m) => m.toUpperCase());
+        topAreas = Object.entries(areaCounts)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 6)
+          .map(([area, count]) => ({ area: titleCase(area), count }));
+        asOf = new Date().toISOString().slice(0, 10);
+      }
+    }
+  }
+} catch {
+  /* fall back to the baked snapshot */
+}
+
+const total = Object.values(tiers).reduce((a, b) => a + b, 0);
+const t3 = tiers['Tier 3'] ?? 0;
+const t4 = tiers['Tier 4'] ?? 0;
+const t3Remaining = Math.max(0, TIER3_CAP - t3);
+const t4Remaining = Math.max(0, TIER4_CAP - t4);
+const asOfLabel = new Date(asOf + 'T12:00:00').toLocaleDateString('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+});
+
+const tierCards = [
+  {
+    name: 'Tier 1',
+    subtitle: 'Part-time rental',
+    fee: '$226 total ($33 application + $193 license)',
+    count: tiers['Tier 1'] ?? 0,
+    capped: false,
+    rules: 'Rent your home 20 days or fewer per year. No residency requirement, no cap on licenses.',
+  },
+  {
+    name: 'Tier 2',
+    subtitle: 'Home sharing',
+    fee: '$317 total ($33 application + $284 license)',
+    count: tiers['Tier 2'] ?? 0,
+    capped: false,
+    rules: 'Rent a room or rooms more than 20 days per year while you live onsite. You can be away up to 90 days a year. No cap.',
+  },
+  {
+    name: 'Tier 3',
+    subtitle: 'Whole home, citywide',
+    fee: '$1,170 total ($41 application + $1,129 license)',
+    count: t3,
+    capped: true,
+    capText: `${t3Remaining.toLocaleString('en-US')} licenses remaining under the city's 1% cap`,
+    rules: 'Whole-home rentals over 20 days per year, anywhere except Mission Beach. The license requires at least 90 days of rental use per year to keep.',
+  },
+  {
+    name: 'Tier 4',
+    subtitle: 'Mission Beach whole home',
+    fee: '$1,170 total ($41 application + $1,129 license)',
+    count: t4,
+    capped: true,
+    capText: 'All licenses issued. Waitlist only.',
+    rules: 'Whole-home rentals in the Mission Beach planning area, capped at 30% of the area\'s dwelling units. Applications are closed; openings come only from lapsed licenses.',
+  },
+];
+
+const faqs = [
+  {
+    q: 'How much does a San Diego STRO license cost?',
+    a: 'As of the current fee schedule: Tier 1 costs $226 in total, Tier 2 $317, and Tiers 3 and 4 each $1,170 ($41 application plus $1,129 license). Licenses last two years and are renewable.',
+  },
+  {
+    q: 'How many Tier 3 licenses are left?',
+    a: `${t3Remaining.toLocaleString('en-US')} as of ${asOfLabel}. The city caps Tier 3 whole-home licenses at 1% of San Diego's housing units, and ${t3.toLocaleString('en-US')} are currently issued. The count on this page updates from the city's open license dataset.`,
+  },
+  {
+    q: 'Can I get a Mission Beach (Tier 4) license?',
+    a: 'Not directly right now. All Tier 4 licenses are issued and applications are closed. Openings only appear when an existing license lapses or is revoked, and they go through a waitlist, so if Mission Beach is your plan, get on the list early and keep your registration current.',
+  },
+  {
+    q: 'If I buy a home that has an STRO license, do I get the license?',
+    a: 'No. STRO licenses are not transferable between hosts or properties. When a licensed home sells, the license does not convey; the new owner applies for their own, which for a whole-home rental means joining the Tier 3 pool or the Tier 4 waitlist. Factor that into any purchase where rental income is part of the math.',
+  },
+  {
+    q: 'Can I hold two licenses for two properties?',
+    a: 'No. The city allows one STRO license per host, covering one dwelling unit at a time.',
+  },
+  {
+    q: 'Does my property manager handle the license?',
+    a: 'The license belongs to you, the host, but a full-service manager handles the paperwork around it. Cardo manages STRO applications, renewals, the local-contact designation, and TOT filings for every home it operates, so compliance never depends on your calendar.',
+  },
+];
+
+const description = `San Diego STRO license guide with a live license tracker: ${t3Remaining.toLocaleString('en-US')} Tier 3 whole-home licenses remain under the city's 1% cap as of ${asOfLabel}. All four tiers, current fees, renewal rules, and what happens when you sell.`;
+
+const faqSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+});
+
+const pageSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://cardorentals.com/san-diego-stro-license',
+  name: 'San Diego STRO License Guide and Tracker',
+  description,
+  dateModified: asOf,
+  isPartOf: { '@id': 'https://cardorentals.com/#organization' },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
+      { '@type': 'ListItem', position: 2, name: 'For Owners', item: 'https://cardorentals.com/owners' },
+      { '@type': 'ListItem', position: 3, name: 'STRO license guide', item: 'https://cardorentals.com/san-diego-stro-license' },
+    ],
+  },
+});
+---
+
+<Base
+  title="San Diego STRO License Guide and Tracker (Updated Monthly) | Cardo Vacation Rentals"
+  description={description}
+  image="/assets/og/og-owners.jpg"
+  imageAlt="Cardo Vacation Rentals, San Diego STRO license guide and availability tracker"
+>
+  <script slot="head" type="application/ld+json" is:inline set:html={pageSchema} />
+  <MarketingHeader {nav} {cta} />
+
+  <main>
+    <section class="phero" data-screen-label="STRO hero">
+      <img class="phero__bg" src="/assets/photos/imported/unsplash-1505693416388-ac5ce068fe85.jpg" alt="" />
+      <div class="phero__overlay"></div>
+      <div class="phero__inner narrow">
+        <p class="eyebrow">Licensing, explained</p>
+        <h1>The San Diego STRO license: what it costs, how many are left, and how to keep yours.</h1>
+        <p>
+          Every short-term rental in the city of San Diego needs a Short-Term Residential
+          Occupancy license. There are four tiers, two of them capped, and the caps are what
+          make the license valuable: whole-home licenses are limited to 1% of the city's housing
+          stock, and Mission Beach is fully allocated. This guide covers all four tiers with
+          current fees, plus a tracker fed by the city's own license data.
+        </p>
+        <a class="btn btn-lg" href="#tracker">See license availability</a>
+        <p class="st-updated">License counts as of {asOfLabel}, from the City of San Diego open data portal.</p>
+      </div>
+    </section>
+
+    <!-- Tracker -->
+    <section class="section-pad" id="tracker" data-screen-label="License tracker">
+      <div class="section-wrap st-trackwrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">The tracker</p>
+          <h2>License availability, from the city's data.</h2>
+          <p class="lede muted">
+            {total.toLocaleString('en-US')} active STRO licenses citywide as of {asOfLabel}. The
+            two capped tiers are the ones to watch: they decide whether a whole-home rental is
+            even possible at a given address.
+          </p>
+        </div>
+
+        <div class="st-tracker reveal">
+          <div class="st-bar">
+            <div class="st-bar__head">
+              <span class="st-bar__name">Tier 3 · whole home, citywide</span>
+              <span class="st-bar__stat"><b>{t3Remaining.toLocaleString('en-US')} remaining</b> of a {TIER3_CAP.toLocaleString('en-US')}-license cap</span>
+            </div>
+            <div class="st-bar__track" role="img" aria-label={`Tier 3: ${t3.toLocaleString('en-US')} licenses issued of a ${TIER3_CAP.toLocaleString('en-US')} cap, ${t3Remaining.toLocaleString('en-US')} remaining`}>
+              <div class="st-bar__fill" style={`width:${Math.min(100, (t3 / TIER3_CAP) * 100).toFixed(1)}%`}></div>
+            </div>
+            <div class="st-bar__sub">{t3.toLocaleString('en-US')} issued · cap set at 1% of San Diego housing units</div>
+          </div>
+
+          <div class="st-bar">
+            <div class="st-bar__head">
+              <span class="st-bar__name">Tier 4 · Mission Beach whole home</span>
+              <span class="st-bar__stat"><b>{t4Remaining === 0 ? 'None remaining' : `${t4Remaining} remaining`}</b> of {TIER4_CAP.toLocaleString('en-US')} licenses</span>
+            </div>
+            <div class="st-bar__track" role="img" aria-label={`Tier 4: ${t4.toLocaleString('en-US')} licenses issued of ${TIER4_CAP.toLocaleString('en-US')}, waitlist only`}>
+              <div class="st-bar__fill st-bar__fill--full" style={`width:${Math.min(100, (t4 / TIER4_CAP) * 100).toFixed(1)}%`}></div>
+            </div>
+            <div class="st-bar__sub">{t4.toLocaleString('en-US')} issued · applications closed, waitlist only</div>
+          </div>
+
+          <div class="st-uncapped">
+            <span>Uncapped tiers: <b>Tier 1</b> {(tiers['Tier 1'] ?? 0).toLocaleString('en-US')} licenses · <b>Tier 2</b> {(tiers['Tier 2'] ?? 0).toLocaleString('en-US')} licenses</span>
+          </div>
+        </div>
+
+        <div class="st-areas reveal">
+          <h3>Where the Tier 3 licenses are</h3>
+          <table class="st-areatable">
+            <thead><tr><th>Community planning area</th><th>Tier 3 licenses</th></tr></thead>
+            <tbody>
+              {topAreas.map((a) => (
+                <tr><td>{a.area}</td><td>{a.count.toLocaleString('en-US')}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="st-source reveal">
+          Source: City of San Diego STRO license dataset (data.sandiego.gov), retrieved {asOfLabel}.
+          Caps and fees per the City Treasurer's STRO program page. Figures refresh when this page rebuilds.
+        </p>
+      </div>
+    </section>
+
+    <!-- The four tiers -->
+    <section class="section-pad st-alt" data-screen-label="Four tiers">
+      <div class="section-wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">The four tiers</p>
+          <h2>Which license your rental needs.</h2>
+          <p class="lede muted">
+            The tier depends on how often you rent and whether you live in the home. Fees are the
+            city's current schedule; licenses last two years and are renewable.
+          </p>
+        </div>
+        <div class="st-tiers">
+          {tierCards.map((t) => (
+            <div class="st-tier reveal">
+              <div class="st-tier__head">
+                <h3>{t.name}<span>{t.subtitle}</span></h3>
+                <div class="st-tier__count">{t.count.toLocaleString('en-US')}<span>active</span></div>
+              </div>
+              <p class="st-tier__fee">{t.fee}</p>
+              <p class="st-tier__rules">{t.rules}</p>
+              {t.capped && <p class="st-tier__cap">{t.capText}</p>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Keeping it -->
+    <section class="section-pad" data-screen-label="Keeping the license">
+      <div class="section-wrap st-keep">
+        <div class="st-keep__intro reveal">
+          <p class="eyebrow">Why it matters</p>
+          <h2>A capped license is an asset. Treat it like one.</h2>
+          <p class="lede muted">
+            Because Tier 3 is nearly full and Tier 4 is closed, a whole-home license you already
+            hold is hard to replace. Three rules protect it.
+          </p>
+        </div>
+        <ul class="st-keep__list reveal">
+          <li>
+            <strong>Renew on time, every two years.</strong> A lapsed license goes back into the
+            pool, and in Mission Beach it goes to the waitlist. There is no grace period worth
+            gambling on.
+          </li>
+          <li>
+            <strong>Meet the 90-day rule.</strong> Tier 3 licenses require at least 90 days of
+            rental use per year. A home that sits idle can lose the license that makes it
+            valuable.
+          </li>
+          <li>
+            <strong>Keep filings current.</strong> TOT registration, remittance, and the city's
+            local-contact designation all have to stay accurate. Cardo handles all three for the
+            homes it manages, along with applications and renewals.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section-pad st-alt" data-screen-label="STRO FAQ">
+      <div class="section-wrap">
+        <div class="faq__head reveal">
+          <p class="eyebrow center" style="justify-content:center">Licensing, answered</p>
+          <h2>Common STRO questions.</h2>
+        </div>
+        <div class="faq__list" data-faq>
+          {faqs.map((f, i) => (
+            <div class:list={['faq__item', i === 0 ? 'is-open' : '']} data-faq-item>
+              <button class="faq__q" type="button" aria-expanded={i === 0 ? 'true' : 'false'}>
+                <span>{f.q}</span>
+                <span class="faq__plus">+</span>
+              </button>
+              <div class="faq__panel">
+                <p class="muted faq__a">{f.a}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="st-source reveal" style="text-align:center">
+          Thinking of changing managers without risking the license?
+          <a href="/switch">The switching guide covers the license handover. →</a>
+        </p>
+      </div>
+      <script type="application/ld+json" is:inline set:html={faqSchema} />
+    </section>
+
+    <section class="cta" data-screen-label="CTA">
+      <div class="cta__inner reveal">
+        <p class="eyebrow">Compliance, handled</p>
+        <h2>Your license stays protected. Your home stays earning.</h2>
+        <p>
+          Cardo manages STRO applications, renewals, TOT filings, and the local-contact
+          designation for every home it operates. Start with a free estimate of what your home
+          should earn under professional management.
+        </p>
+        <a class="btn btn-lg" href="/owners#estimate">Get my free estimate</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .st-alt { background: var(--cream); }
+  .st-updated { margin-top: 14px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.75); }
+  .st-trackwrap { max-width: 880px; }
+
+  /* Tracker bars */
+  .st-tracker { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: clamp(20px, 3vw, 32px); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 26px; }
+  .st-bar__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .st-bar__name { font-weight: 600; color: var(--ink); }
+  .st-bar__stat { font-size: 0.9rem; color: var(--muted); }
+  .st-bar__stat b { color: var(--ink); }
+  .st-bar__track { height: 18px; border-radius: 9px; background: var(--cream); border: 1px solid var(--line); overflow: hidden; }
+  .st-bar__fill { height: 100%; border-radius: 9px 0 0 9px; background: #00967F; }
+  .st-bar__fill--full { background: #C7861F; border-radius: 9px; }
+  .st-bar__sub { margin-top: 7px; font-size: 0.8rem; color: var(--muted); }
+  .st-uncapped { border-top: 1px solid var(--line); padding-top: 16px; font-size: 0.88rem; color: var(--muted); }
+  .st-uncapped b { color: var(--ink); }
+
+  /* Areas table */
+  .st-areas { margin-top: 28px; }
+  .st-areas h3 { margin: 0 0 12px; font-size: 1.15rem; }
+  .st-areatable { width: 100%; border-collapse: collapse; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; font-size: 0.92rem; }
+  .st-areatable th { text-align: left; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .st-areatable td { padding: 11px 16px; border-bottom: 1px solid var(--line); color: var(--muted); }
+  .st-areatable td:last-child { color: var(--ink); font-weight: 600; }
+  .st-areatable tr:last-child td { border-bottom: none; }
+  .st-source { margin: 16px 0 0; font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+
+  /* Tier cards */
+  .st-tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .st-tier { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
+  .st-tier__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+  .st-tier__head h3 { margin: 0; font-size: 1.2rem; }
+  .st-tier__head h3 span { display: block; font-family: var(--font-body); font-size: 0.82rem; font-weight: 600; color: var(--muted); margin-top: 3px; }
+  .st-tier__count { text-align: right; font-family: var(--font-display); font-weight: 600; font-size: 1.4rem; color: var(--ink); line-height: 1; }
+  .st-tier__count span { display: block; font-family: var(--font-body); font-size: 0.7rem; font-weight: 500; color: var(--muted); margin-top: 3px; }
+  .st-tier__fee { margin: 0 0 8px; font-weight: 600; color: var(--ink); font-size: 0.92rem; }
+  .st-tier__rules { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.55; }
+  .st-tier__cap { margin: 10px 0 0; font-size: 0.85rem; font-weight: 600; color: #C7861F; }
+
+  /* Keep list */
+  .st-keep { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(32px, 5vw, 72px); align-items: start; }
+  .st-keep__intro h2 { margin: 8px 0 12px; }
+  .st-keep__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 20px; }
+  .st-keep__list li { font-size: 1rem; line-height: 1.6; color: var(--muted); padding-left: 18px; border-left: 2px solid var(--gold); }
+  .st-keep__list strong { color: var(--ink); }
+
+  /* FAQ accordion (scoped copy of the owners-page styles) */
+  .faq__head { text-align: center; margin-bottom: 44px; }
+  .faq__head h2 { margin: 8px 0 0; }
+  .faq__list { max-width: var(--container-narrow); margin: 0 auto; }
+  .faq__item { border-bottom: 1px solid var(--line); }
+  .faq__q { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 26px 0; background: none; border: none; cursor: pointer; text-align: left; font-family: var(--font-display); font-weight: 500; font-size: 1.3rem; color: var(--ink); }
+  .faq__plus { color: var(--rose); flex: none; transition: transform var(--dur) var(--ease); }
+  .faq__item.is-open .faq__plus { transform: rotate(45deg); }
+  .faq__panel { max-height: 0; overflow: hidden; transition: max-height var(--dur) var(--ease); }
+  .faq__a { margin: 0; padding: 0 0 26px; font-size: 1.05rem; line-height: 1.65; color: var(--text-body); max-width: 760px; }
+
+  @media (max-width: 800px) {
+    .st-tiers { grid-template-columns: 1fr; }
+    .st-keep { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  import '../scripts/reveal.js';
+
+  // FAQ accordion, same single-open behavior as the owners page.
+  const list = document.querySelector('[data-faq]');
+  list?.querySelectorAll('[data-faq-item]').forEach((item) => {
+    const btn = item.querySelector('.faq__q');
+    const panel = item.querySelector('.faq__panel') as HTMLElement | null;
+    btn?.addEventListener('click', () => {
+      const willOpen = !item.classList.contains('is-open');
+      list.querySelectorAll('[data-faq-item]').forEach((o) => {
+        o.classList.remove('is-open');
+        o.querySelector('.faq__q')?.setAttribute('aria-expanded', 'false');
+        (o.querySelector('.faq__panel') as HTMLElement).style.maxHeight = '';
+      });
+      if (willOpen && panel) {
+        item.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+  const open = list?.querySelector('[data-faq-item].is-open .faq__panel') as HTMLElement | null;
+  if (open) open.style.maxHeight = open.scrollHeight + 'px';
+</script>
