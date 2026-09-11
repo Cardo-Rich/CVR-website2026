@@ -263,7 +263,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     story: [
       "Mt Ainsworth is the largest home in this group: five bedrooms, a pool, and a backyard built for entertaining. The owner wanted it to compete at the very top of Coronado’s market but had neither the time nor the design eye to get it there, and wanted to be entirely out of the process.",
-      "We furnished it as a true estate: cohesive rooms that photograph like a luxury hotel and a backyard styled into a destination of its own. After a single walkthrough, the owner left it entirely to us.",
+      "We furnished it as a true estate: cohesive rooms that photograph like a boutique hotel and a backyard styled into a destination of its own. After a single walkthrough, the owner left it entirely to us.",
       "It launched at the top of its comp set and runs 61% above its Coronado market: the strongest lift of the six.",
     ],
     stats: {

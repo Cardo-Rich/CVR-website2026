@@ -32,12 +32,12 @@ export const neighborhoods: Neighborhood[] = [
   {
     slug: 'la-jolla',
     name: 'La Jolla',
-    note: 'Bluff-top luxury & coastal estates',
+    note: 'Bluff-top homes & coastal estates',
     img: '/assets/photos/imported/unsplash-1613490493576-7fde63acd811-1600.jpg',
     seo: {
       title: 'La Jolla Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
-        'Luxury short-term rental management in La Jolla, San Diego. Cardo designs, markets, and manages La Jolla vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management inLa Jolla, San Diego. Cardo designs, markets, and manages La Jolla vacation rentals to beat the market, 5-star Superhost since 2013.',
     },
     intro:
       "La Jolla is San Diego's most prestigious coastal enclave: bluff-top estates, cove views, and a village that draws affluent, design-conscious travelers year-round. It's a market where finish quality and presentation, not just location, decide the nightly rate.",
@@ -47,11 +47,11 @@ export const neighborhoods: Neighborhood[] = [
       { v: 'Summer & holiday weekends', l: 'Peak demand' },
     ],
     body: [
-      'Homes here command some of the highest nightly rates in San Diego, but the bar is high: guests booking La Jolla expect hotel-grade interiors, immaculate turnovers, and seamless service. A home that photographs beautifully and is run to a luxury standard can sit well above its comp set, which is exactly where Cardo positions the properties we manage.',
+      'Homes here command some of the highest nightly rates in San Diego, but the bar is high: guests booking La Jolla expect hotel-grade interiors, immaculate turnovers, and seamless service. A home that photographs beautifully and is run to a hotel standard can sit well above its comp set, which is exactly where Cardo positions the properties we manage.',
       "We pair in-house design with dynamic pricing tuned to La Jolla's demand curve: the summer coastal peak, holiday weekends, and the steady shoulder seasons that stay warm and busy here. The result is a calendar that captures the high-value nights instead of discounting into them.",
     ],
     highlights: [
-      'Bluff and cove-view luxury homes',
+      'Bluff and cove-view homes',
       'Affluent, design-led guest demand',
       'Strong year-round occupancy',
     ],
@@ -93,7 +93,7 @@ export const neighborhoods: Neighborhood[] = [
     seo: {
       title: 'Pacific Beach Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
-        'Luxury short-term rental management in Pacific Beach, San Diego. Cardo designs, markets, and manages Pacific Beach vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management inPacific Beach, San Diego. Cardo designs, markets, and manages Pacific Beach vacation rentals to beat the market, 5-star Superhost since 2013.',
     },
     intro:
       "Pacific Beach is San Diego's most energetic short-term rental market: walkable, beach-adjacent, and in near-constant demand from younger travelers and groups. Occupancy runs high here, and the homes that win are the ones designed to feel bright, easy, and effortlessly coastal.",
@@ -149,7 +149,7 @@ export const neighborhoods: Neighborhood[] = [
     seo: {
       title: 'Mission Beach Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
-        'Luxury short-term rental management in Mission Beach, San Diego. Cardo designs, markets, and manages Mission Beach vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management inMission Beach, San Diego. Cardo designs, markets, and manages Mission Beach vacation rentals to beat the market, 5-star Superhost since 2013.',
     },
     intro:
       "Mission Beach is a classic San Diego beach market: boardwalk frontage, sand on your doorstep, and summer demand that fills calendars months out. Beachfront and near-beach homes here can command a real premium when they're presented and run well.",
@@ -205,7 +205,7 @@ export const neighborhoods: Neighborhood[] = [
     seo: {
       title: 'Del Mar Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
-        'Luxury short-term rental management in Del Mar, San Diego. Cardo designs, markets, and manages Del Mar vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management inDel Mar, San Diego. Cardo designs, markets, and manages Del Mar vacation rentals to beat the market, 5-star Superhost since 2013.',
     },
     intro:
       "Del Mar blends quiet coastal affluence with event-driven demand spikes: the summer racing season, fairgrounds events, and holiday weekends all move rate independently of the calendar. It's a market that rewards pricing that anticipates the windows rather than reacting to them.",
@@ -261,7 +261,7 @@ export const neighborhoods: Neighborhood[] = [
     seo: {
       title: 'Encinitas Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
-        'Luxury short-term rental management in Encinitas, San Diego. Cardo designs, markets, and manages Encinitas vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management inEncinitas, San Diego. Cardo designs, markets, and manages Encinitas vacation rentals to beat the market, 5-star Superhost since 2013.',
     },
     intro:
       "Encinitas is North County's surf-town gem: laid-back, design-forward, and increasingly in demand from travelers looking for character over corporate. Its year-round mild weather and walkable downtown keep occupancy steady well beyond the summer peak.",
@@ -317,7 +317,7 @@ export const neighborhoods: Neighborhood[] = [
     seo: {
       title: 'Carlsbad Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
-        'Luxury short-term rental management in Carlsbad, San Diego. Cardo designs, markets, and manages Carlsbad vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management inCarlsbad, San Diego. Cardo designs, markets, and manages Carlsbad vacation rentals to beat the market, 5-star Superhost since 2013.',
     },
     intro:
       "Carlsbad is North County's family-coastal anchor: beaches, LEGOLAND, the flower fields, and a steady stream of multi-generational travelers who book larger homes for longer stays. It's a market built for comfortable, family-ready properties.",
@@ -373,7 +373,7 @@ export const neighborhoods: Neighborhood[] = [
     seo: {
       title: 'Coronado Airbnb & Vacation Rental Management | Cardo San Diego',
       description:
-        'Luxury short-term rental management in Coronado, San Diego. Cardo designs, markets, and manages Coronado vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management inCoronado, San Diego. Cardo designs, markets, and manages Coronado vacation rentals to beat the market, 5-star Superhost since 2013.',
     },
     intro:
       "Coronado is San Diego's island of prestige: a storied beach town with some of the region's highest nightly rates and a guest base that expects the experience to match. Demand is strong and event-driven, and presentation is everything.",
@@ -383,7 +383,7 @@ export const neighborhoods: Neighborhood[] = [
       { v: 'Summer & event weekends', l: 'Peak demand' },
     ],
     body: [
-      'A Coronado home competes at the very top of the San Diego market, where luxury finishes and flawless service are the price of entry. Homes designed to a true estate standard, and run without a slip, can sit at the top of their comp set here.',
+      'A Coronado home competes at the very top of the San Diego market, where high-end finishes and flawless service are the price of entry. Homes designed to a true estate standard, and run without a slip, can sit at the top of their comp set here.',
       "Cardo brings in-house design and white-glove management to Coronado properties: styling each home to compete with the island's best and pricing it to capture the event-driven demand that defines the market.",
     ],
     highlights: [

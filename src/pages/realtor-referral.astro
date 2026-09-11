@@ -20,7 +20,7 @@ const tiers = [
   },
   {
     fee: '$2,500',
-    name: 'Luxury tier',
+    name: 'Premium tier',
     blurb: 'For homes we expect to produce more than $150,000 in annual gross booking revenue, based on our good-faith underwriting.',
     featured: true,
   },
@@ -90,7 +90,7 @@ const steps = [
         <div class="rf-tiers">
           {tiers.map((t) => (
             <div class:list={['rf-tier', 'reveal', { 'rf-tier--featured': t.featured }]}>
-              {t.featured && <span class="rf-tier__flag">Luxury</span>}
+              {t.featured && <span class="rf-tier__flag">Premium</span>}
               <div class="rf-tier__fee">{t.fee}</div>
               <div class="rf-tier__name">{t.name}</div>
               <p class="rf-tier__blurb">{t.blurb}</p>
