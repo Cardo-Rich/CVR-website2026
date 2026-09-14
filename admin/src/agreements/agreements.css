@@ -233,8 +233,41 @@
 }
 .agreements .ag-status-sent { background: var(--ag-warn-bg); color: var(--ag-warn); }
 .agreements .ag-status-signed { background: var(--ag-success-bg); color: var(--ag-success); }
+.agreements .ag-row-actions { white-space: nowrap; }
 .agreements .ag-row-actions a { color: var(--pink); font-weight: 600; text-decoration: none; }
 .agreements .ag-row-actions a:hover { text-decoration: underline; }
+.agreements .ag-delete-btn { color: var(--muted); vertical-align: baseline; }
+.agreements .ag-delete-btn:hover { color: var(--ag-danger); }
+
+/* Two-step delete confirm, shown in place of the row's links */
+.agreements .ag-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 230px;
+  white-space: normal;
+}
+.agreements .ag-confirm-q { font-size: 12.5px; line-height: 1.45; color: var(--ag-danger); }
+.agreements .ag-confirm-actions { display: flex; align-items: center; gap: 14px; }
+.agreements .ag-danger-btn {
+  appearance: none;
+  cursor: pointer;
+  background: var(--ag-danger);
+  border: 1px solid var(--ag-danger);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 7px 12px;
+  border-radius: 0;
+}
+.agreements .ag-danger-btn:hover { background: #A5332F; border-color: #A5332F; }
+.agreements .ag-danger-btn:disabled { opacity: 0.6; cursor: default; }
+.agreements .ag-cancel-btn { color: var(--muted); }
+.agreements .ag-cancel-btn:hover { color: var(--ink); }
+.agreements .ag-cancel-btn:disabled { opacity: 0.6; cursor: default; }
 
 /* Email settings */
 .agreements details summary::-webkit-details-marker { display: none; }

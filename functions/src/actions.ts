@@ -9,7 +9,11 @@ export function newToken(): string { return randomBytes(18).toString('hex'); } /
 export function isValidToken(token: string): boolean { return /^[0-9a-f]{20,}$/.test(token); }
 
 export interface BucketLike {
-  file(path: string): { save(data: Buffer, opts?: unknown): Promise<unknown>; download(): Promise<Buffer[]> };
+  file(path: string): {
+    save(data: Buffer, opts?: unknown): Promise<unknown>;
+    download(): Promise<Buffer[]>;
+    delete(opts?: { ignoreNotFound?: boolean }): Promise<unknown>;
+  };
 }
 
 export async function getSettings(db: Firestore): Promise<PortalSettings> {
@@ -116,6 +120,21 @@ export async function signAgreement(
     );
   } catch (e) { console.error('post-sign email failed', e); }
   return { signedAt, emailed };
+}
+
+// Permanently removes an agreement and its executed PDF. Staff-only: the
+// Firestore rules deny all client access, so this runs through the callable.
+export async function deleteAgreement(
+  db: Firestore, bucket: BucketLike, token: string,
+): Promise<{ deleted: true; status: AgreementDoc['status'] }> {
+  const d = await getDoc(db, token);
+  if (d.pdfPath) {
+    // A missing object shouldn't block removing the record it belongs to.
+    try { await bucket.file(d.pdfPath).delete({ ignoreNotFound: true }); }
+    catch (e) { console.error('pdf delete failed', e); }
+  }
+  await db.doc(`agreements/${token}`).delete();
+  return { deleted: true, status: d.status };
 }
 
 export async function listAgreements(db: Firestore) {
