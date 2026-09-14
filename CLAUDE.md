@@ -26,6 +26,12 @@
   fees) stay reported and analytical; guide/how-to pages (e.g. /switch) read
   as a journalistic walk-through: second person, narrative, warmer, still
   factual and catch-phrase-free.
+- **Never describe Cardo, its service, or its homes as "luxury" (or
+  "luxurious") in site copy.** Rich's standing rule (Sept 2026): it alienates
+  owners of strong non-luxury homes who would be excellent clients. Prefer
+  design-led, hotel-grade, high-end (for finishes), premium, or nothing.
+  Competitor descriptions on comparison pages use neutral synonyms (upscale,
+  high-end) rather than the word. CSS/code comments are exempt.
 - **Never use em dashes (—) in site copy.** Rich's standing rule. Use periods,
   commas, or colons instead. (En dashes in numeric ranges like 18–35% are fine.)
 - Cardo lists homes under its own Airbnb account. Listing/review portability is

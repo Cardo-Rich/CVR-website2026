@@ -10,7 +10,7 @@ export const company = {
   domain: 'cardorentals.com',
   phone: '619-719-5282',
   phoneHref: '+16197195282',
-  tagline: 'Luxury short-term rental management in San Diego.',
+  tagline: 'Short-term rental management in San Diego.',
   address: {
     street: '3633 Camino del Rio S, Suite 101',
     city: 'San Diego',
@@ -79,7 +79,7 @@ export const cases = [
 ];
 
 export const neighborhoods = [
-  { name: 'La Jolla', note: 'Bluff-top luxury & coastal estates', img: '/assets/photos/imported/unsplash-1613490493576-7fde63acd811.jpg' },
+  { name: 'La Jolla', note: 'Bluff-top homes & coastal estates', img: '/assets/photos/imported/unsplash-1613490493576-7fde63acd811.jpg' },
   { name: 'Pacific Beach', note: 'Walkable, high-occupancy favorites', img: '/assets/photos/imported/unsplash-1600596542815-ffad4c1539a9.jpg' },
   { name: 'Del Mar', note: 'Racetrack-season premium homes', img: '/assets/photos/imported/unsplash-1600607687939-ce8a6c25118c.jpg' },
   { name: 'Encinitas', note: 'Surf-town charm, strong year-round', img: '/assets/photos/imported/unsplash-1505693416388-ac5ce068fe85.jpg' },
