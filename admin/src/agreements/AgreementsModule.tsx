@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { TERMS_META } from '@shared/agreement-content';
-import { createAgreement, listAgreements, getSettings, setSettings as saveSettingsApi } from './api';
+import { createAgreement, listAgreements, deleteAgreement, getSettings, setSettings as saveSettingsApi } from './api';
 import type { AgreementRow, Settings } from './types';
 import './agreements.css';
 
@@ -29,6 +29,10 @@ export default function AgreementsModule() {
   const [agreements, setAgreements] = useState<AgreementRow[]>([]);
   const [listError, setListError] = useState('');
   const [listLoading, setListLoading] = useState(true);
+  // Delete is two-step: the first click arms the row, the second commits.
+  const [confirmToken, setConfirmToken] = useState<string | null>(null);
+  const [deletingToken, setDeletingToken] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState('');
 
   // ----- Email settings -----
   const [settings, setSettingsState] = useState<Settings | null>(null);
@@ -45,6 +49,8 @@ export default function AgreementsModule() {
     try {
       const rows = await listAgreements();
       setAgreements(rows);
+      setConfirmToken(null);
+      setDeleteError('');
     } catch (err) {
       setListError((err as Error).message);
     } finally {
@@ -113,6 +119,20 @@ export default function AgreementsModule() {
     } catch {
       // Clipboard API can fail (permissions, insecure context) — the link is still
       // visible/selectable in the readonly input above, so don't claim success.
+    }
+  }
+
+  async function handleDelete(token: string) {
+    setDeleteError('');
+    setDeletingToken(token);
+    try {
+      await deleteAgreement(token);
+      setAgreements((rows) => rows.filter((r) => r.token !== token));
+      setConfirmToken(null);
+    } catch (err) {
+      setDeleteError((err as Error).message);
+    } finally {
+      setDeletingToken(null);
     }
   }
 
@@ -239,6 +259,7 @@ export default function AgreementsModule() {
           </button>
         </div>
         {listError && <div className="ag-error-box">{listError}</div>}
+        {deleteError && <div className="ag-error-box">{deleteError}</div>}
         <div className="ag-table-wrap">
           {!listLoading && !listError && agreements.length === 0 && (
             <p className="ag-hint">No agreements yet.</p>
@@ -273,15 +294,53 @@ export default function AgreementsModule() {
                       <td>{fmtDate(a.createdAt)}</td>
                       <td>{fmtDate(a.signedAt)}</td>
                       <td className="ag-row-actions">
-                        <a href={link} target="_blank" rel="noopener noreferrer">
-                          Open
-                        </a>
-                        {a.status === 'signed' && (
+                        {confirmToken === a.token ? (
+                          <div className="ag-confirm">
+                            <span className="ag-confirm-q">
+                              {a.status === 'signed'
+                                ? 'Delete this signed agreement and its executed PDF?'
+                                : 'Delete this agreement? The signing link stops working.'}
+                            </span>
+                            <span className="ag-confirm-actions">
+                              <button
+                                className="ag-danger-btn"
+                                type="button"
+                                disabled={deletingToken === a.token}
+                                onClick={() => handleDelete(a.token)}
+                              >
+                                {deletingToken === a.token ? 'Deleting…' : 'Delete permanently'}
+                              </button>
+                              <button
+                                className="ag-text-btn ag-cancel-btn"
+                                type="button"
+                                disabled={deletingToken === a.token}
+                                onClick={() => setConfirmToken(null)}
+                              >
+                                Cancel
+                              </button>
+                            </span>
+                          </div>
+                        ) : (
                           <>
-                            {' · '}
-                            <a href={pdf} target="_blank" rel="noopener noreferrer">
-                              PDF
+                            <a href={link} target="_blank" rel="noopener noreferrer">
+                              Open
                             </a>
+                            {a.status === 'signed' && (
+                              <>
+                                {' · '}
+                                <a href={pdf} target="_blank" rel="noopener noreferrer">
+                                  PDF
+                                </a>
+                              </>
+                            )}
+                            {' · '}
+                            <button
+                              className="ag-text-btn ag-delete-btn"
+                              type="button"
+                              onClick={() => { setDeleteError(''); setConfirmToken(a.token); }}
+                            >
+                              Delete
+                            </button>
                           </>
                         )}
                       </td>

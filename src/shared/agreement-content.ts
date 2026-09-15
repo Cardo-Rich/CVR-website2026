@@ -10,16 +10,19 @@ export interface TermMeta {
   prefix?: string;
   suffix?: string;
   default: string;
+  /** Numbered section of the Agreement this term is governed by; drives the
+   *  in-page jump links on the signing page. */
+  section?: number;
 }
 
 export const TERMS_META: TermMeta[] = [
   { key: 'commissionPct', label: 'Management Commission', sub: '% of rental proceeds · Section 11', suffix: '%', default: '20' },
-  { key: 'amenityFee', label: 'Amenity Marketing Program', sub: 'Guest-paid, per reservation', prefix: '$', default: '20' },
-  { key: 'homeSafeFee', label: 'Cardo HomeSafe — Premium', sub: 'Guest-paid, per reservation · Section 13', prefix: '$', default: '59' },
-  { key: 'homeSafeCoverage', label: 'Cardo HomeSafe — Coverage Amount', sub: 'Covered damage, per claim · Section 13', prefix: '$', default: '3,500' },
-  { key: 'homeSafeDeductible', label: 'Cardo HomeSafe — Deductible', sub: 'Per claim · Section 13', prefix: '$', default: '0' },
-  { key: 'startupFee', label: 'Engagement Fee — Startup', sub: 'Rolled into first payout · non-refundable', prefix: '$', default: '500' },
-  { key: 'lockSyncFee', label: 'Engagement Fee — Lock Sync', sub: 'Rolled into first payout · non-refundable', prefix: '$', default: '190' },
+  { key: 'amenityFee', label: 'Amenity Marketing Program', sub: 'Guest-paid, per reservation · Section 3', prefix: '$', default: '20', section: 3 },
+  { key: 'homeSafeFee', label: 'Cardo HomeSafe — Premium', sub: 'Guest-paid, per reservation · Section 13', prefix: '$', default: '59', section: 13 },
+  { key: 'homeSafeCoverage', label: 'Cardo HomeSafe — Coverage Amount', sub: 'Covered damage, per claim · Section 13', prefix: '$', default: '3,500', section: 13 },
+  { key: 'homeSafeDeductible', label: 'Cardo HomeSafe — Deductible', sub: 'Per claim · Section 13', prefix: '$', default: '0', section: 13 },
+  { key: 'startupFee', label: 'Engagement Fee — Startup', sub: 'Rolled into first payout · non-refundable', prefix: '$', default: '500', section: 11 },
+  { key: 'lockSyncFee', label: 'Engagement Fee — Lock Sync', sub: 'Rolled into first payout · non-refundable', prefix: '$', default: '190', section: 11 },
 ];
 
 export interface AckMeta {
@@ -65,11 +68,27 @@ export interface Section {
 export const PREAMBLE =
   'This Rental Management Agreement (the “Agreement”) is made between Scherf Property Management, LLC, a California limited liability company doing business as Cardo Vacation Rentals (“Cardo,” “we,” or “us”), and the undersigned property owner (“Owner” or “you”). If there is more than one Owner, the obligations under this Agreement apply to each of you jointly and individually. The numbered terms below govern the relationship; please review them in full before signing.';
 
-export const BACKOUT_CALLOUT = {
-  kicker: 'Risk-Free Commitment',
-  title: 'A 14-Day Back-Out, No Strings Attached',
-  body: 'Change your mind for any reason within 14 days of signing and walk away with no penalty and no termination fee. We hold ourselves to the same bar: if the Home doesn’t meet our guest-readiness standards, Cardo may end the agreement at any time — so you’re only ever committed once it’s truly right.',
-};
+export interface Guarantee {
+  /** Selects the badge icon on the signing page. */
+  key: 'backout' | 'standby';
+  title: string;
+  body: string;
+}
+
+export const GUARANTEES_KICKER = 'Risk-Free Commitment';
+
+export const GUARANTEES: Guarantee[] = [
+  {
+    key: 'backout',
+    title: 'A 14-Day Back-Out, No Strings Attached',
+    body: 'Change your mind for any reason within 14 days of signing and walk away with no penalty and no termination fee. We hold ourselves to the same bar: if the Home doesn’t meet our guest-readiness standards, Cardo may end the agreement at any time, so you’re only ever committed once it’s truly right.',
+  },
+  {
+    key: 'standby',
+    title: 'The Safe Standby Guarantee',
+    body: 'Cardo can be at the ready for owners who want Cardo to manage but are not yet ready to get started. Under this guarantee, Cardo can be your manager and assist with design, maintenance, preparation, and permits, and even meet vendors at the property, without charging a management fee, until the unit is ready to list, whether that is a month or a year down the line. During this time the only charge is $70 per hour for time spent on billable labor.',
+  },
+];
 
 export const FOOTER_LINE =
   'Scherf Property Management, LLC d/b/a Cardo Vacation Rentals · 3633 Camino del Rio South #101, San Diego, CA 92108 · cardorentals.com';
@@ -102,7 +121,7 @@ export const SECTIONS: Section[] = [
     n: 3,
     title: 'Guest-Charged Fees',
     blocks: [
-      { p: 'Cardo may charge guests industry-standard fees in addition to nightly rent — for example cleaning, damage waiver, pet, concierge, long-stay, and early/late checkout fees. These guest-charged fees are retained by Cardo and are not part of your payout, as they fund the services those fees represent.' },
+      { p: 'Cardo may charge guests industry-standard fees in addition to nightly rent: for example cleaning, damage waiver, pet, concierge, long-stay, and early/late checkout fees, and the **Amenity Marketing Program** fee stated on the first page. These guest-charged fees are retained by Cardo and are not part of your payout, as they fund the services those fees represent.' },
     ],
   },
   {
@@ -185,6 +204,7 @@ export const SECTIONS: Section[] = [
           'Property Expenses = upkeep, vendor, and maintenance costs tied to the Home.',
         ],
       },
+      { p: '**Engagement Fee.** The startup and lock-sync amounts stated on the first page together make up the Engagement Fee. Nothing is due at signing: the Engagement Fee is deducted from your first Owner Payout, and it is non-refundable.' },
       { p: 'All earnings are held in a Cardo trust account and paid to you by the 15th of each month for the prior month’s rentals. Please review each statement promptly; if you spot an error or have a question, email us by the 28th of the month the statement is sent. After that, the payout is considered final.' },
     ],
   },

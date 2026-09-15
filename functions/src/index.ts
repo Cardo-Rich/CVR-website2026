@@ -5,7 +5,7 @@ import { getDb, getBucket, getAdminApp } from './db.js';
 import { makeSendEmail, signingInviteHtml } from './email.js';
 import { buildPdf } from './pdf.js';
 import {
-  createAgreement, getAgreementPublic, signAgreement, listAgreements,
+  createAgreement, getAgreementPublic, signAgreement, listAgreements, deleteAgreement,
   getSettings, setSettings, HttpErr, isValidToken,
 } from './actions.js';
 import { resolveAdmin } from './claims.js';
@@ -214,6 +214,15 @@ export const adminCreate = onCall({ secrets: [RESEND_API_KEY] }, async (req) => 
   return { token: doc.token, url, emailed };
 });
 export const adminList = onCall(async (req) => { requireAdmin(req.auth); return { agreements: await listAgreements(getDb()) }; });
+export const adminDelete = onCall(async (req) => {
+  requireAdmin(req.auth);
+  try {
+    return await deleteAgreement(getDb(), getBucket(), String(req.data?.token || ''));
+  } catch (e) {
+    if (e instanceof HttpErr) throw new HttpsError(e.status === 404 ? 'not-found' : 'invalid-argument', e.message);
+    throw e; // real failures propagate and log as internal errors
+  }
+});
 export const adminGetSettings = onCall({ secrets: [RESEND_API_KEY] }, async (req) => {
   requireAdmin(req.auth);
   const s = await getSettings(getDb());

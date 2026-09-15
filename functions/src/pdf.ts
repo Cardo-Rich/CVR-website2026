@@ -1,5 +1,5 @@
 import { PDFDocument, StandardFonts, rgb, PDFFont, PDFPage } from 'pdf-lib';
-import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, richToPlain } from './content.js';
+import { SECTIONS, ACKS, TERMS_META, PREAMBLE, GUARANTEES, GUARANTEES_KICKER, FOOTER_LINE, richToPlain } from './content.js';
 import type { AgreementDoc } from './types.js';
 
 // ---------------------------------------------------------------------------
@@ -132,7 +132,7 @@ export async function buildPdf(doc: AgreementDoc): Promise<Uint8Array> {
     w.text(`${m.label}:  ${fmt(m)}   (${richToPlain(m.sub)})`, { size: 9.5, after: 2 });
   }
   const total = (parseFloat(terms.startupFee || '0') || 0) + (parseFloat(terms.lockSyncFee || '0') || 0);
-  w.text(`Total due at signing: $0 — the $${total.toLocaleString('en-US')} in startup and lock-sync fees roll into the first monthly payout.`, {
+  w.text(`Total due at signing: $0. The $${total.toLocaleString('en-US')} in startup and lock-sync fees roll into the first monthly payout.`, {
     size: 9.5,
     font: w.bold,
     color: GREEN,
@@ -155,8 +155,11 @@ export async function buildPdf(doc: AgreementDoc): Promise<Uint8Array> {
   w.rule();
 
   // Risk-free commitment callout
-  w.text(BACKOUT_CALLOUT.kicker.toUpperCase() + ' — ' + BACKOUT_CALLOUT.title, { size: 10, font: w.bold, color: INK, after: 4 });
-  w.text(BACKOUT_CALLOUT.body, { size: 9.5, after: 4 });
+  w.text(GUARANTEES_KICKER.toUpperCase(), { size: 10, font: w.bold, color: INK, after: 5 });
+  for (const g of GUARANTEES) {
+    w.text(g.title, { size: 9.5, font: w.bold, color: INK, after: 2 });
+    w.text(g.body, { size: 9.5, after: 5 });
+  }
   w.rule();
 
   // Acknowledgments

@@ -1,7 +1,10 @@
 ---
 // Client-facing signing page for the Rental Management Agreement.
 // Loaded via the tokenized link emailed from the owner portal: /agreement/?t=TOKEN
-import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, richToHtml } from '../../shared/agreement-content.ts';
+import { SECTIONS, ACKS, TERMS_META, PREAMBLE, GUARANTEES, GUARANTEES_KICKER, FOOTER_LINE, richToHtml } from '../../shared/agreement-content.ts';
+
+// Section titles keyed by number, so a jump link can name its destination.
+const SECTION_TITLES = Object.fromEntries(SECTIONS.map((x) => [x.n, x.title]));
 ---
 
 <!doctype html>
@@ -68,7 +71,14 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
           {TERMS_META.slice(0, 2).map((m, i) => (
             <div class="term-row" style={i === 0 ? 'margin-top: 12px;' : ''}>
               <div style="min-width: 0;">
-                <div class="term-name">{m.label}</div>
+                <div class="term-name">
+                  {m.section ? (
+                    <a class="term-link" href={`#section-${m.section}`} data-jump title={`Jump to Section ${m.section}: ${SECTION_TITLES[m.section]}`}>
+                      {m.label}
+                      <svg class="term-link-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="4" x2="12" y2="19"></line><polyline points="18.5 13 12 19.5 5.5 13"></polyline></svg>
+                    </a>
+                  ) : m.label}
+                </div>
                 <div class="term-sub">{m.sub}</div>
               </div>
               <div class="unit-wrap">
@@ -80,7 +90,12 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
           ))}
 
           <div class="term-row" style="display: block;">
-            <div class="term-name">Cardo HomeSafe Insurance</div>
+            <div class="term-name">
+              <a class="term-link" href="#section-13" data-jump title="Jump to Section 13: Insurance">
+                Cardo HomeSafe Insurance
+                <svg class="term-link-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="4" x2="12" y2="19"></line><polyline points="18.5 13 12 19.5 5.5 13"></polyline></svg>
+              </a>
+            </div>
             <div class="term-sub">Guest-paid damage protection, per reservation &middot; Section 13</div>
             <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px;">
               <div style="flex: 1 1 90px;">
@@ -108,8 +123,13 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
           </div>
 
           <div class="term-row" style="display: block; padding-bottom: 4px;">
-            <div class="term-name">Engagement Fee</div>
-            <div class="term-sub">Rolled into first payout &middot; non-refundable</div>
+            <div class="term-name">
+              <a class="term-link" href="#section-11" data-jump title="Jump to Section 11: Fees &amp; Your Payout">
+                Engagement Fee
+                <svg class="term-link-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="4" x2="12" y2="19"></line><polyline points="18.5 13 12 19.5 5.5 13"></polyline></svg>
+              </a>
+            </div>
+            <div class="term-sub">Rolled into first payout &middot; Section 11 &middot; non-refundable</div>
             <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px;">
               <div style="flex: 1 1 120px;">
                 <div class="field-label" style="margin-bottom: 5px;">Startup</div>
@@ -131,7 +151,7 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
                 <span class="due-label">Total Due at Signing</span>
                 <span class="due-zero">$0</span>
               </div>
-              <div class="due-note">Your $<span id="engagementTotal">690</span> in startup and lock-sync fees roll into your first monthly payout &mdash; nothing is due today.</div>
+              <div class="due-note">Your $<span id="engagementTotal">690</span> in startup and lock-sync fees roll into your first monthly payout. Nothing is due today.</div>
             </div>
           </div>
         </div>
@@ -170,13 +190,23 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
 
       <!-- Risk-free commitment callout -->
       <div class="callout">
-        <div class="callout-badge">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C19A5B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>
-        </div>
-        <div style="min-width: 0;">
-          <div class="callout-kicker">{BACKOUT_CALLOUT.kicker}</div>
-          <div class="callout-title">{BACKOUT_CALLOUT.title}</div>
-          <p class="callout-body">{BACKOUT_CALLOUT.body}</p>
+        <div class="callout-kicker">{GUARANTEES_KICKER}</div>
+        <div class="callout-items">
+          {GUARANTEES.map((g) => (
+            <div class="callout-item">
+              <div class="callout-badge">
+                {g.key === 'standby' ? (
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#C19A5B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 6.8 12 12 15.6 14.2"></polyline></svg>
+                ) : (
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#C19A5B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                )}
+              </div>
+              <div style="min-width: 0;">
+                <div class="callout-title">{g.title}</div>
+                <p class="callout-body">{g.body}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -243,7 +273,7 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
 
     <div style="max-width: 840px; margin-top: 14px;">
       {SECTIONS.map((section) => (
-        <section class="legal">
+        <section class="legal" id={`section-${section.n}`}>
           <h3><span class="num">{section.n}.</span>&nbsp; {section.title}</h3>
           {section.blocks.map((block) => (
             <>
@@ -262,6 +292,11 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
 
   </article>
 </main>
+
+<button id="toTop" class="to-top" type="button" data-noprint aria-label="Back to top" hidden>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="19.5" x2="12" y2="5"></line><polyline points="5.5 11 12 4.5 18.5 11"></polyline></svg>
+  <span>Top</span>
+</button>
 
 <script>
   import { AGREEMENTS_API } from '../../lib/portal-config.js';
@@ -527,6 +562,84 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
   load();
 </script>
 
+<script>
+  // Eased in-page navigation: the commercial terms at the top link down to the
+  // section that governs them, and a floating control returns to the top.
+  const REDUCED = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+  let animId = 0;
+
+  function stopScroll() {
+    if (animId) { cancelAnimationFrame(animId); animId = 0; }
+  }
+
+  function scrollToY(targetY: number) {
+    stopScroll();
+    const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const endY = Math.min(Math.max(0, targetY), maxY);
+    const startY = window.scrollY;
+    const delta = endY - startY;
+    if (REDUCED() || Math.abs(delta) < 2) { window.scrollTo(0, endY); return; }
+    // Longer trips get a longer glide, capped so it never feels sluggish.
+    const duration = Math.min(900, Math.max(420, 260 + Math.abs(delta) * 0.32));
+    const t0 = performance.now();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - t0) / duration);
+      window.scrollTo(0, startY + delta * easeInOutCubic(t));
+      animId = t < 1 ? requestAnimationFrame(step) : 0;
+    };
+    animId = requestAnimationFrame(step);
+  }
+
+  // Any manual scroll input hands control straight back to the reader.
+  ['wheel', 'touchstart', 'keydown'].forEach((evt) =>
+    window.addEventListener(evt, stopScroll, { passive: true }),
+  );
+
+  function headerOffset(): number {
+    const header = document.getElementById('appHeader');
+    const sticky = header && getComputedStyle(header).position === 'sticky' ? header.offsetHeight : 0;
+    return sticky + 22;
+  }
+
+  let flashTimer = 0;
+  function flash(el: HTMLElement) {
+    document.querySelectorAll('.legal.is-target').forEach((n) => n.classList.remove('is-target'));
+    el.classList.add('is-target');
+    clearTimeout(flashTimer);
+    flashTimer = window.setTimeout(() => el.classList.remove('is-target'), 2200);
+  }
+
+  document.addEventListener('click', (e) => {
+    const link = (e.target as HTMLElement | null)?.closest('a[data-jump]') as HTMLAnchorElement | null;
+    if (!link) return;
+    const target = document.querySelector(link.getAttribute('href') || '') as HTMLElement | null;
+    if (!target) return; // no anchor on the page: let the browser handle it
+    e.preventDefault();
+    scrollToY(target.getBoundingClientRect().top + window.scrollY - headerOffset());
+    flash(target);
+  });
+
+  // Back-to-top: appears once the reader is past the first screen.
+  const toTop = document.getElementById('toTop');
+  if (toTop) {
+    toTop.hidden = false;
+    toTop.addEventListener('click', () => scrollToY(0));
+    let ticking = false;
+    const sync = () => {
+      toTop.classList.toggle('is-visible', window.scrollY > 520);
+      ticking = false;
+    };
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(sync);
+    }, { passive: true });
+    sync();
+  }
+</script>
+
 <style is:global>
   * { box-sizing: border-box; }
   /* The hidden attribute must always win over class display rules (e.g. .gate / .signed-banner use display: flex). */
@@ -599,11 +712,15 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
   .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 16px; }
   .sig-box .two-col { grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); }
 
-  .callout { margin-top: 24px; display: flex; gap: 18px; align-items: flex-start; background: #0E111B; border-radius: 0; padding: clamp(20px,3vw,26px) clamp(20px,3vw,28px); }
-  .callout-badge { flex: 0 0 auto; width: 56px; height: 56px; border-radius: 50%; background: rgba(193,154,91,0.14); border: 1px solid rgba(193,154,91,0.4); display: flex; align-items: center; justify-content: center; }
+  .callout { margin-top: 24px; background: #0E111B; border-radius: 0; padding: clamp(20px,3vw,26px) clamp(20px,3vw,28px); }
+  .callout-items { margin-top: 16px; display: flex; flex-direction: column; gap: 22px; }
+  .callout-item { display: flex; gap: 18px; align-items: flex-start; }
+  .callout-item + .callout-item { padding-top: 22px; border-top: 1px solid rgba(193,154,91,0.22); }
+  .callout-badge { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; background: rgba(193,154,91,0.14); border: 1px solid rgba(193,154,91,0.4); display: flex; align-items: center; justify-content: center; }
   .callout-kicker { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #C19A5B; }
-  .callout-title { margin-top: 6px; font-family: 'Cardo', serif; font-size: clamp(17px,2.4vw,20px); font-weight: 700; letter-spacing: -0.01em; color: #F8F3EC; }
+  .callout-title { font-family: 'Cardo', serif; font-size: clamp(17px,2.4vw,20px); font-weight: 700; letter-spacing: -0.01em; color: #F8F3EC; }
   .callout-body { margin: 10px 0 0; font-size: 14.5px; line-height: 1.6; color: rgba(248,243,236,0.82); }
+  @media (max-width: 560px) { .callout-item { gap: 14px; } .callout-badge { width: 44px; height: 44px; } .callout-badge svg { width: 24px; height: 24px; } }
 
   .ack-row { display: flex; gap: 12px; align-items: flex-start; padding: 15px 0; border-top: 1px solid rgba(14,17,27,0.12); cursor: pointer; }
   .ack-row[data-last="true"] { border-bottom: 1px solid rgba(14,17,27,0.12); }
@@ -626,8 +743,29 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
   .submit-btn:disabled { opacity: 0.6; cursor: default; }
   .submit-note { margin-top: 12px; text-align: center; font-size: 12.5px; color: #5C6B78; }
 
+  /* Jump links from a commercial term to the section that governs it. */
+  .term-link { display: inline-flex; align-items: center; gap: 5px; color: inherit; text-decoration: none; border-bottom: 1px solid rgba(237,60,120,0.55); padding-bottom: 1px; cursor: pointer; transition: color .16s ease, border-color .16s ease; }
+  .term-link:hover, .term-link:focus-visible { color: #ED3C78; border-bottom-color: #ED3C78; }
+  .term-link:focus-visible { outline: 2px solid rgba(237,60,120,0.45); outline-offset: 3px; }
+  .term-link-ic { width: 11px; height: 11px; flex: 0 0 auto; opacity: 0.55; transition: transform .16s ease, opacity .16s ease; }
+  .term-link:hover .term-link-ic, .term-link:focus-visible .term-link-ic { opacity: 1; transform: translateY(2px); }
+
   .legal { margin-top: 30px; }
   .legal:first-of-type { margin-top: 34px; }
+  /* Brief accent on the section a jump link just landed on. */
+  .legal { scroll-margin-top: 96px; padding-left: 0; border-left: 3px solid transparent; transition: border-color .5s ease, padding-left .5s ease, background .5s ease; }
+  .legal.is-target { border-left-color: #ED3C78; padding-left: 16px; background: rgba(237,60,120,0.045); }
+
+  .to-top { position: fixed; right: clamp(16px,3vw,32px); bottom: clamp(16px,3vw,32px); z-index: 60; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; width: 58px; height: 58px; appearance: none; cursor: pointer; border: 1px solid rgba(14,17,27,0.14); border-radius: 50%; background: rgba(255,255,255,0.92); backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%); color: #0E111B; box-shadow: 0 14px 34px -14px rgba(14,21,40,0.5); opacity: 0; transform: translateY(12px) scale(0.94); pointer-events: none; transition: opacity .28s ease, transform .28s cubic-bezier(0.22,0.61,0.36,1), border-color .16s ease, color .16s ease; }
+  .to-top svg { width: 17px; height: 17px; }
+  .to-top span { font-family: 'Inter', sans-serif; font-size: 8.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+  .to-top.is-visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  .to-top:hover { border-color: #ED3C78; color: #ED3C78; }
+  .to-top:focus-visible { outline: 2px solid rgba(237,60,120,0.5); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .to-top, .legal, .term-link, .term-link-ic { transition: none !important; }
+  }
   .legal h3 { margin: 0 0 10px; font-family: 'Cardo', serif; font-size: 18px; font-weight: 700; letter-spacing: 0.01em; color: #0E111B; }
   .legal h3 .num { color: #ED3C78; }
   .legal p { margin: 0 0 10px; font-size: 15.5px; line-height: 1.72; color: #232838; }
@@ -645,6 +783,9 @@ import { SECTIONS, ACKS, TERMS_META, PREAMBLE, BACKOUT_CALLOUT, FOOTER_LINE, ric
     #appHeader { position: static !important; box-shadow: none !important; border-bottom: 1px solid #ddd !important; }
     #sheet { box-shadow: none !important; margin: 0 !important; max-width: none !important; border-radius: 0 !important; }
     main { padding: 0 !important; }
+    .term-link { border-bottom: none !important; color: inherit !important; }
+    .term-link-ic, .to-top { display: none !important; }
+    .legal { border-left: none !important; padding-left: 0 !important; background: none !important; }
   }
 </style>
 

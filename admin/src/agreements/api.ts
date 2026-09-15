@@ -10,6 +10,10 @@ export async function listAgreements(): Promise<AgreementRow[]> {
   const r = await httpsCallable<unknown, { agreements: AgreementRow[] }>(functions, 'adminList')();
   return r.data.agreements;
 }
+export async function deleteAgreement(token: string) {
+  const r = await httpsCallable<{ token: string }, { deleted: true; status: 'sent' | 'signed' }>(functions, 'adminDelete')({ token });
+  return r.data;
+}
 export async function getSettings(): Promise<Settings> {
   const r = await httpsCallable<unknown, Settings>(functions, 'adminGetSettings')();
   return r.data;
