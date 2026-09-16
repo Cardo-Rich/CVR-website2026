@@ -47,7 +47,7 @@ export interface Article {
   caseStudy?: CaseStudyMeta;
 }
 
-export const categories = ['All', 'Revenue', 'Design', 'Compliance', 'Neighborhoods', 'Operations', 'Case studies', 'Explore like a local'];
+export const categories = ['All', 'Revenue', 'Tax', 'Design', 'Compliance', 'Neighborhoods', 'Operations', 'Case studies', 'Explore like a local'];
 
 export const articles: Article[] = [
   {
@@ -103,6 +103,52 @@ export const articles: Article[] = [
         <h2>So what's the number?</h2>
         <p>There isn't one honest answer that fits every home. Any manager who quotes you a figure sight-unseen is guessing. Your projection comes from your home's location, size, layout, and finish, run against current San Diego demand. That's the analysis we build for free, usually within a business day, before you ever sign anything.</p>
         <p>The owners who do best aren't the ones with the most nights booked. They're the ones who priced for the right nights, positioned for the right guest, and put their home in a position to be worth more. That's the whole job. It's the one we'd like to do for yours.</p>`,
+  },
+  {
+    slug: 'cost-segregation-upfront-cash-flow',
+    title: 'Unlock Massive Upfront Cash Flow: Why Every Property Owner Needs a Cost Segregation Strategy',
+    category: 'Tax',
+    excerpt:
+      'Traditional depreciation spreads a building\'s write-offs over decades. A cost segregation study is the engineering-backed way to front-load them instead, and it applies to long-term rentals, commercial space, and vacation homes alike.',
+    readTime: '6 min read',
+    dateFull: 'September 16, 2026',
+    dateShort: 'Sep 2026',
+    img: '/assets/photos/kitchen-classic-white.jpg',
+    seo: {
+      title: 'Cost segregation for rental property owners | The Cardo Journal',
+      description:
+        'How a cost segregation study reclassifies building components into 5, 7, and 15-year depreciation schedules to front-load deductions, who it suits, and how it interacts with passive loss rules.',
+    },
+    author: {
+      name: 'The Cardo Team',
+      initials: 'CV',
+    },
+    heroCaption:
+      'Cabinetry, appliances, and specialized lighting: the components a cost segregation study separates from the structural shell.',
+    bodyHtml: `<p class='lede'>Running a real estate portfolio means constantly looking for ways to improve cash flow and reduce tax liability. While traditional depreciation spreads your building's write-offs over decades, there is a powerful engineering-backed strategy that lets you front-load your deductions: cost segregation.</p><p>Whether you own long-term residential rentals, commercial spaces, or short-term vacation properties, understanding this strategy can completely transform your tax outlook.</p><h2>What is a cost segregation study?</h2><p>When you buy a residential rental property, the IRS typically requires you to depreciate the building structure over a rigid 27.5-year timeline. However, a building is not just a single monolith of concrete and wood. It is made up of hundreds of individual components: carpeting, specialized lighting, cabinetry, appliances, and outdoor land improvements.</p><p>A cost segregation study is an engineering-based analysis that separates these components from the structural shell. By doing so, it reclassifies portions of the purchase price into much shorter depreciation schedules: 5-year, 7-year, or 15-year property classes. This allows you to claim massive upfront depreciation deductions rather than waiting decades to realize them.</p><h2>Who can benefit from cost segregation?</h2><p>The beauty of a cost segregation study is that it is fundamentally an asset classification tool, not a classification of how you use your time or how long guests stay.</p><ul><li>Any real estate investor who owns a profitable property can commission a study to accelerate their depreciation.</li><li>It works exceptionally well for properties with heavy asset breakdowns, such as furnished short-term rentals, commercial buildings, or multi-family complexes with extensive fixtures and site improvements.</li></ul><h2>How it interacts with other tax rules</h2><p>While cost segregation creates the massive tax write-off, how you can use those deductions depends entirely on your broader tax classification.</p><p>If your property is a traditional long-term rental, those depreciation losses are generally treated as passive losses and can only offset other passive income, unless you qualify for Real Estate Professional Status. However, if you operate a short-term rental, you might be able to utilize these write-offs much faster against active or W-2 income by leveraging the 7-day rule.</p><blockquote>Want to know how to turn those accelerated depreciation losses into active write-offs? Read our companion guide, <a class='inline' href='/blog/the-7-day-rule-short-term-rental-w2-income'>The 7-day rule: when short-term rental losses offset W-2 income</a>, to see how stay duration changes the game.</blockquote><h2>Maximize your portfolio's potential</h2><p>Cost segregation is one of the most effective tools available to lower your tax liability and retain cash for future investments. By working closely with a qualified engineering firm and your CPA, you can build a fully compliant, defensible asset study tailored to your portfolio.</p><p>Thinking about conducting a cost segregation study on your property? Our <a class='inline' href='/owners/cost-segregation'>cost segregation page</a> walks through the process, what a study typically reclassifies, and illustrative first-year numbers, and you can <a class='inline' href='/owners/cost-segregation#analysis'>request a free analysis</a> there to discuss your asset strategy.</p><div class='callout'><p class='eyebrow'>Please note</p><p>This article is general information, not tax advice. Cardo Vacation Rentals is a property manager, not a tax advisor. Confirm how any of this applies to your property with your CPA or tax professional.</p></div>`,
+  },
+  {
+    slug: 'the-7-day-rule-short-term-rental-w2-income',
+    title: 'The 7-day rule: when short-term rental losses offset W-2 income',
+    category: 'Tax',
+    excerpt:
+      'The average length of your guest stays decides how the IRS treats your rental losses. Here is how the 7-day rule works, what material participation requires, and why the two conditions have to be met together.',
+    readTime: '6 min read',
+    dateFull: 'September 15, 2026',
+    dateShort: 'Sep 2026',
+    img: '/assets/photos/guests-family-poolside.jpg',
+    seo: {
+      title: 'The 7-day rule and your W-2 income | The Cardo Journal',
+      description:
+        'How the short-term rental exception under Treasury Regulation 1.469-1T(e)(3)(ii) works: the 7-day average stay test, the material participation requirement, and how it pairs with cost segregation.',
+    },
+    author: {
+      name: 'The Cardo Team',
+      initials: 'CV',
+    },
+    heroCaption:
+      'Short stays are an operational reality first. They are also what determines how the IRS classifies the activity.',
+    bodyHtml: `<p class='lede'>If you manage short-term rentals on platforms like Airbnb or Vrbo, you already know that guest turnover, staging, and property management require serious, hands-on effort. But did you know that the actual length of your guest stays dictates how the IRS views your tax losses?</p><p>While many investors focus heavily on asset depreciation, understanding the 7-day rule is the key to unlocking how those write-offs apply to your overall financial picture.</p><h2>The passive loss trap versus short-term rentals</h2><p>Under standard IRS guidelines, residential rental real estate is automatically classified as a passive activity. This means that if your property generates a large paper loss, often driven by depreciation, that loss is locked away. You generally cannot use it to offset your regular W-2 wages or active business income unless you hold official Real Estate Professional Status (REPS).</p><p>However, short-term and vacation rentals have a unique exception under Treasury Regulation Section 1.469-1T(e)(3)(ii).</p><h2>How the 7-day rule works</h2><p>To step outside the standard passive rental classification, your property must meet a specific operational threshold:</p><ul><li><strong>The average stay requirement:</strong> if the average period of customer use for your property is 7 days or less, the IRS stops treating the activity as a traditional rental activity.</li><li><strong>Material participation:</strong> meeting the 7-day rule is only half the battle. You must also materially participate in the business, meaning you log enough hours managing operations, handling guest communications, or coordinating cleanings to prove you are actively running the enterprise.</li></ul><p>When these two conditions are met, your rental losses become non-passive, allowing you to potentially use them to offset active or W-2 income.</p><h2>Pairing it with accelerated depreciation</h2><p>The 7-day rule dictates how you use your tax losses, but it does not create the losses by itself. To truly maximize the tax-saving power of a short-term rental, investors often pair operational strategy with a <a class='inline' href='/owners/cost-segregation'>cost segregation study</a>.</p><blockquote>Curious about how to generate those massive upfront deductions in the first place? Read our companion guide, <a class='inline' href='/blog/cost-segregation-upfront-cash-flow'>Unlock Massive Upfront Cash Flow: Why Every Property Owner Needs a Cost Segregation Strategy</a>, to learn how engineering-based asset studies create substantial tax write-offs.</blockquote><h2>Structuring your strategy for success</h2><p>Operating short-term rentals requires strict record-keeping, from tracking average night lengths to logging your participation hours. When combined with proper asset depreciation, it transforms a vacation property into a powerful financial optimization vehicle.</p><p>Manage short-term rentals and want to be sure your setup lines up with the IRS rules? <a class='inline' href='/owners/cost-segregation#analysis'>Send us your questions</a>.</p><div class='callout'><p class='eyebrow'>Please note</p><p>This article is general information, not tax advice. Cardo Vacation Rentals is a property manager, not a tax advisor. Confirm how any of this applies to your property with your CPA or tax professional.</p></div>`,
   },
   {
     slug: 'five-design-choices-that-lift-your-nightly-rate',
