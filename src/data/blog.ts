@@ -47,7 +47,14 @@ export interface Article {
   caseStudy?: CaseStudyMeta;
 }
 
-export const categories = ['All', 'Revenue', 'Tax', 'Design', 'Compliance', 'Neighborhoods', 'Operations', 'Case studies', 'Explore like a local'];
+export const categories = ['All', 'Revenue', 'Tax', 'Accounting', 'Design', 'Compliance', 'Neighborhoods', 'Operations', 'Case studies', 'Explore like a local'];
+
+// Chip label -> the article categories it covers on /blog. A chip that is not
+// listed here matches articles whose `category` is the chip's own label; the
+// guest guides each carry their own category and sit together under one chip.
+export const categoryGroups: Record<string, string[]> = {
+  'Explore like a local': ['Surf & sand', 'Food & drink', 'Family adventures'],
+};
 
 export const articles: Article[] = [
   {

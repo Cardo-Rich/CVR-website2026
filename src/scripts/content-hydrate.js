@@ -262,6 +262,24 @@ export function hydrateNeighborhoodDetail(items) {
   }
 }
 
+// Astro scopes a page's <style> rules with a data-astro-cid-* attribute that it
+// stamps on the elements it renders. Cards we build here are created after that
+// render, so they have to carry the same attribute or none of the page's card
+// styles match them. Returns the attribute name found on `el`, or null.
+function scopeAttr(el) {
+  if (!el || !el.attributes) return null;
+  for (var i = 0; i < el.attributes.length; i++) {
+    var n = el.attributes[i].name;
+    if (n.indexOf('data-astro-cid-') === 0) return n;
+  }
+  return null;
+}
+function applyScope(root, attr) {
+  if (!attr || !root) return;
+  root.setAttribute(attr, '');
+  root.querySelectorAll('*').forEach(function (el) { el.setAttribute(attr, ''); });
+}
+
 // Rebuild the /blog index (featured card + posts grid) from CMS articles.
 export function hydrateBlogIndex(items) {
   var grid = document.querySelector('[data-blog-grid]');
@@ -282,6 +300,7 @@ export function hydrateBlogIndex(items) {
     var fH = feat.querySelector('h2'); if (fH) fH.textContent = featured.title;
     var fP = feat.querySelector('.feat__body > p'); if (fP) fP.textContent = featured.excerpt || '';
   }
+  var scope = scopeAttr(grid);
   grid.innerHTML = '';
   rest.forEach(function (p) {
     var a = document.createElement('a');
@@ -298,8 +317,12 @@ export function hydrateBlogIndex(items) {
     var link = document.createElement('span'); link.className = 'link-arrow'; link.textContent = 'Read →';
     body.appendChild(meta); body.appendChild(h3); body.appendChild(ex); body.appendChild(link);
     a.appendChild(media); a.appendChild(body);
+    applyScope(a, scope);
     grid.appendChild(a);
   });
+  // The category filter on /blog reads the cards in the DOM, so tell it the
+  // grid it filtered has just been replaced.
+  document.dispatchEvent(new CustomEvent('cardo:blog-hydrated'));
 }
 
 // Rewrite the /blog/[slug] article page from the matching CMS article.

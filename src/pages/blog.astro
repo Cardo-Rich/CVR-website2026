@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import MarketingHeader from '../components/sections/MarketingHeader.astro';
 import Footer from '../components/sections/Footer.astro';
-import { categories } from '../data/blog';
+import { categories, categoryGroups } from '../data/blog';
 import { getPublishedArticles } from '../lib/content/articles';
 
 const articles = await getPublishedArticles();
@@ -35,7 +35,12 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
         </div>
         <div class="cats">
           {categories.map((c, i) => (
-            <span class={i === 0 ? 'cat is-active' : 'cat'}>{c}</span>
+            <button
+              type="button"
+              class={i === 0 ? 'cat is-active' : 'cat'}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+              data-cat-match={i === 0 ? '' : (categoryGroups[c] || [c]).join('|')}
+            >{c}</button>
           ))}
         </div>
       </div>
@@ -43,7 +48,7 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
 
     <!-- FEATURED -->
     {featured && (
-      <section class="section-pad-sm" data-screen-label="Featured post" style="padding-top:clamp(32px,5vw,56px)">
+      <section class="section-pad-sm" data-screen-label="Featured post" data-blog-featured-section style="padding-top:clamp(32px,5vw,56px)">
         <div class="section-wrap">
           <a class="feat reveal" href={`/blog/${featured.slug}`} data-blog-featured data-blog-slug={featured.slug}>
             <div class="feat__media"><img src={featured.img} alt={featured.title} loading="lazy" /></div>
@@ -74,6 +79,7 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
             </a>
           ))}
         </div>
+        <p class="posts-empty" data-blog-empty hidden>No posts in this category yet.</p>
       </div>
     </section>
 
@@ -124,14 +130,53 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
 <script>
   import '../scripts/blog.js';
 
+  // Category chips filter the grid (and the featured card) in place. A chip
+  // carries the categories it covers in data-cat-match; the "All" chip carries
+  // none and matches everything. A card's category is the text of its
+  // .post-cat span, which is correct for both the statically rendered cards
+  // and the ones the CMS rebuilds after load.
   (function () {
-    var cats = document.querySelectorAll('.cat');
+    var cats = Array.prototype.slice.call(document.querySelectorAll('.cat'));
+    var grid = document.querySelector('[data-blog-grid]');
+    if (!cats.length || !grid) return;
+    var featSection = document.querySelector('[data-blog-featured-section]');
+    var feat = document.querySelector('[data-blog-featured]');
+    var empty = document.querySelector('[data-blog-empty]');
+
+    function catOf(card) {
+      var el = card.querySelector('.post-cat');
+      return el ? el.textContent.trim() : '';
+    }
+
+    function apply() {
+      var chip = cats.filter(function (c) { return c.classList.contains('is-active'); })[0] || cats[0];
+      var raw = chip.getAttribute('data-cat-match') || '';
+      var want = raw ? raw.split('|') : null; // null → show everything
+      var shown = 0;
+      Array.prototype.forEach.call(grid.querySelectorAll('.post'), function (card) {
+        var hit = !want || want.indexOf(catOf(card)) !== -1;
+        card.hidden = !hit;
+        if (hit) shown++;
+      });
+      if (featSection && feat) {
+        var featHit = !want || want.indexOf(catOf(feat)) !== -1;
+        featSection.hidden = !featHit;
+        if (featHit) shown++;
+      }
+      if (empty) empty.hidden = shown > 0;
+    }
+
     cats.forEach(function (c) {
       c.addEventListener('click', function () {
-        cats.forEach(function (x) { x.classList.remove('is-active'); });
+        cats.forEach(function (x) { x.classList.remove('is-active'); x.setAttribute('aria-pressed', 'false'); });
         c.classList.add('is-active');
+        c.setAttribute('aria-pressed', 'true');
+        apply();
       });
     });
+
+    // The CMS replaces the grid a moment after load; re-filter what it built.
+    document.addEventListener('cardo:blog-hydrated', apply);
   })();
 
   // Case-study library — the full CMS list (featured or not). Hidden until
@@ -204,8 +249,9 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
   .blog-top h1 { font-size: clamp(2.4rem,4.6vw,3.6rem); margin: 12px 0 16px; }
   .blog-top p { font-size: 1.18rem; color: var(--ink-soft); max-width: 600px; }
   .cats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
-  .cat { font-size: .85rem; font-weight: 600; color: var(--ink-soft); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); padding: 9px 18px; transition: all var(--dur-fast) var(--ease); cursor: pointer; }
+  .cat { font-family: var(--font-body); font-size: .85rem; font-weight: 600; color: var(--ink-soft); background: none; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); padding: 9px 18px; transition: all var(--dur-fast) var(--ease); cursor: pointer; }
   .cat:hover, .cat.is-active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .cat:focus-visible { outline: 2px solid var(--rose); outline-offset: 2px; }
 
   /* Featured */
   .feat { display: grid; grid-template-columns: 1.15fr 1fr; gap: 40px; align-items: center; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
@@ -224,6 +270,9 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
   .posts { display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; }
   .post { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
   .post:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  /* .post sets display:flex, so it needs to opt back out when the filter hides it. */
+  .post[hidden] { display: none; }
+  .posts-empty { color: var(--muted); margin: 28px 0 0; }
   .post__media { aspect-ratio: 16/10; }
   .post__media img { width: 100%; height: 100%; object-fit: cover; }
   .post__body { padding: 24px; display: flex; flex-direction: column; flex: 1; }
