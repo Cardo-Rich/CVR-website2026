@@ -285,7 +285,10 @@ const cta = { label: 'Free estimate', href: '/owners#estimate' };
   .news h2 { margin: 8px 0 10px; }
   .news p { color: var(--muted); margin: 0; }
   .news__form { display: flex; gap: 10px; }
-  .news__form input { flex: 1; font-family: var(--font-body); font-size: .98rem; padding: 14px 16px; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); background: #fff; outline: none; }
+  /* The email input's intrinsic width (its default size) is otherwise the
+     grid track's minimum, which pushes the section past a phone viewport. */
+  .news__inner > * { min-width: 0; }
+  .news__form input { flex: 1; min-width: 0; font-family: var(--font-body); font-size: .98rem; padding: 14px 16px; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); background: #fff; outline: none; }
   .news__form input:focus { border-color: var(--rose); box-shadow: 0 0 0 3px var(--accent-soft); }
   @media (max-width: 720px) { .news__inner { grid-template-columns: 1fr; gap: 22px; } }
 </style>
