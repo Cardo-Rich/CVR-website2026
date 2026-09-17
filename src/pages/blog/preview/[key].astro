@@ -1,0 +1,48 @@
+---
+// Unlisted preview of an unpublished Journal draft. One page per document in
+// `articleDrafts`, addressed by its random previewKey rather than its slug, so
+// the URL cannot be guessed. noindex, excluded from the sitemap, and not
+// linked from anywhere public; the admin editor and the drafting script hand
+// out the link. Renders exactly what the live page will, minus the CMS
+// hydration (which would overwrite the draft body with the published one).
+import Base from '../../../layouts/Base.astro';
+import MarketingHeader from '../../../components/sections/MarketingHeader.astro';
+import Footer from '../../../components/sections/Footer.astro';
+import ArticleView from '../../../components/blog/ArticleView.astro';
+import { getPublishedArticles, getDraftArticles } from '../../../lib/content/articles';
+import { getNeighborhoods } from '../../../lib/content/neighborhoods';
+
+export async function getStaticPaths() {
+  const [drafts, published, neighborhoods] = await Promise.all([getDraftArticles(), getPublishedArticles(), getNeighborhoods()]);
+  return drafts.map((a) => {
+    const haystack = `${a.title} ${a.excerpt}`;
+    const areas = neighborhoods.filter((nh) => haystack.includes(nh.name)).slice(0, 3);
+    const related = published.filter((p) => p.slug !== a.slug).slice(0, 3);
+    return { params: { key: a.previewKey }, props: { a, related, areas } };
+  });
+}
+const { a, related, areas } = Astro.props;
+const nav = [
+  { label: 'For Owners', href: '/owners' },
+  { label: 'Design', href: '/home-designs' },
+  { label: 'Case studies', href: '/home-designs#case-studies' },
+  { label: 'Blog', href: '/blog', active: true },
+];
+const cta = { label: 'Free estimate', href: '/owners#estimate' };
+const isGuestGuide = a.showOnHome === true;
+const savedAt = new Date(a.updatedAt);
+const savedLabel = isNaN(savedAt.getTime()) ? '' : ` Draft saved ${savedAt.toLocaleString('en-US', { timeZone: 'America/Los_Angeles', dateStyle: 'medium', timeStyle: 'short' })} Pacific.`;
+const previewNote = `This article is not published and this link is unlisted. It will go live at /blog/${a.slug} once published from the admin editor.${savedLabel}`;
+---
+
+<Base title={`Draft: ${a.title}`} description={a.seo?.description || a.excerpt} image={a.img} type="article" noindex={true}>
+  <MarketingHeader {nav} {cta} />
+  <main>
+    <ArticleView {a} {related} {areas} {isGuestGuide} {previewNote} />
+  </main>
+  <Footer />
+</Base>
+
+<script>
+  import '../../../scripts/reveal.js';
+</script>

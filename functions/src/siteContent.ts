@@ -3,6 +3,8 @@
 // be synced live from the Places API (New); Airbnb has no public API, so its
 // reviews are managed in the CMS.
 import type { Firestore } from 'firebase-admin/firestore';
+import type { Article } from './article.js';
+import { listPublished, listForAdmin, hasDrafts, publishAllDrafts, discardAllDrafts } from './articles.js';
 
 export interface CaseStudyItem {
   id: string;        // matches data-case on the owners page (falcon, nute, ...)
@@ -62,37 +64,9 @@ export interface OwnerTestimonialItem {
 
 // Blog articles are the single source of truth for the blog index/detail pages,
 // the home "Explore like a local" cards, and the owners "Case studies" grid.
-// A post always appears in its blog category; the show* toggles additionally
-// surface it as a home or owners card. `caseStudy` carries the extra numbers a
-// design case study needs to render its card + preview popup.
-export interface BlogCaseStudy {
-  name: string;     // short home name for the card/popup (e.g. "Falcon")
-  hood: string;     // neighborhood label (card + popup eyebrow)
-  beds: string;     // e.g. "4 BR"
-  revenue: string;  // e.g. "$214,800"
-  nightly: string;  // e.g. "$589 / night"
-  lift: string;     // e.g. "+57% over market"
-  gallery?: string[]; // extra thumbnails for the preview popup
-}
-export interface BlogArticleItem {
-  slug: string;
-  title: string;
-  category: string;
-  excerpt: string;
-  readTime: string;
-  dateFull: string;
-  dateShort: string;
-  img: string;
-  featured?: boolean;
-  seo: { title: string; description: string };
-  author: { name: string; initials: string };
-  heroCaption: string;
-  bodyHtml: string;
-  localTip?: string;      // "Explore like a local" card tip line
-  showOnHome?: boolean;   // surface as an Explore-like-a-local card on the home page
-  showOnOwners?: boolean; // surface as a case-study card on the owners page
-  caseStudy?: BlogCaseStudy;
-}
+// They live one document per article in the `articles` / `articleDrafts`
+// collections (see article.ts and articles.ts), not in a siteContent doc, so
+// they are read here but written through the article functions.
 
 // Neighborhood market pages (index cards + full /neighborhoods/[slug] detail).
 export interface NeighborhoodItem {
@@ -123,7 +97,7 @@ export interface ReviewsDoc {
 const PUBLISHED = 'siteContent';
 const DRAFT = 'siteContentDraft';
 export type ContentRoot = typeof PUBLISHED | typeof DRAFT;
-const DOCS = ['caseStudies', 'reviews', 'sections', 'featuredHomes', 'guestPhotos', 'teamMembers', 'ownerTestimonials', 'neighborhoods', 'blog'] as const;
+const DOCS = ['caseStudies', 'reviews', 'sections', 'featuredHomes', 'guestPhotos', 'teamMembers', 'ownerTestimonials', 'neighborhoods'] as const;
 const casesRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/caseStudies`);
 const reviewsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/reviews`);
 const sectionsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/sections`);
@@ -132,19 +106,20 @@ const guestRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/guestPhot
 const teamRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/teamMembers`);
 const ownerTestRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/ownerTestimonials`);
 const hoodsRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/neighborhoods`);
-const blogRef = (db: Firestore, root: ContentRoot) => db.doc(`${root}/blog`);
 
 // Section visibility switches: key → shown? Missing keys default to shown,
 // so the static site is unaffected until an editor turns something off.
 export type SectionsMap = Record<string, boolean>;
 
-export interface SiteContentData { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap; featuredHomes: FeaturedHomeItem[]; guestPhotos: GuestPhotoItem[]; teamMembers: TeamMemberItem[]; ownerTestimonials: OwnerTestimonialItem[]; neighborhoods: NeighborhoodItem[]; blog: BlogArticleItem[] }
+export interface SiteContentData { caseStudies: CaseStudyItem[]; reviews: ReviewsDoc; sections: SectionsMap; featuredHomes: FeaturedHomeItem[]; guestPhotos: GuestPhotoItem[]; teamMembers: TeamMemberItem[]; ownerTestimonials: OwnerTestimonialItem[]; neighborhoods: NeighborhoodItem[]; blog: Article[] }
 
 // forPublic: apply display rules (e.g. Google minimum-star filter) so the
 // site only ever receives what should be shown. root selects the published
 // copy (default, served at /api/content) or the draft copy (admin preview).
+// Articles have no draft root here: the published list is returned for the
+// PUBLISHED root and getContentForAdmin overlays drafts itself.
 export async function getContent(db: Firestore, forPublic = false, root: ContentRoot = PUBLISHED): Promise<SiteContentData> {
-  const [cs, rv, sec, fh, gp, tm, ot, nh, bl] = await Promise.all([casesRef(db, root).get(), reviewsRef(db, root).get(), sectionsRef(db, root).get(), featuredRef(db, root).get(), guestRef(db, root).get(), teamRef(db, root).get(), ownerTestRef(db, root).get(), hoodsRef(db, root).get(), blogRef(db, root).get()]);
+  const [cs, rv, sec, fh, gp, tm, ot, nh, blog] = await Promise.all([casesRef(db, root).get(), reviewsRef(db, root).get(), sectionsRef(db, root).get(), featuredRef(db, root).get(), guestRef(db, root).get(), teamRef(db, root).get(), ownerTestRef(db, root).get(), hoodsRef(db, root).get(), root === PUBLISHED ? listPublished(db) : Promise.resolve([] as Article[])]);
   const reviews = ((rv.data() as ReviewsDoc) || { google: {}, airbnb: {} });
   if (forPublic && reviews.google) {
     const min = Number(reviews.google.minStars) || 0;
@@ -161,7 +136,7 @@ export async function getContent(db: Firestore, forPublic = false, root: Content
     teamMembers: ((tm.data()?.items as TeamMemberItem[]) || []),
     ownerTestimonials: ((ot.data()?.items as OwnerTestimonialItem[]) || []),
     neighborhoods: ((nh.data()?.items as NeighborhoodItem[]) || []),
-    blog: ((bl.data()?.items as BlogArticleItem[]) || []),
+    blog,
   };
 }
 
@@ -169,11 +144,16 @@ export async function getContent(db: Firestore, forPublic = false, root: Content
 // any doc that has no draft yet. hasDraft flags which docs carry unpublished
 // edits, so the toolbar can show "draft changes pending".
 export async function getContentForAdmin(db: Firestore): Promise<SiteContentData & { hasDraft: boolean; draftDocs: string[] }> {
-  const draftSnaps = await Promise.all(DOCS.map((d) => db.doc(`${DRAFT}/${d}`).get()));
-  const draftDocs = DOCS.filter((_, i) => draftSnaps[i].exists);
-  const pub = await getContent(db, false, PUBLISHED);
-  const draft = await getContent(db, false, DRAFT);
-  // DOCS order: caseStudies, reviews, sections, featuredHomes, guestPhotos
+  const [draftSnaps, pub, draft, blog, articleDrafts] = await Promise.all([
+    Promise.all(DOCS.map((d) => db.doc(`${DRAFT}/${d}`).get())),
+    getContent(db, false, PUBLISHED),
+    getContent(db, false, DRAFT),
+    listForAdmin(db),
+    hasDrafts(db),
+  ]);
+  const draftDocs: string[] = DOCS.filter((_, i) => draftSnaps[i].exists);
+  if (articleDrafts) draftDocs.push('articles');
+  // DOCS order: caseStudies, reviews, sections, featuredHomes, guestPhotos, ...
   const merged: SiteContentData = {
     caseStudies: draftSnaps[0].exists ? draft.caseStudies : pub.caseStudies,
     reviews: draftSnaps[1].exists ? draft.reviews : pub.reviews,
@@ -183,13 +163,14 @@ export async function getContentForAdmin(db: Firestore): Promise<SiteContentData
     teamMembers: draftSnaps[5].exists ? draft.teamMembers : pub.teamMembers,
     ownerTestimonials: draftSnaps[6].exists ? draft.ownerTestimonials : pub.ownerTestimonials,
     neighborhoods: draftSnaps[7].exists ? draft.neighborhoods : pub.neighborhoods,
-    blog: draftSnaps[8].exists ? draft.blog : pub.blog,
+    blog,
   };
   return { ...merged, hasDraft: draftDocs.length > 0, draftDocs };
 }
 
 // Copy every existing draft doc onto its published counterpart, then delete
-// the drafts. Returns the list of docs that were published.
+// the drafts; article drafts are published the same way, one document each.
+// Returns the list of docs (and article slugs) that were published.
 export async function publishDrafts(db: Firestore): Promise<{ published: string[] }> {
   const published: string[] = [];
   for (const d of DOCS) {
@@ -199,16 +180,18 @@ export async function publishDrafts(db: Firestore): Promise<{ published: string[
     await db.doc(`${DRAFT}/${d}`).delete();
     published.push(d);
   }
+  published.push(...(await publishAllDrafts(db)).map((slug) => `article:${slug}`));
   return { published };
 }
 
-// Throw away all pending draft edits.
+// Throw away all pending draft edits, article drafts included.
 export async function discardDrafts(db: Firestore): Promise<{ discarded: string[] }> {
   const discarded: string[] = [];
   for (const d of DOCS) {
     const ref = db.doc(`${DRAFT}/${d}`);
     if ((await ref.get()).exists) { await ref.delete(); discarded.push(d); }
   }
+  discarded.push(...(await discardAllDrafts(db)).map((slug) => `article:${slug}`));
   return { discarded };
 }
 
@@ -318,46 +301,6 @@ export async function setNeighborhoods(db: Firestore, items: NeighborhoodItem[],
     ctaText: String(it.ctaText || '').slice(0, 400),
   }));
   await hoodsRef(db, root).set({ items: clean }, { merge: false });
-}
-
-export async function setBlog(db: Firestore, items: BlogArticleItem[], root: ContentRoot = DRAFT): Promise<void> {
-  if (!Array.isArray(items)) throw new Error('items must be an array');
-  const clean = items.slice(0, 100).map((it) => {
-    const out: Record<string, unknown> = {
-      slug: String(it.slug || '').slice(0, 100).replace(/[^a-z0-9-]/g, '') || 'post',
-      title: String(it.title || '').slice(0, 240),
-      category: String(it.category || '').slice(0, 60),
-      excerpt: String(it.excerpt || '').slice(0, 600),
-      readTime: String(it.readTime || '').slice(0, 40),
-      dateFull: String(it.dateFull || '').slice(0, 60),
-      dateShort: String(it.dateShort || '').slice(0, 40),
-      img: String(it.img || '').slice(0, 600),
-      featured: it.featured === true,
-      seo: { title: String(it.seo?.title || '').slice(0, 240), description: String(it.seo?.description || '').slice(0, 400) },
-      author: { name: String(it.author?.name || '').slice(0, 120), initials: String(it.author?.initials || '').slice(0, 6) },
-      heroCaption: String(it.heroCaption || '').slice(0, 400),
-      bodyHtml: String(it.bodyHtml || '').slice(0, 60000),
-      localTip: String(it.localTip || '').slice(0, 300),
-      showOnHome: it.showOnHome === true,
-      showOnOwners: it.showOnOwners === true,
-    };
-    // Only persist the case-study block when the post actually carries one
-    // (Firestore rejects undefined fields).
-    const cs = it.caseStudy;
-    if (cs && (cs.hood || cs.revenue || cs.nightly || cs.lift || cs.beds)) {
-      out.caseStudy = {
-        name: String(cs.name || '').slice(0, 120),
-        hood: String(cs.hood || '').slice(0, 120),
-        beds: String(cs.beds || '').slice(0, 24),
-        revenue: String(cs.revenue || '').slice(0, 40),
-        nightly: String(cs.nightly || '').slice(0, 60),
-        lift: String(cs.lift || '').slice(0, 60),
-        gallery: strArr(cs.gallery, 8, 600),
-      };
-    }
-    return out;
-  });
-  await blogRef(db, root).set({ items: clean }, { merge: false });
 }
 
 function cleanCards(cards: unknown): ReviewCard[] {

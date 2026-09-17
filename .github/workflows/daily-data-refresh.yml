@@ -3,9 +3,10 @@ name: Daily data refresh (live)
 # Rebuilds and redeploys the live site once a day so build-time data stays
 # current — today that means the STRO license tracker on
 # /san-diego-stro-license, which fetches the City of San Diego's open license
-# dataset during the build. Runs at 14:10 UTC (6:10/7:10am Pacific), plus
-# manually via the Actions tab. Hosting only: functions don't change on a
-# schedule, so they are not redeployed here.
+# dataset during the build, and the Journal, which builds from Firestore.
+# Also prunes Journal article revisions past their 30-day expiry. Runs at
+# 14:10 UTC (6:10/7:10am Pacific), plus manually via the Actions tab. Hosting
+# only: functions don't change on a schedule, so they are not redeployed here.
 on:
   schedule:
     - cron: '10 14 * * *'
@@ -23,6 +24,10 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - name: Prune expired Journal revisions
+        run: npm run blog:prune-revisions
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}
       - run: npm run build:all
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}

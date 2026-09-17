@@ -1,0 +1,43 @@
+name: Journal migration (one-time)
+
+# Moves the Journal into the `articles` Firestore collection, one document per
+# article, using the service account CI already holds. Run from the Actions
+# tab (or the API) on the branch that carries scripts/blog-migrate.ts:
+#   step=dry-run   list what would be written
+#   step=write     create/update articles/{slug} from the fixture (idempotent)
+#   step=cutover   delete siteContent/blog + siteContentDraft/blog once `write`
+#                  is verified on a preview build
+# Delete this workflow and scripts/data/blog-articles-2026-09-17.json after
+# the cutover has run.
+on:
+  workflow_dispatch:
+    inputs:
+      step:
+        description: 'dry-run, write, or cutover'
+        type: choice
+        options: [dry-run, write, cutover]
+        default: dry-run
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Run migration step (${{ inputs.step }})
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}
+        run: |
+          case "${{ inputs.step }}" in
+            dry-run) npm run blog:migrate -- --dry-run ;;
+            write)   npm run blog:migrate ;;
+            cutover) npm run blog:migrate -- --cutover ;;
+          esac
+      - name: Show the collection afterwards
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}
+        run: npm run blog:list

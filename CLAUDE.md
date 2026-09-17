@@ -42,6 +42,35 @@
 - Performance claims: homes outperform their market **by up to 32%** (and solo
   managers by more than 60%). Do not use the old 61% figure.
 
+## Journal authoring (blog)
+
+- **Articles live in Firestore, one document each.** `articles/{slug}` is the
+  live post, `articleDrafts/{slug}` a pending one (new post or edits), and
+  `articles/{slug}/revisions` a 30-day history. There is no seed file: the
+  build reads Firestore and fails loudly if it cannot (`src/lib/content/articles.ts`).
+  `FIREBASE_SERVICE_ACCOUNT` must be set in the environment for `npm run build`
+  and for the scripts below.
+- **To add or revise a post from a session:** write the article as JSON (the
+  fields in `src/data/blog.ts`: `slug`, `title`, `category`, `excerpt`,
+  `readTime`, `dateFull`, `dateShort`, `img`, `seo`, `author`, `heroCaption`,
+  `bodyHtml`, plus `featured` / `showOnHome` / `showOnOwners` / `caseStudy` as
+  needed) and run `npm run blog:draft -- path/to/article.json`. That saves a
+  **draft** with an unlisted preview page at `/blog/preview/{previewKey}`,
+  and prints the URL. The script refuses copy that breaks the house rules
+  (em dashes, "VRBO", "luxury"). Sessions never publish: Rich reviews the
+  preview and publishes from the admin editor on the site, or from the
+  article's Publish button there.
+- The preview page exists after the next site build. `blog:draft` requests
+  one when `GITHUB_DEPLOY_TOKEN` is set; otherwise trigger the "Deploy to
+  Firebase Hosting (live)" workflow with `hosting_only=true` (the GitHub
+  Actions tools can do this) and share the preview link once it is green.
+- `npm run blog:list` shows live posts and drafts; `-- --export file.json`
+  writes a file that `BLOG_FIXTURE=file.json npm run dev` can build from
+  offline. `npm run blog:prune-revisions` runs daily in CI.
+- Article body HTML uses the site's prose vocabulary: `<p class='lede'>` for
+  the opening paragraph, `<h2>`/`<h3>`, `<blockquote>`, `<ul>`, `<a
+  class='inline'>`, and `<div class='callout'><p class='eyebrow'>…</p><p>…</p></div>`.
+
 ## Project shape
 
 - Astro marketing site. `npm run build` (or `build:all` incl. the `admin/` app).

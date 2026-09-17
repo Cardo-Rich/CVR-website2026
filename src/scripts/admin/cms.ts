@@ -81,12 +81,16 @@ export interface BlogCaseStudy {
 }
 export interface BlogArticleItem {
   slug: string; title: string; category: string; excerpt: string; readTime: string;
-  dateFull: string; dateShort: string; img: string; featured?: boolean;
+  dateFull: string; dateShort: string; date?: string; img: string; featured?: boolean;
   seo: { title: string; description: string };
   author: { name: string; initials: string };
   heroCaption: string; bodyHtml: string;
   localTip?: string; showOnHome?: boolean; showOnOwners?: boolean; caseStudy?: BlogCaseStudy;
+  // Set by adminContentGet: whether a live copy and/or a pending draft exist,
+  // and the draft's preview key (page at /blog/preview/{previewKey}).
+  published?: boolean; draft?: boolean; previewKey?: string; publishedAt?: string; updatedAt?: string;
 }
+export interface RevisionSummary { id: string; savedAt: string; expiresAt: string; source: string; title: string }
 export interface ReviewCard { name: string; meta: string; stars: number; text: string }
 export interface ReviewsDoc {
   google: { placeId?: string; rating?: number | null; count?: number | null; minStars?: number; reviews?: ReviewCard[]; syncedAt?: string | null };
@@ -109,8 +113,24 @@ export async function login(): Promise<void> { await signInWithPopup(auth, provi
 export async function logout(): Promise<void> { await signOut(auth); }
 
 export const getContent = () => httpsCallable<unknown, SiteContent>(functions, 'adminContentGet')().then((r) => r.data);
-export const saveContent = (patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: SectionsMap; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[]; ownerTestimonials?: OwnerTestimonialItem[]; neighborhoods?: NeighborhoodItem[]; blog?: BlogArticleItem[] }) =>
+export const saveContent = (patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: SectionsMap; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[]; ownerTestimonials?: OwnerTestimonialItem[]; neighborhoods?: NeighborhoodItem[] }) =>
   httpsCallable<typeof patch, { ok: true }>(functions, 'adminContentSet')(patch).then((r) => r.data);
+
+// Journal articles: one Firestore document each, saved one at a time. A save
+// is always a draft (with an unlisted preview page); publish is explicit.
+export type DeployResult = 'triggered' | 'debounced' | 'disabled' | 'failed';
+export const saveArticle = (article: BlogArticleItem) =>
+  httpsCallable<{ article: BlogArticleItem }, { ok: true; slug: string; previewKey: string; previewPath: string; rebuild: DeployResult }>(functions, 'adminArticleSave')({ article }).then((r) => r.data);
+export const publishArticle = (slug: string) =>
+  httpsCallable<{ slug: string }, { ok: true; slug: string; publishedAt: string; rebuild: DeployResult }>(functions, 'adminArticlePublish')({ slug }).then((r) => r.data);
+export const deleteArticle = (slug: string) =>
+  httpsCallable<{ slug: string }, { ok: true; removedPublished: boolean; removedDraft: boolean; rebuild: DeployResult }>(functions, 'adminArticleDelete')({ slug }).then((r) => r.data);
+export const discardArticle = (slug: string) =>
+  httpsCallable<{ slug: string }, { ok: true; discarded: boolean }>(functions, 'adminArticleDiscard')({ slug }).then((r) => r.data);
+export const listRevisions = (slug: string) =>
+  httpsCallable<{ slug: string }, { ok: true; revisions: RevisionSummary[] }>(functions, 'adminArticleRevisions')({ slug }).then((r) => r.data.revisions);
+export const restoreRevision = (slug: string, revisionId: string) =>
+  httpsCallable<{ slug: string; revisionId: string }, { ok: true; slug: string; previewKey: string; previewPath: string }>(functions, 'adminArticleRestore')({ slug, revisionId }).then((r) => r.data);
 export const publishDrafts = () => httpsCallable<unknown, { published: string[]; rebuild: string }>(functions, 'adminPublish')().then((r) => r.data);
 export const discardDrafts = () => httpsCallable<unknown, { discarded: string[] }>(functions, 'adminDiscardDraft')().then((r) => r.data);
 export const syncGoogle = (placeId?: string) =>

@@ -199,3 +199,50 @@ html.cadm-admin [data-cms="blog"] { padding-top: 56px !important; }
 .cadm-gbtn:focus-visible { outline: 2px solid #4285F4; outline-offset: 2px; }
 .cadm-gbtn__g { display: inline-flex; }
 .cadm-gbtn__g svg { width: 18px; height: 18px; }
+
+/* ---- modal: wide + full-screen ---- */
+.cadm-modal__head .cadm-spacer { flex: 1; }
+.cadm-modal__full { padding: 6px 10px; font-size: 12.5px; }
+.cadm-modal--wide { width: min(980px, 100%); }
+.cadm-modal--full { position: fixed; inset: 0; width: 100%; max-width: none; height: 100%; border-radius: 0; display: flex; flex-direction: column; }
+.cadm-modal--full .cadm-modal__body { max-height: none; flex: 1; }
+.cadm-modal--full .cadm-rte__area { max-height: none; min-height: 55vh; }
+.cadm-modal__foot a.cadm-mbtn { text-decoration: none; display: inline-flex; align-items: center; }
+
+/* ---- draft badge on blog cards ---- */
+.cadm-draft-badge { position: absolute; left: 10px; top: 10px; z-index: 3; background: var(--cadm-purple); color: #fff; font: 700 11px/1 system-ui, sans-serif; letter-spacing: .04em; text-transform: uppercase; padding: 6px 8px; border-radius: 6px; pointer-events: none; }
+
+/* ---- rich-text editor (article body) ---- */
+.cadm-rte { border: 1px solid var(--cadm-line); border-radius: 9px; overflow: hidden; background: #fff; }
+.cadm-rte__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 6px; border-bottom: 1px solid var(--cadm-line); background: #faf9ff; position: sticky; top: 0; z-index: 1; }
+.cadm-rte__bar select { font: 600 12.5px system-ui, sans-serif; border: 1px solid var(--cadm-line); border-radius: 6px; padding: 5px 6px; background: #fff; color: #4b4563; }
+.cadm-rte__btn { appearance: none; border: 0; background: #fff; border-radius: 6px; padding: 6px 9px; font: 600 12.5px/1 system-ui, sans-serif; color: #4b4563; cursor: pointer; box-shadow: inset 0 0 0 1px var(--cadm-line); }
+.cadm-rte__btn:hover { background: var(--cadm-purple-soft); }
+.cadm-rte__btn.is-on { background: var(--cadm-purple); color: #fff; box-shadow: none; }
+.cadm-rte__btn:disabled { opacity: .45; cursor: default; }
+.cadm-rte__sep { width: 1px; align-self: stretch; background: var(--cadm-line); margin: 2px 3px; }
+.cadm-rte__area { min-height: 340px; max-height: 60vh; overflow: auto; padding: 18px 22px; outline: none; font: 400 16px/1.65 var(--font-body, system-ui, sans-serif); color: var(--cadm-ink); }
+.cadm-rte__area:focus { box-shadow: inset 0 0 0 2px var(--cadm-purple); }
+.cadm-rte__area:empty::before { content: "Start writing…"; color: #9a94b3; }
+.cadm-rte__area h2 { font: 500 24px/1.25 var(--font-display, Georgia, serif); margin: 1.2em 0 .4em; color: #1a1a2e; }
+.cadm-rte__area h3 { font: 500 19px/1.3 var(--font-display, Georgia, serif); margin: 1em 0 .3em; color: #1a1a2e; }
+.cadm-rte__area p { margin: 0 0 1em; }
+.cadm-rte__area p.lede { font: 400 20px/1.45 var(--font-display, Georgia, serif); color: #1a1a2e; }
+.cadm-rte__area blockquote { margin: 1.2em 0; padding: 2px 0 2px 18px; border-left: 3px solid #ED3C78; font: 400 20px/1.35 var(--font-display, Georgia, serif); color: #1a1a2e; }
+.cadm-rte__area ul, .cadm-rte__area ol { margin: 0 0 1em; padding-left: 26px; }
+.cadm-rte__area li { margin-bottom: 6px; }
+.cadm-rte__area a { color: #ED3C78; text-decoration: underline; }
+.cadm-rte__area .callout { background: #f6f1e7; border-radius: 10px; padding: 16px 18px; margin: 1.2em 0; }
+.cadm-rte__area .callout .eyebrow { font: 700 11px/1.4 system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: #8a6d3b; margin: 0 0 6px; }
+.cadm-rte__area .callout p:last-child { margin-bottom: 0; }
+.cadm-rte__area hr { border: 0; border-top: 1px solid var(--cadm-line); margin: 1.5em 0; }
+.cadm-rte__area img { max-width: 100%; height: auto; border-radius: 8px; }
+.cadm-rte__src { display: block; width: 100%; min-height: 340px; box-sizing: border-box; border: 0; padding: 14px; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--cadm-ink); resize: vertical; outline: none; }
+
+/* ---- article history ---- */
+.cadm-hist { display: flex; flex-direction: column; gap: 8px; }
+.cadm-hist__row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--cadm-line); border-radius: 9px; }
+.cadm-hist__meta { flex: 1; min-width: 0; }
+.cadm-hist__meta b { display: block; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cadm-hist__meta span { font-size: 12px; color: #6b6483; }
+.cadm-hist__src { flex: none; font: 700 10.5px/1 system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--cadm-purple-dark); background: var(--cadm-purple-soft); padding: 5px 7px; border-radius: 5px; }

@@ -1,4 +1,4 @@
-// One-time migration: seed the initial articles + case studies into Firestore.
+// One-time migration: seed the initial case studies into Firestore.
 //
 // Run with `npm run seed`. Requires Firestore access via one of:
 //   - FIRESTORE_EMULATOR_HOST (local emulator)
@@ -8,8 +8,11 @@
 // Idempotent: each doc id is the slug and writes use { merge: true }, so
 // re-running this script is safe and will not duplicate or clobber data
 // added later via the CMS.
+//
+// Journal articles are no longer seeded here: they live only in Firestore
+// (see scripts/blog-migrate.ts for the one-time move and scripts/blog-draft.ts
+// for adding a post).
 import { getDb } from '../src/lib/content/firestore';
-import { articles } from '../src/data/blog';
 import { caseStudies } from '../src/data/case-studies';
 
 const db = getDb();
@@ -19,9 +22,6 @@ if (!db) {
 }
 
 try {
-  for (const a of articles as any[]) {
-    await db.collection('articles').doc(a.slug).set({ ...a, status: 'published' }, { merge: true });
-  }
   for (const c of caseStudies as any[]) {
     await db.collection('caseStudies').doc(c.slug).set({ ...c, status: 'published' }, { merge: true });
   }
@@ -30,4 +30,4 @@ try {
   process.exit(1);
 }
 
-console.log('Seeded', (articles as any[]).length, 'articles,', (caseStudies as any[]).length, 'case studies');
+console.log('Seeded', (caseStudies as any[]).length, 'case studies');
