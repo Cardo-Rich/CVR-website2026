@@ -11,7 +11,10 @@ import {
 import { resolveAdmin } from './claims.js';
 import { getSlots, book as ghlBook, addNote as ghlAddNote, type GhlConfig } from './ghl.js';
 import { handleLead } from './lead.js';
-import { getContent, getContentForAdmin, setCaseStudies, setReviews, setSections, setFeaturedHomes, setGuestPhotos, setTeamMembers, setOwnerTestimonials, setNeighborhoods, setBlog, publishDrafts, discardDrafts, syncGoogleReviews } from './siteContent.js';
+import { getContent, getContentForAdmin, setCaseStudies, setReviews, setSections, setFeaturedHomes, setGuestPhotos, setTeamMembers, setOwnerTestimonials, setNeighborhoods, publishDrafts, discardDrafts, syncGoogleReviews } from './siteContent.js';
+import { saveDraft, publishArticle, deleteArticle, discardDraft, listRevisions, restoreRevision, NotFound } from './articles.js';
+import { previewPath } from './article.js';
+import { requestDeploy } from './deploy.js';
 import type { AgreementDoc } from './types.js';
 
 const RESEND_API_KEY = defineSecret('RESEND_API_KEY');
@@ -130,6 +133,9 @@ export const lead = onRequest({ secrets: [GHL_API_TOKEN, RESEND_API_KEY], cors: 
 
 // ---- Site content: public read + admin CMS write + Google reviews sync ----
 const GOOGLE_PLACES_API_KEY = defineSecret('GOOGLE_PLACES_API_KEY');
+// Fine-grained GitHub token with Actions: read+write on the site repo. Lets a
+// publish or a draft save rebuild the site so its static page exists.
+const GITHUB_DEPLOY_TOKEN = defineSecret('GITHUB_DEPLOY_TOKEN');
 
 // GET /api/content → { caseStudies, reviews }. CDN-cached; the static site
 // hydrates from this and falls back to its baked-in copy when unavailable.
@@ -163,18 +169,18 @@ export const adminContentSet = onCall(async (req) => {
     if (req.data?.teamMembers) await setTeamMembers(getDb(), req.data.teamMembers);
     if (req.data?.ownerTestimonials) await setOwnerTestimonials(getDb(), req.data.ownerTestimonials);
     if (req.data?.neighborhoods) await setNeighborhoods(getDb(), req.data.neighborhoods);
-    if (req.data?.blog) await setBlog(getDb(), req.data.blog);
     return { ok: true };
   } catch (e) { console.error('adminContentSet', e); throw new HttpsError('internal', (e as Error).message || 'Save failed'); }
 });
 // Promote all pending drafts to published. The public /api/content immediately
 // serves the new content and the hydrated sections update live, so no rebuild
 // is required for changes to appear.
-export const adminPublish = onCall(async (req) => {
+export const adminPublish = onCall({ secrets: [GITHUB_DEPLOY_TOKEN] }, async (req) => {
   requireAdmin(req.auth);
   try {
     const result = await publishDrafts(getDb());
-    return { ok: true, ...result, rebuild: 'skipped' as const };
+    const rebuild = await requestDeploy(getDb(), GITHUB_DEPLOY_TOKEN.value(), 'publish', { hostingOnly: true });
+    return { ok: true, ...result, rebuild };
   } catch (e) { console.error('adminPublish', e); throw new HttpsError('internal', (e as Error).message || 'Publish failed'); }
 });
 export const adminDiscardDraft = onCall(async (req) => {
@@ -182,6 +188,62 @@ export const adminDiscardDraft = onCall(async (req) => {
   try {
     return { ok: true, ...(await discardDrafts(getDb())) };
   } catch (e) { console.error('adminDiscardDraft', e); throw new HttpsError('internal', (e as Error).message || 'Discard failed'); }
+});
+
+// ---- Journal articles: one Firestore document per article ----
+// Every save is a draft with an unlisted preview page; publishing is a
+// separate step. Each mutation asks GitHub to rebuild the site (hosting only)
+// so the static article or preview page exists a few minutes later.
+function articleError(e: unknown, fallback: string): never {
+  if (e instanceof NotFound) throw new HttpsError('not-found', e.message);
+  const msg = (e as Error).message || fallback;
+  if (/required/i.test(msg)) throw new HttpsError('invalid-argument', msg);
+  console.error(fallback, e);
+  throw new HttpsError('internal', msg);
+}
+export const adminArticleSave = onCall({ secrets: [GITHUB_DEPLOY_TOKEN] }, async (req) => {
+  requireAdmin(req.auth);
+  try {
+    const draft = await saveDraft(getDb(), req.data?.article, 'admin');
+    const rebuild = await requestDeploy(getDb(), GITHUB_DEPLOY_TOKEN.value(), `draft:${draft.slug}`, { hostingOnly: true });
+    return { ok: true, slug: draft.slug, previewKey: draft.previewKey, previewPath: previewPath(draft.previewKey), rebuild };
+  } catch (e) { articleError(e, 'Save failed'); }
+});
+export const adminArticlePublish = onCall({ secrets: [GITHUB_DEPLOY_TOKEN] }, async (req) => {
+  requireAdmin(req.auth);
+  try {
+    const pub = await publishArticle(getDb(), String(req.data?.slug || ''));
+    const rebuild = await requestDeploy(getDb(), GITHUB_DEPLOY_TOKEN.value(), `publish:${pub.slug}`, { hostingOnly: true });
+    return { ok: true, slug: pub.slug, publishedAt: pub.publishedAt, rebuild };
+  } catch (e) { articleError(e, 'Publish failed'); }
+});
+export const adminArticleDelete = onCall({ secrets: [GITHUB_DEPLOY_TOKEN] }, async (req) => {
+  requireAdmin(req.auth);
+  try {
+    const slug = String(req.data?.slug || '');
+    const result = await deleteArticle(getDb(), slug);
+    const rebuild = await requestDeploy(getDb(), GITHUB_DEPLOY_TOKEN.value(), `delete:${slug}`, { hostingOnly: true });
+    return { ok: true, ...result, rebuild };
+  } catch (e) { articleError(e, 'Delete failed'); }
+});
+export const adminArticleDiscard = onCall(async (req) => {
+  requireAdmin(req.auth);
+  try {
+    return { ok: true, discarded: await discardDraft(getDb(), String(req.data?.slug || '')) };
+  } catch (e) { articleError(e, 'Discard failed'); }
+});
+export const adminArticleRevisions = onCall(async (req) => {
+  requireAdmin(req.auth);
+  try {
+    return { ok: true, revisions: await listRevisions(getDb(), String(req.data?.slug || '')) };
+  } catch (e) { articleError(e, 'Could not load history'); }
+});
+export const adminArticleRestore = onCall(async (req) => {
+  requireAdmin(req.auth);
+  try {
+    const draft = await restoreRevision(getDb(), String(req.data?.slug || ''), String(req.data?.revisionId || ''));
+    return { ok: true, slug: draft.slug, previewKey: draft.previewKey, previewPath: previewPath(draft.previewKey) };
+  } catch (e) { articleError(e, 'Restore failed'); }
 });
 export const adminSyncGoogleReviews = onCall({ secrets: [GOOGLE_PLACES_API_KEY] }, async (req) => {
   requireAdmin(req.auth);

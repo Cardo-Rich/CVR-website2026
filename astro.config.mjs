@@ -24,7 +24,9 @@ export default defineConfig({
         !page.includes('/agreement') &&
         !page.includes('/admin') &&
         !page.includes('/portal') &&
-        !page.includes('/careers'),
+        !page.includes('/careers') &&
+        // Unlisted, noindex previews of unpublished Journal drafts.
+        !page.includes('/blog/preview/'),
     }),
   ],
   // /portal is the owner-login entry. Interim: a branded splash

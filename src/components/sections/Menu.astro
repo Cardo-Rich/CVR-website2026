@@ -3,10 +3,11 @@
 // Toggles between a light Guests menu and a dark Owners menu; the Owners side
 // reuses the property-management splash on its first open of the session.
 // The trigger button (`[data-menu-open]`) lives in each page's header.
-import { articles } from '../../data/blog';
+import { getPublishedArticles } from '../../lib/content/articles';
 import { reviews, initial, avatarColor } from '../../data/reviews';
 import { CATEGORIES, categoryUrl } from '../../scripts/booking.js';
 
+const articles = await getPublishedArticles();
 const ownerFeature = articles.find((a) => a.featured) ?? articles[0];
 // A few standout Google reviews for the in-menu carousel.
 const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
@@ -42,6 +43,10 @@ const menuReviews = reviews.filter((r) => r.platform === 'google').slice(0, 6);
         <a class="menu-item" href="/#explore">
           <span class="menu-item__label">Local Faves</span>
           <span class="menu-item__sub">The best of the best</span>
+        </a>
+        <a class="menu-item" href="/blog">
+          <span class="menu-item__label">The Cardo Journal</span>
+          <span class="menu-item__sub">San Diego guides and what we have learned running homes here</span>
         </a>
 
         <div class="menu-revs">

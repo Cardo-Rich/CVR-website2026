@@ -10,8 +10,9 @@
    - edits save as DRAFT; Publish promotes drafts and (optionally) rebuilds
 
    Layout is never editable — only content. */
-import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle, uploadPhoto, listPhotos, deletePhoto } from './cms';
+import { watchAdmin, login, logout, getContent, saveContent, publishDrafts, discardDrafts, syncGoogle, uploadPhoto, listPhotos, deletePhoto, saveArticle, publishArticle, deleteArticle, discardArticle, listRevisions, restoreRevision } from './cms';
 import type { LibraryPhoto } from './cms';
+import { richEditor } from './editor';
 import { photoLibrary } from '../../data/home';
 import type { SiteContent, CaseStudyItem, ReviewsDoc, ReviewCard, FeaturedHomeItem, GuestPhotoItem, TeamMemberItem, OwnerTestimonialItem, NeighborhoodItem, BlogArticleItem } from './cms';
 import '../../styles/admin.css';
@@ -236,7 +237,7 @@ async function onDiscard() {
 }
 
 // persist current `content` as a draft patch
-async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[]; ownerTestimonials?: OwnerTestimonialItem[]; neighborhoods?: NeighborhoodItem[]; blog?: BlogArticleItem[] }) {
+async function persist(patch: { caseStudies?: CaseStudyItem[]; reviews?: Partial<ReviewsDoc>; sections?: Record<string, boolean>; featuredHomes?: FeaturedHomeItem[]; guestPhotos?: GuestPhotoItem[]; teamMembers?: TeamMemberItem[]; ownerTestimonials?: OwnerTestimonialItem[]; neighborhoods?: NeighborhoodItem[] }) {
   await saveContent(patch);
   setDirty(true);
 }
@@ -838,14 +839,25 @@ function openHoodModal(slug: string | null) {
 }
 
 // ---------- blog articles ----------
-function ensureBlogSeeded() {
+// Articles live one Firestore document each. The admin list (content.blog,
+// from adminContentGet) is the published set with pending drafts overlaid;
+// each item says whether a live copy and/or a draft exist and carries the
+// draft's preview key. Saves go through adminArticleSave, one article at a
+// time, and are always drafts; publishing is a separate, explicit step.
+function blogItem(slug: string): BlogArticleItem | undefined {
+  return content?.blog.find((x) => x.slug === slug);
+}
+function upsertBlogItem(a: BlogArticleItem) {
   if (!content) return;
-  const list = content.blog || (content.blog = []);
-  if (list.length) return;
-  const embed = document.querySelector('[data-blog-seed]');
-  if (embed) {
-    try { const seed = JSON.parse(embed.textContent || '[]'); if (Array.isArray(seed) && seed.length) content.blog = seed; } catch { /* ignore */ }
-  }
+  const idx = content.blog.findIndex((x) => x.slug === a.slug);
+  if (idx >= 0) content.blog[idx] = a; else content.blog.unshift(a);
+}
+// Pull the merged list again after a publish / discard / restore so the
+// draft flags and the toolbar's "changes pending" state come from the server.
+async function reloadContent() {
+  content = await getContent();
+  setDirty(!!content.hasDraft);
+  applyDraftToPage();
 }
 function decorateBlogCards() {
   if (!content) return;
@@ -856,17 +868,39 @@ function decorateBlogCards() {
     const editBtn = el('button', { class: 'cadm-edit-fab', title: 'Edit this article', html: PENCIL, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); openBlogModal(slug); } });
     const delBtn = el('button', { class: 'cadm-edit-fab cadm-edit-fab--del', style: 'right:52px', title: 'Delete this article', html: TRASH, onclick: (e: Event) => { e.preventDefault(); e.stopPropagation(); deleteBlog(slug); } });
     card.append(delBtn, editBtn);
+    const item = blogItem(slug);
+    if (item?.draft) card.append(el('span', { class: 'cadm-draft-badge' }, [item.published ? 'Draft edits' : 'Draft']));
   });
 }
 async function deleteBlog(slug: string) {
   if (!content) return;
-  ensureBlogSeeded();
-  const a = content.blog.find((x) => x.slug === slug);
-  if (!confirm(`Delete “${a?.title || slug}”? Applies on publish (its page is removed at the next deploy).`)) return;
-  content.blog = content.blog.filter((x) => x.slug !== slug);
-  try { await persist({ blog: content.blog }); applyDraftToPage(); toast('Article removed (draft).'); }
-  catch (e) { toast((e as Error).message, true); }
+  const a = blogItem(slug);
+  if (!confirm(`Delete “${a?.title || slug}”? It comes off the site at the next rebuild (a few minutes). A copy stays in History for 30 days if you need it back.`)) return;
+  try {
+    await deleteArticle(slug);
+    content.blog = content.blog.filter((x) => x.slug !== slug);
+    applyDraftToPage();
+    toast('Article deleted. The site is rebuilding.');
+  } catch (e) { toast((e as Error).message, true); }
 }
+async function publishBlog(slug: string) {
+  try {
+    const r = await publishArticle(slug);
+    await reloadContent();
+    toast(r.rebuild === 'triggered' || r.rebuild === 'debounced' ? 'Published. The site is rebuilding; the page is live in a few minutes.' : 'Published.');
+  } catch (e) { toast((e as Error).message, true); }
+}
+async function discardBlogDraft(slug: string) {
+  const a = blogItem(slug);
+  const what = a?.published ? 'the unpublished edits to' : 'the draft';
+  if (!confirm(`Discard ${what} “${a?.title || slug}”? This cannot be undone.`)) return;
+  try {
+    await discardArticle(slug);
+    await reloadContent();
+    toast('Draft discarded.');
+  } catch (e) { toast((e as Error).message, true); }
+}
+
 // Blog posts are the single source of truth: the same editor covers the blog
 // index/detail pages, the home "Explore like a local" cards (showOnHome +
 // localTip), and the owners "Case studies" grid + preview popup (showOnOwners +
@@ -874,11 +908,9 @@ async function deleteBlog(slug: string) {
 // section "Add …" chips.
 function openBlogModal(slug: string | null, preset?: Partial<BlogArticleItem>) {
   if (!content) return;
-  ensureBlogSeeded();
-  const list = content.blog;
-  const existing = slug ? list.find((x) => x.slug === slug) : null;
+  const existing = slug ? blogItem(slug) : null;
   const a: BlogArticleItem = existing ? JSON.parse(JSON.stringify(existing))
-    : { slug: '', title: '', category: '', excerpt: '', readTime: '', dateFull: '', dateShort: '', img: '', featured: false, seo: { title: '', description: '' }, author: { name: '', initials: '' }, heroCaption: '', bodyHtml: '', localTip: '', showOnHome: false, showOnOwners: false, ...(preset || {}) };
+    : { slug: '', title: '', category: '', excerpt: '', readTime: '', dateFull: '', dateShort: '', img: '', featured: false, seo: { title: '', description: '' }, author: { name: 'The Cardo Team', initials: 'CV' }, heroCaption: '', bodyHtml: '', localTip: '', showOnHome: false, showOnOwners: false, ...(preset || {}) };
   const cs = a.caseStudy || { name: '', hood: '', beds: '', revenue: '', nightly: '', lift: '', gallery: [] };
   const title = field('Title', a.title);
   const category = field('Category', a.category);
@@ -892,8 +924,8 @@ function openBlogModal(slug: string | null, preset?: Partial<BlogArticleItem>) {
   const authorInit = field('Author initials', a.author?.initials || '');
   const featured = el('input', { type: 'checkbox' }) as HTMLInputElement; featured.checked = a.featured === true;
   const featWrap = el('label', { class: 'cadm-field' }, [el('span', {}, ['Featured (top of blog)']), featured]);
-  const bodyHtml = field('Body (HTML — use <p>, <h2>, <blockquote>, <ul><li>…)', a.bodyHtml, { wide: true, textarea: true });
-  (bodyHtml.wrap.querySelector('textarea') as HTMLTextAreaElement).style.minHeight = '260px';
+  const body = richEditor(a.bodyHtml || '');
+  const bodyWrap = el('div', { class: 'cadm-field cadm-wide' }, [el('span', {}, ['Article body']), body.wrap]);
   const seoT = field('SEO title', a.seo?.title || '', { wide: true });
   const seoD = field('SEO description', a.seo?.description || '', { wide: true, textarea: true });
 
@@ -913,24 +945,11 @@ function openBlogModal(slug: string | null, preset?: Partial<BlogArticleItem>) {
   const csLift = field('Lift vs market (e.g. +57% over market)', cs.lift || '');
   const csGallery = field('Popup gallery image URLs (one per line)', (cs.gallery || []).join('\n'), { wide: true, textarea: true });
 
-  modal(existing ? `Edit post — ${a.title}` : 'New blog post', [
-    el('div', { class: 'cadm-grid2' }, [title.wrap, category.wrap]),
-    excerpt.wrap, img.wrap, heroCaption.wrap,
-    el('div', { class: 'cadm-grid2' }, [readTime.wrap, dateFull.wrap, dateShort.wrap]),
-    el('div', { class: 'cadm-grid2' }, [authorName.wrap, authorInit.wrap]),
-    featWrap,
-    el('div', { class: 'cadm-subhead' }, ['Placement']),
-    showHomeWrap, localTip.wrap, showOwnersWrap,
-    el('div', { class: 'cadm-subhead' }, ['Case study details (owners card + popup)']),
-    el('div', { class: 'cadm-grid2' }, [csName.wrap, csHood.wrap, csBeds.wrap, csRevenue.wrap, csNightly.wrap, csLift.wrap]),
-    csGallery.wrap,
-    el('div', { class: 'cadm-subhead' }, ['Article body']), bodyHtml.wrap,
-    el('div', { class: 'cadm-subhead' }, ['SEO']), seoT.wrap, seoD.wrap,
-  ], async () => {
+  const collect = () => {
     a.title = title.get(); a.category = category.get(); a.excerpt = excerpt.get(); a.img = img.get();
     a.heroCaption = heroCaption.get(); a.readTime = readTime.get(); a.dateFull = dateFull.get(); a.dateShort = dateShort.get();
     a.author = { name: authorName.get(), initials: authorInit.get() };
-    a.featured = featured.checked; a.bodyHtml = bodyHtml.get();
+    a.featured = featured.checked; a.bodyHtml = body.get();
     a.seo = { title: seoT.get(), description: seoD.get() };
     a.localTip = localTip.get(); a.showOnHome = showHome.checked; a.showOnOwners = showOwners.checked;
     const gallery = csGallery.get().split('\n').map((s) => s.trim()).filter(Boolean);
@@ -940,41 +959,140 @@ function openBlogModal(slug: string | null, preset?: Partial<BlogArticleItem>) {
       delete a.caseStudy;
     }
     if (!a.title.trim()) throw new Error('Title is required.');
-    if (!a.slug) a.slug = slugify(a.title);
-    const next = list.slice();
-    const idx = next.findIndex((x) => x.slug === a.slug);
-    if (idx >= 0) next[idx] = a; else next.push(a);
-    content!.blog = next;
-    await persist({ blog: next });
+  };
+  // Save the form as a draft and mirror the result into the admin list.
+  const save = async () => {
+    collect();
+    const { published: _p, draft: _d, previewKey: _k, publishedAt: _pa, updatedAt: _u, ...toSave } = a;
+    const r = await saveArticle(toSave);
+    a.slug = r.slug;
+    upsertBlogItem({ ...a, draft: true, published: existing?.published === true, previewKey: r.previewKey });
+    setDirty(true);
     applyDraftToPage();
-  });
+    return r;
+  };
+
+  const foot: Node[] = [];
+  if (existing) {
+    foot.push(el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', type: 'button', onclick: () => openHistoryModal(existing.slug) }, ['History']));
+    if (existing.draft) {
+      if (existing.previewKey) foot.push(el('a', { class: 'cadm-mbtn cadm-mbtn--ghost', href: '/blog/preview/' + existing.previewKey, target: '_blank', rel: 'noopener', title: 'Opens the unlisted preview page (built a few minutes after the last save)' }, ['Preview']));
+      foot.push(el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', type: 'button', onclick: async () => { dlg.close(); await discardBlogDraft(existing.slug); } }, ['Discard draft']));
+    }
+  }
+  // Publish saves the form first, so what goes live is what is on screen.
+  const publishBtn = el('button', { class: 'cadm-mbtn cadm-mbtn--primary', type: 'button', onclick: async () => {
+    publishBtn.disabled = true; publishBtn.textContent = 'Publishing…';
+    try { await save(); dlg.close(); await publishBlog(a.slug); }
+    catch (e) { toast((e as Error).message, true); publishBtn.disabled = false; publishBtn.textContent = existing?.published ? 'Publish changes' : 'Publish'; }
+  } }, [existing?.published ? 'Publish changes' : 'Publish']) as HTMLButtonElement;
+  foot.push(publishBtn);
+
+  const dlg = modal(existing ? `Edit post — ${a.title}` : 'New blog post', [
+    el('div', { class: 'cadm-grid2' }, [title.wrap, category.wrap]),
+    excerpt.wrap, img.wrap, heroCaption.wrap,
+    el('div', { class: 'cadm-grid2' }, [readTime.wrap, dateFull.wrap, dateShort.wrap]),
+    el('div', { class: 'cadm-grid2' }, [authorName.wrap, authorInit.wrap]),
+    featWrap,
+    el('div', { class: 'cadm-subhead' }, ['Article body']), bodyWrap,
+    el('div', { class: 'cadm-subhead' }, ['Placement']),
+    showHomeWrap, localTip.wrap, showOwnersWrap,
+    el('div', { class: 'cadm-subhead' }, ['Case study details (owners card + popup)']),
+    el('div', { class: 'cadm-grid2' }, [csName.wrap, csHood.wrap, csBeds.wrap, csRevenue.wrap, csNightly.wrap, csLift.wrap]),
+    csGallery.wrap,
+    el('div', { class: 'cadm-subhead' }, ['SEO']), seoT.wrap, seoD.wrap,
+  ], async () => {
+    const r = await save();
+    return r.rebuild === 'triggered' || r.rebuild === 'debounced'
+      ? `Saved to draft. The preview page will be ready in a few minutes at ${r.previewPath}.`
+      : 'Saved to draft.';
+  }, { extraFoot: foot, wide: true, saveLabel: 'Save draft' });
+}
+
+// Every save, publish, and delete keeps a snapshot for 30 days. Restoring
+// puts that version back as a draft; publishing it is still a separate step.
+async function openHistoryModal(slug: string) {
+  const list = el('div', { class: 'cadm-hist' }, [el('p', { class: 'cadm-note' }, ['Loading history…'])]);
+  const dlg = modal(`History — ${blogItem(slug)?.title || slug}`, [
+    el('p', { class: 'cadm-note' }, ['Snapshots are kept for 30 days from the day they were made, then removed automatically. Restore puts a snapshot back as a draft; publish it to make it live.']),
+    list,
+  ], null, { wide: true });
+  const when = (iso: string) => new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+  const day = (iso: string) => new Date(iso).toLocaleDateString('en-US', { dateStyle: 'medium' });
+  try {
+    const revs = await listRevisions(slug);
+    list.innerHTML = '';
+    if (!revs.length) { list.append(el('p', { class: 'cadm-note' }, ['No snapshots yet.'])); return; }
+    for (const r of revs) {
+      const restore = el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', type: 'button' }, ['Restore']) as HTMLButtonElement;
+      restore.addEventListener('click', async () => {
+        if (!confirm(`Restore the ${when(r.savedAt)} version of “${r.title}” as a draft? Your current draft, if any, is replaced (it stays in History).`)) return;
+        restore.disabled = true; restore.textContent = 'Restoring…';
+        try { await restoreRevision(slug, r.id); await reloadContent(); dlg.close(); toast('Restored as a draft. Open the article to review and publish.'); }
+        catch (e) { toast((e as Error).message, true); restore.disabled = false; restore.textContent = 'Restore'; }
+      });
+      list.append(el('div', { class: 'cadm-hist__row' }, [
+        el('span', { class: 'cadm-hist__src' }, [r.source]),
+        el('div', { class: 'cadm-hist__meta' }, [el('b', {}, [r.title]), el('span', {}, [`${when(r.savedAt)} · expires ${day(r.expiresAt)}`])]),
+        restore,
+      ]));
+    }
+  } catch (e) {
+    list.innerHTML = '';
+    list.append(el('p', { class: 'cadm-err' }, ['Could not load history: ' + (e as Error).message]));
+  }
 }
 
 // ---------- modal framework ----------
-function modal(title: string, bodyKids: (Node | string)[], onSave: () => Promise<void> | void): void {
+interface ModalOpts {
+  /** Extra footer controls, placed between the note and Cancel. */
+  extraFoot?: Node[];
+  /** Wider dialog (the article editor). */
+  wide?: boolean;
+  /** Label for the save button; default "Save draft". */
+  saveLabel?: string;
+}
+// onSave may return a message to toast instead of the default. Pass null for
+// a read-only dialog (no save button; Cancel reads "Close"). Returns a handle
+// so extra footer controls can close the dialog themselves.
+function modal(title: string, bodyKids: (Node | string)[], onSave: (() => Promise<void | string> | void | string) | null, opts: ModalOpts = {}): { close: () => void } {
   const err = el('p', { class: 'cadm-err', style: 'display:none' });
-  const saveBtn = el('button', { class: 'cadm-mbtn cadm-mbtn--primary' }, ['Save draft']) as HTMLButtonElement;
+  const saveLabel = opts.saveLabel || 'Save draft';
+  const saveBtn = el('button', { class: 'cadm-mbtn cadm-mbtn--primary' }, [saveLabel]) as HTMLButtonElement;
   const scrim = el('div', { class: 'cadm-modal-scrim' });
+  const box = el('div', { class: 'cadm-modal' + (opts.wide ? ' cadm-modal--wide' : '') });
   const close = () => scrim.remove();
-  saveBtn.addEventListener('click', async () => {
-    saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; err.style.display = 'none';
-    try { await onSave(); close(); toast('Saved to draft.'); }
-    catch (e) { err.textContent = (e as Error).message; err.style.display = 'block'; saveBtn.disabled = false; saveBtn.textContent = 'Save draft'; }
+  // Full-screen toggle: the article editor is far easier to use with the
+  // whole viewport, and it costs nothing on the smaller dialogs.
+  const fullBtn = el('button', { class: 'cadm-mbtn cadm-mbtn--ghost cadm-modal__full', type: 'button', title: 'Toggle full screen', 'aria-pressed': 'false' }, ['Full screen']) as HTMLButtonElement;
+  fullBtn.addEventListener('click', () => {
+    const on = box.classList.toggle('cadm-modal--full');
+    fullBtn.setAttribute('aria-pressed', String(on));
+    fullBtn.textContent = on ? 'Exit full screen' : 'Full screen';
   });
-  scrim.append(el('div', { class: 'cadm-modal' }, [
-    el('div', { class: 'cadm-modal__head' }, [el('h3', {}, [title])]),
+  saveBtn.addEventListener('click', async () => {
+    if (!onSave) return;
+    saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; err.style.display = 'none';
+    try { const msg = await onSave(); close(); toast(typeof msg === 'string' && msg ? msg : 'Saved to draft.'); }
+    catch (e) { err.textContent = (e as Error).message; err.style.display = 'block'; saveBtn.disabled = false; saveBtn.textContent = saveLabel; }
+  });
+  box.append(
+    el('div', { class: 'cadm-modal__head' }, [el('h3', {}, [title]), el('span', { class: 'cadm-spacer' }), fullBtn]),
     el('div', { class: 'cadm-modal__body' }, [...bodyKids, err]),
     el('div', { class: 'cadm-modal__foot' }, [
-      el('span', { class: 'cadm-note' }, ['Saved as a draft — nothing goes live until you Publish.']),
+      el('span', { class: 'cadm-note' }, [onSave ? 'Saved as a draft — nothing goes live until you Publish.' : '']),
       el('span', { class: 'cadm-spacer' }),
-      el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', onclick: close }, ['Cancel']),
-      saveBtn,
+      ...(opts.extraFoot || []),
+      el('button', { class: 'cadm-mbtn cadm-mbtn--ghost', onclick: close }, [onSave ? 'Cancel' : 'Close']),
+      ...(onSave ? [saveBtn] : []),
     ]),
-  ]));
+  );
+  scrim.append(box);
   // Backdrop clicks intentionally do NOT close admin dialogs — they close only
   // via their explicit buttons (Cancel/Save/Close), so a text-selection drag
   // that happens to end on the darkened scrim can't discard an in-progress edit.
   document.body.append(scrim);
+  return { close };
 }
 function field(label: string, value: string, opts: { wide?: boolean; textarea?: boolean } = {}): { wrap: HTMLElement; get: () => string } {
   const input = opts.textarea ? el('textarea', {}, [value]) : el('input', { value });

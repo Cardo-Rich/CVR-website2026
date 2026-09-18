@@ -2,7 +2,7 @@
   "name": "cvr-website2026",
   "type": "module",
   "version": "0.1.0",
-  "description": "Cardo Vacation Rentals — marketing site + embedded design system (Claude Design + Claude Code on one codebase)",
+  "description": "Cardo Vacation Rentals \u2014 marketing site + embedded design system (Claude Design + Claude Code on one codebase)",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -14,7 +14,11 @@
     "emulators": "firebase emulators:start --only firestore,auth,storage",
     "seed": "tsx scripts/seed-firestore.ts",
     "build:admin": "npm --prefix admin install && npm --prefix admin run build",
-    "build:all": "npm run build && npm run build:admin"
+    "build:all": "npm run build && npm run build:admin",
+    "blog:draft": "tsx scripts/blog-draft.ts",
+    "blog:list": "tsx scripts/blog-list.ts",
+    "blog:migrate": "tsx scripts/blog-migrate.ts",
+    "blog:prune-revisions": "tsx scripts/blog-prune-revisions.ts"
   },
   "engines": {
     "node": ">=20"
