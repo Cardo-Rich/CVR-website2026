@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import MarketingHeader from '../components/sections/MarketingHeader.astro';
 import Footer from '../components/sections/Footer.astro';
+import SmsConsent from '../components/ui/SmsConsent.astro';
 
 const nav = [
   { label: 'For Owners', href: '/owners' },
@@ -196,6 +197,8 @@ const steps = [
               <label class="rf-form__wide">Anything else we should know?<textarea name="Notes" rows="3"></textarea></label>
             </div>
           </fieldset>
+
+          <SmsConsent />
 
           <div class="rf-form__foot">
             <button class="btn btn-lg" type="submit">Submit referral</button>

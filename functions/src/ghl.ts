@@ -51,10 +51,38 @@ export async function getSlots(cfg: GhlConfig, days: number): Promise<Day[]> {
   return out;
 }
 
+// ---- SMS consent (A2P 10DLC) ----
+// The website's SmsConsent.astro block has two optional checkboxes. Each one
+// the visitor ticks becomes a contact tag, so HighLevel workflows can gate
+// every SMS step on consent, plus a timestamped note as the opt-in record.
+export interface SmsConsentInput { service?: boolean; marketing?: boolean; page?: string; }
+export const SMS_TAG_SERVICE = 'SMS Opt-In: Service';
+export const SMS_TAG_MARKETING = 'SMS Opt-In: Marketing';
+
+export function smsConsentTags(sms?: SmsConsentInput): string[] {
+  const tags: string[] = [];
+  if (sms?.service === true) tags.push(SMS_TAG_SERVICE);
+  if (sms?.marketing === true) tags.push(SMS_TAG_MARKETING);
+  return tags;
+}
+
+export function smsConsentNote(sms: SmsConsentInput | undefined, phone: string): string {
+  if (!phone) return '';
+  const page = String(sms?.page || '').replace(/[^\w\-/.]/g, '').slice(0, 120) || 'unknown page';
+  const yes = (v?: boolean) => (v === true ? 'YES' : 'no');
+  return [
+    `SMS consent record (web form on cardorentals.com${page}, ${new Date().toISOString()})`,
+    `Phone: ${phone}`,
+    `Customer care / account texts: ${yes(sms?.service)}`,
+    `Marketing texts: ${yes(sms?.marketing)}`,
+    'Disclosure shown: brand name, message types, "Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help.", links to /privacy and /terms. Boxes unchecked by default and optional.',
+  ].join('\n');
+}
+
 export interface BookInput {
   firstName?: string; lastName?: string; email?: string; phone?: string;
   startIso?: string; guests?: string; earlyContact?: boolean;
-  hearAbout?: string;
+  hearAbout?: string; sms?: SmsConsentInput;
 }
 
 // The public endpoint can't be trusted to tag contacts with arbitrary strings,
@@ -84,12 +112,15 @@ export async function book(cfg: GhlConfig, input: BookInput): Promise<{ contactI
     phone: input.phone || '',
     source: 'Owners landing page',
   };
-  if (hearAbout) contactBody.tags = [`Heard: ${hearAbout}`];
+  const tags = [...(hearAbout ? [`Heard: ${hearAbout}`] : []), ...smsConsentTags(input.sms)];
+  if (tags.length) contactBody.tags = tags;
   const cRes = await fetch(`${BASE}/contacts/upsert`, { method: 'POST', headers: headers(cfg, '2021-07-28'), body: JSON.stringify(contactBody) });
   if (!cRes.ok) throw new Error(`GHL contact upsert ${cRes.status}: ${await cRes.text()}`);
   const cJson = (await cRes.json()) as { contact?: { id?: string }; id?: string };
   const contactId = cJson.contact?.id || cJson.id;
   if (!contactId) throw new Error('GHL upsert returned no contact id');
+  const consentNote = smsConsentNote(input.sms, input.phone || '');
+  if (consentNote) await addNote(cfg, contactId, consentNote).catch((e) => console.error('consent note failed', e));
 
   let appointmentId: string | undefined;
   if (input.startIso) {

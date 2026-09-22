@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import MarketingHeader from '../../components/sections/MarketingHeader.astro';
 import Footer from '../../components/sections/Footer.astro';
+import SmsConsent from '../../components/ui/SmsConsent.astro';
 
 const nav = [
   { label: 'For Owners', href: '/owners' },
@@ -165,6 +166,8 @@ const steps = [
             </label>
             <label class="cs-form__wide">Anything else we should know?<textarea name="Notes" rows="3" placeholder="Year purchased, whether you've done a study before, etc."></textarea></label>
           </div>
+
+          <SmsConsent />
 
           <div class="cs-form__foot">
             <button class="btn btn-lg" type="submit">Get my free analysis</button>

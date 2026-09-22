@@ -16,14 +16,17 @@ export function wireLeadForm(opts) {
 
     const fields = {};
     form.querySelectorAll('input, textarea, select').forEach((el) => {
+      if (el.type === 'checkbox') return; // consent boxes travel in `sms` below
       if (el.name && String(el.value || '').trim()) fields[el.name] = String(el.value).trim();
     });
+    const checked = (n) => { const el = form.querySelector('[name="' + n + '"]'); return !!(el && el.checked); };
     const payload = {
       type: opts.type,
       name: val(opts.nameField),
       email: val(opts.emailField),
       phone: val(opts.phoneField),
       fields,
+      sms: { service: checked('smsConsentService'), marketing: checked('smsConsentMarketing'), page: location.pathname },
     };
 
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }

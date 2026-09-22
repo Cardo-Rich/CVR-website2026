@@ -7,6 +7,7 @@
 // Submitting all three reveals the full confirmation with a text-us shortcut.
 // The #estimate anchor sits on the section so links land on the hero heading.
 import { company } from '../../data/site';
+import SmsConsent from '../ui/SmsConsent.astro';
 ---
 
 <section class="hero" id="estimate" data-screen-label="Hero">
@@ -98,7 +99,7 @@ import { company } from '../../data/site';
         </div>
 
         <div class="lead__consent">
-          <label class="consent"><input type="checkbox" name="smsConsent" required /><span>I agree to receive text messages from Cardo Vacation Rentals at the number provided (estimate, account, and appointment reminders). Msg &amp; data rates may apply, msg frequency varies. Reply STOP to opt out, HELP for help.</span></label>
+          <SmsConsent compact />
           <label class="consent"><input type="checkbox" name="terms" required /><span>I agree to Cardo's <a href="/terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
         </div>
         <button type="submit" class="btn btn-block" style="margin-top:16px">Confirm appointment</button>
