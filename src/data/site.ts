@@ -11,6 +11,7 @@ export const company = {
   domain: 'cardorentals.com',
   phone: '619-719-5282',
   phoneHref: '+16197195282',
+  email: 'service@cardorentals.com',
   tagline: 'Short-term rental management in San Diego.',
   address: {
     street: '3633 Camino del Rio S, Suite 101',
