@@ -10,6 +10,7 @@ import { CATEGORIES, categoryUrl } from '../../scripts/booking.js';
       <p>Short-term rental management in San Diego. 5-star Superhost since 2013.</p>
       <div class="footer__contact">
         <a href={`tel:${company.phoneHref}`} class="footer__phone">{company.phone}</a>
+        <a href={`mailto:${company.email}`} class="footer__email">{company.email}</a>
         <address class="footer__addr">
           {company.address.street}<br />
           {company.address.city}, {company.address.region} {company.address.postalCode}
