@@ -78,6 +78,8 @@
 .footer__col a:hover { color: #fff; }
 .footer__bar { border-top: 1px solid rgba(255,255,255,.1); }
 .footer__barinner { max-width: var(--container); margin: 0 auto; padding: 20px 24px; display: flex; justify-content: space-between; font-size: .82rem; flex-wrap: wrap; gap: 10px; }
+
+.footer__legal a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 @media (max-width: 1040px) { .footer__main { grid-template-columns: 1fr 1fr 1fr; } .footer__brand { grid-column: 1 / -1; } }
 @media (max-width: 720px) { .footer__main { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 480px) { .footer__main { grid-template-columns: 1fr; } }

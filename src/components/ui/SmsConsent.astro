@@ -1,0 +1,42 @@
+---
+// SMS opt-in block for every form that collects a phone number. Built to the
+// A2P 10DLC (TCR / carrier) checklist that HighLevel reviewers apply:
+//   - two separate checkboxes: non-marketing and marketing consent
+//   - both unchecked by default and optional (consent is never a condition
+//     of submitting the form or of purchase)
+//   - brand name, message types, frequency, "Msg & data rates may apply",
+//     STOP / HELP, and links to the Privacy Policy and Terms of Service
+// The field names are read by src/scripts/lead-form.js and owners.js, and the
+// server records them on the HighLevel contact (functions/src/ghl.ts,
+// functions/src/lead.ts). Keep the wording in sync with the SMS sections of
+// /privacy and /terms and with the A2P campaign registration in HighLevel.
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+---
+
+<div class:list={['smsc', { 'smsc--compact': compact }]}>
+  <label class="smsc__opt">
+    <input type="checkbox" name="smsConsentService" value="yes" />
+    <span>I agree to receive customer care and account text messages from Cardo Vacation Rentals, such as replies to my inquiry, appointment confirmations and reminders, and updates about my property or reservation. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help.</span>
+  </label>
+  <label class="smsc__opt">
+    <input type="checkbox" name="smsConsentMarketing" value="yes" />
+    <span>I agree to receive marketing text messages from Cardo Vacation Rentals, such as owner offers, market updates, and news about our services. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help.</span>
+  </label>
+  <p class="smsc__fine">Consent to receive text messages is optional and is not a condition of any purchase or service. We do not share your mobile number or SMS opt-in consent with third parties for their marketing purposes. See our <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a> and <a href="/terms" target="_blank" rel="noopener">Terms of Service</a>.</p>
+</div>
+
+<style>
+  .smsc { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 4px; grid-column: 1 / -1; text-align: left; }
+  .smsc__opt { display: flex !important; flex-direction: row !important; align-items: flex-start; gap: 9px; font-size: .8rem; font-weight: 400; line-height: 1.5; color: var(--muted); cursor: pointer; }
+  .smsc__opt input { width: 16px !important; height: 16px; margin: 2px 0 0; padding: 0; flex: none; accent-color: var(--rose); cursor: pointer; }
+  .smsc__fine { margin: 0; font-size: .76rem; line-height: 1.5; color: var(--muted); }
+  .smsc a { color: var(--ink-soft, #3a4048); text-decoration: underline; text-underline-offset: 2px; }
+  .smsc a:hover { color: var(--rose); }
+  .smsc--compact { gap: 8px; margin: 0; }
+  .smsc--compact .smsc__opt { font-size: .68rem; line-height: 1.45; gap: 8px; }
+  .smsc--compact .smsc__opt input { width: 15px !important; height: 15px; margin-top: 1px; }
+  .smsc--compact .smsc__fine { font-size: .66rem; }
+</style>

@@ -3,7 +3,8 @@
 // HighLevel CRM as a tagged contact + note — and, for cost-seg, an opportunity in
 // a named pipeline — and a notification email is sent so nothing gets forgotten.
 import type { GhlConfig } from './ghl.js';
-import { upsertContact, addNote, findPipeline, createOpportunity } from './ghl.js';
+import { upsertContact, addNote, findPipeline, createOpportunity, smsConsentTags, smsConsentNote } from './ghl.js';
+import type { SmsConsentInput } from './ghl.js';
 import { emailShell, escHtml } from './email.js';
 
 export type LeadType = 'referral' | 'vendor' | 'costseg';
@@ -28,6 +29,7 @@ export interface LeadInput {
   type?: string;
   name?: string; email?: string; phone?: string;
   fields?: Record<string, string>;
+  sms?: SmsConsentInput;
 }
 
 function splitName(name: string): { firstName: string; lastName: string } {
@@ -63,8 +65,11 @@ export async function handleLead(cfg: GhlConfig, sendEmail: SendEmail, input: Le
   let crm = false;
   if (cfg.token() && cfg.locationId()) {
     try {
-      const contactId = await upsertContact(cfg, { firstName, lastName, email, phone, source: meta.source, tags: meta.tags });
+      const tags = [...meta.tags, ...smsConsentTags(input.sms)];
+      const contactId = await upsertContact(cfg, { firstName, lastName, email, phone, source: meta.source, tags });
       await addNote(cfg, contactId, noteText).catch((e) => console.error('lead note failed', e));
+      const consentNote = smsConsentNote(input.sms, phone);
+      if (consentNote) await addNote(cfg, contactId, consentNote).catch((e) => console.error('consent note failed', e));
       if (meta.pipeline) {
         const pipe = await findPipeline(cfg, meta.pipeline).catch((e) => { console.error('pipeline lookup failed', e); return null; });
         if (pipe) {
@@ -85,7 +90,7 @@ export async function handleLead(cfg: GhlConfig, sendEmail: SendEmail, input: Le
     const html = emailShell(
       `<h2 style="margin:0 0 4px;font-size:18px;">New ${escHtml(meta.label.toLowerCase())}</h2>
        <p style="font-size:13px;color:#6B6D78;margin:0 0 18px;">Submitted from cardorentals.com${crm ? ' · added to HighLevel' : ''}</p>
-       ${fieldsHtml(fields)}`,
+       ${fieldsHtml({ ...fields, 'SMS consent (customer care)': input.sms?.service === true ? 'Yes' : 'No', 'SMS consent (marketing)': input.sms?.marketing === true ? 'Yes' : 'No' })}`,
     );
     emailed = await sendEmail([meta.notify], `New ${meta.label.toLowerCase()}${name ? ' — ' + name : ''}`, html);
   } catch (e) {

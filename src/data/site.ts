@@ -7,6 +7,7 @@
 
 export const company = {
   name: 'Cardo Vacation Rentals',
+  legalName: 'Scherf Property Management LLC',
   domain: 'cardorentals.com',
   phone: '619-719-5282',
   phoneHref: '+16197195282',

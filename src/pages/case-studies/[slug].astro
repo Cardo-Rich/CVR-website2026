@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import MarketingHeader from '../../components/sections/MarketingHeader.astro';
+import SmsConsent from '../../components/ui/SmsConsent.astro';
 import Footer from '../../components/sections/Footer.astro';
 import { getPublishedCaseStudies } from '../../lib/content/case-studies';
 import { getNeighborhoods } from '../../lib/content/neighborhoods';
@@ -113,6 +114,7 @@ const breadcrumbLd = JSON.stringify({
                 <select name="neighborhood"><option>La Jolla</option><option>Pacific Beach</option><option>Mission Beach</option><option>Del Mar</option><option>Encinitas</option><option>Carlsbad</option><option>Coronado</option><option>Other San Diego</option></select>
               </div>
               <div class="field"><label>Anything we should know? <span style="color:var(--muted);font-weight:400">(optional)</span></label><textarea name="message" placeholder="Tell us a bit about your home…"></textarea></div>
+              <SmsConsent />
               <button type="submit" class="btn btn-block" style="margin-top:4px">Get my free estimate</button>
             </form>
             <div class="cspost-form__success" data-cs-success hidden>
