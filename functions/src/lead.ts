@@ -7,7 +7,7 @@ import { upsertContact, addNote, findPipeline, createOpportunity, smsConsentTags
 import type { SmsConsentInput } from './ghl.js';
 import { emailShell, escHtml } from './email.js';
 
-export type LeadType = 'referral' | 'vendor' | 'costseg';
+export type LeadType = 'referral' | 'vendor' | 'costseg' | 'contact';
 
 interface LeadMeta {
   label: string;      // human label for subject/email
@@ -22,6 +22,7 @@ interface LeadMeta {
 const LEADS: Record<LeadType, LeadMeta> = {
   referral: { label: 'Realtor referral', source: 'Realtor Referral Program', tags: ['Website Lead', 'Realtor Referral'], notify: 'sales@cardorentals.com' },
   vendor:   { label: 'Vendor application', source: 'Vendor Application', tags: ['Website Lead', 'Vendor'], notify: 'owners@cardorentals.com' },
+  contact:  { label: 'Website contact message', source: 'Contact Page', tags: ['Website Lead', 'Contact Form'], notify: 'service@cardorentals.com' },
   costseg:  { label: 'Cost segregation inquiry', source: 'Cost Segregation', tags: ['Website Lead', 'Cost Segregation'], notify: 'sales@cardorentals.com', pipeline: 'Cost Segregation' },
 };
 
