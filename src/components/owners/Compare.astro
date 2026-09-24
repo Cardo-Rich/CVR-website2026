@@ -1,12 +1,13 @@
 ---
 // ===================== MANAGEMENT OPTIONS (Cardo vs Alternatives) =====================
 // Data mirrors Cardo-vs-Alternatives.xlsx. Cell values: true = included,
-// false = not offered, string = qualified note. `emph` rows (owner time,
-// cost) get a highlighted band; `tip` adds a sleek hover-for-detail popover.
+// false = not offered, string = qualified note. `emph` rows (cost) get a
+// highlighted band; `tip` adds a sleek hover-for-detail popover.
 const cols = ['Cardo', 'Standard STR Manager', 'Airbnb Cohost', 'Self-Managing'];
 
 const rows = [
-  { label: 'Owner time required', cells: ['Near zero', 'Low', 'High', 'Very High'], emph: true },
+  { label: 'Management cost', cells: ['20%', '18–35%', '10–20%', 'N/A'], emph: true },
+  { label: 'Owner time required', cells: ['Near zero', 'Low', 'High', 'Very High'] },
   { label: 'Gross revenue', cells: ['Highest', 'Above average', 'Market average', 'Market average'] },
   { label: 'Zero-hassle damage insurance', cells: [true, false, false, false], tip: "The Cardo HomeSafe protection ensures you're covered on ANY platform. $0 deductible, high coverage amounts, and immediate payouts." },
   { label: 'Real-time owner portal', cells: [true, 'Sometimes', false, false] },
@@ -23,7 +24,6 @@ const rows = [
   { label: 'In-house cleaning & white-linen', cells: [true, 'Subcontracted', 'You arrange', 'You'], tip: 'We own the entire cleaning and laundry process: hotel-grade linens supplied and laundered in-house, never subcontracted.' },
   { label: 'Premium amenity restocking', cells: [true, false, false, 'You'], tip: 'Hotel-grade toiletries, coffee, and guest essentials curated and restocked for every stay.' },
   { label: 'Rapid maintenance response', cells: [true, 'Sometimes', false, 'You'], tip: 'Vetted local vendors and fast response: small problems get fixed before the next guest ever arrives.' },
-  { label: 'Management cost', cells: ['20%', '18–35%', '10–20%', 'N/A'], emph: true },
 ];
 
 const check = '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
@@ -106,7 +106,7 @@ const info  = '<svg class="vs__hint-ic" width="13" height="13" viewBox="0 0 24 2
   .vs__no { color: var(--muted); opacity: .45; }
   .vs__txt { color: var(--ink-soft); }
 
-  /* Emphasis rows (owner time + cost) — highlighted band, distinct from features */
+  /* Emphasis rows (cost) —highlighted band, distinct from features */
   .vs__row--emph td { background: var(--paper); box-shadow: inset 0 1px 0 var(--line), inset 0 -1px 0 var(--line); }
   .vs__row--emph td.vs__cardo { background: var(--ink); }
   .vs__row--emph td.vs__rowhead { font-weight: 700; color: var(--ink); }
