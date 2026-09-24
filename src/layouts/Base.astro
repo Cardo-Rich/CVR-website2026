@@ -20,6 +20,8 @@ interface Props {
   /** Article timestamps (ISO 8601) — only used when type === "article". */
   publishedTime?: string;
   modifiedTime?: string;
+  /** HighLevel chat widget (SMS opt-in + live chat). On by default; off for flows like the agreement portal. */
+  chatWidget?: boolean;
 }
 
 const {
@@ -32,6 +34,7 @@ const {
   canonical,
   publishedTime,
   modifiedTime,
+  chatWidget = true,
 } = Astro.props;
 
 // Resolve absolute URLs against the configured site (astro.config.mjs → site).
@@ -170,6 +173,15 @@ const orgSchemaJson = JSON.stringify(orgSchema);
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=28102798859389302&ev=PageView&noscript=1" /></noscript>
     <!-- End Meta Pixel (noscript) -->
     <slot />
+    {chatWidget && (
+      <Fragment>
+        {/* HighLevel chat widget. It is also the registered A2P 10DLC opt-in
+            method: the widget collects the phone number and SMS consent, and
+            chats land in HighLevel Conversations. Widget settings (colors,
+            greeting, consent text) live in HighLevel, not here. */}
+        <script is:inline src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="6ab4c644fad6c0284b46adb7" data-source="WEB_USER"></script>
+      </Fragment>
+    )}
     <!-- Inline admin layer: activates only for signed-in admins; a no-op for
          every public visitor beyond one idle-time auth check. -->
     <script>
