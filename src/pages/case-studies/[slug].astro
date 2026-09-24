@@ -102,9 +102,8 @@ const breadcrumbLd = JSON.stringify({
             </ul>
           </div>
           <div class="cspost-form">
-            <form data-cs-form>
-              <button type="button" class="gbtn" data-cs-google><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Continue with Google</button>
-              <div class="cspost-form__or">or send your details</div>
+            <form data-cs-form novalidate>
+              <input type="hidden" name="case study" value={c.name} />
               <div class="cspost-form__row">
                 <div class="field"><label>Full name</label><input name="name" placeholder="Jane Owner" required /></div>
                 <div class="field"><label>Phone</label><input name="phone" type="tel" placeholder="619-555-0100" /></div>
@@ -119,9 +118,9 @@ const breadcrumbLd = JSON.stringify({
             </form>
             <div class="cspost-form__success" data-cs-success hidden>
               <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
-              <h3 style="margin:0 0 8px">Your owner account is ready</h3>
-              <p class="muted" style="margin:0 0 16px">We're preparing your estimate now: track it, your agreement, and onboarding from your Cardo owner portal.</p>
-              <a href="https://cardorentals.guestyowners.com" class="btn btn-block">Go to my owner portal</a>
+              <h3 style="margin:0 0 8px">Thanks, we have your details</h3>
+              <p class="muted" style="margin:0 0 16px">An account manager will contact you within one business day with a design plan and a revenue projection for your home.</p>
+              <a href="/owners" class="btn btn-block">See how Cardo works with owners</a>
             </div>
           </div>
         </div>
@@ -154,22 +153,26 @@ const breadcrumbLd = JSON.stringify({
 
 <script>
   import '../../scripts/reveal.js';
+  import { wireLeadForm } from '../../scripts/lead-form.js';
 
-  (function () {
-    var f = document.querySelector('[data-cs-form]');
-    var s = document.querySelector('[data-cs-success]');
-    function done() {
+  // Posts to /api/lead (type 'owner'): HighLevel contact + note + SMS consent
+  // tags, and a notification email to sales. On success the form is swapped
+  // for the confirmation panel.
+  wireLeadForm({
+    form: '[data-cs-form]',
+    type: 'owner',
+    nameField: 'name',
+    emailField: 'email',
+    phoneField: 'phone',
+    fallbackTo: 'sales@cardorentals.com',
+    subject: 'Owner estimate request',
+    onSuccess: () => {
+      const f = document.querySelector('[data-cs-form]');
+      const s = document.querySelector('[data-cs-success]');
       if (f) f.hidden = true;
       if (s) s.hidden = false;
-    }
-    f && f.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (!f.reportValidity()) return;
-      done();
-    });
-    var g = document.querySelector('[data-cs-google]');
-    g && g.addEventListener('click', done);
-  })();
+    },
+  });
 </script>
 
 <style>
@@ -235,11 +238,6 @@ const breadcrumbLd = JSON.stringify({
   .cspost-contact__list li { display: flex; gap: 10px; align-items: center; color: rgba(248,243,236,.9); font-size: .96rem; }
   .cspost-contact__list svg { flex: none; }
   .cspost-form { background: var(--paper); border-radius: var(--radius-lg); padding: 26px; box-shadow: var(--shadow-lg); }
-  .cspost-form .gbtn { display: inline-flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 13px 18px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: #fff; color: #1f2937; font-family: var(--font-body); font-weight: 600; font-size: .98rem; cursor: pointer; transition: box-shadow var(--dur-fast) var(--ease); }
-  .cspost-form .gbtn:hover { box-shadow: 0 4px 14px rgba(0,0,0,.12); }
-  .cspost-form .gbtn svg { width: 19px; height: 19px; flex: none; }
-  .cspost-form__or { display: flex; align-items: center; gap: 14px; margin: 16px 0; color: var(--muted); font-size: .8rem; }
-  .cspost-form__or::before, .cspost-form__or::after { content: ""; height: 1px; background: var(--line); flex: 1; }
   .cspost-form .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
   .cspost-form .field label { font-size: .78rem; font-weight: 600; color: var(--ink); }
   .cspost-form .field input, .cspost-form .field select, .cspost-form .field textarea { font-family: var(--font-body); font-size: .96rem; padding: 12px 13px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: #fff; color: var(--ink); outline: none; width: 100%; }

@@ -41,6 +41,7 @@ export function wireLeadForm(opts) {
       form.reset();
       // Conversion signal for GTM (GA4 generate_lead + Meta Lead fire on this).
       try { (window.dataLayer = window.dataLayer || []).push({ event: 'lead_submit', leadForm: opts.type || 'lead' }); } catch (e2) {}
+      if (typeof opts.onSuccess === 'function') opts.onSuccess();
       if (status) {
         status.textContent = opts.successText || 'Thanks! We’ve got your details and will be in touch shortly.';
         status.classList.add('is-sent');
