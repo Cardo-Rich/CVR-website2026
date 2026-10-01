@@ -18,7 +18,8 @@
     "blog:draft": "tsx scripts/blog-draft.ts",
     "blog:list": "tsx scripts/blog-list.ts",
     "blog:migrate": "tsx scripts/blog-migrate.ts",
-    "blog:prune-revisions": "tsx scripts/blog-prune-revisions.ts"
+    "blog:prune-revisions": "tsx scripts/blog-prune-revisions.ts",
+    "ghl:owner-sync": "tsx scripts/ghl-owner-sync.ts"
   },
   "engines": {
     "node": ">=20"
