@@ -205,10 +205,34 @@ video.ghero__bg { pointer-events: none; }
 .bookbar__field label { font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .bookbar__field input, .bookbar__field select { border: none; background: none; font-family: var(--font-body); font-size: 1rem; color: var(--ink); outline: none; padding: 2px 0; width: 100%; cursor: pointer; }
 .bookbar__field input::-webkit-calendar-picker-indicator { opacity: .5; cursor: pointer; }
+/* A neighborhood too long for its field ends in an ellipsis, not mid-letter. */
+.bookbar__field select { text-overflow: ellipsis; }
 .bookbar__search { border: none; border-radius: var(--radius); background: var(--rose); color: #fff; font-family: var(--font-body); font-weight: 600; font-size: 1rem; padding: 0 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 9px; transition: background var(--dur-fast) var(--ease); }
 .bookbar__search:hover { background: var(--rose-deep); }
 .bookbar__search svg { width: 18px; height: 18px; }
-@media (max-width: 860px) { .bookbar__card { grid-template-columns: 1fr 1fr; } .bookbar__field + .bookbar__field::before { display: none; } .bookbar__search { grid-column: 1 / -1; padding: 14px; } }
+/* Two columns on phones. minmax(0, 1fr), not 1fr: a plain 1fr column won't
+   shrink below its widest field (a date input, or a select sized to its longest
+   neighborhood), which pushed the right column past the card on phones. */
+@media (max-width: 860px) { .bookbar__card { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .bookbar__field + .bookbar__field::before { display: none; } .bookbar__search { grid-column: 1 / -1; padding: 14px; } }
+/* Below 360px half the card is too narrow for a date, so stack the fields. */
+@media (max-width: 359px) { .bookbar__card { grid-template-columns: minmax(0, 1fr); } }
+
+/* Empty date fields (both search widgets open without dates). Desktop browsers
+   draw an empty date input as mm/dd/yyyy, but phones and tablets draw a blank,
+   which reads as a missing field, so touch screens get a hint in its place.
+   guest.js keeps .is-empty current. iOS also shrinks an empty date input and
+   centres the date once picked: the min-height and text-align keep the field
+   steady and the date where the hint was. */
+.datefield { position: relative; display: flex; }
+.datefield__hint { display: none; }
+.datefield input[type="date"] { min-height: 1.5em; }
+.datefield input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+@media (hover: none) {
+  .datefield > input.is-empty:not(:focus) { color: transparent; }
+  .datefield > input.is-empty:not(:focus) + .datefield__hint { display: flex; align-items: center; position: absolute; inset: 0; color: var(--muted); pointer-events: none; white-space: nowrap; overflow: hidden; }
+}
+.bookbar__field .datefield__hint { font-size: 1rem; }
+.navsearch .datefield__hint { font-size: .84rem; padding-left: 2px; }
 
 /* Trust strip */
 .gtrust { max-width: var(--container); margin: 0 auto; padding: 22px 24px 0; display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; color: var(--ink-soft); font-size: .92rem; }
