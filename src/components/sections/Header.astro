@@ -2,11 +2,9 @@
 // V3 guest header: light-sand bar, a centered nav search that appears on
 // scroll, and a right-aligned "Menu" drawer (shared <Menu /> component).
 import Menu from './Menu.astro';
-import { AREAS, GUEST_OPTIONS, GUESTS_DEFAULT, today, addDays, defaultCheckIn, defaultCheckOut } from '../../scripts/booking.js';
+import { AREAS, GUEST_OPTIONS, GUESTS_DEFAULT, today, addDays } from '../../scripts/booking.js';
 
-// Build-time dates; guest.js re-stamps them on load (see BookingHero).
-const checkIn = defaultCheckIn();
-const checkOut = defaultCheckOut();
+// The dates open empty, as in BookingHero.
 ---
 
 <header class="site-header" data-header data-screen-label="Header">
@@ -20,9 +18,9 @@ const checkOut = defaultCheckOut();
       <svg class="navsearch__ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       <select class="navsearch__where" aria-label="Where">{AREAS.map((a) => <option>{a.label}</option>)}</select>
       <span class="navsearch__div"></span>
-      <input type="date" value={checkIn} data-default={checkIn} min={today()} aria-label="Check in" />
+      <span class="datefield"><input type="date" class="is-empty" min={today()} aria-label="Check in" /><span class="datefield__hint" aria-hidden="true">Check in</span></span>
       <span class="navsearch__div"></span>
-      <input type="date" value={checkOut} data-default={checkOut} min={addDays(today(), 1)} aria-label="Check out" />
+      <span class="datefield"><input type="date" class="is-empty" min={addDays(today(), 1)} aria-label="Check out" /><span class="datefield__hint" aria-hidden="true">Check out</span></span>
       <span class="navsearch__div navsearch__div--guests"></span>
       <select class="navsearch__guests" aria-label="Guests">
         {GUEST_OPTIONS.map((g) => <option value={g.value} selected={g.value === GUESTS_DEFAULT}>{g.label}</option>)}

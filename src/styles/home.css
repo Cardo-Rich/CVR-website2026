@@ -210,6 +210,23 @@ video.ghero__bg { pointer-events: none; }
 .bookbar__search svg { width: 18px; height: 18px; }
 @media (max-width: 860px) { .bookbar__card { grid-template-columns: 1fr 1fr; } .bookbar__field + .bookbar__field::before { display: none; } .bookbar__search { grid-column: 1 / -1; padding: 14px; } }
 
+/* Empty date fields (both search widgets open without dates). Desktop browsers
+   draw an empty date input as mm/dd/yyyy, but phones and tablets draw a blank,
+   which reads as a missing field, so touch screens get a hint in its place.
+   guest.js keeps .is-empty current. iOS also shrinks an empty date input and
+   centres the date once picked: the min-height and text-align keep the field
+   steady and the date where the hint was. */
+.datefield { position: relative; display: flex; }
+.datefield__hint { display: none; }
+.datefield input[type="date"] { min-height: 1.5em; }
+.datefield input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+@media (hover: none) {
+  .datefield > input.is-empty:not(:focus) { color: transparent; }
+  .datefield > input.is-empty:not(:focus) + .datefield__hint { display: flex; align-items: center; position: absolute; inset: 0; color: var(--muted); pointer-events: none; white-space: nowrap; overflow: hidden; }
+}
+.bookbar__field .datefield__hint { font-size: 1rem; }
+.navsearch .datefield__hint { font-size: .84rem; padding-left: 2px; }
+
 /* Trust strip */
 .gtrust { max-width: var(--container); margin: 0 auto; padding: 22px 24px 0; display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; color: var(--ink-soft); font-size: .92rem; }
 .gtrust span { display: inline-flex; align-items: center; gap: 8px; }

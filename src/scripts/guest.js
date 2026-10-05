@@ -58,7 +58,7 @@ import { bookingUrlFrom, initDateFields } from './booking.js';
     });
   });
 
-  /* ---- Search widget dates: today → 3 nights out, on every widget ---- */
+  /* ---- Search widget dates: open empty, kept in order once picked ---- */
   [].slice.call(document.querySelectorAll('[data-bookbar], [data-navsearch]')).forEach(initDateFields);
 
   /* ---- Booking bar → booking site ---- */

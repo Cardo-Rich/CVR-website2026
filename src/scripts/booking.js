@@ -17,10 +17,10 @@
 export var BOOKING_BASE = 'https://booking.cardorentals.com';
 var SEARCH_PATH = '/s';
 
-// Pre-filled stay: check-in a week out, three nights. The lead time matters —
-// in peak season the next few days are booked solid, so opening the search on
-// today's date lands the visitor on "no homes available".
-export var LEAD_DAYS = 7;
+// The widgets open with no dates, which searches every home. Once the visitor
+// picks a check-in, the check-out is filled in this many nights later until
+// they pick one of their own, so a search on the check-in alone still carries
+// a stay the engine can use.
 export var STAY_NIGHTS = 3;
 
 // Default party size for the hero widget's Guests select.
@@ -90,8 +90,8 @@ function guestsNum(v) {
 }
 
 /* ---- Dates ---------------------------------------------------------------
-   Local-calendar dates, not UTC: a visitor in San Diego should see their own
-   "today" pre-filled, not tomorrow's date because the browser is west of UTC. */
+   Local-calendar dates, not UTC: a visitor in San Diego should be able to pick
+   their own "today", not have it greyed out because the browser is west of UTC. */
 export function isoDate(d) {
   var m = String(d.getMonth() + 1), day = String(d.getDate());
   return d.getFullYear() + '-' + (m.length < 2 ? '0' + m : m) + '-' + (day.length < 2 ? '0' + day : day);
@@ -106,38 +106,48 @@ export function addDays(iso, n) {
   return isoDate(new Date(+p[0], +p[1] - 1, +p[2] + n));
 }
 
-// The stay the widgets open on: a week out, three nights.
-export function defaultCheckIn() { return addDays(today(), LEAD_DAYS); }
-export function defaultCheckOut() { return addDays(defaultCheckIn(), STAY_NIGHTS); }
-
-/* Pre-fill a widget's dates with the default stay and keep the pair sane
-   afterwards. The markup carries build-time dates so the fields are never blank
-   on first paint; this re-stamps them so a build that's been live for a while
-   still opens on a stay in the visitor's future, not the build's. */
+/* Keep a widget's pair of dates sane. The fields open empty (an empty range
+   searches every home); this only steps in once the visitor starts picking. */
 export function initDateFields(form) {
   var ci = form.querySelector('input[aria-label="Check in"]');
   var co = form.querySelector('input[aria-label="Check out"]');
   if (!ci || !co) return;
   var now = today();
 
-  // Re-stamp only a field the visitor hasn't touched: the markup records what
-  // the build put there, so a value that still matches is ours to move forward,
-  // and anything else (a real choice, or one the browser restored) is left be.
-  function untouched(el) { return !el.value || el.value === el.getAttribute('data-default'); }
-  var ciFresh = untouched(ci), coFresh = untouched(co);
+  // Phones draw an empty date field as a blank where desktop browsers show
+  // mm/dd/yyyy, so empty fields are marked for the CSS to put a hint in.
+  function mark() {
+    ci.classList.toggle('is-empty', !ci.value);
+    co.classList.toggle('is-empty', !co.value);
+  }
 
-  // Visitors can still pick anything from today onward; only the pre-filled
-  // value leads by a week.
+  // The markup's min dates are the build's "today"; move them to the visitor's.
+  // A date already in a field was restored by the browser (back button,
+  // reload), so it stays unless it has since slipped into the past.
   ci.min = now;
-  if (ciFresh || ci.value < now) ci.value = defaultCheckIn();
-  co.min = addDays(ci.value, 1);
-  if (coFresh || co.value <= ci.value) co.value = addDays(ci.value, STAY_NIGHTS);
+  if (ci.value && ci.value < now) ci.value = '';
+  co.min = addDays(ci.value || now, 1);
+  if (co.value && co.value < co.min) co.value = ci.value ? addDays(ci.value, STAY_NIGHTS) : '';
+  mark();
 
+  // A check-out filled in from the check-in follows it until the visitor picks
+  // their own, so correcting a mis-tapped check-in doesn't leave a long stay.
+  var coFilled = false;
   ci.addEventListener('change', function () {
-    if (!ci.value) return; // visitor cleared it — leave the pair alone
-    if (ci.value < now) ci.value = now;
-    co.min = addDays(ci.value, 1);
-    if (co.value && co.value <= ci.value) co.value = addDays(ci.value, STAY_NIGHTS);
+    if (ci.value && ci.value < now) ci.value = now;
+    co.min = addDays(ci.value || now, 1);
+    if (!ci.value) {
+      if (coFilled) { co.value = ''; coFilled = false; }
+    } else if (coFilled || !co.value || co.value <= ci.value) {
+      co.value = addDays(ci.value, STAY_NIGHTS);
+      coFilled = true;
+    }
+    mark();
+  });
+  co.addEventListener('change', function () { coFilled = false; mark(); });
+  [ci, co].forEach(function (el) {
+    el.addEventListener('input', mark);
+    el.addEventListener('blur', mark);
   });
 }
 
