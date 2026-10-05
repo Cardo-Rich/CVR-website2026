@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 // @ts-expect-error — plain-JS browser module, no types
 import {
   bookingUrlFrom, AREAS, GUEST_OPTIONS, boxFor, addDays, isoDate, today,
-  CATEGORIES, categoryUrl, initDateFields, STAY_NIGHTS,
+  CATEGORIES, categoryUrl, initDateFields,
 } from '../src/scripts/booking.js';
 
 /* A stand-in for the widget form: bookingUrlFrom only ever calls querySelector,
@@ -111,41 +111,44 @@ describe('initDateFields', () => {
     expect(params(bookingUrlFrom(form({ 'Check in': ci.value, 'Check out': co.value }))).has('checkin')).toBe(false);
   });
 
-  it('fills the check-out a few nights after a picked check-in', () => {
+  it('leaves the check-out for the visitor to pick after a check-in', () => {
     const { ci, co } = widget();
     ci.pick(inDays(20));
-    expect(co.value).toBe(inDays(20 + STAY_NIGHTS));
-    expect(co.min).toBe(inDays(21));
-    expect(ci.empty() || co.empty()).toBe(false);
-  });
-
-  it('moves a filled-in check-out with the check-in until the visitor picks one', () => {
-    const { ci, co } = widget();
-    ci.pick(inDays(20));
-    ci.pick(inDays(10)); // corrected a mis-tap: the stay is still three nights
-    expect(co.value).toBe(inDays(10 + STAY_NIGHTS));
-    co.pick(inDays(18));
-    ci.pick(inDays(12)); // the visitor's own check-out stays put
-    expect(co.value).toBe(inDays(18));
-    ci.pick(inDays(25)); // ...unless the check-in moves past it
-    expect(co.value).toBe(inDays(25 + STAY_NIGHTS));
-  });
-
-  it('clears a filled-in check-out when the check-in is cleared', () => {
-    const { ci, co } = widget();
-    ci.pick(inDays(20));
-    ci.pick('');
     expect(co.value).toBe('');
-    expect(co.min).toBe(inDays(1));
-    expect(ci.empty() && co.empty()).toBe(true);
+    expect(co.min).toBe(inDays(21));
+    expect(ci.empty()).toBe(false);
+    expect(co.empty()).toBe(true);
   });
 
-  it('keeps dates the browser restored, unless they have slipped into the past', () => {
+  it('clears a check-out the check-in moves onto or past, and keeps any other', () => {
+    const { ci, co } = widget();
+    co.pick(inDays(18));
+    ci.pick(inDays(12));
+    expect(co.value).toBe(inDays(18));
+    ci.pick(inDays(18));
+    expect(co.value).toBe('');
+    expect(co.empty()).toBe(true);
+    co.pick(inDays(30));
+    ci.pick(inDays(25));
+    expect(co.value).toBe(inDays(30));
+  });
+
+  it('keeps the check-out when the check-in is cleared', () => {
+    const { ci, co } = widget();
+    ci.pick(inDays(20));
+    co.pick(inDays(23));
+    ci.pick('');
+    expect(co.value).toBe(inDays(23));
+    expect(co.min).toBe(inDays(1));
+    expect(ci.empty()).toBe(true);
+  });
+
+  it('keeps dates the browser restored, unless they have stopped making sense', () => {
     expect(widget(inDays(5), inDays(9))).toMatchObject({ ci: { value: inDays(5) }, co: { value: inDays(9) } });
     const stale = widget(inDays(-3), inDays(-1));
     expect(stale.ci.value).toBe('');
     expect(stale.co.value).toBe('');
-    expect(widget(inDays(5), inDays(5)).co.value).toBe(inDays(5 + STAY_NIGHTS));
+    expect(widget(inDays(5), inDays(5)).co.value).toBe('');
   });
 });
 

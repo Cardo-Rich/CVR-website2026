@@ -17,12 +17,6 @@
 export var BOOKING_BASE = 'https://booking.cardorentals.com';
 var SEARCH_PATH = '/s';
 
-// The widgets open with no dates, which searches every home. Once the visitor
-// picks a check-in, the check-out is filled in this many nights later until
-// they pick one of their own, so a search on the check-in alone still carries
-// a stay the engine can use.
-export var STAY_NIGHTS = 3;
-
 // Default party size for the hero widget's Guests select.
 export var GUESTS_DEFAULT = 2;
 
@@ -107,7 +101,8 @@ export function addDays(iso, n) {
 }
 
 /* Keep a widget's pair of dates sane. The fields open empty (an empty range
-   searches every home); this only steps in once the visitor starts picking. */
+   searches every home) and only ever hold dates the visitor picked: nothing is
+   filled in for them, and a check-out that stops making sense is cleared. */
 export function initDateFields(form) {
   var ci = form.querySelector('input[aria-label="Check in"]');
   var co = form.querySelector('input[aria-label="Check out"]');
@@ -127,27 +122,18 @@ export function initDateFields(form) {
   ci.min = now;
   if (ci.value && ci.value < now) ci.value = '';
   co.min = addDays(ci.value || now, 1);
-  if (co.value && co.value < co.min) co.value = ci.value ? addDays(ci.value, STAY_NIGHTS) : '';
+  if (co.value && co.value < co.min) co.value = '';
   mark();
 
-  // A check-out filled in from the check-in follows it until the visitor picks
-  // their own, so correcting a mis-tapped check-in doesn't leave a long stay.
-  var coFilled = false;
   ci.addEventListener('change', function () {
     if (ci.value && ci.value < now) ci.value = now;
     co.min = addDays(ci.value || now, 1);
-    if (!ci.value) {
-      if (coFilled) { co.value = ''; coFilled = false; }
-    } else if (coFilled || !co.value || co.value <= ci.value) {
-      co.value = addDays(ci.value, STAY_NIGHTS);
-      coFilled = true;
-    }
-    mark();
+    // A check-out on or before the new check-in is cleared, not moved: the
+    // visitor picks a new one rather than inheriting a stay we chose.
+    if (co.value && co.value < co.min) co.value = '';
   });
-  co.addEventListener('change', function () { coFilled = false; mark(); });
   [ci, co].forEach(function (el) {
-    el.addEventListener('input', mark);
-    el.addEventListener('blur', mark);
+    ['input', 'change', 'blur'].forEach(function (type) { el.addEventListener(type, mark); });
   });
 }
 
