@@ -16,6 +16,7 @@
     "build:admin": "npm --prefix admin install && npm --prefix admin run build",
     "build:all": "npm run build && npm run build:admin",
     "blog:draft": "tsx scripts/blog-draft.ts",
+    "blog:publish": "tsx scripts/blog-publish.ts",
     "blog:list": "tsx scripts/blog-list.ts",
     "blog:migrate": "tsx scripts/blog-migrate.ts",
     "blog:prune-revisions": "tsx scripts/blog-prune-revisions.ts",

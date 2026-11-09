@@ -13,6 +13,11 @@
 - PRs deploy to a temporary preview channel via `pr-preview.yml`; that build is
   also the CI signal (a green preview deploy == build passed).
 
+- **One exception: the scheduled SEO autopilot job.** Rich approved it (Nov
+  2026) to merge its own small PRs after the preview check passes and to
+  publish Journal posts automatically. It follows
+  `docs/seo-autopilot/RUNBOOK.md`. Interactive sessions keep the rules above.
+
 ## Copy rules
 
 - **Owner/marketing-page voice (Rich's pick, Sept 2026): professional
@@ -59,7 +64,9 @@
   and prints the URL. The script refuses copy that breaks the house rules
   (em dashes, "VRBO", "luxury"). Sessions never publish: Rich reviews the
   preview and publishes from the admin editor on the site, or from the
-  article's Publish button there.
+  article's Publish button there. (Exception: the SEO autopilot commits
+  `content/journal/{slug}.json`; on merge, `journal-publish.yml` runs
+  `npm run blog:publish` and rebuilds the site.)
 - The preview page exists after the next site build. `blog:draft` requests
   one when `GITHUB_DEPLOY_TOKEN` is set; otherwise trigger the "Deploy to
   Firebase Hosting (live)" workflow with `hosting_only=true` (the GitHub

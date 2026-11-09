@@ -1,0 +1,59 @@
+name: Journal auto-publish
+
+# The scheduled SEO job commits finished articles as JSON under
+# content/journal/. When one lands on main, this saves it to Firestore,
+# publishes it, and requests a hosting rebuild so the page goes live.
+# Manual run: pass a file path to (re)publish one article.
+on:
+  push:
+    branches: [main]
+    paths: ['content/journal/**.json']
+  workflow_dispatch:
+    inputs:
+      file:
+        description: 'Path to an article JSON file, e.g. content/journal/my-post.json'
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: journal-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Find articles to publish
+        id: files
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            FILES="${{ inputs.file }}"
+          else
+            BEFORE="${{ github.event.before }}"
+            if [ -z "$BEFORE" ] || ! git cat-file -e "$BEFORE" 2>/dev/null; then BEFORE="${{ github.sha }}~1"; fi
+            FILES=$(git diff --name-only --diff-filter=AM "$BEFORE" "${{ github.sha }}" -- 'content/journal/*.json' | tr '\n' ' ')
+          fi
+          echo "list=$FILES" >> "$GITHUB_OUTPUT"
+          echo "Articles: $FILES"
+      - name: Save and publish
+        if: steps.files.outputs.list != ''
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_CARDO_WEBSITE_2026 }}
+        run: npm run blog:publish -- ${{ steps.files.outputs.list }}
+      - name: Rebuild the live site
+        if: steps.files.outputs.list != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run deploy.yml -f hosting_only=true -f reason="journal-publish ${{ github.sha }}"
