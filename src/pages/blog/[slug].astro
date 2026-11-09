@@ -5,6 +5,7 @@ import Footer from '../../components/sections/Footer.astro';
 import ArticleView from '../../components/blog/ArticleView.astro';
 import { getPublishedArticles } from '../../lib/content/articles';
 import { getNeighborhoods } from '../../lib/content/neighborhoods';
+import { categoryGroups } from '../../data/blog';
 
 export async function getStaticPaths() {
   const articles = await getPublishedArticles();
@@ -30,8 +31,12 @@ const nav = [
 const cta = { label: 'Free estimate', href: '/owners#estimate' };
 
 // Guest-facing "explore" guides (surf, food, family) get a booking CTA; owner
-// articles get the earning-estimate CTA. showOnHome marks the guest guides.
-const isGuestGuide = a.showOnHome === true;
+// articles get the earning-estimate CTA. showOnHome marks the guest guides;
+// so does any guest category (Surf & sand, Food & drink, Family adventures),
+// so new guest posts that are not pinned to the home page still get the
+// booking CTA.
+const guestCategories = categoryGroups['Explore like a local'] || [];
+const isGuestGuide = a.showOnHome === true || guestCategories.includes(a.category);
 
 // Structured data (BlogPosting) so search engines and AI answer engines can
 // read the article cleanly. Built from the article's own fields.
@@ -42,7 +47,9 @@ const jsonLd = JSON.stringify({
   '@type': 'BlogPosting',
   headline: a.title,
   description: a.seo?.description || a.excerpt,
-  image: a.img ? [a.img] : undefined,
+  // Absolute URL: schema.org image values must be full URLs; a bare
+  // "/assets/..." path is not resolved by Google's rich-result parser.
+  image: a.img ? [new URL(a.img, 'https://cardorentals.com').href] : undefined,
   datePublished: isoDate,
   dateModified: isoDate,
   author: { '@type': 'Organization', name: a.author?.name || 'Cardo Vacation Rentals', url: 'https://cardorentals.com' },
