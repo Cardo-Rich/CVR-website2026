@@ -10,6 +10,20 @@ export function wireLeadForm(opts) {
   const btnLabel = btn ? btn.textContent : '';
   const val = (n) => { const el = form.querySelector('[name="' + n + '"]'); return el ? String(el.value || '').trim() : ''; };
 
+  // Spam defense (see functions/src/spam.ts): a hidden honeypot field bots fill
+  // but humans never see, plus a timing token so instant/automated submits are
+  // dropped server-side. 'url' is not used by any real form field.
+  const HONEYPOT = 'url';
+  const wiredAt = Date.now();
+  let honeypot = form.querySelector('[name="' + HONEYPOT + '"]');
+  if (!honeypot) {
+    honeypot = document.createElement('input');
+    honeypot.type = 'text'; honeypot.name = HONEYPOT; honeypot.tabIndex = -1;
+    honeypot.setAttribute('autocomplete', 'off'); honeypot.setAttribute('aria-hidden', 'true');
+    honeypot.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;opacity:0';
+    form.appendChild(honeypot);
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!form.reportValidity()) return;
@@ -17,6 +31,7 @@ export function wireLeadForm(opts) {
     const fields = {};
     form.querySelectorAll('input, textarea, select').forEach((el) => {
       if (el.type === 'checkbox') return; // consent boxes travel in `sms` below
+      if (el.name === HONEYPOT) return;   // honeypot travels in `honeypot` below
       if (el.name && String(el.value || '').trim()) fields[el.name] = String(el.value).trim();
     });
     const checked = (n) => { const el = form.querySelector('[name="' + n + '"]'); return !!(el && el.checked); };
@@ -27,6 +42,8 @@ export function wireLeadForm(opts) {
       phone: val(opts.phoneField),
       fields,
       sms: { service: checked('smsConsentService'), marketing: checked('smsConsentMarketing'), page: location.pathname },
+      honeypot: honeypot.value,
+      elapsedMs: Date.now() - wiredAt,
     };
 
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }

@@ -269,6 +269,17 @@
       '2': panel.querySelector('[data-lead-step="2"]'),
       '3': panel.querySelector('[data-lead-step="3"]')
     };
+    // Spam defense (see functions/src/spam.ts): hidden honeypot + timing token.
+    // The server drops any booking with a filled honeypot or an instant submit.
+    var leadWiredAt = Date.now();
+    var honeypot = null;
+    if (steps['2']) {
+      honeypot = document.createElement('input');
+      honeypot.type = 'text'; honeypot.name = 'url'; honeypot.tabIndex = -1;
+      honeypot.setAttribute('autocomplete', 'off'); honeypot.setAttribute('aria-hidden', 'true');
+      honeypot.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;opacity:0';
+      steps['2'].appendChild(honeypot);
+    }
     var done = panel.querySelector('[data-lead-done]');
     var calMount = panel.querySelector('[data-leadcal]');
     var barSteps = [].slice.call(panel.querySelectorAll('.leadbar__step'));
@@ -480,7 +491,8 @@
           action:'book', firstName: lead.firstName, lastName: lead.lastName, email: lead.email, phone: lead.phone,
           startIso: lead.appointmentStart, guests: lead.guests, earlyContact: !!lead.earlyContact,
           hearAbout: lead.hearAbout || '',
-          sms: { service: !!lead.smsConsentService, marketing: !!lead.smsConsentMarketing, page: location.pathname }
+          sms: { service: !!lead.smsConsentService, marketing: !!lead.smsConsentMarketing, page: location.pathname },
+          honeypot: honeypot ? honeypot.value : '', elapsedMs: Date.now() - leadWiredAt
         })}).then(function(r){ return r.json(); }).then(function(d){
           if (d && d.configured && d.contactId) saveLead({ contactId: d.contactId, appointmentId: d.appointmentId });
         }).catch(function(){});
