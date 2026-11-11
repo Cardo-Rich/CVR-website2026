@@ -11,6 +11,7 @@ import {
 import { resolveAdmin } from './claims.js';
 import { getSlots, book as ghlBook, addNote as ghlAddNote, type GhlConfig } from './ghl.js';
 import { handleLead } from './lead.js';
+import { spamReason, rateLimited, recordAlert, clientIp } from './spam.js';
 import { getContent, getContentForAdmin, setCaseStudies, setReviews, setSections, setFeaturedHomes, setGuestPhotos, setTeamMembers, setOwnerTestimonials, setNeighborhoods, publishDrafts, discardDrafts, syncGoogleReviews } from './siteContent.js';
 import { saveDraft, publishArticle, deleteArticle, discardDraft, listRevisions, restoreRevision, NotFound } from './articles.js';
 import { previewPath } from './article.js';
@@ -97,7 +98,16 @@ export const ghl = onRequest({ secrets: [GHL_API_TOKEN], cors: false }, async (r
     const body = req.body ?? {};
     if (body.action === 'book') {
       if (!configured) { res.json({ configured: false }); return; }
-      res.json({ configured: true, ...(await ghlBook(ghlCfg, body)) });
+      // Spam screen before writing a contact + holding a calendar slot.
+      const reason = spamReason(body);
+      if (reason) { console.warn('[LEAD_SPAM] booking dropped:', reason, clientIp(req)); res.json({ configured: true, dropped: true }); return; }
+      if (await rateLimited(getDb(), clientIp(req), 5, 60 * 60 * 1000)) { console.warn('[LEAD_SPAM] booking rate-limited:', clientIp(req)); res.json({ configured: true, dropped: true }); return; }
+      try {
+        res.json({ configured: true, ...(await ghlBook(ghlCfg, body)) });
+      } catch (e) {
+        await recordAlert(getDb(), 'booking_failed', { email: body.email, phone: body.phone, startIso: body.startIso, error: (e as Error).message });
+        throw e;
+      }
       return;
     }
     if (body.action === 'note') {
@@ -122,11 +132,23 @@ export const lead = onRequest({ secrets: [GHL_API_TOKEN, RESEND_API_KEY], cors: 
   if (req.method === 'OPTIONS') { res.status(204).send(''); return; }
   if (req.method !== 'POST') { res.status(405).json({ error: 'POST only' }); return; }
   try {
+    const body = req.body ?? {};
+    const ip = clientIp(req);
+    // Spam screen first — drop junk silently (look like success so bots move on)
+    // and never let it reach the CRM or trigger GHL notification workflows.
+    const reason = spamReason(body);
+    if (reason) { console.warn('[LEAD_SPAM] lead dropped:', reason, ip); res.json({ ok: true, emailed: false, crm: false, dropped: true }); return; }
+    if (await rateLimited(getDb(), ip, 5, 60 * 60 * 1000)) { console.warn('[LEAD_SPAM] lead rate-limited:', ip); res.json({ ok: true, emailed: false, crm: false, dropped: true }); return; }
+
     const settings = await getSettings(getDb());
     const send = makeSendEmail(RESEND_API_KEY.value(), settings);
-    res.json(await handleLead(ghlCfg, send, req.body ?? {}));
+    const result = await handleLead(ghlCfg, send, body);
+    // Loud failure: a real lead that did NOT make it into the CRM is a lost lead.
+    if (!result.crm) await recordAlert(getDb(), 'lead_crm_failed', { type: body.type, email: body.email, phone: body.phone });
+    res.json(result);
   } catch (e) {
     console.error('lead error', e);
+    await recordAlert(getDb(), 'lead_error', { type: (req.body ?? {}).type, error: (e as Error).message });
     res.status(400).json({ error: (e as Error).message || 'Lead submission failed' });
   }
 });
