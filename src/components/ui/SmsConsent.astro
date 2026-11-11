@@ -6,37 +6,68 @@
 //     of submitting the form or of purchase)
 //   - brand name, message types, frequency, "Msg & data rates may apply",
 //     STOP / HELP, and links to the Privacy Policy and Terms of Service
+// Default layout: short checkbox labels that name the message types, with one
+// shared disclosure in small print directly below them, so every required
+// element sits next to the checkboxes without a paragraph on each one.
+// `service` names the customer care topics in words that fit the form's
+// audience (owners by default; realtors and vendors pass their own).
+// `full` keeps the long per-checkbox wording that was submitted with the A2P
+// campaign; /contact (the registered opt-in page) uses it.
 // The field names are read by src/scripts/lead-form.js and owners.js, and the
 // server records them on the HighLevel contact (functions/src/ghl.ts,
 // functions/src/lead.ts). Keep the wording in sync with the SMS sections of
 // /privacy and /terms and with the A2P campaign registration in HighLevel.
 interface Props {
   compact?: boolean;
+  full?: boolean;
+  /** What the customer care texts are about, for this form's audience. */
+  service?: string;
 }
-const { compact = false } = Astro.props;
+const { compact = false, full = false, service = 'inquiry replies, appointment reminders, and property updates' } = Astro.props;
+const brand = 'Scherf Property Management LLC dba Cardo Vacation Rentals';
 ---
 
-<div class:list={['smsc', { 'smsc--compact': compact }]}>
-  <label class="smsc__opt" for="sms-consent-service">
-    <input type="checkbox" id="sms-consent-service" name="smsConsentService" value="yes" />
-    <span>By checking this box, I agree to receive customer care text messages from Scherf Property Management LLC dba Cardo Vacation Rentals at the phone number provided, including inquiry replies, appointment reminders, and property or reservation updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out. Reply HELP for help.</span>
-  </label>
-  <label class="smsc__opt" for="sms-consent-marketing">
-    <input type="checkbox" id="sms-consent-marketing" name="smsConsentMarketing" value="yes" />
-    <span>By checking this box, I agree to receive marketing text messages from Scherf Property Management LLC dba Cardo Vacation Rentals at the phone number provided, including owner offers, market updates, and service news. Message frequency varies. Message and data rates may apply. Reply STOP to opt out. Reply HELP for help.</span>
-  </label>
-  <p class="smsc__fine">Consent to receive text messages is optional and is not a condition of any purchase or service. We do not share your mobile number or SMS opt-in consent with third parties for their marketing purposes. See our <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a> and <a href="/terms" target="_blank" rel="noopener">Terms of Service</a>.</p>
+<div class:list={['smsc', { 'smsc--compact': compact, 'smsc--full': full }]}>
+  {full ? (
+    <>
+      <label class="smsc__opt" for="sms-consent-service">
+        <input type="checkbox" id="sms-consent-service" name="smsConsentService" value="yes" />
+        <span>By checking this box, I agree to receive customer care text messages from {brand} at the phone number provided, including inquiry replies, appointment reminders, and property or reservation updates. Message frequency varies. Message and data rates may apply. Reply STOP to opt out. Reply HELP for help.</span>
+      </label>
+      <label class="smsc__opt" for="sms-consent-marketing">
+        <input type="checkbox" id="sms-consent-marketing" name="smsConsentMarketing" value="yes" />
+        <span>By checking this box, I agree to receive marketing text messages from {brand} at the phone number provided, including owner offers, market updates, and service news. Message frequency varies. Message and data rates may apply. Reply STOP to opt out. Reply HELP for help.</span>
+      </label>
+      <p class="smsc__fine">Consent to receive text messages is optional and is not a condition of any purchase or service. We do not share your mobile number or SMS opt-in consent with third parties for their marketing purposes. See our <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a> and <a href="/terms" target="_blank" rel="noopener">Terms of Service</a>.</p>
+    </>
+  ) : (
+    <>
+      <label class="smsc__opt" for="sms-consent-service">
+        <input type="checkbox" id="sms-consent-service" name="smsConsentService" value="yes" />
+        <span>I agree to receive customer care texts: {service}.</span>
+      </label>
+      <label class="smsc__opt" for="sms-consent-marketing">
+        <input type="checkbox" id="sms-consent-marketing" name="smsConsentMarketing" value="yes" />
+        <span>I agree to receive marketing texts: owner offers, market updates, and service news.</span>
+      </label>
+      <p class="smsc__fine">Both are optional and not a condition of any purchase or service. Texts come from {brand} at the number provided. Message frequency varies. Message and data rates may apply. Reply STOP to opt out, HELP for help. We do not share your number or opt-in with third parties for their marketing. <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a> · <a href="/terms" target="_blank" rel="noopener">Terms</a></p>
+    </>
+  )}
 </div>
 
 <style>
-  .smsc { display: flex; flex-direction: column; gap: 10px; margin: 6px 0 4px; grid-column: 1 / -1; text-align: left; }
-  .smsc__opt { display: flex !important; flex-direction: row !important; align-items: flex-start; gap: 9px; font-size: .86rem; font-weight: 400; line-height: 1.5; color: var(--ink-soft, #3a4048); cursor: pointer; }
-  .smsc__opt input { width: 16px !important; height: 16px; margin: 2px 0 0; padding: 0; flex: none; accent-color: var(--rose); cursor: pointer; }
-  .smsc__fine { margin: 0; font-size: .8rem; line-height: 1.5; color: var(--muted); }
-  .smsc a { color: var(--ink-soft, #3a4048); text-decoration: underline; text-underline-offset: 2px; }
+  .smsc { display: flex; flex-direction: column; gap: 6px; margin: 2px 0 12px; grid-column: 1 / -1; text-align: left; }
+  .smsc__opt { display: flex !important; flex-direction: row !important; align-items: flex-start; gap: 8px; font-size: .82rem; font-weight: 400; line-height: 1.45; color: var(--ink-soft, #3a4048); cursor: pointer; }
+  .smsc__opt input { width: 15px !important; height: 15px; margin: 2px 0 0; padding: 0; flex: none; accent-color: var(--rose); cursor: pointer; }
+  .smsc__fine { margin: 2px 0 0 23px; font-size: .7rem; line-height: 1.45; color: var(--muted); }
+  .smsc a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
   .smsc a:hover { color: var(--rose); }
-  .smsc--compact { gap: 8px; margin: 0; }
-  .smsc--compact .smsc__opt { font-size: .68rem; line-height: 1.45; gap: 8px; }
-  .smsc--compact .smsc__opt input { width: 15px !important; height: 15px; margin-top: 1px; }
-  .smsc--compact .smsc__fine { font-size: .66rem; }
+  .smsc--full { gap: 10px; margin: 6px 0 4px; }
+  .smsc--full .smsc__opt { font-size: .86rem; line-height: 1.5; gap: 9px; }
+  .smsc--full .smsc__opt input { width: 16px !important; height: 16px; }
+  .smsc--full .smsc__fine { margin-left: 0; font-size: .8rem; line-height: 1.5; }
+  .smsc--compact { gap: 5px; margin: 0; }
+  .smsc--compact .smsc__opt { font-size: .72rem; gap: 7px; }
+  .smsc--compact .smsc__opt input { width: 14px !important; height: 14px; margin-top: 1px; }
+  .smsc--compact .smsc__fine { margin-left: 21px; font-size: .64rem; }
 </style>
