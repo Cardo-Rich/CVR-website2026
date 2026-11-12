@@ -61,7 +61,7 @@ const breadcrumbLd = JSON.stringify({
       <div class="cspost-gallery reveal">
         <div class="cspost-gallery__grid">
           {c.gallery.map((src) => (
-            <figure><img src={src} alt={c.name} loading="lazy" /></figure>
+            <figure><img src={src} alt={`${c.name}, ${c.neighborhood}`} loading="lazy" /></figure>
           ))}
         </div>
       </div>
