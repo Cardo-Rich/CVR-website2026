@@ -1,0 +1,35 @@
+{
+  "slug": "mt-ainsworth-coronado-case-study",
+  "title": "Mt Ainsworth: a Clairemont group home with a game room and heated pool",
+  "category": "Case studies",
+  "excerpt": "A five-bedroom Clairemont home with a heated pool and spa, a game room and outdoor dining for twelve.",
+  "readTime": "3 min",
+  "dateFull": "March 26, 2026",
+  "dateShort": "Mar 2026",
+  "img": "/assets/photos/homes/ainsworth-pergola.jpg",
+  "showOnOwners": true,
+  "caseStudy": {
+    "name": "Mt Ainsworth",
+    "hood": "Clairemont",
+    "beds": "5 BR",
+    "revenue": "$268,900",
+    "nightly": "$694 / night",
+    "lift": "+61% over market",
+    "gallery": [
+      "/assets/photos/homes/ainsworth-pergola.jpg",
+      "/assets/photos/portfolio/ainsworth-game-room.jpg",
+      "/assets/photos/homes/ainsworth-pool-spa.jpg",
+      "/assets/photos/homes/ainsworth-firepit.jpg"
+    ]
+  },
+  "seo": {
+    "title": "Mt Ainsworth | Design Case Study | Cardo Vacation Rentals",
+    "description": "A five-bedroom Clairemont home with a heated pool and spa, a game room and outdoor dining for twelve."
+  },
+  "author": {
+    "name": "Cardo Design Team",
+    "initials": "CV"
+  },
+  "heroCaption": "Mt Ainsworth, Clairemont: the pergola over the outdoor dining table.",
+  "bodyHtml": "<p class=\"lede\">Mt Ainsworth is a five-bedroom home on Mount Ainsworth Avenue in Clairemont, set up for family reunions and group trips of up to fourteen guests.</p>\n<p>Cardo's design team built the home around entertaining: a game room with navy walls, a pool table, an arcade cabinet and a dart board, and a pergola over a twelve-seat outdoor dining table with patio heaters.</p>\n<p>The backyard also has a heated pool and spa, a gas fire pit and a nine-foot shuffleboard table. An upstairs bedroom includes a workstation with an adjustable-height desk.</p>\n<div class=\"callout\"><p class=\"eyebrow\">The home</p><p>Clairemont, San Diego. 5 bedrooms, 3.5 bathrooms; sleeps 14 guests. Listed with Cardo since December 2023.</p></div>"
+}
