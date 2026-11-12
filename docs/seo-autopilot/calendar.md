@@ -41,9 +41,9 @@ From a first look on Nov 8, 2026 (re-checked Nov 9):
 
 - Homepage carries every Journal post's full body in a hidden JSON block (`data-blog-seed` in ThingsToDo.astro and owners CaseStudies.astro, used by the admin editor), about 160 KB today and growing ~3 posts a week. Not visible to search engines as content, but it slows the page. Admin app area: flagged for Rich.
 - Empty or generic image alt text on the homepage (Explore cards use the title as alt).
-- Journal: related-posts block picks the next 3 posts by index, not by topic or audience.
 - GTM noscript reference renders as a visible link (tracking: flag for Rich, off limits).
 - Done Nov 9: BlogPosting image now an absolute URL; guest-category posts get the booking CTA (PR #69).
+- Done Nov 12: Journal related-posts block now picks by category, audience and neighborhood instead of list position (PR #76).
 - Done Nov 11: Journal index H1, title and meta now cover owners and guests (PR #75).
 - Done Nov 10: homepage H1 now "Vacation rentals in San Diego" (was "Vacation in San Diego").
 - Checked Nov 10, not an issue: the homepage no longer renders the Reviews block; no duplicated review cards or hero in live HTML.
