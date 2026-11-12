@@ -11,13 +11,14 @@ import Footer from '../../../components/sections/Footer.astro';
 import ArticleView from '../../../components/blog/ArticleView.astro';
 import { getPublishedArticles, getDraftArticles } from '../../../lib/content/articles';
 import { getNeighborhoods } from '../../../lib/content/neighborhoods';
+import { pickRelated } from '../../../lib/content/related';
 
 export async function getStaticPaths() {
   const [drafts, published, neighborhoods] = await Promise.all([getDraftArticles(), getPublishedArticles(), getNeighborhoods()]);
   return drafts.map((a) => {
     const haystack = `${a.title} ${a.excerpt}`;
     const areas = neighborhoods.filter((nh) => haystack.includes(nh.name)).slice(0, 3);
-    const related = published.filter((p) => p.slug !== a.slug).slice(0, 3);
+    const related = pickRelated(a, published, neighborhoods.map((nh) => nh.name));
     return { params: { key: a.previewKey }, props: { a, related, areas } };
   });
 }

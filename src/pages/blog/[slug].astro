@@ -6,18 +6,20 @@ import ArticleView from '../../components/blog/ArticleView.astro';
 import { getPublishedArticles } from '../../lib/content/articles';
 import { getNeighborhoods } from '../../lib/content/neighborhoods';
 import { categoryGroups } from '../../data/blog';
+import { pickRelated } from '../../lib/content/related';
 
 export async function getStaticPaths() {
   const articles = await getPublishedArticles();
   const neighborhoods = await getNeighborhoods();
-  return articles.map((a, i) => {
+  const areaNames = neighborhoods.map((nh) => nh.name);
+  return articles.map((a) => {
     // Neighborhoods this article names (title/excerpt) → link through to those
     // market pages. Precise by design: only areas the post is actually about.
     const haystack = `${a.title} ${a.excerpt}`;
     const areas = neighborhoods.filter((nh) => haystack.includes(nh.name)).slice(0, 3);
     return {
       params: { slug: a.slug },
-      props: { a, related: [articles[(i+1)%articles.length], articles[(i+2)%articles.length], articles[(i+3)%articles.length]], areas },
+      props: { a, related: pickRelated(a, articles, areaNames), areas },
     };
   });
 }
