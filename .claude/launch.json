@@ -8,6 +8,13 @@
       "port": 4321
     },
     {
+      "name": "astro-dev-offline",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "env": { "BLOG_FIXTURE": "scripts/data/blog-articles-2026-09-17.json" },
+      "port": 4321
+    },
+    {
       "name": "admin-dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "admin", "run", "dev"],

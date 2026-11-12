@@ -96,7 +96,7 @@ export const faqs = [
   },
   {
     q: 'How fast can my home go live?',
-    a: 'Most homes launch within a few weeks: onboarding and permitting, in-house design and photography, listing build-out, and pricing setup before your first guest.',
+    a: 'Most homes launch within a few weeks: onboarding and permitting, a free design consultation, professional photography, listing build-out, and pricing setup before your first guest.',
   },
   {
     q: 'Will I still control my calendar?',
