@@ -5,7 +5,7 @@ add ideas, or strike ones he does not want.
 
 ## Audience balance (last 10 posts)
 
-Owner: 1 · Guest: 1 (target roughly 50/50)
+Owner: 1 · Guest: 2 (target roughly 50/50)
 
 ## Upcoming posts
 
@@ -13,9 +13,10 @@ Owner: 1 · Guest: 1 (target roughly 50/50)
 |---|---|---|---|---|
 | Mon Nov 9 | San Diego holiday events, December 2026 | Guest | No | Published (/blog/san-diego-holiday-events-december-2026) |
 | Wed Nov 11 | Buying or selling a San Diego home with an STRO license (non-transferability) | Owner | Optional example (no answer; written from city rules) | Published (/blog/selling-or-buying-a-home-with-a-san-diego-stro-license) |
-| Fri Nov 13 | San Diego with a dog: beaches, patios, pet-friendly stays | Guest | No (link booking.cardorentals.com/s?petAllowed=true) | Planned |
+| Fri Nov 13 | San Diego with a dog: beaches, patios, pet-friendly stays | Guest | No | Published (/blog/san-diego-with-a-dog) |
 | Mon Nov 16 | Is San Diego oversaturated? STR vs long-term rental, honest numbers | Owner | No | Planned |
-| Wed Nov 18 | Best San Diego beaches by kind of trip (families, surfers, dogs) | Guest | No | Planned |
+| Wed Nov 18 | Best San Diego beaches by kind of trip (families, surfers, quiet; link the dog post for dogs) | Guest | No | Planned |
+| Fri Nov 20 | Mission Beach Tier 4 STRO licenses and the waitlist, explained (primary sources only) | Owner | No | Planned |
 
 ## Backlog
 
@@ -24,7 +25,6 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 
 - Owner: Does hiring a manager affect the short-term rental tax loophole? (primary sources only)
 - Owner: San Diego revenue benchmarks by neighborhood, 2026
-- Owner: Mission Beach Tier 4 waitlist explained
 - Owner: Coronado, Oceanside, Carlsbad, Encinitas, Del Mar rules (one short page each)
 - Guest: A rainy-day San Diego list
 - Guest: Neighborhood guides for Ocean Beach, Point Loma, North Park
@@ -43,6 +43,9 @@ From a first look on Nov 8, 2026 (re-checked Nov 9):
 - Empty or generic image alt text on the homepage (Explore cards use the title as alt).
 - GTM noscript reference renders as a visible link (tracking: flag for Rich, off limits).
 - Done Nov 9: BlogPosting image now an absolute URL; guest-category posts get the booking CTA (PR #69).
+- Overlong meta descriptions remain on /owners/management-fees (193 chars, fee page: flag for Rich), /owners/san-diego-stro-license (221, dynamic tracker text), several Journal posts (165–211) and the six neighborhood pages (162–172). Owner page titles run 70–82 chars because of the " | Cardo Vacation Rentals" suffix.
+- Done Nov 13: trimmed meta descriptions on /owners/switch, /owners/best-vacation-rental-management-san-diego and /owners/cost-segregation to 154–156 chars (PR #79).
+- Checked Nov 13, minor: homepage alt text is descriptive except the decorative hero (empty alt, fine); Explore cards use the post title, acceptable.
 - Done Nov 12: Journal related-posts block now picks by category, audience and neighborhood instead of list position (PR #76).
 - Done Nov 11: Journal index H1, title and meta now cover owners and guests (PR #75).
 - Done Nov 10: homepage H1 now "Vacation rentals in San Diego" (was "Vacation in San Diego").
