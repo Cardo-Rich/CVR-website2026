@@ -1,0 +1,35 @@
+{
+  "slug": "falcon-la-jolla-case-study",
+  "title": "Falcon: a Mission Hills craftsman furnished in a Japandi style",
+  "category": "Case studies",
+  "excerpt": "A historic craftsman between Hillcrest and Mission Hills, furnished in a Japandi style, with a separate casita and a private hot tub.",
+  "readTime": "3 min",
+  "dateFull": "June 24, 2026",
+  "dateShort": "Jun 2026",
+  "img": "/assets/photos/homes/falcon-living.jpg",
+  "showOnOwners": true,
+  "caseStudy": {
+    "name": "Falcon",
+    "hood": "Mission Hills",
+    "beds": "4 BR",
+    "revenue": "$214,800",
+    "nightly": "$589 / night",
+    "lift": "+57% over market",
+    "gallery": [
+      "/assets/photos/homes/falcon-living.jpg",
+      "/assets/photos/homes/falcon-dining.jpg",
+      "/assets/photos/homes/falcon-sitting.jpg",
+      "/assets/photos/homes/falcon-hot-tub.jpg"
+    ]
+  },
+  "seo": {
+    "title": "Falcon | Design Case Study | Cardo Vacation Rentals",
+    "description": "A historic craftsman between Hillcrest and Mission Hills, furnished in a Japandi style, with a separate casita and a private hot tub."
+  },
+  "author": {
+    "name": "Cardo Design Team",
+    "initials": "CV"
+  },
+  "heroCaption": "Falcon, Mission Hills: the craftsman living room.",
+  "bodyHtml": "<p class=\"lede\">Falcon is a historic craftsman home on Falcon Street, between Hillcrest and Mission Hills. The main house keeps its original wood trim, fireplace and wide windows, and a separate casita on the lot gives larger groups more privacy.</p>\n<p>Cardo's design team furnished it in a Japandi style: oak tables, cream upholstery and simple lines that leave the original woodwork in view. Outside, patio seating and a six-person hot tub sit beside the casita.</p>\n<p>The home sleeps eight across four bedrooms and two bathrooms, with shops, restaurants and parks within walking distance.</p>\n<div class=\"callout\"><p class=\"eyebrow\">The project</p><p>$75,000 all-in: furniture &amp; decor, paint &amp; handyman, art &amp; styling, outdoor, kitchen kit, and white-linen setup, recovered by a nightly rate 57% over market.</p></div>\n<div class=\"callout\"><p class=\"eyebrow\">The home</p><p>Mission Hills, San Diego. 4 bedrooms, 2 bathrooms; sleeps 8 guests. Listed with Cardo since August 2025.</p></div>"
+}

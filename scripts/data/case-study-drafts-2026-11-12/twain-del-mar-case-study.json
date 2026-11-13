@@ -1,0 +1,35 @@
+{
+  "slug": "twain-del-mar-case-study",
+  "title": "Twain: a remodeled Allied Gardens home with a sunset hot tub",
+  "category": "Case studies",
+  "excerpt": "A remodeled three-bedroom in Allied Gardens with a hot tub on a west-facing deck.",
+  "readTime": "3 min",
+  "dateFull": "May 8, 2026",
+  "dateShort": "May 2026",
+  "img": "/assets/photos/homes/twain-hot-tub.jpg",
+  "showOnOwners": true,
+  "caseStudy": {
+    "name": "Twain",
+    "hood": "Allied Gardens",
+    "beds": "3 BR",
+    "revenue": "$192,500",
+    "nightly": "$512 / night",
+    "lift": "+48% over market",
+    "gallery": [
+      "/assets/photos/homes/twain-hot-tub.jpg",
+      "/assets/photos/homes/twain-living.jpg",
+      "/assets/photos/homes/twain-dining.jpg",
+      "/assets/photos/homes/twain-deck.jpg"
+    ]
+  },
+  "seo": {
+    "title": "Twain | Design Case Study | Cardo Vacation Rentals",
+    "description": "A remodeled three-bedroom in Allied Gardens with a hot tub on a west-facing deck."
+  },
+  "author": {
+    "name": "Cardo Design Team",
+    "initials": "CV"
+  },
+  "heroCaption": "Twain, Allied Gardens: the hot tub on the back deck.",
+  "bodyHtml": "<p class=\"lede\">Twain is a newly remodeled three-bedroom home in Allied Gardens, about ten minutes from San Diego State University and fifteen from La Mesa Village.</p>\n<p>The home is furnished around an open layout: green sofas and a white brick fireplace in the living room, and a dining room set for six. The backyard deck has outdoor dining, a BBQ grill and a hot tub that faces the sunset.</p>\n<p>It sleeps six, with central air conditioning, dedicated parking and an in-unit washer and dryer.</p>\n<div class=\"callout\"><p class=\"eyebrow\">The project</p><p>$66,400 all-in, recovered by a nightly rate 48% over market.</p></div>\n<div class=\"callout\"><p class=\"eyebrow\">The home</p><p>Allied Gardens, San Diego. 3 bedrooms, 1 bathroom; sleeps 6 guests. Listed with Cardo since November 2025.</p></div>"
+}

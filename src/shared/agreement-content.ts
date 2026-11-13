@@ -227,6 +227,7 @@ export const SECTIONS: Section[] = [
     n: 14,
     title: 'Photos, Listings & Intellectual Property',
     blocks: [
+      { p: 'Cardo provides professional listing photography for the Home at launch, and updates it as needed, at no charge beyond the Management Fee. Full design and furnishing services are not included; Cardo quotes them separately under their own agreement.' },
       { p: 'Photography, video, and listing copy (titles and descriptions) created or paid for by Cardo are Cardo’s property, and Cardo may use them for marketing and training. Imagery you pay for yourself remains yours. You won’t use Cardo-owned materials without our written permission.' },
     ],
   },

@@ -1,0 +1,35 @@
+{
+  "slug": "nute-pacific-beach-case-study",
+  "title": "Nute: a Bay Ho pool home with views across Mission Bay",
+  "category": "Case studies",
+  "excerpt": "A Bay Ho home with a private pool and views across Mission Bay, furnished with bold color and two living rooms.",
+  "readTime": "3 min",
+  "dateFull": "May 20, 2026",
+  "dateShort": "May 2026",
+  "img": "/assets/photos/homes/nute-pool.jpg",
+  "showOnOwners": true,
+  "caseStudy": {
+    "name": "Nute",
+    "hood": "Bay Ho",
+    "beds": "3 BR",
+    "revenue": "$158,300",
+    "nightly": "$412 / night",
+    "lift": "+44% over market",
+    "gallery": [
+      "/assets/photos/homes/nute-pool.jpg",
+      "/assets/photos/homes/nute-living.jpg",
+      "/assets/photos/homes/nute-bedroom.jpg",
+      "/assets/photos/homes/nute-dining.jpg"
+    ]
+  },
+  "seo": {
+    "title": "Nute | Design Case Study | Cardo Vacation Rentals",
+    "description": "A Bay Ho home with a private pool and views across Mission Bay, furnished with bold color and two living rooms."
+  },
+  "author": {
+    "name": "Cardo Design Team",
+    "initials": "CV"
+  },
+  "heroCaption": "Nute, Bay Ho: the pool patio over Mission Bay.",
+  "bodyHtml": "<p class=\"lede\">Nute sits on a hillside street in Bay Ho, with a private pool on a patio that looks out over Mission Bay.</p>\n<p>Cardo's design team furnished it with bold color: a navy sofa and patterned rug in the second living room, a primary suite with a king bed and a soaking tub, and a dining area set against the large windows.</p>\n<p>The home sleeps eight across three bedrooms and two bathrooms, a short drive from the beaches and Mission Bay Park.</p>\n<div class=\"callout\"><p class=\"eyebrow\">The project</p><p>$49,300 all-in, recovered by a nightly rate 44% over market and a calendar that filled in weeks.</p></div>\n<div class=\"callout\"><p class=\"eyebrow\">The home</p><p>Bay Ho, San Diego. 3 bedrooms, 2 bathrooms; sleeps 8 guests. Listed with Cardo since April 2025.</p></div>"
+}

@@ -1,0 +1,95 @@
+---
+// ===================== PHOTOGRAPHY (included in the commission) =====================
+// A portfolio of listing photos Cardo produced for homes it manages, at no
+// separate charge to the owner, plus a link to the Instagram account where
+// those homes are promoted. Images come from the Home Designs brochure and
+// the Guesty listing photos (public/assets/photos/portfolio/, homes/).
+const INSTAGRAM = 'https://www.instagram.com/cardovacationrentals/';
+
+const photos = [
+  { src: '/assets/photos/portfolio/pergola-pool-dining.jpg', alt: 'Outdoor dining table set under a pergola with patio heaters, beside a pool overlooking the hills', area: 'feature' },
+  { src: '/assets/photos/portfolio/falcon-living-tall.jpg', alt: 'Craftsman living room with a round oak coffee table and a cream sofa', area: 'tall' },
+  { src: '/assets/photos/portfolio/falcon-dining.jpg', alt: 'Dining room with an oak table, bench seating and original wood trim' },
+  { src: '/assets/photos/portfolio/bed-towel-detail.jpg', alt: 'Rolled white towels and guest amenities on a made bed with a rust throw' },
+  { src: '/assets/photos/homes/kane-pool.jpg', alt: 'Backyard pool with floats and a patio, at a five-bedroom home in Bay Ho' },
+  { src: '/assets/photos/portfolio/nute-living.jpg', alt: 'Living room with a navy sofa, a red patterned rug and a leather lounge chair' },
+  { src: '/assets/photos/homes/twain-hot-tub.jpg', alt: 'Hot tub on a deck at sunset, overlooking the hills' },
+  { src: '/assets/photos/portfolio/ainsworth-game-room.jpg', alt: 'Game room with a pool table, navy walls and framed prints' },
+  { src: '/assets/photos/portfolio/floral-bedroom.jpg', alt: 'Bright bedroom with white linens and a large floral painting' },
+  { src: '/assets/photos/homes/kane-bedroom.jpg', alt: 'Bedroom with a green accent wall, a wood headboard and abstract art' },
+  { src: '/assets/photos/homes/twain-living.jpg', alt: 'Living room with green sofas, a white brick fireplace and a round coffee table' },
+  { src: '/assets/photos/portfolio/falcon-sitting-room.jpg', alt: 'Sitting room with two armchairs in front of glass-paned French doors' },
+];
+
+const included = [
+  { t: 'A professional shoot before launch', d: 'Cardo books and directs the photographer. The edited set is delivered for Airbnb, Vrbo, Booking.com and our direct-booking site.' },
+  { t: 'Promotion on Instagram', d: 'Each home is featured on the Cardo Vacation Rentals account, in front of past guests and new travelers.' },
+  { t: 'Updated photos as the home changes', d: 'When rooms are refreshed or the season changes, the listing photos are updated to match.' },
+];
+---
+
+<section class="section-pad pfolio" id="photography" data-screen-label="Photography">
+  <div class="section-wrap">
+    <div class="pfolio__head">
+      <div class="reveal">
+        <p class="eyebrow">Photography &amp; promotion</p>
+        <h2>Professional photography is included in the 20%.</h2>
+        <p class="lede">Every photo on this page was taken for a home Cardo manages, at no separate charge to the owner. The same images carry the listing on every booking channel and appear on our Instagram, where we promote each home.</p>
+      </div>
+      <ul class="pfolio__list reveal">
+        {included.map((i) => (
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+            <div><b>{i.t}</b><span>{i.d}</span></div>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="pfolio__grid">
+      {photos.map((p) => (
+        <figure class={`pfolio__tile reveal${p.area ? ` pfolio__tile--${p.area}` : ''}`}>
+          <img src={p.src} alt={p.alt} loading="lazy" decoding="async" />
+        </figure>
+      ))}
+    </div>
+
+    <div class="pfolio__ig reveal">
+      <a class="btn btn-lg" href={INSTAGRAM} target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        See how we promote homes on Instagram
+      </a>
+      <a class="pfolio__handle" href={INSTAGRAM} target="_blank" rel="noopener">@cardovacationrentals</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pfolio { background: var(--paper); }
+  .pfolio__head { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: end; margin-bottom: 44px; }
+  .pfolio__head h2 { margin: 8px 0 16px; }
+  .pfolio__head .lede { margin: 0; max-width: 560px; }
+  .pfolio__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+  .pfolio__list li { display: grid; grid-template-columns: 18px 1fr; gap: 12px; align-items: start; }
+  .pfolio__list svg { margin-top: 3px; }
+  .pfolio__list b { display: block; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+  .pfolio__list span { color: var(--muted); font-size: .95rem; line-height: 1.5; }
+
+  .pfolio__grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: clamp(150px, 15vw, 210px); gap: 10px; }
+  .pfolio__tile { margin: 0; overflow: hidden; background: var(--cream); }
+  .pfolio__tile img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s var(--ease); }
+  .pfolio__tile:hover img { transform: scale(1.04); }
+  .pfolio__tile--feature { grid-column: span 2; grid-row: span 2; }
+  .pfolio__tile--tall { grid-row: span 2; }
+
+  .pfolio__ig { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin-top: 36px; }
+  .pfolio__ig .btn { display: inline-flex; align-items: center; gap: 10px; }
+  .pfolio__handle { color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--line-strong); padding-bottom: 2px; }
+  .pfolio__handle:hover { color: var(--rose); border-color: var(--rose); }
+
+  @media (max-width: 900px) {
+    .pfolio__head { grid-template-columns: 1fr; gap: 28px; }
+    .pfolio__grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: clamp(140px, 34vw, 220px); }
+  }
+  @media (prefers-reduced-motion: reduce) { .pfolio__tile img { transition: none; } .pfolio__tile:hover img { transform: none; } }
+</style>
