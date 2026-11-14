@@ -35,9 +35,9 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Bluff-top homes & coastal estates',
     img: '/assets/photos/imported/unsplash-1613490493576-7fde63acd811-1600.jpg',
     seo: {
-      title: 'La Jolla Airbnb & Vacation Rental Management | Cardo San Diego',
+      title: 'La Jolla Airbnb & Vacation Rental Management | Cardo',
       description:
-        'Short-term rental management inLa Jolla, San Diego. Cardo designs, markets, and manages La Jolla vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management in La Jolla, San Diego: in-house design, dynamic pricing and hotel-grade turnovers for bluff and cove-view homes since 2013.',
     },
     intro:
       "La Jolla is San Diego's most prestigious coastal enclave: bluff-top estates, cove views, and a village that draws affluent, design-conscious travelers year-round. It's a market where finish quality and presentation, not just location, decide the nightly rate.",
@@ -91,9 +91,9 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Walkable, high-occupancy favorites',
     img: '/assets/photos/imported/unsplash-1600596542815-ffad4c1539a9-1600.jpg',
     seo: {
-      title: 'Pacific Beach Airbnb & Vacation Rental Management | Cardo San Diego',
+      title: 'Pacific Beach Airbnb & Vacation Rental Management | Cardo',
       description:
-        'Short-term rental management inPacific Beach, San Diego. Cardo designs, markets, and manages Pacific Beach vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management in Pacific Beach, San Diego: design, pricing and 24/7 guest care for walkable homes near the beach and boardwalk since 2013.',
     },
     intro:
       "Pacific Beach is San Diego's most energetic short-term rental market: walkable, beach-adjacent, and in near-constant demand from younger travelers and groups. Occupancy runs high here, and the homes that win are the ones designed to feel bright, easy, and effortlessly coastal.",
@@ -147,9 +147,9 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Boardwalk demand & beachfront homes',
     img: '/assets/photos/imported/unsplash-1502136969935-8d8eef54d77b-1600.jpg',
     seo: {
-      title: 'Mission Beach Airbnb & Vacation Rental Management | Cardo San Diego',
+      title: 'Mission Beach Airbnb & Vacation Rental Management | Cardo',
       description:
-        'Short-term rental management inMission Beach, San Diego. Cardo designs, markets, and manages Mission Beach vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management in Mission Beach, San Diego: pricing for the summer peak, design and guest care for boardwalk and beachfront homes since 2013.',
     },
     intro:
       "Mission Beach is a classic San Diego beach market: boardwalk frontage, sand on your doorstep, and summer demand that fills calendars months out. Beachfront and near-beach homes here can command a real premium when they're presented and run well.",
@@ -203,9 +203,9 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Racetrack-season premium homes',
     img: '/assets/photos/imported/unsplash-1600607687939-ce8a6c25118c-1600.jpg',
     seo: {
-      title: 'Del Mar Airbnb & Vacation Rental Management | Cardo San Diego',
+      title: 'Del Mar Airbnb & Vacation Rental Management | Cardo',
       description:
-        'Short-term rental management inDel Mar, San Diego. Cardo designs, markets, and manages Del Mar vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management in Del Mar: pricing set ahead of racing season and fair dates, plus in-house design and guest care. Superhost since 2013.',
     },
     intro:
       "Del Mar blends quiet coastal affluence with event-driven demand spikes: the summer racing season, fairgrounds events, and holiday weekends all move rate independently of the calendar. It's a market that rewards pricing that anticipates the windows rather than reacting to them.",
@@ -259,9 +259,9 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Surf-town charm, strong year-round',
     img: '/assets/photos/imported/unsplash-1505693416388-ac5ce068fe85-1600.jpg',
     seo: {
-      title: 'Encinitas Airbnb & Vacation Rental Management | Cardo San Diego',
+      title: 'Encinitas Airbnb & Vacation Rental Management | Cardo',
       description:
-        'Short-term rental management inEncinitas, San Diego. Cardo designs, markets, and manages Encinitas vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management in Encinitas: in-house design, year-round pricing and guest care for homes near beaches and downtown. Superhost since 2013.',
     },
     intro:
       "Encinitas is North County's surf-town gem: laid-back, design-forward, and increasingly in demand from travelers looking for character over corporate. Its year-round mild weather and walkable downtown keep occupancy steady well beyond the summer peak.",
@@ -315,9 +315,9 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Family coastal & North County demand',
     img: '/assets/photos/imported/unsplash-1571003123894-1f0594d2b5d9-1600.jpg',
     seo: {
-      title: 'Carlsbad Airbnb & Vacation Rental Management | Cardo San Diego',
+      title: 'Carlsbad Airbnb & Vacation Rental Management | Cardo',
       description:
-        'Short-term rental management inCarlsbad, San Diego. Cardo designs, markets, and manages Carlsbad vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management in Carlsbad: design, pricing and guest care for larger family homes near North County beaches and attractions, since 2013.',
     },
     intro:
       "Carlsbad is North County's family-coastal anchor: beaches, LEGOLAND, the flower fields, and a steady stream of multi-generational travelers who book larger homes for longer stays. It's a market built for comfortable, family-ready properties.",
@@ -371,9 +371,9 @@ export const neighborhoods: Neighborhood[] = [
     note: 'Island prestige & event demand',
     img: '/assets/photos/imported/unsplash-1512917774080-9991f1c4c750-1600.jpg',
     seo: {
-      title: 'Coronado Airbnb & Vacation Rental Management | Cardo San Diego',
+      title: 'Coronado Airbnb & Vacation Rental Management | Cardo',
       description:
-        'Short-term rental management inCoronado, San Diego. Cardo designs, markets, and manages Coronado vacation rentals to beat the market, 5-star Superhost since 2013.',
+        'Short-term rental management in Coronado: event-aware pricing, in-house design and hotel-grade turnovers for homes on the island. Superhost since 2013.',
     },
     intro:
       "Coronado is San Diego's island of prestige: a storied beach town with some of the region's highest nightly rates and a guest base that expects the experience to match. Demand is strong and event-driven, and presentation is everything.",
