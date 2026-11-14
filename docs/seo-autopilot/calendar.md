@@ -43,7 +43,8 @@ From a first look on Nov 8, 2026 (re-checked Nov 9):
 - Empty or generic image alt text on the homepage (Explore cards use the title as alt).
 - GTM noscript reference renders as a visible link (tracking: flag for Rich, off limits).
 - Done Nov 9: BlogPosting image now an absolute URL; guest-category posts get the booking CTA (PR #69).
-- Overlong meta descriptions remain on /owners/management-fees (193 chars, fee page: flag for Rich), /owners/san-diego-stro-license (221, dynamic tracker text), several Journal posts (165–211) and the six neighborhood pages (162–172). Owner page titles run 70–82 chars because of the " | Cardo Vacation Rentals" suffix.
+- Overlong meta descriptions remain on /owners/management-fees (193 chars, fee page: flag for Rich), /owners/san-diego-stro-license (221, dynamic tracker text) and several Journal posts (165–211).
+- Done Nov 14: all seven neighborhood pages had a missing space in the meta description ("inLa Jolla"), 160–172 chars, and Del Mar/Encinitas/Carlsbad/Coronado labelled "San Diego"; now unique 150–155 char descriptions and titles 51–57 chars (PR #80). Owner page titles run 70–82 chars because of the " | Cardo Vacation Rentals" suffix.
 - Done Nov 13: trimmed meta descriptions on /owners/switch, /owners/best-vacation-rental-management-san-diego and /owners/cost-segregation to 154–156 chars (PR #79).
 - Checked Nov 13, minor: homepage alt text is descriptive except the decorative hero (empty alt, fine); Explore cards use the post title, acceptable.
 - Done Nov 12: Journal related-posts block now picks by category, audience and neighborhood instead of list position (PR #76).
