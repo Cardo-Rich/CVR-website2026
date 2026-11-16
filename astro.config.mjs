@@ -1,10 +1,34 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { getPublishedArticles } from './src/lib/content/articles.ts';
 
-// Cardo Vacation Rentals marketing site.
-// Static-first: the homepage is content + light client islands (header frost,
-// FAQ accordion, lead form). No UI framework needed — plain Astro + vanilla JS.
+// <lastmod> for Journal URLs in the sitemap, so crawlers can tell which posts
+// are new or were refreshed without re-fetching all of them. Each post uses its
+// Firestore updatedAt (set on every save/publish), falling back to its display
+// date; /blog uses the newest post's value. Read from the same source the pages
+// build from (Firestore, or BLOG_FIXTURE offline). It is loaded here, while the
+// config is evaluated, because the sitemap's serialize step runs after Astro has
+// closed the module runner that config imports depend on. Builds only; on any
+// failure the sitemap is written without lastmod rather than not at all.
+/** @type {Map<string, string>} */
+const journalLastmod = new Map();
+if (process.argv.includes('build')) {
+  try {
+    for (const a of await getPublishedArticles()) {
+      const raw = a.updatedAt || a.date || a.dateFull;
+      const t = raw ? Date.parse(raw) : NaN;
+      if (isNaN(t)) continue;
+      const iso = new Date(t).toISOString();
+      journalLastmod.set(`https://cardorentals.com/blog/${a.slug}`, iso);
+      const newest = journalLastmod.get('https://cardorentals.com/blog');
+      if (!newest || iso > newest) journalLastmod.set('https://cardorentals.com/blog', iso);
+    }
+  } catch (err) {
+    console.warn('[sitemap] Journal lastmod skipped:', err instanceof Error ? err.message : err);
+  }
+}
+
 export default defineConfig({
   site: 'https://cardorentals.com',
   // Firebase Hosting serves this site with `cleanUrls: true` + `trailingSlash:
@@ -27,6 +51,10 @@ export default defineConfig({
         !page.includes('/careers') &&
         // Unlisted, noindex previews of unpublished Journal drafts.
         !page.includes('/blog/preview/'),
+      serialize: (item) => {
+        const lastmod = journalLastmod.get(item.url.replace(/\/$/, ''));
+        return lastmod ? { ...item, lastmod } : item;
+      },
     }),
   ],
   // /portal is the owner-login entry. Interim: a branded splash
