@@ -5,7 +5,7 @@ add ideas, or strike ones he does not want.
 
 ## Audience balance (last 10 posts)
 
-Owner: 1 · Guest: 2 (target roughly 50/50)
+Owner: 2 · Guest: 2 (autopilot posts since Nov 9; target roughly 50/50)
 
 ## Upcoming posts
 
@@ -14,9 +14,10 @@ Owner: 1 · Guest: 2 (target roughly 50/50)
 | Mon Nov 9 | San Diego holiday events, December 2026 | Guest | No | Published (/blog/san-diego-holiday-events-december-2026) |
 | Wed Nov 11 | Buying or selling a San Diego home with an STRO license (non-transferability) | Owner | Optional example (no answer; written from city rules) | Published (/blog/selling-or-buying-a-home-with-a-san-diego-stro-license) |
 | Fri Nov 13 | San Diego with a dog: beaches, patios, pet-friendly stays | Guest | No | Published (/blog/san-diego-with-a-dog) |
-| Mon Nov 16 | Is San Diego oversaturated? STR vs long-term rental, honest numbers | Owner | No | Planned |
+| Mon Nov 16 | Is San Diego oversaturated? STR vs long-term rental, honest numbers | Owner | No | Published (/blog/is-san-diego-oversaturated-short-term-vs-long-term-rental) |
 | Wed Nov 18 | Best San Diego beaches by kind of trip (families, surfers, quiet; link the dog post for dogs) | Guest | No | Planned |
 | Fri Nov 20 | Mission Beach Tier 4 STRO licenses and the waitlist, explained (primary sources only) | Owner | No | Planned |
+| Mon Nov 23 | A rainy-day San Diego list (museums, aquariums, indoor food halls; winter timing) | Guest | No | Planned |
 
 ## Backlog
 
@@ -26,7 +27,6 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 - Owner: Does hiring a manager affect the short-term rental tax loophole? (primary sources only)
 - Owner: San Diego revenue benchmarks by neighborhood, 2026
 - Owner: Coronado, Oceanside, Carlsbad, Encinitas, Del Mar rules (one short page each)
-- Guest: A rainy-day San Diego list
 - Guest: Neighborhood guides for Ocean Beach, Point Loma, North Park
 
 ## Open questions for Rich
@@ -39,6 +39,10 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 
 From a first look on Nov 8, 2026 (re-checked Nov 9):
 
+- Done Nov 16: sitemap had no `<lastmod>`; Journal URLs now carry each post's Firestore updatedAt and /blog the newest (PR #83, checked on preview).
+- Found Nov 16: the April post "STRO permits, TOT, and staying compliant" says the TMD assessment "rides alongside" every STR; the Treasurer's TOT page says TMD applies to lodging businesses with 70+ rooms, and TOT is now 11.75/12.75/13.75% by zone (since May 1, 2025). Needs a refresh (post lives only in Firestore; needs its JSON exported first).
+- Found Nov 16: owner subpages (/owners/switch, /management-fees, /san-diego-stro-license, /cost-segregation, /best-vacation-rental-management-san-diego) have no BreadcrumbList schema; neighborhood pages and Journal posts do.
+- Found Nov 16: Journal BlogPosting `dateModified` always equals `datePublished`; could use Firestore updatedAt (same source as the new sitemap lastmod).
 - Homepage carries every Journal post's full body in a hidden JSON block (`data-blog-seed` in ThingsToDo.astro and owners CaseStudies.astro, used by the admin editor), about 160 KB today and growing ~3 posts a week. Not visible to search engines as content, but it slows the page. Admin app area: flagged for Rich.
 - Empty or generic image alt text on the homepage (Explore cards use the title as alt).
 - GTM noscript reference renders as a visible link (tracking: flag for Rich, off limits).
