@@ -15,13 +15,14 @@ interface LeadMeta {
   tags: string[];     // GHL contact tags
   notify: string;     // internal recipient for the notification email
   pipeline?: string;  // if set, create an opportunity in this (by-name) pipeline
+  message?: string;   // form field holding the visitor's message: required, and shown first in the email
 }
 
 // Recipients are fixed server-side so the public endpoint can't be used to email
 // arbitrary addresses.
 const LEADS: Record<LeadType, LeadMeta> = {
   referral: { label: 'Realtor referral', source: 'Realtor Referral Program', tags: ['Website Lead', 'Realtor Referral'], notify: 'sales@cardorentals.com' },
-  vendor:   { label: 'Vendor application', source: 'Vendor Application', tags: ['Website Lead', 'Vendor'], notify: 'owners@cardorentals.com' },
+  vendor:   { label: 'Vendor application', source: 'Vendor Application', tags: ['Website Lead', 'Vendor'], notify: 'sales@cardorentals.com', message: 'About' },
   owner:    { label: 'Owner estimate request', source: 'Case Study Page', tags: ['Website Lead', 'Owner Lead', 'Case Study'], notify: 'sales@cardorentals.com' },
   contact:  { label: 'Website contact message', source: 'Contact Page', tags: ['Website Lead', 'Contact Form'], notify: 'service@cardorentals.com' },
   costseg:  { label: 'Cost segregation inquiry', source: 'Cost Segregation', tags: ['Website Lead', 'Cost Segregation'], notify: 'sales@cardorentals.com', pipeline: 'Cost Segregation' },
@@ -47,6 +48,11 @@ function fieldsHtml(fields: Record<string, string>): string {
   return `<table style="border-collapse:collapse;font-size:14px;line-height:1.5;">${rows}</table>`;
 }
 
+function messageHtml(message: string): string {
+  return `<p style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#6B6D78;margin:0 0 6px;">Message</p>
+    <div style="font-size:15px;line-height:1.55;color:#0E1528;white-space:pre-wrap;background:#F6F4EF;border-radius:8px;padding:12px 14px;margin:0 0 20px;">${escHtml(message)}</div>`;
+}
+
 type SendEmail = (to: string[], subject: string, html: string) => Promise<boolean>;
 
 export async function handleLead(cfg: GhlConfig, sendEmail: SendEmail, input: LeadInput): Promise<{ ok: boolean; emailed: boolean; crm: boolean }> {
@@ -58,6 +64,8 @@ export async function handleLead(cfg: GhlConfig, sendEmail: SendEmail, input: Le
   const email = (input.email || '').trim();
   const phone = (input.phone || '').trim();
   if (!name && !email && !phone) throw new Error('A name, email, or phone is required');
+  const message = meta.message ? String(fields[meta.message] || '').trim() : '';
+  if (meta.message && !message) throw new Error('A message is required');
   const { firstName, lastName } = splitName(name);
 
   const noteText = `${meta.label} — submitted via cardorentals.com\n\n` +
@@ -92,7 +100,8 @@ export async function handleLead(cfg: GhlConfig, sendEmail: SendEmail, input: Le
     const html = emailShell(
       `<h2 style="margin:0 0 4px;font-size:18px;">New ${escHtml(meta.label.toLowerCase())}</h2>
        <p style="font-size:13px;color:#6B6D78;margin:0 0 18px;">Submitted from cardorentals.com${crm ? ' · added to HighLevel' : ''}</p>
-       ${fieldsHtml({ ...fields, 'SMS consent (customer care)': input.sms?.service === true ? 'Yes' : 'No', 'SMS consent (marketing)': input.sms?.marketing === true ? 'Yes' : 'No' })}`,
+       ${message ? messageHtml(message) : ''}
+       ${fieldsHtml({ ...Object.fromEntries(Object.entries(fields).filter(([k]) => k !== meta.message)), 'SMS consent (customer care)': input.sms?.service === true ? 'Yes' : 'No', 'SMS consent (marketing)': input.sms?.marketing === true ? 'Yes' : 'No' })}`,
     );
     emailed = await sendEmail([meta.notify], `New ${meta.label.toLowerCase()}${name ? ' — ' + name : ''}`, html);
   } catch (e) {
