@@ -39,6 +39,9 @@
   high-end) rather than the word. CSS/code comments are exempt.
 - **Never use em dashes (—) in site copy.** Rich's standing rule. Use periods,
   commas, or colons instead. (En dashes in numeric ranges like 18–35% are fine.)
+- **Keep Journal posts short and non-repetitive (Rich, Nov 2026).** Owner
+  guides 900–1,300 words, guest posts 600–1,000. State each fact once; no
+  conclusion that restates the body. Same voice, fewer words.
 - Cardo lists homes under its own Airbnb account. Listing/review portability is
   **not** a selling point to promote against competitors; keep any ownership
   talk neutral and factual.

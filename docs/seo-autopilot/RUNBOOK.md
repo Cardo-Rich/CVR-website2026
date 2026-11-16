@@ -111,8 +111,14 @@ the backlog in `calendar.md`:
   ("Nov 2026"), img, seo {title ≤ 60 chars, description 140–155 chars},
   author {name: "Cardo Vacation Rentals", initials: "CV"} unless Rich says
   otherwise, heroCaption, bodyHtml, flags only when needed.
-- 1,200–2,000 words for owner guides, 800–1,400 for guest posts. Depth over
-  length: San Diego specifics, real numbers with sources, no filler.
+- **Keep posts tight (Rich, Nov 16, 2026: readability first).** 900–1,300
+  words for owner guides, 600–1,000 for guest posts. State each fact and
+  figure once: no repeating numbers in the lede, a source callout, the body
+  and the conclusion. Cite sources inline only (the "As of" callout is one
+  short line, not a source list). No conclusion that restates the body. Use
+  a list or a paragraph for a point, not both. After drafting, cut about a
+  third before committing. Depth over length: San Diego specifics, real
+  numbers with sources, no filler.
 - AEO shape: question-style H2s, a 40–80 word direct answer right under each,
   then detail. Visible "As of {Month Year}" for anything time-sensitive.
 - 3+ internal links (`<a class='inline'>`): at least one to a related
