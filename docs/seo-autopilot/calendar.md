@@ -29,6 +29,10 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 - Owner: Coronado, Oceanside, Carlsbad, Encinitas, Del Mar rules (one short page each)
 - Guest: Neighborhood guides for Ocean Beach, Point Loma, North Park
 
+## Notes
+
+- Nov 17: Rich asked (Nov 16, PR #84, open) for shorter posts: owner guides 900–1,300 words, guest 600–1,000, state each fact once. Autopilot follows that now, even before #84 merges.
+
 ## Open questions for Rich
 
 | Asked | For post date | Question | Answer |
@@ -40,7 +44,7 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 From a first look on Nov 8, 2026 (re-checked Nov 9):
 
 - Done Nov 16: sitemap had no `<lastmod>`; Journal URLs now carry each post's Firestore updatedAt and /blog the newest (PR #83, checked on preview).
-- Found Nov 16: the April post "STRO permits, TOT, and staying compliant" says the TMD assessment "rides alongside" every STR; the Treasurer's TOT page says TMD applies to lodging businesses with 70+ rooms, and TOT is now 11.75/12.75/13.75% by zone (since May 1, 2025). Needs a refresh (post lives only in Firestore; needs its JSON exported first).
+- Done Nov 17: April post "STRO permits, TOT, and staying compliant" refreshed (TMD applies only to 70+ room lodging; TOT 11.75/12.75/13.75% by zone; fees, counts, deadlines; meta 184 to 150) (PR #86). JSON taken from the homepage `data-blog-seed` block since no Firestore credentials in the session; now lives in content/journal/.
 - Found Nov 16: owner subpages (/owners/switch, /management-fees, /san-diego-stro-license, /cost-segregation, /best-vacation-rental-management-san-diego) have no BreadcrumbList schema; neighborhood pages and Journal posts do.
 - Found Nov 16: Journal BlogPosting `dateModified` always equals `datePublished`; could use Firestore updatedAt (same source as the new sitemap lastmod).
 - Homepage carries every Journal post's full body in a hidden JSON block (`data-blog-seed` in ThingsToDo.astro and owners CaseStudies.astro, used by the admin editor), about 160 KB today and growing ~3 posts a week. Not visible to search engines as content, but it slows the page. Admin app area: flagged for Rich.
