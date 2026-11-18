@@ -16,12 +16,39 @@ const nav = [
   { label: 'Blog', href: '/blog', active: true },
 ];
 const cta = { label: 'Free estimate', href: '/owners#estimate' };
+
+// CollectionPage structured data: the Journal index, its breadcrumb, and the
+// list of live posts in display order.
+const pageSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  '@id': 'https://cardorentals.com/blog',
+  name: 'The Cardo Journal',
+  isPartOf: { '@id': 'https://cardorentals.com/#organization' },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
+      { '@type': 'ListItem', position: 2, name: 'The Cardo Journal', item: 'https://cardorentals.com/blog' },
+    ],
+  },
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: [featured, ...rest].filter(Boolean).map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `https://cardorentals.com/blog/${p!.slug}`,
+      name: p!.title,
+    })),
+  },
+});
 ---
 
 <Base
   title="The Cardo Journal | San Diego Vacation Rental Guides"
   description="San Diego vacation rental guides from the Cardo team: revenue, design and compliance for owners, plus beaches, food and events for guests."
 >
+  <script slot="head" type="application/ld+json" is:inline set:html={pageSchema} />
   <MarketingHeader {nav} {cta} />
 
   <main>
