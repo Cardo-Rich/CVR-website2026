@@ -27,12 +27,31 @@ const steps = [
   { n: '3', title: 'File', blurb: 'Your CPA applies the accelerated depreciation on this year’s return, or a look-back study catches up prior years with no amended returns.' },
   { n: '4', title: 'Keep more', blurb: 'The deductions lower your taxable income, freeing up cash to reinvest in the property or your next one.' },
 ];
+
+// WebPage + breadcrumb structured data (Home > For Owners > this page), matching
+// the other owner guides, so search results can show the breadcrumb trail.
+const pageSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://cardorentals.com/owners/cost-segregation',
+  name: 'Cost Segregation for Short-Term Rentals',
+  isPartOf: { '@id': 'https://cardorentals.com/#organization' },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
+      { '@type': 'ListItem', position: 2, name: 'For Owners', item: 'https://cardorentals.com/owners' },
+      { '@type': 'ListItem', position: 3, name: 'Cost segregation', item: 'https://cardorentals.com/owners/cost-segregation' },
+    ],
+  },
+});
 ---
 
 <Base
   title="Cost Segregation for Short-Term Rentals | Cardo"
   description="How San Diego short-term rental owners use cost segregation to speed up depreciation and offset active income under the STR tax rules, with worked examples."
 >
+  <script slot="head" type="application/ld+json" is:inline set:html={pageSchema} />
   <MarketingHeader {nav} {cta} />
 
   <main>
