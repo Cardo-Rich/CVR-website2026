@@ -28,6 +28,7 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 - Owner: San Diego revenue benchmarks by neighborhood, 2026
 - Owner: Coronado, Oceanside, Carlsbad, Encinitas, Del Mar rules (one short page each)
 - Guest: Neighborhood guides for Ocean Beach, Point Loma, North Park
+- Owner: Airbnb's new house rules policy (7 standard rules, the rest move to "Additional rules"; effective Nov 20, 2026 per a Guesty notice in Slack): what owners should change. Verify every detail against Airbnb's own help pages first.
 
 ## Notes
 
@@ -43,6 +44,7 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 
 From a first look on Nov 8, 2026 (re-checked Nov 9):
 
+- Done Nov 19: eight older Journal posts had meta descriptions of 162 to 211 chars; now 148 to 156, and the cost segregation SEO title 63 to 54 (PR #89; JSON from the live data-blog-seed block, body and dates unchanged). Remaining short ones: case-study meta descriptions run 91 to 104 chars (could be fuller), and what-your-san-diego-home-could-earn-2026 is 126.
 - Done Nov 18: /blog, /neighborhoods, /owners/cost-segregation and /owners/home-designs had no page-level schema; now CollectionPage (with ItemList) or WebPage, each with BreadcrumbList (PR #88, checked on preview). The Nov 16 note below was stale: /switch, /management-fees, /san-diego-stro-license and /best-vacation-rental-management already had breadcrumbs.
 - Found Nov 18: Journal `dateModified` fix is not clean yet: every pre-November post carries the same Sept 17 migration timestamp as updatedAt, and refreshed posts get a new dateFull (so datePublished moves). Needs a separate `dateModified`/original-date field before switching.
 - Done Nov 16: sitemap had no `<lastmod>`; Journal URLs now carry each post's Firestore updatedAt and /blog the newest (PR #83, checked on preview).
