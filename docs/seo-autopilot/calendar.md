@@ -5,7 +5,7 @@ add ideas, or strike ones he does not want.
 
 ## Audience balance (last 10 posts)
 
-Owner: 2 · Guest: 3 (autopilot posts since Nov 9; target roughly 50/50)
+Owner: 3 · Guest: 3 (autopilot posts since Nov 9; target roughly 50/50)
 
 ## Upcoming posts
 
@@ -16,9 +16,10 @@ Owner: 2 · Guest: 3 (autopilot posts since Nov 9; target roughly 50/50)
 | Fri Nov 13 | San Diego with a dog: beaches, patios, pet-friendly stays | Guest | No | Published (/blog/san-diego-with-a-dog) |
 | Mon Nov 16 | Is San Diego oversaturated? STR vs long-term rental, honest numbers | Owner | No | Published (/blog/is-san-diego-oversaturated-short-term-vs-long-term-rental) |
 | Wed Nov 18 | Best San Diego beaches by kind of trip (families, surfers, quiet; link the dog post for dogs) | Guest | No | Published (/blog/best-san-diego-beaches-by-kind-of-trip) |
-| Fri Nov 20 | Mission Beach Tier 4 STRO licenses and the waitlist, explained (primary sources only) | Owner | No | Planned |
+| Fri Nov 20 | Mission Beach Tier 4 STRO licenses and the waitlist, explained (primary sources only) | Owner | No | Published (/blog/mission-beach-tier-4-stro-license-waitlist) |
 | Mon Nov 23 | A rainy-day San Diego list (museums, aquariums, indoor food halls; winter timing) | Guest | No | Planned |
 | Wed Nov 25 | Does hiring a manager affect the short-term rental tax loophole? (IRS material participation tests; primary sources only) | Owner | No | Planned |
+| Fri Nov 27 | San Diego Christmas and New Year's week with kids (Thanksgiving weekend timing; verify every date and hour) | Guest | No | Planned |
 
 ## Backlog
 
@@ -43,6 +44,8 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 ## Audit findings (top first)
 
 From a first look on Nov 8, 2026 (re-checked Nov 9):
+
+- Done Nov 20: /realtor-referral meta description 191 to 151 chars (payout range unchanged) and /become-a-vendor 165 to 154 (PR #91, checked on preview). Remaining: /careers meta is 58 chars ("open roles coming soon"; Slack shows active hiring, so Rich may want a real careers description), /reviews 117 (could be fuller).
 
 - Done Nov 19: eight older Journal posts had meta descriptions of 162 to 211 chars; now 148 to 156, and the cost segregation SEO title 63 to 54 (PR #89; JSON from the live data-blog-seed block, body and dates unchanged). Remaining short ones: case-study meta descriptions run 91 to 104 chars (could be fuller), and what-your-san-diego-home-could-earn-2026 is 126.
 - Done Nov 18: /blog, /neighborhoods, /owners/cost-segregation and /owners/home-designs had no page-level schema; now CollectionPage (with ItemList) or WebPage, each with BreadcrumbList (PR #88, checked on preview). The Nov 16 note below was stale: /switch, /management-fees, /san-diego-stro-license and /best-vacation-rental-management already had breadcrumbs.
