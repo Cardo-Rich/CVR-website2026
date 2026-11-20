@@ -19,7 +19,7 @@ Owner: 3 · Guest: 3 (autopilot posts since Nov 9; target roughly 50/50)
 | Fri Nov 20 | Mission Beach Tier 4 STRO licenses and the waitlist, explained (primary sources only) | Owner | No | Published (/blog/mission-beach-tier-4-stro-license-waitlist) |
 | Mon Nov 23 | A rainy-day San Diego list (museums, aquariums, indoor food halls; winter timing) | Guest | No | Planned |
 | Wed Nov 25 | Does hiring a manager affect the short-term rental tax loophole? (IRS material participation tests; primary sources only) | Owner | No | Planned |
-| Fri Nov 27 | San Diego Christmas and New Year's week with kids (Thanksgiving weekend timing; verify every date and hour) | Guest | No | Planned |
+| Fri Nov 27 | Ocean Beach neighborhood guide for visitors (pier, Newport Ave, dog beach link, where to eat; verify hours) | Guest | No | Planned |
 
 ## Backlog
 
@@ -28,7 +28,7 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 
 - Owner: San Diego revenue benchmarks by neighborhood, 2026
 - Owner: Coronado, Oceanside, Carlsbad, Encinitas, Del Mar rules (one short page each)
-- Guest: Neighborhood guides for Ocean Beach, Point Loma, North Park
+- Guest: Neighborhood guides for Point Loma, North Park (Ocean Beach scheduled Nov 27)
 - Owner: Airbnb's new house rules policy (7 standard rules, the rest move to "Additional rules"; effective Nov 20, 2026 per a Guesty notice in Slack): what owners should change. Verify every detail against Airbnb's own help pages first.
 
 ## Notes
