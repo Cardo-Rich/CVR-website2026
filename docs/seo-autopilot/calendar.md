@@ -45,6 +45,7 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 
 From a first look on Nov 8, 2026 (re-checked Nov 9):
 
+- Done Nov 21: /owners/san-diego-stro-license meta description 221 to ~151 chars (template stays 142 to 153 for any count/date; tracker numbers unchanged) and the owners FAQ fee link now goes straight to /owners/management-fees instead of through a 301 (PR #92, checked on preview). Remaining from a full crawl: /case-studies/* pages have only BreadcrumbList (no Article schema) and meta descriptions of 78 to 133 chars (data from Firestore/seed, not content/journal); Journal case-study posts 91 to 104; /reviews 117; /terms 79. No broken internal links found; /management-fees was the only internal link through a redirect.
 - Done Nov 20: /realtor-referral meta description 191 to 151 chars (payout range unchanged) and /become-a-vendor 165 to 154 (PR #91, checked on preview). Remaining: /careers meta is 58 chars ("open roles coming soon"; Slack shows active hiring, so Rich may want a real careers description), /reviews 117 (could be fuller).
 
 - Done Nov 19: eight older Journal posts had meta descriptions of 162 to 211 chars; now 148 to 156, and the cost segregation SEO title 63 to 54 (PR #89; JSON from the live data-blog-seed block, body and dates unchanged). Remaining short ones: case-study meta descriptions run 91 to 104 chars (could be fuller), and what-your-san-diego-home-could-earn-2026 is 126.
@@ -57,7 +58,7 @@ From a first look on Nov 8, 2026 (re-checked Nov 9):
 - Empty or generic image alt text on the homepage (Explore cards use the title as alt).
 - GTM noscript reference renders as a visible link (tracking: flag for Rich, off limits).
 - Done Nov 9: BlogPosting image now an absolute URL; guest-category posts get the booking CTA (PR #69).
-- Overlong meta descriptions remain on /owners/management-fees (193 chars, fee page: flag for Rich), /owners/san-diego-stro-license (221, dynamic tracker text) and several Journal posts (165–211).
+- Overlong meta descriptions remain on /owners/management-fees (193 chars, fee page: flag for Rich) and several Journal posts (165–211).
 - Done Nov 15: owner page titles shortened from 64–82 to 47–59 chars (/owners, /owners/switch, /owners/san-diego-stro-license, /owners/cost-segregation) and /owners meta trimmed 163 to 155 (PR #81). /owners/management-fees title (82) and meta (193) left for Rich (fee page). Next up: overlong Journal meta descriptions (beyond-the-big-parks 211, 7-day-rule 196, cost-segregation post 193, STRO/TOT post 184) need a post refresh; posts not in content/journal/ need their full JSON from Firestore first.
 - Done Nov 14: all seven neighborhood pages had a missing space in the meta description ("inLa Jolla"), 160–172 chars, and Del Mar/Encinitas/Carlsbad/Coronado labelled "San Diego"; now unique 150–155 char descriptions and titles 51–57 chars (PR #80). Owner page titles run 70–82 chars because of the " | Cardo Vacation Rentals" suffix.
 - Done Nov 13: trimmed meta descriptions on /owners/switch, /owners/best-vacation-rental-management-san-diego and /owners/cost-segregation to 154–156 chars (PR #79).
