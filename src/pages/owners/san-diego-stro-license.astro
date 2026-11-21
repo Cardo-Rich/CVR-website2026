@@ -138,7 +138,8 @@ const faqs = [
   },
 ];
 
-const description = `San Diego STRO license guide with a live license tracker: ${t3Remaining.toLocaleString('en-US')} Tier 3 whole-home licenses remain under the city's 1% cap as of ${asOfLabel}. All four tiers, current fees, renewal rules, and what happens when you sell.`;
+// Kept to ~140-155 chars (search snippet length) for any count/date width.
+const description = `San Diego STRO license tracker: ${t3Remaining.toLocaleString('en-US')} Tier 3 whole-home licenses left under the 1% cap as of ${asOfLabel}. Tiers, fees, renewals and selling rules.`;
 
 const faqSchema = JSON.stringify({
   '@context': 'https://schema.org',
