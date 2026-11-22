@@ -42,10 +42,42 @@ const breadcrumbLd = JSON.stringify({
     { '@type': 'ListItem', position: 3, name: c.name, item: canonical },
   ],
 });
+
+// Article schema so search engines read the case study as an article about
+// this home: headline, absolute images, publish month, publisher, place.
+const MONTHS = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+const isoMonth = (() => {
+  const m = String(c.date || '').trim().match(/^([A-Za-z]+)\s+(\d{4})$/);
+  if (!m) return undefined;
+  const i = MONTHS.indexOf(m[1].toLowerCase());
+  return i < 0 ? undefined : `${m[2]}-${String(i + 1).padStart(2, '0')}`;
+})();
+const abs = (src: string) => new URL(src, 'https://cardorentals.com').href;
+const articleLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: `${c.name}: design case study, ${c.neighborhood}`,
+  description: c.seo.description,
+  image: (c.gallery?.length ? c.gallery : [c.cardImg]).filter(Boolean).map(abs),
+  datePublished: isoMonth,
+  author: { '@type': 'Organization', name: 'Cardo Vacation Rentals', url: 'https://cardorentals.com' },
+  publisher: { '@type': 'Organization', name: 'Cardo Vacation Rentals', logo: { '@type': 'ImageObject', url: 'https://cardorentals.com/assets/logo-horizontal-color.png' } },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+  articleSection: 'Design case studies',
+  contentLocation: { '@type': 'Place', name: c.neighborhood },
+});
+
+// Several case-study descriptions (the hook) run 78 to 133 characters, short
+// for a search snippet. Add the factual frame when there is room; never
+// past 160.
+const baseDesc = String(c.seo.description || c.hook || '').trim();
+const descTail = ` A ${c.beds} design case study in ${c.neighborhood}: scope of work, investment and results.`;
+const metaDesc = baseDesc.length < 120 && (baseDesc + descTail).length <= 160 ? baseDesc + descTail : baseDesc;
 ---
 
-<Base title={c.seo.title} description={c.seo.description} image={c.gallery?.[0]} imageAlt={c.name} type="article" canonical={canonical}>
+<Base title={c.seo.title} description={metaDesc} image={c.gallery?.[0]} imageAlt={c.name} type="article" canonical={canonical}>
   <script slot="head" type="application/ld+json" is:inline set:html={breadcrumbLd} />
+  <script slot="head" type="application/ld+json" is:inline set:html={articleLd} />
   <MarketingHeader {nav} {cta} />
 
   <main>
