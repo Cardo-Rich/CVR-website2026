@@ -5,7 +5,7 @@ add ideas, or strike ones he does not want.
 
 ## Audience balance (last 10 posts)
 
-Owner: 3 · Guest: 3 (autopilot posts since Nov 9; target roughly 50/50)
+Owner: 3 · Guest: 4 (autopilot posts since Nov 9; target roughly 50/50)
 
 ## Upcoming posts
 
@@ -17,9 +17,10 @@ Owner: 3 · Guest: 3 (autopilot posts since Nov 9; target roughly 50/50)
 | Mon Nov 16 | Is San Diego oversaturated? STR vs long-term rental, honest numbers | Owner | No | Published (/blog/is-san-diego-oversaturated-short-term-vs-long-term-rental) |
 | Wed Nov 18 | Best San Diego beaches by kind of trip (families, surfers, quiet; link the dog post for dogs) | Guest | No | Published (/blog/best-san-diego-beaches-by-kind-of-trip) |
 | Fri Nov 20 | Mission Beach Tier 4 STRO licenses and the waitlist, explained (primary sources only) | Owner | No | Published (/blog/mission-beach-tier-4-stro-license-waitlist) |
-| Mon Nov 23 | A rainy-day San Diego list (museums, aquariums, indoor food halls; winter timing) | Guest | No | Planned |
+| Mon Nov 23 | A rainy-day San Diego list (museums, aquariums, indoor food halls; winter timing) | Guest | No | Published (/blog/rainy-day-san-diego) |
 | Wed Nov 25 | Does hiring a manager affect the short-term rental tax loophole? (IRS material participation tests; primary sources only) | Owner | No | Planned |
 | Fri Nov 27 | Ocean Beach neighborhood guide for visitors (pier, Newport Ave, dog beach link, where to eat; verify hours) | Guest | No | Planned |
+| Mon Nov 30 | How owners should hear about repairs: work orders, photos and closing the loop (general; no names, homes or vendors) | Owner | No | Planned |
 
 ## Backlog
 
@@ -29,7 +30,6 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 - Owner: San Diego revenue benchmarks by neighborhood, 2026
 - Owner: Coronado, Oceanside, Carlsbad, Encinitas, Del Mar rules (one short page each)
 - Guest: Neighborhood guides for Point Loma, North Park (Ocean Beach scheduled Nov 27)
-- Owner: How owners should hear about repairs: work orders, photos and closing the loop (general, from what the team does; no names, homes or vendors)
 - Owner: Airbnb's new house rules policy (7 standard rules, the rest move to "Additional rules"; effective Nov 20, 2026 per a Guesty notice in Slack): what owners should change. Verify every detail against Airbnb's own help pages first.
 
 ## Notes
@@ -41,11 +41,13 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 | Asked | For post date | Question | Answer |
 |---|---|---|---|
 | Nov 9 | Wed Nov 11 | Any anonymized owner story about selling/buying a home and the STRO license not transferring? | No answer; published from city rules alone |
+| Nov 23 | Any day (site fix) | Which guest review count is current: 2,000+ (site default description, Organization schema) or 3,500+ (/reviews)? | |
 
 ## Audit findings (top first)
 
 From a first look on Nov 8, 2026 (re-checked Nov 9):
 
+- Done Nov 23: /reviews title now "San Diego Vacation Rental Reviews | Cardo Vacation Rentals" (was "Guest Reviews", no location) and meta 117 to 153 chars (PR #95, checked on preview). Found: sitewide default description and Organization schema in Base.astro say "2,000+ guest reviews" while /reviews says 3,500+; asked Rich which is current before changing.
 - Done Nov 22: /case-studies/* pages now carry Article schema (headline, absolute gallery images, publish month, publisher, neighborhood) next to the breadcrumbs, and hooks under 120 chars get a short factual tail so descriptions run 133 to 158 (were 81 to 133) (PR #93, checked on preview). Remaining: Journal case-study posts 91 to 104 chars, /reviews 117, /careers 58 (needs Rich's hiring line), /terms 79 (off limits).
 - Done Nov 21: /owners/san-diego-stro-license meta description 221 to ~151 chars (template stays 142 to 153 for any count/date; tracker numbers unchanged) and the owners FAQ fee link now goes straight to /owners/management-fees instead of through a 301 (PR #92, checked on preview). Remaining from a full crawl: /case-studies/* pages have only BreadcrumbList (no Article schema) and meta descriptions of 78 to 133 chars (data from Firestore/seed, not content/journal); Journal case-study posts 91 to 104; /reviews 117; /terms 79. No broken internal links found; /management-fees was the only internal link through a redirect.
 - Done Nov 20: /realtor-referral meta description 191 to 151 chars (payout range unchanged) and /become-a-vendor 165 to 154 (PR #91, checked on preview). Remaining: /careers meta is 58 chars ("open roles coming soon"; Slack shows active hiring, so Rich may want a real careers description), /reviews 117 (could be fuller).
