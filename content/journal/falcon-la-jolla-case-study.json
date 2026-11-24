@@ -1,0 +1,38 @@
+{
+  "slug": "falcon-la-jolla-case-study",
+  "title": "Falcon: an inherited La Jolla bluff home, relaunched in five weeks",
+  "category": "Case studies",
+  "excerpt": "An inherited bluff home, dated and half-furnished, fully reimagined and launched in five weeks.",
+  "readTime": "4 min",
+  "dateFull": "June 24, 2026",
+  "dateShort": "Jun 2026",
+  "img": "/assets/photos/designs-living-craftsman.jpg",
+  "featured": false,
+  "seo": {
+    "title": "Falcon | Design Case Study | Cardo Vacation Rentals",
+    "description": "An inherited La Jolla bluff home, fully reimagined and launched in five weeks. The four-bedroom now earns $589 a night, 57% above its market."
+  },
+  "author": {
+    "name": "Cardo Design Team",
+    "initials": "CV"
+  },
+  "heroCaption": "Falcon, La Jolla: cleared, repainted, and fully restyled in five weeks.",
+  "bodyHtml": "<p class=\"lede\">Falcon came to us inherited and frozen in time: good bones and an unbeatable bluff location, buried under decades of mismatched furniture.</p>\n        <p>The owner lived out of state and had neither the time nor the appetite to manage a renovation from afar, so they approved our plan and stepped back entirely.</p>\n        <p>Our design team cleared the home, repainted throughout, and furnished every room to make the most of the light and the view. We sourced and shipped the furniture, hung the art, stocked the kitchen, and staged it for the photographer, start to finish on a single invoice.</p>\n        <p>Five weeks later Falcon launched fully styled and photographed, and settled into the top tier of its La Jolla market at 57% above comparable homes.</p>\n        <div class=\"callout\"><p class=\"eyebrow\">The project</p><p>$78,400 all-in: furniture &amp; decor, paint &amp; handyman, art &amp; styling, outdoor, kitchen kit, photography, and white-linen setup, recovered by a nightly rate 57% over market.</p></div>",
+  "localTip": "",
+  "showOnHome": false,
+  "showOnOwners": true,
+  "caseStudy": {
+    "name": "Falcon",
+    "hood": "La Jolla",
+    "beds": "4 BR",
+    "revenue": "$214,800",
+    "nightly": "$589 / night",
+    "lift": "+57% over market",
+    "gallery": [
+      "/assets/photos/designs-living-craftsman.jpg",
+      "/assets/photos/designs-living-fireplace.jpg",
+      "/assets/photos/designs-dining.jpg",
+      "/assets/photos/designs-bedroom-fan.jpg"
+    ]
+  }
+}

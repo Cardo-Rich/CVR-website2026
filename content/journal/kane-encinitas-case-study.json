@@ -1,0 +1,38 @@
+{
+  "slug": "kane-encinitas-case-study",
+  "title": "Kane: an Encinitas surf home with a game room guests book it for",
+  "category": "Case studies",
+  "excerpt": "A surf-town home with a game room guests now book it specifically for.",
+  "readTime": "4 min",
+  "dateFull": "April 14, 2026",
+  "dateShort": "Apr 2026",
+  "img": "/assets/photos/designs-gameroom.jpg",
+  "featured": false,
+  "seo": {
+    "title": "Kane | Design Case Study | Cardo Vacation Rentals",
+    "description": "An Encinitas three-bedroom whose unused bonus room became a navy game room guests now search for. The home earns $447 a night, 41% above its market."
+  },
+  "author": {
+    "name": "Cardo Design Team",
+    "initials": "CV"
+  },
+  "heroCaption": "Kane, Encinitas: a bonus room turned into the listing's signature feature.",
+  "bodyHtml": "<p class=\"lede\">Kane had an underused bonus room and an owner with a full-time job two time zones away.</p>\n        <p>They knew the space could be a differentiator but had no bandwidth to figure out how, and no desire to coordinate vendors remotely.</p>\n        <p>We turned the bonus room into a moody navy game room that anchors the whole listing, then styled the rest of the home to match the energy. The owner approved a moodboard remotely and stayed out of the rest.</p>\n        <p>It has become the feature guests search for, lifting both bookings and rate to 41% above its Encinitas market.</p>\n        <div class=\"callout\"><p class=\"eyebrow\">The project</p><p>$58,200 all-in, including a game-room build-out that became the home's most-searched feature.</p></div>",
+  "localTip": "",
+  "showOnHome": false,
+  "showOnOwners": true,
+  "caseStudy": {
+    "name": "Kane",
+    "hood": "Encinitas",
+    "beds": "3 BR",
+    "revenue": "$168,300",
+    "nightly": "$447 / night",
+    "lift": "+41% over market",
+    "gallery": [
+      "/assets/photos/designs-gameroom.jpg",
+      "/assets/photos/designs-living-fireplace.jpg",
+      "/assets/photos/designs-bedroom-fan.jpg",
+      "/assets/photos/designs-amenities.jpg"
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "slug": "nute-pacific-beach-case-study",
+  "title": "Nute: a tired Pacific Beach walk-street rental, booked solid in a month",
+  "category": "Case studies",
+  "excerpt": "A tired walk-street rental turned light, bright, and fully booked within its first month.",
+  "readTime": "4 min",
+  "dateFull": "May 20, 2026",
+  "dateShort": "May 2026",
+  "img": "/assets/photos/designs-living-bright.jpg",
+  "featured": false,
+  "seo": {
+    "title": "Nute | Design Case Study | Cardo Vacation Rentals",
+    "description": "A dim Pacific Beach walk-street rental redesigned for short stays and fully booked in its first month. It now earns $412 a night, 44% above its market."
+  },
+  "author": {
+    "name": "Cardo Design Team",
+    "initials": "CV"
+  },
+  "heroCaption": "Nute, Pacific Beach: from drab long-term rental to coastal-bright short stay.",
+  "bodyHtml": "<p class=\"lede\">Nute had been a long-term rental for years: functional, dim, and forgettable.</p>\n        <p>The owner wanted to move it to short-term but had been quoted long timelines and bigger budgets elsewhere, and had no interest in project-managing the work.</p>\n        <p>We took it from drab to coastal-bright: a lighter palette, smarter furniture for the walk-street layout, and styling that made the small footprint feel generous. After one approval call, the owner left the rest to us.</p>\n        <p>It photographed beautifully, booked solid in its first month, and now runs 44% ahead of its Pacific Beach market.</p>\n        <div class=\"callout\"><p class=\"eyebrow\">The project</p><p>$52,100 all-in, recovered by a nightly rate 44% over market and a calendar that filled in weeks.</p></div>",
+  "localTip": "",
+  "showOnHome": false,
+  "showOnOwners": true,
+  "caseStudy": {
+    "name": "Nute",
+    "hood": "Pacific Beach",
+    "beds": "3 BR",
+    "revenue": "$158,300",
+    "nightly": "$412 / night",
+    "lift": "+44% over market",
+    "gallery": [
+      "/assets/photos/designs-living-bright.jpg",
+      "/assets/photos/designs-bedroom-floral.jpg",
+      "/assets/photos/designs-dining.jpg",
+      "/assets/photos/designs-amenities.jpg"
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "slug": "twain-del-mar-case-study",
+  "title": "Twain: a Del Mar craftsman styled to own racing season",
+  "category": "Case studies",
+  "excerpt": "A craftsman classic styled to own Del Mar's racing season, and hold strong the rest of the year.",
+  "readTime": "4 min",
+  "dateFull": "May 8, 2026",
+  "dateShort": "May 2026",
+  "img": "/assets/photos/designs-dining.jpg",
+  "featured": false,
+  "seo": {
+    "title": "Twain | Design Case Study | Cardo Vacation Rentals",
+    "description": "A four-bedroom Del Mar craftsman furnished around its architecture for racing season and the rest of the year. It earns $512 a night, 48% above market."
+  },
+  "author": {
+    "name": "Cardo Design Team",
+    "initials": "CV"
+  },
+  "heroCaption": "Twain, Del Mar: designed around the architecture, not over it.",
+  "bodyHtml": "<p class=\"lede\">Twain is a true craftsman: wood detailing, built-ins, character in every room.</p>\n        <p>The owner loved the house but had no interest in furnishing it for short-term guests, and worried a generic staging would flatten everything that made it special.</p>\n        <p>Our team designed around the architecture instead of over it: warm, layered furnishings that read editorial in photos and live comfortably for a full house. The owner trusted us with every detail, start to finish.</p>\n        <p>Twain now commands Del Mar's racing-season premium and runs 48% above its market across the year.</p>\n        <div class=\"callout\"><p class=\"eyebrow\">The project</p><p>$69,800 all-in, recovered by a nightly rate 48% over market and a racing-season premium the home now owns.</p></div>",
+  "localTip": "",
+  "showOnHome": false,
+  "showOnOwners": true,
+  "caseStudy": {
+    "name": "Twain",
+    "hood": "Del Mar",
+    "beds": "4 BR",
+    "revenue": "$192,500",
+    "nightly": "$512 / night",
+    "lift": "+48% over market",
+    "gallery": [
+      "/assets/photos/designs-dining.jpg",
+      "/assets/photos/designs-living-craftsman.jpg",
+      "/assets/photos/designs-living-fireplace.jpg",
+      "/assets/photos/designs-bedroom-fan.jpg"
+    ]
+  }
+}
