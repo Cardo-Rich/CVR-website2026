@@ -1,0 +1,38 @@
+{
+  "slug": "mt-ainsworth-coronado-case-study",
+  "title": "Mt Ainsworth: a Coronado estate finished for the top of its market",
+  "category": "Case studies",
+  "excerpt": "A five-bedroom estate with a resort backyard, finished to sit at the top of its market.",
+  "readTime": "4 min",
+  "dateFull": "March 26, 2026",
+  "dateShort": "Mar 2026",
+  "img": "/assets/photos/designs-pool.jpg",
+  "featured": false,
+  "seo": {
+    "title": "Mt Ainsworth | Design Case Study | Cardo Vacation Rentals",
+    "description": "A five-bedroom Coronado home with a pool and an entertaining backyard, furnished for the top of its market. It earns $694 a night, 61% above that market."
+  },
+  "author": {
+    "name": "Cardo Design Team",
+    "initials": "CV"
+  },
+  "heroCaption": "Mt Ainsworth, Coronado: furnished as a true estate, top of its comp set.",
+  "bodyHtml": "<p class=\"lede\">Mt Ainsworth is the largest home in this group: five bedrooms, a pool, and a backyard built for entertaining.</p>\n        <p>The owner wanted it to compete at the very top of Coronado's market but had neither the time nor the design eye to get it there, and wanted to be entirely out of the process.</p>\n        <p>We furnished it as a true estate: cohesive rooms that photograph like a boutique hotel and a backyard styled into a destination of its own. After a single walkthrough, the owner left it entirely to us.</p>\n        <p>It launched at the top of its comp set and runs 61% above its Coronado market: the strongest lift of the six.</p>\n        <div class=\"callout\"><p class=\"eyebrow\">The project</p><p>$94,700 all-in: the strongest lift of the six, at 61% over market.</p></div>",
+  "localTip": "",
+  "showOnHome": false,
+  "showOnOwners": true,
+  "caseStudy": {
+    "name": "Mt Ainsworth",
+    "hood": "Coronado",
+    "beds": "5 BR",
+    "revenue": "$268,900",
+    "nightly": "$694 / night",
+    "lift": "+61% over market",
+    "gallery": [
+      "/assets/photos/designs-pool.jpg",
+      "/assets/photos/designs-living-craftsman.jpg",
+      "/assets/photos/designs-dining.jpg",
+      "/assets/photos/designs-living-bright.jpg"
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "slug": "sixth-mission-beach-case-study",
+  "title": "Sixth: a compact Mission Beach two-bedroom that punches above its size",
+  "category": "Case studies",
+  "excerpt": "A compact two-bedroom that punches well above its size, and its nightly comps.",
+  "readTime": "4 min",
+  "dateFull": "April 28, 2026",
+  "dateShort": "Apr 2026",
+  "img": "/assets/photos/designs-bedroom-floral.jpg",
+  "featured": false,
+  "seo": {
+    "title": "Sixth | Design Case Study | Cardo Vacation Rentals",
+    "description": "A two-bedroom Mission Beach home a block from the sand, designed to live larger than its footprint. It now earns $356 a night, 39% above its market."
+  },
+  "author": {
+    "name": "Cardo Design Team",
+    "initials": "CV"
+  },
+  "heroCaption": "Sixth, Mission Beach: every inch designed to work twice as hard.",
+  "bodyHtml": "<p class=\"lede\">Small homes are the hardest to make special, and Sixth is small: a two-bedroom a block from the sand.</p>\n        <p>The owner assumed its size capped what it could earn, and had nearly listed it long-term to avoid the hassle.</p>\n        <p>We designed every inch to work twice as hard: dual-purpose furniture, a bright cohesive palette, and styling that photographs larger than the footprint. The owner handed it over and let the team run.</p>\n        <p>Guests book it for the location and rate it for the comfort, and it now runs 39% above its Mission Beach market.</p>\n        <div class=\"callout\"><p class=\"eyebrow\">The project</p><p>$41,600 all-in: proof that footprint doesn't cap what a well-designed home earns.</p></div>",
+  "localTip": "",
+  "showOnHome": false,
+  "showOnOwners": true,
+  "caseStudy": {
+    "name": "Sixth",
+    "hood": "Mission Beach",
+    "beds": "2 BR",
+    "revenue": "$128,400",
+    "nightly": "$356 / night",
+    "lift": "+39% over market",
+    "gallery": [
+      "/assets/photos/designs-bedroom-floral.jpg",
+      "/assets/photos/designs-living-bright.jpg",
+      "/assets/photos/designs-amenities.jpg",
+      "/assets/photos/designs-bedroom-fan.jpg"
+    ]
+  }
+}
