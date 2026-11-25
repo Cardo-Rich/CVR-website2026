@@ -5,7 +5,7 @@ add ideas, or strike ones he does not want.
 
 ## Audience balance (last 10 posts)
 
-Owner: 3 · Guest: 4 (autopilot posts since Nov 9; target roughly 50/50)
+Owner: 4 · Guest: 4 (autopilot posts since Nov 9; target roughly 50/50)
 
 ## Upcoming posts
 
@@ -18,9 +18,10 @@ Owner: 3 · Guest: 4 (autopilot posts since Nov 9; target roughly 50/50)
 | Wed Nov 18 | Best San Diego beaches by kind of trip (families, surfers, quiet; link the dog post for dogs) | Guest | No | Published (/blog/best-san-diego-beaches-by-kind-of-trip) |
 | Fri Nov 20 | Mission Beach Tier 4 STRO licenses and the waitlist, explained (primary sources only) | Owner | No | Published (/blog/mission-beach-tier-4-stro-license-waitlist) |
 | Mon Nov 23 | A rainy-day San Diego list (museums, aquariums, indoor food halls; winter timing) | Guest | No | Published (/blog/rainy-day-san-diego) |
-| Wed Nov 25 | Does hiring a manager affect the short-term rental tax loophole? (IRS material participation tests; primary sources only) | Owner | No | Planned |
+| Wed Nov 25 | Does hiring a manager affect the short-term rental tax loophole? (IRS material participation tests; primary sources only) | Owner | No | Published (/blog/does-hiring-a-property-manager-affect-the-short-term-rental-tax-loophole) |
 | Fri Nov 27 | Ocean Beach neighborhood guide for visitors (pier, Newport Ave, dog beach link, where to eat; verify hours) | Guest | No | Planned |
 | Mon Nov 30 | How owners should hear about repairs: work orders, photos and closing the loop (general; no names, homes or vendors) | Owner | No | Planned |
+| Wed Dec 2 | How to spot a fake booking message or payment link before a San Diego stay (general; verify against Airbnb and FTC pages; no names, no platform blame) | Guest | No | Planned |
 
 ## Backlog
 
@@ -30,7 +31,6 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 - Owner: San Diego revenue benchmarks by neighborhood, 2026
 - Owner: Coronado, Oceanside, Carlsbad, Encinitas, Del Mar rules (one short page each)
 - Guest: Neighborhood guides for Point Loma, North Park (Ocean Beach scheduled Nov 27)
-- Guest: How to spot a fake booking message or payment link before a San Diego stay (general; guests and hosts in Slack reported scam WhatsApp messages with wrong dates and look-alike booking links on Nov 23). No names, no platform blame; verify advice against Airbnb's and the FTC's own pages.
 - Owner: Airbnb's new house rules policy (7 standard rules, the rest move to "Additional rules"; effective Nov 20, 2026 per a Guesty notice in Slack): what owners should change. Verify every detail against Airbnb's own help pages first.
 
 ## Notes
@@ -48,6 +48,7 @@ Starter ideas from `docs/seo-aeo-strategy.md` and gaps in the current Journal
 
 From a first look on Nov 8, 2026 (re-checked Nov 9):
 
+- Done Nov 25: /owners/best-vacation-rental-management-san-diego title 71 to 59 chars (PR #98, checked on preview). Sitemap crawl of 55 URLs: every other title 30 to 60 (neighborhood titles read 61 only because of the &amp; entity), every page one H1, self canonical and OG image; one img without alt per page is the GTM noscript pixel (off limits). Left for Rich: /owners/management-fees title 82 / meta 193 (fee page), /terms meta 79 (off limits).
 - Done Nov 24: the six Journal case-study posts (91 to 104 chars) and what-your-san-diego-home-could-earn-2026 (126) now have meta descriptions of 141 to 155, using only each post's own case-study figures (PR #96). All 25 live Journal posts now sit at 141 to 156. Next candidates: homepage Explore card alt text, /careers meta (needs Rich's hiring line), Journal dateModified field.
 - Done Nov 23: /reviews title now "San Diego Vacation Rental Reviews | Cardo Vacation Rentals" (was "Guest Reviews", no location) and meta 117 to 153 chars (PR #95, checked on preview). Found: sitewide default description and Organization schema in Base.astro say "2,000+ guest reviews" while /reviews says 3,500+; asked Rich which is current before changing.
 - Done Nov 22: /case-studies/* pages now carry Article schema (headline, absolute gallery images, publish month, publisher, neighborhood) next to the breadcrumbs, and hooks under 120 chars get a short factual tail so descriptions run 133 to 158 (were 81 to 133) (PR #93, checked on preview). Remaining: Journal case-study posts 91 to 104 chars, /reviews 117, /careers 58 (needs Rich's hiring line), /terms 79 (off limits).
