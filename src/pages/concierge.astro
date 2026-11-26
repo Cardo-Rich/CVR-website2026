@@ -11,6 +11,22 @@ const services = [
   { title: 'Baby & family gear', tag: 'On request', blurb: 'Cribs, high chairs, strollers, and beach toys delivered before you arrive.', img: '/assets/photos/imported/unsplash-1526047932273-341f2a7631f9-700.jpg' },
   { title: 'Mid-stay refresh clean', tag: 'Add-on', blurb: 'A discreet turnover mid-trip so the home feels brand new all over again.', img: '/assets/photos/imported/unsplash-1522771739844-6a9f6d5f14af-700.jpg' },
 ];
+
+// WebPage + breadcrumb structured data (Home > Concierge).
+const pageSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://cardorentals.com/concierge',
+  name: 'Concierge Services',
+  isPartOf: { '@id': 'https://cardorentals.com/#organization' },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Concierge', item: 'https://cardorentals.com/concierge' },
+    ],
+  },
+});
 ---
 
 <Base
@@ -19,6 +35,7 @@ const services = [
   image="/assets/og/og-concierge.jpg"
   imageAlt="Cardo guest concierge: five-star stays across San Diego"
 >
+  <script slot="head" type="application/ld+json" is:inline set:html={pageSchema} />
   <MarketingHeader />
 
   <main>
