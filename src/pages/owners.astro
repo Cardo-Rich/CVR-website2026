@@ -49,10 +49,27 @@ const serviceSchema = {
   url: 'https://cardorentals.com/owners',
 };
 const serviceSchemaJson = JSON.stringify(serviceSchema);
+
+// WebPage + breadcrumb structured data (Home > For Owners).
+const pageSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  '@id': 'https://cardorentals.com/owners',
+  name: 'Short-Term Rental Management in San Diego',
+  isPartOf: { '@id': 'https://cardorentals.com/#organization' },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://cardorentals.com/' },
+      { '@type': 'ListItem', position: 2, name: 'For Owners', item: 'https://cardorentals.com/owners' },
+    ],
+  },
+});
 ---
 
 <Base title="Airbnb & Vacation Rental Management in San Diego | Cardo" description="San Diego Airbnb and short-term rental property management: a free earning estimate, above-market revenue and full-service marketing. Superhost since 2013." image="/assets/og/og-owners.jpg" imageAlt="Cardo Vacation Rentals, short-term rental management in San Diego">
   <script slot="head" type="application/ld+json" is:inline set:html={serviceSchemaJson} />
+  <script slot="head" type="application/ld+json" is:inline set:html={pageSchema} />
   <MarketingHeader />
   <main>
     <OwnerHero />
