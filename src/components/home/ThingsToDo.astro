@@ -19,7 +19,7 @@ const tipPath = 'M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6-6.3 4.6L8 14 2 9.4h7.6z
     <div class="todo reveal" data-explore>
       {cards.map((p) => (
         <a class="todo__card" href={`/blog/${p.slug}`} data-explore-slug={p.slug}>
-          <img src={p.img} alt={p.title} loading="lazy" />
+          <img src={p.img} alt={p.heroCaption || p.title} loading="lazy" />
           <div class="todo__body">
             <div class="todo__kicker">{p.category}</div>
             <h3>{p.title}</h3>

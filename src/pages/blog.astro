@@ -78,7 +78,7 @@ const pageSchema = JSON.stringify({
       <section class="section-pad-sm" data-screen-label="Featured post" data-blog-featured-section style="padding-top:clamp(32px,5vw,56px)">
         <div class="section-wrap">
           <a class="feat reveal" href={`/blog/${featured.slug}`} data-blog-featured data-blog-slug={featured.slug}>
-            <div class="feat__media"><img src={featured.img} alt={featured.title} loading="lazy" /></div>
+            <div class="feat__media"><img src={featured.img} alt={featured.heroCaption || featured.title} loading="lazy" /></div>
             <div class="feat__body">
               <div class="post-meta"><span class="post-cat">{featured.category}</span><span>{featured.readTime}</span><span>{featured.dateShort}</span></div>
               <h2>{featured.title}</h2>
@@ -96,7 +96,7 @@ const pageSchema = JSON.stringify({
         <div class="posts" data-blog-grid>
           {rest.map((p) => (
             <a class="post reveal" href={`/blog/${p.slug}`} data-blog-slug={p.slug}>
-              <div class="post__media"><img src={p.img} alt={p.title} loading="lazy" /></div>
+              <div class="post__media"><img src={p.img} alt={p.heroCaption || p.title} loading="lazy" /></div>
               <div class="post__body">
                 <div class="post-meta"><span class="post-cat">{p.category}</span><span>{p.readTime}</span></div>
                 <h3>{p.title}</h3>

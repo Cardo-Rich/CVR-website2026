@@ -40,7 +40,7 @@ const { a, related, areas, isGuestGuide, previewNote } = Astro.props;
 
   <div class="art-hero">
     <figure>
-      <img src={a.img} alt={a.title} data-blog-img />
+      <img src={a.img} alt={a.heroCaption || a.title} data-blog-img />
       <figcaption data-blog-caption>{a.heroCaption}</figcaption>
     </figure>
   </div>
