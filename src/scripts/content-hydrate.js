@@ -339,7 +339,7 @@ export function hydrateBlogArticle(items) {
   set('[data-blog-author]', a.author && a.author.name);
   set('[data-blog-meta]', (a.dateFull || '') + ' · ' + (a.readTime || ''));
   set('[data-blog-caption]', a.heroCaption);
-  var img = art.querySelector('[data-blog-img]'); if (img && a.img) { img.src = a.img; img.alt = a.title; }
+  var img = art.querySelector('[data-blog-img]'); if (img && a.img) { img.src = a.img; img.alt = a.heroCaption || a.title; }
   var body = art.querySelector('[data-blog-body]'); if (body && typeof a.bodyHtml === 'string') body.innerHTML = a.bodyHtml;
 }
 
